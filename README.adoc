@@ -1,0 +1,35 @@
+= Fendo
+:author: Marcos Cruz (programandala.net)
+:revdate: 2017-02-08
+
+// This file is part of Fendo
+// http://programandala.net/en.program.fendo.html
+
+== Description
+
+Fendo is a website engine under development, designed to build static
+websites.
+
+Fendo is written in http://forth-standard.org[Forth] with
+http://gnu.org/software/gforth[Gforth].
+
+Home page: http://programandala.net/en.program.fendo.html
+
+Documentation is still missing.
+
+== Motivation, history and current status
+
+The development of Fendo started in 2012, in order to replace two
+previous similar applications written by the author (one of them
+written in Forth, the other one written in PHP) with a new one that
+combines the best features of both of them.
+
+Since 2014-12, Fendo is the engine that powers
+http://programandala.net[programandala.net].
+
+On 2017-02-08, a local Git repository was created from development
+backups, in order to resume the development and prepare the first
+public release.
+
+Fendo is very stable and is regulary improved, after the requirements
+of the website.
