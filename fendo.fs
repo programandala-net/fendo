@@ -23,7 +23,7 @@
 \ <http://gnu.org/licenses>.
 
 \ Fendo is written in Forth
-\ with Gforth (<http://www.jwdt.com/~paysan/gforth.html>).
+\ with Gforth (<http://www.bernd-paysan.de/gforth.html>).
 
 \ **************************************************************
 \ Change history of this file
@@ -33,16 +33,17 @@
 \ **************************************************************
 \ Requirements
 
-require ffl/str.f
-require ffl/tos.f
-require ffl/xos.f
+require ffl/str.fs
+require ffl/tos.fs
+require ffl/xos.fs
 
 require galope/anew.fs
-require galope/csb.fs
+\ require galope/sb.fs
 
 \ **************************************************************
 \ Modules
 
 anew --fendo--
 
-
+include fendo_data.fs
+include fendo_content.fs
