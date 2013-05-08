@@ -1,9 +1,9 @@
-\ fendo_content.fs
+\ fendo_require.fs
 
 \ This file is part of
 \ Fendo ("Forth Engine for Net DOcuments") version A-00.
 
-\ This file defines the page content tools.
+\ This file defines the page data require word.
 
 \ Copyright (C) 2013 Marcos Cruz (programandala.net)
 
@@ -29,25 +29,19 @@
 \ **************************************************************
 \ Change history of this file
 
-\ 2013-04-28 Start.
+\ 2013-05-07 Start.
 
 \ **************************************************************
 \ Requirements
 
-require galope/backslash-end-of-file.fs  \ '\eof'
+require fendo_data.fs
+require fendo_content.fs
 
 \ **************************************************************
-\ Content marks
 
-variable get_content?  \ flag: get the page content? (otherwise, skip it)
-: content{  ( "text }content" -- )
-  \ Mark the start of the page content. 
-  get_content? @ 0= if  \eof  then
+: require_data  ( "name" -- )
+  \ "name" = file name
+  get_data? dup @ swap on  get_content? dup @ swap off
+  include
+  get_content? ! get_data? !
   ;
-
-: }content  ( -- )
-  \ Mark the end of the page content. 
-  \ xxx todo
-  get_content? off
-  ;
-
