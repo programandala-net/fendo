@@ -1,9 +1,9 @@
-\ fendo_content.fs
+\ fendo_files.fs
 
 \ This file is part of
 \ Fendo ("Forth Engine for Net DOcuments") version A-00.
 
-\ This file defines the page content tools.
+\ This file defines the files tools.
 
 \ Copyright (C) 2013 Marcos Cruz (programandala.net)
 
@@ -29,24 +29,22 @@
 \ **************************************************************
 \ Change history of this file
 
-\ 2013-04-28 Start.
+\ 2013-05-17 Start.
 
 \ **************************************************************
-\ Requirements
+\
 
-require galope/backslash-end-of-file.fs  \ '\eof'
+defer fs>html
 
-\ **************************************************************
-\ Content marks
-
-: content{  ( "text }content" -- )
-  \ Mark the start of the page content. 
-  do_content? @ 0= if  \eof  then
+: (fs>html)  ( ca1 len1 -- ca2 len2 )
+  \ Convert a filename from the original Forth source to the
+  \ target HTML. Simply convert the "fs" extension to "html". 
+  \ a1 len1 = filename of a page Forth source
+  \ a2 len2 = filename of its target HTML file
+  2 - ." html" s+
   ;
 
-: }content  ( -- )
-  \ Mark the end of the page content. 
-  \ xxx todo
-  do_content? off
-  ;
+' (fs>html) is fs>html
+
+
 
