@@ -1,11 +1,11 @@
-.( fendo.fs ) cr
+.( fendo_html_tags.fs ) cr
 
 \ This file is part of
 \ Fendo ("Forth Engine for Net DOcuments") version A-00.
 
-\ This file is the main one; it loads all the modules.
+\ This file defines the HTML tags.
 
-\ Copyright (C) 2012,2013 Marcos Cruz (programandala.net)
+\ Copyright (C) 2013 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute
 \ it and/or modify it under the terms of the GNU General
@@ -29,32 +29,32 @@
 \ **************************************************************
 \ Change history of this file
 
-\ 2012-06-30 Start.
-\ 2013-04-28 New: <fendo_data.fs>, <fendo_content.fs>.
-\ 2013-05-07 New: <fendo_require.fs>.
+\ 2013-06-01 Start.
 
 \ **************************************************************
 \ Requirements
 
-require ffl/str.fs
-require ffl/tos.fs
-require ffl/xos.fs
-
-require galope/anew.fs
-\ require galope/sb.fs
 
 \ **************************************************************
-\ Modules
+\ 
 
-anew --fendo--
+[undefined] fendo_markup_voc [if]
+  vocabulary fendo_markup_voc 
+[then]
+also fendo_markup_voc definitions
 
-vocabulary fendo_voc
-also fendo_voc  definitions
+: </li>  ( -- )
+  s" </li>" echo
+  ;
+: </ul>  ( -- )
+  s" </ul>" echo
+  ;
+: </ol>  ( -- )
+  s" </ol>" echo
+  ;
 
-include fendo_files.fs
-include fendo_data.fs
-include fendo_html_tags.fs
-include fendo_markup.fs
-include fendo_content.fs
+previous 
+fendo_voc definitions
 
-.( fendo.fs compiled) cr
+.( fendo_html_tags.fs compiled) cr
+

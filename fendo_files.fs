@@ -1,9 +1,9 @@
-\ fendo_files.fs
+.( fendo_files.fs) cr
 
 \ This file is part of
 \ Fendo ("Forth Engine for Net DOcuments") version A-00.
 
-\ This file defines the files tools.
+\ This file defines the file tools.
 
 \ Copyright (C) 2013 Marcos Cruz (programandala.net)
 
@@ -30,21 +30,40 @@
 \ Change history of this file
 
 \ 2013-05-17 Start.
+\ 2013-05-18 Rewritten with '-suffix'.
+\ 2013-06-01 Fix: typo in code.
+
+\ **************************************************************
+\ Requirements
+
+require galope/minus-suffix.fs  \ '-suffix'
 
 \ **************************************************************
 \
 
-defer fs>html
+defer forth_extension
+: (forth_extension)  ( -- ca len )
+  s" .fs"
+  ;
+' forth_extension is (forth_extension)
+defer html_extension
+: (html_extension)  ( -- ca len )
+  s" .html"
+  ;
+' html_extension is (html_extension)
 
-: (fs>html)  ( ca1 len1 -- ca2 len2 )
-  \ Convert a filename from the original Forth source to the
-  \ target HTML. Simply convert the "fs" extension to "html". 
-  \ a1 len1 = filename of a page Forth source
-  \ a2 len2 = filename of its target HTML file
-  2 - ." html" s+
+: source>target  ( ca1 len1 -- ca2 len2 )
+  \ ca1 len1 = Forth source page file name
+  \ ca2 len2 = target HTML page file name
+  forth_extension -suffix  html_extension s+
   ;
 
-' (fs>html) is fs>html
+\ **************************************************************
+\ 
 
+: echo  ( ca len -- )
+  \ Print text string to the HTML file.
+  type  \ xxx to do
+  ;
 
-
+.( fendo_files.fs compiled) cr
