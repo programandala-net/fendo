@@ -32,8 +32,10 @@
 \ 2013-06-01 Start.
 
 \ **************************************************************
-\ Requirements
+\ Todo
 
+\ Is this file necessary? HTML tags can be used freely in the
+\ contents. These words are useful only inside other words.
 
 \ **************************************************************
 \ 
@@ -43,15 +45,23 @@
 [then]
 also fendo_markup_voc definitions
 
-: </li>  ( -- )
-  s" </li>" echo
-  ;
-: </ul>  ( -- )
-  s" </ul>" echo
-  ;
-: </ol>  ( -- )
-  s" </ol>" echo
-  ;
+: <li>  ( -- )  s" <li>" echo  ;
+: </li>  ( -- )  s" </li>" echo  ;
+: <ul>  ( -- )  s" <ul>" echo  ;
+: </ul>  ( -- )  s" </ul>" echo  ;
+: <ol>  ( -- )  s" <ol>" echo  ;
+: </ol>  ( -- )  s" </ol>" echo  ;
+: <em>  ( -- )  s" <em>" echo  ;
+: </em>  ( -- )  s" </em>" echo  ;
+: <strong>  ( -- )  s" <strong>" echo  ;
+: </strong>  ( -- )  s" </strong>" echo  ;
+: <del>  ( -- )  s" <del>" echo  ;
+: </del>  ( -- )  s" </del>" echo  ;
+: <span>  ( -- )  s" <span>" echo  ;
+: </span>  ( -- )  s" </span>" echo  ;
+: <div>  ( -- )  s" <div>" echo  ;
+: </div>  ( -- )  s" </div>" echo  ;
+: <br/>  ( -- )  s" <br />" echo  ;
 
 previous 
 fendo_voc definitions

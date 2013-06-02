@@ -45,7 +45,7 @@ require galope/backslash-end-of-file.fs  \ '\eof'
 : do_markup  ( ca len -- )
   \ Evaluate a markup; if it's not a markup, print it.
   \ ca len = parsed word
-  2dup find-name if  evaluate  else  echo  then
+  2dup find-name if  evaluate  else  _echo_  then
   ;
 variable #empty_lines  \ counter
 : close_pending_unordered_list  ( -- )
@@ -54,17 +54,17 @@ variable #empty_lines  \ counter
 : close_pending_ordered_list  ( -- )
   #+ @ if  [ also fendo_markup_voc ] </li> </ol> [ previous ]  then
   ;
-: close_pending_lists  ( -- )
+: close_pending_list  ( -- )
   close_pending_unordered_list  close_pending_ordered_list  
   ;
-: close_pending_paragraphs  ( -- )
+: close_pending_paragraph  ( -- )
   |? @ if  [ also fendo_markup_voc ] | [ previous ]  then
   ;
 : empty_line  ( -- )
   \ Manage an empty line. 
   \ xxx todo
   ." {EMPTY LINE}"  \ xxx debug check
-  close_pending_lists close_pending_paragraphs
+  close_pending_list close_pending_paragraph
   ;
 variable #empty_names  \ counter
 : empty_name  ( -- )
@@ -74,7 +74,6 @@ variable #empty_names  \ counter
   #empty_names @ if  empty_line  then  1 #empty_names +!
   ;
 : (parse_content)  ( "text" -- )
-  cr order cr
   begin
     parse-name dup
     if    do_markup  #empty_names off  true
@@ -83,7 +82,7 @@ variable #empty_names  \ counter
   until
   ;
 : parse_content  ( "text" -- )
-  ." parse_content" cr  \ xxx tmp
+  next_space? off
   only fendo_markup_voc
   (parse_content)
   only forth also fendo_voc
