@@ -33,6 +33,8 @@
 \ 2013-05-18 New: Parser; 'skip_content{'.
 \ 2013-06-01 New: Parser rewritten from scratch. Management of
 \   empty names and empty lines.
+\ 2013-06-02 New: Counters for both types of elements (markups and
+\   printable words); required in order to separate words.
 
 \ **************************************************************
 \ Requirements
@@ -42,12 +44,22 @@ require galope/backslash-end-of-file.fs  \ '\eof'
 \ **************************************************************
 \ Parser
 
-: do_markup  ( ca len -- )
-  \ Evaluate a markup; if it's not a markup, print it.
-  \ ca len = parsed word
-  2dup find-name if  evaluate  else  _echo_  then
+: markup  ( ca len -- )
+  \ Manage a markup: execute it and update the counters.
+  #printable off  evaluate  1 #markups +!
   ;
-variable #empty_lines  \ counter
+: content  ( ca len -- )
+  \ Manage a string of content: print it and update the counters.
+  #markups off  echo_  1 #printable +!
+  ;
+variable #nothings  \ counter of empty parsings
+: something  ( ca len -- )
+  \ Manage something found on the page content.
+  \ ca len = parsed word
+  #nothings off
+  2dup find-name if  markup  else  content  then
+  ;
+
 : close_pending_unordered_list  ( -- )
   #- @ if  [ also fendo_markup_voc ] </li> </ul> [ previous ]  then
   ;
@@ -60,29 +72,30 @@ variable #empty_lines  \ counter
 : close_pending_paragraph  ( -- )
   |? @ if  [ also fendo_markup_voc ] | [ previous ]  then
   ;
-: empty_line  ( -- )
+: emptiness  ( -- )
   \ Manage an empty line. 
   \ xxx todo
   ." {EMPTY LINE}"  \ xxx debug check
   close_pending_list close_pending_paragraph
   ;
-variable #empty_names  \ counter
-: empty_name  ( -- )
-  \ Manage an empty name. 
+: nothing  ( -- )
+  \ Manage a "nothing", a parsed empty name. 
   \ The first empty name means the current line is finished;
   \ the second consecutive empty name means the current line is empty.
-  #empty_names @ if  empty_line  then  1 #empty_names +!
+  #nothings @ if  emptiness  then  1 #nothings +!
   ;
 : (parse_content)  ( "text" -- )
+  \ Actually parse the page content.
   begin
     parse-name dup
-    if    do_markup  #empty_names off  true
-    else  empty_name 2drop refill
+    if    something  true
+    else  nothing  2drop refill
     then  0=
   until
   ;
 : parse_content  ( "text" -- )
-  next_space? off
+  \ Parse the page content.
+  separate? off
   only fendo_markup_voc
   (parse_content)
   only forth also fendo_voc
@@ -91,17 +104,13 @@ variable #empty_names  \ counter
 \ **************************************************************
 \ Content marks
 
-: }content  ( -- )
-  \ Do mark the end of the page content. 
-  [ also fendo_markup_voc ]  }content  [ previous ]
-  ;
 : skip_content  ( "text }content" -- )
   \ Skip the page content.
   begin   parse-name dup 0=
     if    2drop refill 0= dup abort" Missing '}content'"
     else  s" }content" str=
     then
-  until   }content
+  until   [ also fendo_markup_voc ] }content [ previous ]
   ;
 : content{  ( "text }content" -- )
   \ Mark the start of the page content. 
