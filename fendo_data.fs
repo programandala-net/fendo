@@ -65,7 +65,7 @@ variable 'data  \ address of the latest created data
 : parse_datum  ( u "text<nl>" -- )
   \ Parse and store a datum.
   \ u = datum offset
-  >r  0 parse \ parse the rest of the current input line
+  >r  0 parse  \ parse the rest of the current input line
   'data @ r> + datum!
   ;
 : datum@  ( a -- ca len )

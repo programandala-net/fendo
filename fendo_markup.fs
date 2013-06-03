@@ -32,6 +32,8 @@
 \ 2013-05-18 Start. First HTML tags.
 \ 2013-06-01 Paragraphs, lists, headings, delete.
 \ 2013-06-02 New: also 'previous_space?'.
+\   New: Counters for both types of elements (markups and
+\   printable words); required in order to separate words.
 
 \ **************************************************************
 \ Requirements
@@ -40,29 +42,22 @@
 \ **************************************************************
 \ Tool words
 
+variable #markups   \ counter of consecutive markups
+variable #printable \ counter of consecutive printable elements 
+
 : echo_space  ( -- )
   s"  " echo 
   ;
-variable previous_space?  \ flag: do print a space before the current tag or word?
-: previous_space  ( -- )
-  \ Echo a space for separating the current word or tag from
-  \ the previous one.
-  previous_space? @ if  echo_space  previous_space? off  then  
+variable separate?  \ flag: separate the current tag or word from the previous one?
+variable separate_next?  \ flag: separate the next tag or word from the current one?
+: separate  ( -- )
+  \ Separate the current tag or word from the previous one,
+  \ if required.
+  separate? @ if  echo_space  then
+  separate_next? @ separate? !  separate? on
   ;
-variable next_space?  \ flag: do print a space after the current tag or word?
-: next_space  ( -- )
-  \ Echo a space for separating the current word or tag from
-  \ the next one.
-  next_space? @ if  echo_space  then  next_space? on
-  ;
-: _echo_  ( ca len -- ) 
-  previous_space echo next_space
-  ;
-: _echo  ( ca len -- )
-  previous_space echo
-  ;
-: echo_  ( ca len -- )
-  echo next_space
+: echo_  ( ca len -- ) 
+  echo separate
   ;
 : markup  ( ca1 len1 ca2 len2 a -- )
   \ Open or close a HTML tag.
@@ -71,7 +66,7 @@ variable next_space?  \ flag: do print a space after the current tag or word?
   \ ca2 len2 = closing HTML tag
   \ a = markup flag variable: is the markup already open?
   dup >r @
-  if    _echo 2drop r> off  \ close it
+  if    echo_ 2drop r> off  \ close it
   else  2drop echo_ r> on  \ open it
   then  
   ;
@@ -79,19 +74,16 @@ variable //?  \ is there an open '//'?
 variable **?  \ is there an open '**'?
 variable --?  \ is there an open '--'?
 variable __?  \ is there an open '__'?
-variable |?  \ is there an open '|'?
-variable =?  \ is there an open heading?
-variable #-  \ counter of unordered list elements
-variable #+  \ counter of ordered list elements
+variable |?   \ is there an open '|'?
+variable =?   \ is there an open heading?
+variable #-   \ counter of unordered list elements
+variable #+   \ counter of ordered list elements
 
 : ((-))  ( a -- )
   \ List element.
   \ a = counter variable
   [ also fendo_markup_voc ]
-  previous_space
-  dup @ if  </li>  then  <li>  1 swap +!
-  next_space
-  previous_space? off next_space? off
+  dup @ if  </li>  then  <li>  1 swap +!  separate? off
   [ previous ]
   ;
 : (-)  ( -- )
@@ -127,32 +119,32 @@ variable #+  \ counter of ordered list elements
 also fendo_markup_voc definitions
 
 : //  ( -- )
-  \ Start of finish a <em> region.
+  \ Start or finish a <em> region.
   s" <em>" s" </em>" //? markup 
   ;
 : **  ( -- )
-  \ Start of finish a <strong> region.
+  \ Start or finish a <strong> region.
   s" <strong>" s" </strong>" **? markup
   ;
 : --  ( -- )
-  \ Start of finish a <del> region.
+  \ Start or finish a <del> region.
   s" <del>" s" </del>" --? markup
   ;
 : ""  ( -- )
-  \ Start of finish a <q> region.
+  \ Start or finish a <q> region.
   s" <q>" s" </q>" --? markup
   ;
 : """  ( -- )
-  \ Start of finish a <blockquote> region.
+  \ Start or finish a <blockquote> region.
   s" <blockquote>" s" </blockquote>" --? markup
   ;
 : ##  ( )
-  \ Start of finish an inline <code> region.
+  \ Start or finish an inline <code> region.
   \ xxx todo special parsing required in the region.
   s" <code>" s" </code>" --? markup
   ;
 : ###  ( )
-  \ Start of finish a block <code> region.
+  \ Start or finish a block <code> region.
   \ xxx todo special parsing required in the region.
   s" <code><pre>" s" </pre></code>" --? markup
   ;
@@ -163,7 +155,7 @@ also fendo_markup_voc definitions
 : \\  ( -- )
   \ Line break.
   [ also fendo_markup_voc ] <br/> [ previous ]
-  previous_space? off
+  separate? off
   ;
 : -  ( -- )
   \ Element of unordered list.
