@@ -58,12 +58,4 @@ defer html_extension
   forth_extension -suffix  html_extension s+
   ;
 
-\ **************************************************************
-\ 
-
-: echo  ( ca len -- )
-  \ Print text string to the HTML file.
-  type  \ xxx to do
-  ;
-
 .( fendo_files.fs compiled) cr
