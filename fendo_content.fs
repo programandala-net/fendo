@@ -35,6 +35,16 @@
 \   empty names and empty lines.
 \ 2013-06-02 New: Counters for both types of elements (markups and
 \   printable words); required in order to separate words.
+\ 2013-06-04 Fix: lists were not properly closed by an empty space.
+\ 2013-06-05 Fix: 'markup' now uses a name token; this was
+\   required in order to define '~', a markup that parses the
+\   next name is the source.
+
+\ **************************************************************
+\ Todo
+
+\ 2013-06-04: Flag the first markup of the current line, in
+\ order to use '--' both forth nested lists and delete.
 
 \ **************************************************************
 \ Requirements
@@ -44,39 +54,46 @@ require galope/backslash-end-of-file.fs  \ '\eof'
 \ **************************************************************
 \ Parser
 
-: markup  ( ca len -- )
+: markup  ( nt -- )
   \ Manage a markup: execute it and update the counters.
-  #printable off  evaluate  1 #markups +!
+  #printable off  name>int execute  1 #markups +!
   ;
-: content  ( ca len -- )
+: (content)  ( ca len -- )
   \ Manage a string of content: print it and update the counters.
-  #markups off  echo_  1 #printable +!
+  #markups off  _echo  1 #printable +!
   ;
+' (content) is content
 variable #nothings  \ counter of empty parsings
 : something  ( ca len -- )
   \ Manage something found on the page content.
   \ ca len = parsed word
   #nothings off
-  2dup find-name if  markup  else  content  then
+  2dup find-name dup if  nip nip markup  else  drop content  then
   ;
 
-: close_pending_unordered_list  ( -- )
-  #- @ if  [ also fendo_markup_voc ] </li> </ul> [ previous ]  then
+: close_bullet_list  ( -- )
+  [fendo_markup_voc] </li> </ul> [previous]  bullet_list_items off
   ;
-: close_pending_ordered_list  ( -- )
-  #+ @ if  [ also fendo_markup_voc ] </li> </ol> [ previous ]  then
+: close_numbered_list  ( -- )
+  [fendo_markup_voc] </li> </ol> [previous]  numbered_list_items off
   ;
 : close_pending_list  ( -- )
-  close_pending_unordered_list  close_pending_ordered_list  
+  bullet_list_items @ if  close_bullet_list  then
+  numbered_list_items @ if  close_numbered_list  then
+  ;
+: close_pending_header  ( -- )
+  opened_[=]? @ if  [fendo_markup_voc] | [previous]  then
   ;
 : close_pending_paragraph  ( -- )
-  |? @ if  [ also fendo_markup_voc ] | [ previous ]  then
+  \ xxx todo
+  opened_[|]? @ if  [fendo_markup_voc] | [previous]  then
   ;
 : emptiness  ( -- )
   \ Manage an empty line. 
   \ xxx todo
-  ." {EMPTY LINE}"  \ xxx debug check
+  ." {EMPTY LINE}"  \ xxx debugging
   close_pending_list close_pending_paragraph
+  echo_cr
   ;
 : nothing  ( -- )
   \ Manage a "nothing", a parsed empty name. 
@@ -100,17 +117,13 @@ variable #nothings  \ counter of empty parsings
   (parse_content)
   only forth also fendo_voc
   ;
-
-\ **************************************************************
-\ Content marks
-
 : skip_content  ( "text }content" -- )
   \ Skip the page content.
   begin   parse-name dup 0=
     if    2drop refill 0= dup abort" Missing '}content'"
     else  s" }content" str=
     then
-  until   [ also fendo_markup_voc ] }content [ previous ]
+  until   [fendo_markup_voc] }content [previous]
   ;
 : content{  ( "text }content" -- )
   \ Mark the start of the page content. 

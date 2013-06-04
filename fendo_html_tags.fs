@@ -31,6 +31,7 @@
 
 \ 2013-06-01 Start.
 \ 2013-06-02 More tags. Start of the attribute management.
+\ 2013-06-04 Fix: 'count' was missing for string variables.
 
 \ **************************************************************
 \ Todo
@@ -38,8 +39,8 @@
 \ Is this file necessary? HTML tags can be used freely in the
 \ contents. Are these words are useful only inside other words?
 
-\ All opening tags can have attributes and must reset all
-\ attributes at the end.
+\ 2013-06-04 The word '&#' parses a number and echoes the
+\ corresponding HTML entity.
 
 \ **************************************************************
 \ Requirements
@@ -49,7 +50,13 @@ require galope/svariable.fs
 \ **************************************************************
 \ Attributes
 
+: attribute:  ( "name" -- )
+  \ Create an attribute.
+  parse-name dup
+  ;
+
 \ xxx todo complete
+
 svariable alt
 svariable class
 svariable href
@@ -85,7 +92,7 @@ svariable style
 : +attribute  ( xt -- )
   \ Print an attribute, if not empty.
   \ xt = execution token of the attribute variable
-  dup execute ?dup if  (+attribute)  else  2drop drop  then
+  dup execute count ?dup if  (+attribute)  else  2drop  then
   ;
 
   \ xxx todo complete
@@ -133,28 +140,33 @@ svariable style
 \ HTML tags
 
 : {html}  ( ca len -- )
-  \ Print an empty HTML tag (eg. <br/>, <hr/>)
+  \ Print an empty HTML tag (e.g. <br/>, <hr/>),
+  \ with all previously defined attributes.
   \ ca len = HTML tag
-  s" <" echo echo_attributes s" />" echo
+  s" <" echo echo echo_attributes s" />" echo  separate? off
   -attributes
   ;
 : {html  ( ca len -- )
-  \ Print an opening HTML tag.
+  \ Print an opening HTML tag (e.g. <p>, <a>),
+  \ with all previously defined attributes.
   \ ca len = HTML tag
-  s" <" echo echo_attributes s" >" echo
+  s" <" _echo echo echo_attributes s" >" echo  separate? off
   -attributes
   ;
 : html}  ( ca len -- )
-  \ Print a closing HTML tag.
+  \ Print a closing HTML tag (e.g. </p>, </a>).
   \ ca len = HTML tag
-  s" </" echo echo s" >" echo
+  s" </" echo echo s" >" echo  separate? off
   ;
 
 \ **************************************************************
-\ HTML actual markup
+\ Actual HTML markup
 
 [undefined] fendo_markup_voc [if]
   vocabulary fendo_markup_voc 
+  : [fendo_markup_voc]  ( -- )
+    also fendo_markup_voc
+    ;  immediate
 [then]
 also fendo_markup_voc definitions
 
@@ -163,7 +175,7 @@ also fendo_markup_voc definitions
 : </a>  ( -- )  s" a" html}  ;
 : <blockquote>  ( -- )  s" blockquote" {html  ;
 : </blockquote>  ( -- )  s" blockquote" html}  ;
-: <br/>  ( -- )  s" br />" {html}  ;
+: <br/>  ( -- )  s" br" {html}  ;
 : <code>  ( -- )  s" code" {html  ;
 : </code>  ( -- )  s" code" html}  ;
 : <dd>  ( -- )  s" dd" {html  ;
@@ -178,23 +190,26 @@ also fendo_markup_voc definitions
 : </div>  ( -- )  s" div" html}  ;
 : <em>  ( -- )  s" em" {html  ;
 : </em>  ( -- )  s" em" html}  ;
-: <h1>  ( -- )  s" h1>" {html  ;
-: </h1>  ( -- )  s" /h1>" html}  ;
-: <h2>  ( -- )  s" h2>" {html  ;
-: </h2>  ( -- )  s" /h2>" html}  ;
-: <h3>  ( -- )  s" h3>" {html  ;
-: </h3>  ( -- )  s" /h3>" html}  ;
-: <h4>  ( -- )  s" h4>" {html  ;
-: </h4>  ( -- )  s" /h4>" html}  ;
-: <h5>  ( -- )  s" h5>" {html  ;
-: </h5>  ( -- )  s" /h5>" html}  ;
-: <h6>  ( -- )  s" h6>" {html  ;
-: </h6>  ( -- )  s" /h6>" html}  ;
-: <img>  ( -- )  s" img/>" {html}  ;
+: <h1>  ( -- )  s" h1" {html  ;
+: </h1>  ( -- )  s" h1" html}  ;
+: <h2>  ( -- )  s" h2" {html  ;
+: </h2>  ( -- )  s" h2" html}  ;
+: <h3>  ( -- )  s" h3" {html  ;
+: </h3>  ( -- )  s" h3" html}  ;
+: <h4>  ( -- )  s" h4" {html  ;
+: </h4>  ( -- )  s" h4" html}  ;
+: <h5>  ( -- )  s" h5" {html  ;
+: </h5>  ( -- )  s" h5" html}  ;
+: <h6>  ( -- )  s" h6" {html  ;
+: </h6>  ( -- )  s" h6" html}  ;
+: <hr/>  ( -- )  s" hr" {html}  ;
+: <img/>  ( -- )  s" img" {html}  ;
 : <li>  ( -- )  s" li" {html  ;
 : </li>  ( -- )  s" li" html}  ;
 : <ol>  ( -- )  s" ol" {html  ;
 : </ol>  ( -- )  s" ol" html}  ;
+: <p>  ( -- )  s" p" {html  ;
+: </p>  ( -- )  s" p" html}  ;
 : <pre>  ( -- )  s" pre" {html  ;
 : </pre>  ( -- )  s" pre" html}  ;
 : <q>  ( -- )  s" q" {html  ;
@@ -211,6 +226,8 @@ also fendo_markup_voc definitions
 : </tr>  ( -- )  s" tr" html}  ;
 : <ul>  ( -- )  s" ul" {html  ;
 : </ul>  ( -- )  s" ul" html}  ;
+
+: &nbsp;  ( -- )  s" &nbsp;" echo separate? off ;
 
 previous 
 fendo_voc definitions

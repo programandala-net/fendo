@@ -1,11 +1,11 @@
-.( fendo.fs ) cr
+.( fendo_echo.fs ) cr
 
 \ This file is part of
 \ Fendo ("Forth Engine for Net DOcuments") version A-00.
 
-\ This file is the main one; it loads all the modules.
+\ This file defines the words that print to the target HTML file.
 
-\ Copyright (C) 2012,2013 Marcos Cruz (programandala.net)
+\ Copyright (C) 2013 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute
 \ it and/or modify it under the terms of the GNU General
@@ -29,40 +29,46 @@
 \ **************************************************************
 \ Change history of this file
 
-\ 2012-06-30 Start.
-\ 2013-04-28 New: <fendo_data.fs>, <fendo_content.fs>.
-\ 2013-05-07 New: <fendo_require.fs>.
+\ 2013-06-04 Start.
+
+\ **************************************************************
+\ Todo
+
 
 \ **************************************************************
 \ Requirements
 
-require ffl/str.fs
-require ffl/tos.fs
-require ffl/xos.fs
-
-require galope/anew.fs
-\ require galope/sb.fs
 
 \ **************************************************************
-\ Tool words
+\ 
 
-: [previous]  ( -- )
-  previous
-  ;  immediate
 
-\ **************************************************************
-\ Modules
+: echo  ( ca len -- )
+  \ Print a text string to the HTML file.
+  type  \ xxx todo
+  ;
+: echo_cr  ( -- )
+  \ Print a carriage return to the HTML file.
+  cr  \ xxx todo
+  ;
+: echo_space  ( -- )
+  \ Print a space to the HTML file.
+  s"  " echo 
+  ;
+: echo_quote  ( -- )
+  \ Print a double quote to the HTML file.
+  s\" \"" echo 
+  ;
+variable separate?  \ flag: separate the next tag or word from the current one?
+: _separate  ( -- )
+  \ Separate the current tag or word from the previous one, if needed.
+  separate? @ if  echo_space  then  separate? on
+  ;
+: _echo  ( ca len -- ) 
+  \ Print a text string to the HTML file, with a previous space if needed.
+  _separate echo 
+  ;
 
-anew --fendo--
+.( fendo_echo.fs compiled) cr
 
-vocabulary fendo_voc
-also fendo_voc  definitions
 
-include fendo_files.fs
-include fendo_data.fs
-include fendo_echo.fs
-include fendo_html_tags.fs
-include fendo_markup.fs
-include fendo_content.fs
-
-.( fendo.fs compiled) cr
