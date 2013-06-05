@@ -44,7 +44,12 @@
 \ Todo
 
 \ 2013-06-04: Flag the first markup of the current line, in
-\ order to use '--' both forth nested lists and delete.
+\   order to use '--' both forth nested lists and delete.
+\ 2013-06-04: Additional vocabulary with Forth words allowed
+\   during parsing? E.g. 's"', 'place'. Or define them in the same voc?
+\   Or make them unnecesary? E.g. use 'class=' for parsing and
+\   storing the class attribute, instead of 's" bla" class
+\   place'.
 
 \ **************************************************************
 \ Requirements
@@ -71,35 +76,34 @@ variable #nothings  \ counter of empty parsings
   2dup find-name dup if  nip nip markup  else  drop content  then
   ;
 
-: close_bullet_list  ( -- )
+: close_pending_bullet_list  ( -- )
   [fendo_markup_voc] </li> </ul> [previous]  bullet_list_items off
   ;
-: close_numbered_list  ( -- )
+: close_pending_numbered_list  ( -- )
   [fendo_markup_voc] </li> </ol> [previous]  numbered_list_items off
   ;
 : close_pending_list  ( -- )
-  bullet_list_items @ if  close_bullet_list  then
-  numbered_list_items @ if  close_numbered_list  then
+  bullet_list_items @ if  close_pending_bullet_list  then
+  numbered_list_items @ if  close_pending_numbered_list  then
   ;
 : close_pending_header  ( -- )
-  opened_[=]? @ if  [fendo_markup_voc] | [previous]  then
+  opened_[=]? @ if  [fendo_markup_voc] = [previous]  then
   ;
 : close_pending_paragraph  ( -- )
   \ xxx todo
-  opened_[|]? @ if  [fendo_markup_voc] | [previous]  then
+  opened_[_]? @ if  [fendo_markup_voc] _ [previous]  then
   ;
-: emptiness  ( -- )
+: empty_line  ( -- )
   \ Manage an empty line. 
   \ xxx todo
-  ." {EMPTY LINE}"  \ xxx debugging
-  close_pending_list close_pending_paragraph
-  echo_cr
+  \ ." {EMPTY LINE}"  \ xxx debugging
+  close_pending_list close_pending_paragraph  echo_cr
   ;
 : nothing  ( -- )
   \ Manage a "nothing", a parsed empty name. 
   \ The first empty name means the current line is finished;
   \ the second consecutive empty name means the current line is empty.
-  #nothings @ if  emptiness  then  1 #nothings +!
+  #nothings @ if  empty_line  then  1 #nothings +!
   ;
 : (parse_content)  ( "text" -- )
   \ Actually parse the page content.

@@ -42,13 +42,25 @@ require ffl/xos.fs
 
 require galope/anew.fs
 \ require galope/sb.fs
+require galope/svariable.fs
 
 \ **************************************************************
-\ Tool words
+\ Generic tool words
 
 : [previous]  ( -- )
   previous
   ;  immediate
+: parse-name?  ( "name" -- ca len f )
+  \ Parse the next name in the source.
+  \ ca len = parsed name
+  \ f = empty name?
+  parse-name dup 0=
+  ;
+: :svariable  ( ca len -- )
+  \ Create a string variable with the name on the stack.
+  \ ca len = name of the variable
+  nextname svariable
+  ;
 
 \ **************************************************************
 \ Modules

@@ -36,6 +36,13 @@
 \   printable words); required in order to separate words.
 \ 2013-06-04 New: punctuation words, HTML entity words. More
 \   markups.
+\ 2013-06-04: Words to de/activate the parsing voc, in order to
+\   mix Forth code in the sources. Maybe '[forth]' and '[fendo]'.
+\ 2013-06-05 Change: '|' renamed to '_'; '|' will be needed for the
+\   table markup.
+\ 2013-06-05 New: Finished the code for entities; the common code for
+\   entities and punctuation has been factored.
+\ 2013-06-06 Change: HTML entities moved to <fendo_markup_html.fs>.
 
 \ **************************************************************
 \ Todo
@@ -50,9 +57,12 @@
 \ 2013-06-04: Flag the first markup of the current line, in
 \ order to use '--' both forth nested lists and delete, or '**'
 \ for list and for bold.
+\ 2013-06-05: Comments. '{*...*}'?
+\ 2013-06-05: divide files: fendo_markup.fs includes
+\ fendo_markup_html.fs and fendo_markup_own.fs ?
 
 \ **************************************************************
-\ Tool words
+\ Generic tool words for markup
 
 \ xxx used in the parser only, but will be needed here too:
 variable #markups   \ counter of consecutive markups
@@ -62,20 +72,6 @@ defer content
   \ Manage a string of content: print it and update the counters.
   \ Defined in the parser module.
 
-false [if]  \ first version
-: markups  ( ca1 len1 ca2 len2 a -- )
-  \ Open or close a HTML tag.
-  \ This code is based on FML, a Forth-ish Markup Language for RetroWiki.
-  \ ca1 len1 = opening HTML tag
-  \ ca2 len2 = closing HTML tag
-  \ a = markup flag variable: is the markup already open?
-  \ dup opened_[|]? = if  dup cr ." opened_[|]? in markup is " ? key drop  then  \ xxx debugging
-  dup >r @
-  if    separate? off  _echo 2drop r> off  \ close it
-  else  2drop _echo r> on  separate? off  \ open it
-  then  
-  ;
-[else]  \ second version
 : markups  ( xt1 xt2 a -- )
   \ Open or close a HTML tag.
   \ This code is based on FML, a Forth-ish Markup Language for RetroWiki.
@@ -87,7 +83,6 @@ false [if]  \ first version
   else  drop true
   then  r> !  execute
   ;
-[then]
 
 variable opened_[//]?         \ is there an open '//'?
 variable opened_[**]?         \ is there an open '**'?
@@ -95,13 +90,16 @@ variable opened_[--]?         \ is there an open '--'?
 variable opened_[__]?         \ is there an open '__'?
 variable opened_[=]?          \ is there an open heading?
 variable #header              \ level of the opened heading
-variable opened_[|]?          \ is there an open '|'?
+variable opened_[_]?          \ is there an open '_'?
 variable bullet_list_items    \ counter 
 variable numbered_list_items  \ counter 
 variable opened_[##]?         \ is there an open inline code?
 variable opened_[###]?        \ is there an open block code?
 variable opened_[""]?         \ is there an open inline quote?
 variable opened_["""]?        \ is there an open block quote?
+
+\ **************************************************************
+\ Tool words for lists
 
 : ((-))  ( a -- )
   \ List element.
@@ -119,18 +117,13 @@ variable opened_["""]?        \ is there an open block quote?
   numbered_list_items ((-))
   ;
 
-: parse-name?  ( "name" -- ca len f )
-  \ Parse the next name in the source.
-  \ ca len = parsed name
-  \ f = empty name?
-  parse-name dup 0=
-  ;
+\ **************************************************************
+\ Tool words for punctuation
 
 : :punctuation   ( ca len -- )
   \ Create a punctuation word.
   \ ca len = punctuation --and name of its punctuation word
-  2dup nextname  create  s,
-  does>  ( dfa )  count echo  separate? on
+  :echo_name  separate? on
   ;
 : punctuation:   ( "name" -- )
   \ Create a punctuation word.
@@ -139,95 +132,24 @@ variable opened_["""]?        \ is there an open block quote?
   :punctuation
   ;
 
-: :entity   ( ca len -- )
-  \ Create a HTML entity word. 
-  \ ca len = entity --and name of its entity word
-  2dup nextname  create  2,
-  does>  ( dfa -- ca len )  2@ echo  separate? off
-  ;
-: entity:   ( "name" -- )
-  \ Create a HTML entity word. 
-  \ "name" = entity --and name of its entity word
-  parse-name? abort" Parseable name expected in 'entity:'"
-  :entity
-  ;
-
 \ **************************************************************
 \ Actual markup
 
-[undefined] fendo_markup_voc [if]
-  vocabulary fendo_markup_voc 
-  : [fendo_markup_voc]  ( -- )
-    also fendo_markup_voc
-    ;  immediate
-[then]
 also fendo_markup_voc definitions
 
-\ Fendo markup,
-\ inspired by WikiCreole, text2tags and others.
+\ Tool markup
 
-false [if]  \ first version
+: [+forth]  ( -- )
+  \ Set the vocabularies for inserting Forth code in the page content.
+  only fendo_voc also fendo_markup_voc also forth
+  ;  immediate
+: [-forth]  ( -- )
+  \ Set the vocabularies for parsing the page content.
+  only fendo_markup_voc
+  ;  immediate
 
-: //  ( -- )
-  \ Start or finish a <em> region.
-  s" <em>" s" </em>" opened_[//]? markups 
-  ;
-: **  ( -- )
-  \ Start or finish a <strong> region.
-  s" <strong>" s" </strong>" opened_[**]? markups
-  ;
-: --  ( -- )
-  \ Start or finish a <del> region.
-  s" <del>" s" </del>" opened_[--]? markups
-  ;
-: ""  ( -- )
-  \ Start or finish a <q> region.
-  s" <q>" s" </q>" opened_[""]? markups
-  ;
-: """  ( -- )
-  \ Start or finish a <blockquote> region.
-  s" <blockquote>" s" </blockquote>" opened_["""]? markups
-  ;
-: ##  ( )
-  \ Start or finish an inline <code> region.
-  \ xxx todo special parsing required in the region.
-  s" <code>" s" </code>" opened_[##]? markups
-  ;
-: ###  ( )
-  \ Start or finish a block <code> region.
-  \ xxx todo special parsing required in the region.
-  s" <code><pre>" s" </pre></code>" opened_[###]? markups
-  ;
-: |  ( -- )
-  \ Start or finish a <p> region.
-  s" <p>" s" </p>" opened_[|]? markups  separate? off
-  ;
-: =  ( -- )
-  \ Start or finish a <h1> region.
-  s" <h1>" s" </h1>" opened_[=]? markups
-  ;
-: ==  ( -- )
-  \ Start or finish a <h2> region.
-  s" <h2>" s" </h2>" opened_[=]? markups
-  ;
-: ===  ( -- )
-  \ Start or finish a <h3> region.
-  s" <h3>" s" </h3>" opened_[=]? markups
-  ;
-: ====  ( -- )
-  \ Start or finish a <h4> region.
-  s" <h4>" s" </h4>" opened_[=]? markups
-  ;
-: =====  ( -- )
-  \ Start or finish a <h5> region.
-  s" <h5>" s" </h5>" opened_[=]? markups
-  ;
-: ======  ( -- )
-  \ Start or finish a <h6> region.
-  s" <h6>" s" </h6>" opened_[=]? markups
-  ;
-
-[else]  \ second version
+\ Fendo markup, inspired by Creole (http://wikicreole.org),
+\ text2tags (http://text2tags.org) and others.
 
 : //  ( -- )
   \ Start or finish a <em> region.
@@ -254,9 +176,9 @@ false [if]  \ first version
   \ xxx todo special parsing required in the region.
   ['] <code> ['] </code> opened_[##]? markups
   ;
-: |  ( -- )
+: _  ( -- )
   \ Start or finish a <p> region.
-  ['] <p> ['] </p> opened_[|]? markups  separate? off
+  ['] <p> ['] </p> opened_[_]? markups  separate? off
   ;
 : =  ( -- )
   \ Start or finish a <h1> region.
@@ -282,8 +204,6 @@ false [if]  \ first version
   \ Start or finish a <h6> region.
   ['] <h6> ['] </h6> opened_[=]? markups
   ;
-
-[then]
 
 : \\  ( -- )
   \ Line break.
