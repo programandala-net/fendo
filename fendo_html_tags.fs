@@ -32,6 +32,11 @@
 \ 2013-06-01 Start.
 \ 2013-06-02 More tags. Start of the attribute management.
 \ 2013-06-04 Fix: 'count' was missing for string variables.
+\ 2013-06-06 Improvement: simpler attribute definition: one
+\   defining word creates all required words, and the attributes'
+\   xt are stored in a table in order to manage all of them in a
+\   loop (e.g. for initialization or printing).
+\ 2013-06-06 Change: HTML entities moved here from <fendo_markup.fs>.
 
 \ **************************************************************
 \ Todo
@@ -45,36 +50,99 @@
 \ **************************************************************
 \ Requirements
 
+require galope/3dup.fs
 require galope/svariable.fs
 
 \ **************************************************************
-\ Attributes
+\ Generic tool words for markup
 
-: attribute:  ( "name" -- )
-  \ Create an attribute.
-  parse-name dup
+[undefined] fendo_markup_voc [if]
+  vocabulary fendo_markup_voc 
+  : [fendo_markup_voc]  ( -- )
+    also fendo_markup_voc
+    ;  immediate
+[then]
+
+\ **************************************************************
+\ Tool words for HTML attributes
+
+: :attribute@  ( ca len xt -- )
+  \ Create a word that fetchs an attribute.
+  \ ca len = name of the attribute variable
+  \ xt = execution token of the attribute variable
+  \ ca1 len1 = attribute value
+  >r
+  s" @" s+ nextname create  \ create a word with the name 'attribute@'.
+  r> ,
+  does>  ( -- ca1 len1 )
+    ( dfa ) perform count
+  ;
+: :attribute!  ( ca len xt -- )
+  \ Create a word that stores an attribute.
+  \ ca len = name of the attribute variable
+  \ xt = execution token of the attribute variable
+  \ ca1 len1 = attribute value
+  >r
+  s" !" s+ nextname create  \ create a word with the name 'attribute!'.
+  r> ,
+  does>  ( ca1 len1 -- )
+    ( dfa ) perform place
+  ;
+: :attribute"  ( ca len xt -- )
+  \ Create a word that parses and stores an attribute.
+  \ ca len = name of the attribute variable
+  \ xt = execution token of the attribute variable
+  >r
+  s\" \"" s+ nextname create  \ create a word with the name 'attribute"'.
+  r> ,
+  does>  ( "text<quote>" -- )
+    ( dfa ) [char] " parse  rot perform place
+  ; 
+: attribute:  ( "name" -- xt )
+  \ Create (in the markup vocabulary)
+  \ a string variable for an attribute, and two words to manage it.
+  \ "name" = name of the attribute variable
+  \ xt = execution token of the attribute variable
+  \ ca len = name of the attribute variable
+  get-current also fendo_markup_voc definitions
+  parse-name? abort" Parseable name expected in 'attribute:'"
+  2dup :svariable latestxt  ( ca len xt )  dup >r
+  3dup :attribute" 3dup :attribute! :attribute@
+  previous set-current  r>
   ;
 
-\ xxx todo complete
+depth [if]
+  .( The stack must be empty before defining the attributes.) abort
+[then]
 
-svariable alt
-svariable class
-svariable href
-svariable hreflang
-svariable id
-svariable src
-svariable style
+\ Note: the '=' ending is a compromise to avoid name clashes (e.g. 'align')
+
+\ The first attribute defined (the last in the table) is a
+\ special one that lets to include any raw content in the HTML
+\ tag, without label or surrounding quotes:
+attribute: raw=
+
+\ Real attributes:
+attribute: align=
+attribute: alt=
+attribute: class=
+attribute: height=
+attribute: href=
+attribute: hreflang=
+attribute: id=
+attribute: src=
+attribute: style=
+attribute: width=
+
+depth constant #attributes  \ count of defined attributes
+create 'attributes_xt  \ table for the xt of the attribute variables
+#attributes 0 [?do]  ,  [loop]  \ fill the table
 
 : -attributes  ( -- )
-  \ Clear all possible HTML attributes.
-  \ xxx todo complete
-  alt off
-  class off
-  href off
-  hreflang off
-  id off
-  src off
-  style off
+  \ Clear all HTML attributes.
+  'attributes_xt #attributes cells bounds do
+    i perform off
+  cell +loop
   ;
 
 : ((+attribute))  ( ca1 len1 ca2 len2 -- )
@@ -94,50 +162,50 @@ svariable style
   \ xt = execution token of the attribute variable
   dup execute count ?dup if  (+attribute)  else  2drop  then
   ;
-
-  \ xxx todo complete
-: +alt  ( -- )
-  \ Print the "alt" attribute, if not empty.
-  ['] alt +attribute
+: echo_raw_attribute  ( xt -- )
+  \ Print the special raw attribute, if not empty.
+  \ xt = execution token of the raw attribute variable.
+  execute count ?dup if  echo_space echo echo_space  else  2drop  then
   ;
-: +class  ( -- )
-  \ Print the "class" attribute, if not empty.
-  ['] class +attribute
+: echo_real_attributes  ( a u -- )
+  \ Print all non-empty real attributes.
+  \ a = address of the first attribute's xt
+  \ u = count
+  cells bounds ?do
+    i @ +attribute
+  cell +loop
   ;
-: +href  ( -- )
-  \ Print the "href" attribute, if not empty.
-  ['] href +attribute
-  ;
-: +hreflang  ( -- )
-  \ Print the "hreflang" attribute, if not empty.
-  ['] hreflang +attribute
-  ;
-: +id  ( -- )
-  \ Print the "id" attribute, if not empty.
-  ['] id +attribute
-  ;
-: +src  ( -- )
-  \ Print the "src" attribute, if not empty.
-  ['] src +attribute
-  ;
-: +style  ( -- )
-  \ Print the "style" attribute, if not empty.
-  ['] style +attribute
-  ;
-
 : echo_attributes  ( -- )
   \ Print all non-empty attributes.
-  +alt
-  +class
-  +href
-  +hreflang
-  +id
-  +src
-  +style
+  \ All but the last one are real attributes:
+  'attributes_xt #attributes
+  2dup -1 echo_real_attributes
+  cells + @ echo_raw_attribute
   ;
 
 \ **************************************************************
-\ HTML tags
+\ Tool words for HTML entities
+
+: :echo_name   ( ca len -- )
+  \ Create a word that prints its own name.
+  \ ca len = word name 
+  2dup nextname  create  s,
+  does>  ( dfa )  count echo
+  ;
+: :entity   ( ca len -- )
+  \ Create a HTML entity word. 
+  \ ca len = entity --and name of its entity word
+  :echo_name  separate? off
+  ;
+: entity:   ( "name" -- )
+  \ Create a HTML entity word. 
+  \ "name" = entity --and name of its entity word
+  parse-name? abort" Parseable name expected in 'entity:'"
+  :entity
+  ;
+
+\ **************************************************************
+\ Tool words for HTML tags
 
 : {html}  ( ca len -- )
   \ Print an empty HTML tag (e.g. <br/>, <hr/>),
@@ -162,15 +230,8 @@ svariable style
 \ **************************************************************
 \ Actual HTML markup
 
-[undefined] fendo_markup_voc [if]
-  vocabulary fendo_markup_voc 
-  : [fendo_markup_voc]  ( -- )
-    also fendo_markup_voc
-    ;  immediate
-[then]
 also fendo_markup_voc definitions
 
-\ xxx todo complete with attribute management
 : <a>  ( -- )  s" a" {html  ;
 : </a>  ( -- )  s" a" html}  ;
 : <blockquote>  ( -- )  s" blockquote" {html  ;
@@ -204,10 +265,10 @@ also fendo_markup_voc definitions
 : </h6>  ( -- )  s" h6" html}  ;
 : <hr/>  ( -- )  s" hr" {html}  ;
 : <img/>  ( -- )  s" img" {html}  ;
-: <li>  ( -- )  s" li" {html  ;
+: <li>  ( -- )  echo_cr s" li" {html  ;
 : </li>  ( -- )  s" li" html}  ;
 : <ol>  ( -- )  s" ol" {html  ;
-: </ol>  ( -- )  s" ol" html}  ;
+: </ol>  ( -- )  echo_cr s" ol" html}  ;
 : <p>  ( -- )  s" p" {html  ;
 : </p>  ( -- )  s" p" html}  ;
 : <pre>  ( -- )  s" pre" {html  ;
@@ -222,12 +283,20 @@ also fendo_markup_voc definitions
 : </table>  ( -- )  s" table" html}  ;
 : <td>  ( -- )  s" td" {html  ;
 : </td>  ( -- )  s" td" html}  ;
+: <th>  ( -- )  s" th" {html  ;
+: </th>  ( -- )  s" th" html}  ;
 : <tr>  ( -- )  s" tr" {html  ;
 : </tr>  ( -- )  s" tr" html}  ;
 : <ul>  ( -- )  s" ul" {html  ;
-: </ul>  ( -- )  s" ul" html}  ;
+: </ul>  ( -- )  echo_cr s" ul" html}  ;
 
-: &nbsp;  ( -- )  s" &nbsp;" echo separate? off ;
+\ Entities
+
+entity: &dquot;
+entity: &gt;
+entity: &lt;
+entity: &nbsp;
+entity: &squot;
 
 previous 
 fendo_voc definitions
