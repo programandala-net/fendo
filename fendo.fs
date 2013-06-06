@@ -36,6 +36,8 @@
 \ **************************************************************
 \ Requirements
 
+only forth definitions
+
 require ffl/str.fs
 require ffl/tos.fs
 require ffl/xos.fs
@@ -44,7 +46,6 @@ require galope/anew.fs
 \ require galope/sb.fs
 require galope/svariable.fs
 
-\ **************************************************************
 \ Generic tool words
 
 : [previous]  ( -- )
@@ -62,19 +63,23 @@ require galope/svariable.fs
   nextname svariable
   ;
 
-\ **************************************************************
-\ Modules
-
 anew --fendo--
 
-vocabulary fendo_voc
-also fendo_voc  definitions
+\ **************************************************************
+\ Wordlists
+
+wordlist constant fendo_wid
+wordlist constant fendo_markup_wid
+
+fendo_wid >order definitions
+
+\ **************************************************************
+\ Modules
 
 include fendo_files.fs
 include fendo_data.fs
 include fendo_echo.fs
-include fendo_html_tags.fs
 include fendo_markup.fs
-include fendo_content.fs
+include fendo_parser.fs
 
 .( fendo.fs compiled) cr
