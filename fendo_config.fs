@@ -23,9 +23,6 @@
 \ License along with this program; if not, see
 \ <http://gnu.org/licenses>.
 
-\ Fendo is written in Forth
-\ with Gforth (<http://www.bernd-paysan.de/gforth.html>).
-
 \ **************************************************************
 \ Change history of this file
 
@@ -44,14 +41,23 @@ require galope/svariable.fs
 \ Config values are stored in ordinary variables, but as dynamic
 \ strings (with  '$!', '$@', etc.).
 
-\ Filenames
+\ All directories and subdirectories must have an ending slash.
+
+\ Filename extensions
 
 variable forth_extension   \ filename extension of Forth source pages
 variable html_extension    \ filename extension of target HTML files
 
-variable source_dir  \ directory of the Forth source pages (with final slash)
-variable target_dir  \ directory of the target HTML pages (with final slash)
-variable designs_dir \ directory of the HTML designs (with final slash)
+\ Local absolute directories (with final slash)
+
+variable source_dir           \ Forth source pages
+variable target_dir           \ target HTML pages
+variable designs_dir          \ HTML designs
+
+\ Target relative subdirectories (with final slash)
+
+variable target_files_subdir  \ target files
+variable target_img_subdir    \ target images
 
 \ Design and template
 
@@ -68,8 +74,12 @@ s" .fs" forth_extension $!
 s" .html" html_extension $!
 
 s" ~/forth/fendo-demo/pages/" source_dir $!
-s" ~/forth/fendo-demo/html/" target_dir $!
 s" ~/forth/fendo-demo/designs/" designs_dir $!
+s" ~/forth/fendo-demo/html/" target_dir $!
+
+s" files/arc/" target_files_subdir $!
+s" files/img/" target_img_subdir $!
+s" style/" style_subdir $!
 
 \ Design and template
 

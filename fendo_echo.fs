@@ -23,9 +23,6 @@
 \ License along with this program; if not, see
 \ <http://gnu.org/licenses>.
 
-\ Fendo is written in Forth
-\ with Gforth (<http://www.bernd-paysan.de/gforth.html>).
-
 \ **************************************************************
 \ Change history of this file
 
