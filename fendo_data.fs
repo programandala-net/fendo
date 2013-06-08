@@ -42,12 +42,19 @@
 \   order to set default values to certain fields.
 \ 2013-05-18 New: 'parse_datum' is rewriten and factored out to
 \   'datum!'.
+\ 2013-06-07 Fix: The check in 'data{' was obsolete; it has been
+\   rewritten.
+\ 2013-06-08 Fix: The leading spaces of parsed data were not
+\   removed.
+\ 2013-06-08 Fix: now 'datum@' returns an empty string if the
+\   datum was not set.
+\ 2013-06-08 Fix: '@' missing in 'default_data'.
 
 \ **************************************************************
-\ Requirements
+\ Todo
 
-require galope/bracket-true.fs  \ '[true]'
-require galope/bracket-false.fs  \ '[false]'
+\ 2013-06-07 Calculated data: rendered_title plain_title
+\   ... same with description. Better: filter words!
 
 \ **************************************************************
 \ Page data engine
@@ -66,13 +73,14 @@ variable 'data  \ address of the latest created data
   \ Parse and store a datum.
   \ u = datum offset
   >r  0 parse  \ parse the rest of the current input line
+  -leading  \ no leading spaces
   'data @ r> + datum!
   ;
 : datum@  ( a -- ca len )
   \ Fetch a datum.
   \ a = datum address 
   \ ca len = datum 
-  @ count
+  @ ?dup if  count  else  pad 0  then
   ;
 variable in_data_header?  \ flag to let the data fields to disguise the context
 variable /datum  \ byte offset of the currently created datum
@@ -86,9 +94,9 @@ variable /datum  \ byte offset of the currently created datum
     \ u = datum offset
     \ a1 = page data address
     \ a2 = datum address
-    @  in_data_header? @  ( u flag )
+    @  in_data_header? @  ( u ff )
     if    ( u "datum<nl>" -- ) parse_datum
-    else  ( a1 u -- a2 ) +
+    else  ( a1 u -- a2 ) + 
     then
   ;
 
@@ -97,12 +105,12 @@ variable /datum  \ byte offset of the currently created datum
 
 datum: source_file
 
-datum: language  \ ISO code of the page's language
-datum: title
-datum: description
+datum: language     \ ISO code of the page's language
+datum: title        \ page title; xxx can include markups?
+datum: description  \ page description; xxx can include markups?
 
 \ For special links (e.g. in breadcrumbs or menus):
-datum: button  \ link text 
+datum: button         \ link text 
 datum: button_tittle  \ link title
 ' button_tittle alias button-title
 
@@ -113,40 +121,67 @@ datum: modifed  \ modification date
 datum: access_key  \ access key (one char)
 ' access_key alias access-key
 
-\ Hierarchy data, indicated with a page id (a page name):
+\ Hierarchy data, indicated with a page-id (a page name):
 datum: up
 datum: prev
 datum: next
 datum: first
 datum: last
 
-datum: keywords  \ list of keywords, separated by commas
-datum: tags  \ list of tags, separated by commas
-datum: status  \ list of status ids, separated by commas
+datum: keywords   \ list of keywords, separated by commas
+datum: tags       \ list of tags, separated by commas
+datum: status     \ list of status ids, separated by commas
 
-datum: related  \ list of page ids, xxx separated by commas?
-datum: language_versions  \ list of page ids, xxx separated by commas?
+datum: related            \ list of page-ids, xxx separated by commas?
+datum: language_versions  \ list of page-ids, xxx separated by commas?
+
+datum: design_dir   \ design directory in the designs directory, with final slash
+datum: template     \ HTML template file
 
 \ **************************************************************
-\ Page calculated data fields
+\ Page-ids
 
-: target_file  ( a -- ca len )
-  \ a -- page id
-  \ ca len = target HTML page file name
-  source_file datum@ source>target
+\ The first time a page is interpreted, its data is parsed and
+\ created, also when the content doesn't has to be parsered.
+\ Then a page-id and two aliases are created, based on the
+\ source filename. The execution of the page-id returns the
+\ address of the page data, in order to access the individual
+\ data fields.
+
+: "page-id"  ( -- ca len )
+  \ Return the name of the main page-id.
+  \ ca len = name of the main page-id
+  sourcefilename -extension
+  \ 2dup cr ." page-id = " type cr  \ xxx debugging
+  ;
+: :page_id  ( -- )
+  \ Create the main page-id and init its data space.
+  "page-id" :create  here 'data !  /datum @ allot
+  ;
+: :page_id_aliases  { xt -- }
+  \ Create aliases of the main page-id.
+  \ xt = execution token of the main page-id
+  xt sourcefilename :alias
+  xt sourcefilename source>target_extension :alias
+  ;
+: :page_ids  ( -- )
+  \ Create the default page-ids.
+  :page_id  latestxt :page_id_aliases
   ;
 
 \ **************************************************************
 \ Page data header
 
-defer default_data
-: (default_data)  ( -- )
+0 value current_page  \ page-id of the current page
+
+defer default_data  ( -- )
+  \ Set the default values of the page data.
+:noname  ( -- )
   \ Set the default values of the page data.
   \ xxx todo finish
-  sourcefilename 'data source_file datum!
+  sourcefilename 'data @ source_file datum!
   ;
-' (default_data) is default_data
-
+is default_data
 : }data  ( -- )
   \ Mark the end of the page data and finish the data header.
   in_data_header? off  \ end of header
@@ -160,44 +195,37 @@ defer default_data
     then
   until   }data
   ;
-
-: create_name  ( ca len -- )
-  \ Create a 'create' word with the given name.
-  nextname create
-  ;
-: alias_alias  ( ca len -- )
-  \ Create an 'alias' with the given name.
-  nextname alias
-  ;
-: create_page_id  ( -- )
-  \ Create the default page ids.
-  sourcefilename create_name  \ the name is the source file name
-  [false] [if]
-    \ xxx todo
-    latestxt
-    dup create_alias
-    dup -extension 2dup create_name  \ the source file name without extension
-  [then]
-  ;
-
 : get_data{  ( "<text><spaces>}data" -- )
   \ Get the page data.
-  create_page_id  here 'data !  /datum @ allot
-  in_data_header? on
+  :page_ids  'data @ to current_page  in_data_header? on
   ;
 : data{  ( "<text><spaces>}data" -- )
   \ Mark the start of the page data.
-  save-input parse-name find-name >r
-  restore-input abort" 'restore-input' failed"
-  r> if  skip_data{  else  get_data{  then
+  [false] [if]  \ xxx old and buggy
+    save-input parse-name find-name >r
+    restore-input abort" 'restore-input' failed in 'data{'"
+    r> if  skip_data{  else  get_data{  then
+  [else]  \ xxx new
+    \ xxx how to access the page-ids in the markup?
+    \ xxx include them in the markup wordlist? create a wordlist?
+    "page-id" fendo_wid search-wordlist
+    if  drop skip_data{  else  get_data{  then
+  [then]
   ;
 
 variable do_content?  \ flag: do the page content? (otherwise, skip it)
 do_content? on
+: source_filename  ( ca1 len1 -- ca2 len2 )
+  \ Complete a source page filename with its path.
+  source_dir count 2swap s+
+  ;
 : require_data  ( "name" -- )
   \ Require a page file in order to get its data.
   \ "name" = file name
-  do_content? dup @ swap off  require  do_content? !
+  do_content? @  do_content? off
+  parse-name? abort" Filename expected in 'require_data'"
+  source_filename required
+  do_content? !
   ;
 
 .( fendo_data.fs compiled) cr

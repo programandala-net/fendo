@@ -52,16 +52,6 @@
 \ Requirements
 
 require galope/3dup.fs
-require galope/svariable.fs
-
-\ **************************************************************
-\ Generic tool words for markup and parsing
-
-: [fendo_markup_wid]  ( -- )
-  fendo_markup_wid >order
-  ;  immediate
-variable header_cell?  \ flag, is it a header cell the latest opened cell in the table?
-variable table_started?  \ flag, is a table open?
 
 \ **************************************************************
 \ Tool words for HTML attributes
@@ -72,7 +62,7 @@ variable table_started?  \ flag, is a table open?
   \ xt = execution token of the attribute variable
   \ ca1 len1 = attribute value
   >r
-  s" @" s+ nextname create  \ create a word with the name 'attribute@'.
+  s" @" s+ :create  \ create a word with the name 'attribute@'.
   r> ,
   does>  ( -- ca1 len1 )
     ( dfa ) perform count
@@ -104,15 +94,16 @@ variable table_started?  \ flag, is a table open?
   \ "name" = name of the attribute variable
   \ xt = execution token of the attribute variable
   \ ca len = name of the attribute variable
-  get-current fendo_markup_wid >order definitions
+  get-current fendo>current 
   parse-name? abort" Parseable name expected in 'attribute:'"
   2dup :svariable latestxt  ( ca len xt )  dup >r
   3dup :attribute" 3dup :attribute! :attribute@
-  previous set-current  r>
+  set-current  r>
   ;
 
 depth [if]
-  .( The stack must be empty before defining the attributes.) abort
+  .( The stack must be empty before defining the attributes.)
+  abort
 [then]
 
 \ The first attribute defined (thus the last in the table) is a
@@ -274,12 +265,6 @@ create 'attributes_xt  \ table for the xt of the attribute variables
 \ **************************************************************
 \ Tool words for HTML entities
 
-: :echo_name   ( ca len -- )
-  \ Create a word that prints its own name.
-  \ ca len = word name 
-  2dup nextname  create  s,
-  does>  ( dfa )  count echo
-  ;
 : :entity   ( ca len -- )
   \ Create a HTML entity word. 
   \ ca len = entity --and name of its entity word
@@ -318,7 +303,7 @@ create 'attributes_xt  \ table for the xt of the attribute variables
 \ **************************************************************
 \ Actual HTML markup
 
-fendo_markup_wid >order definitions
+get-current markup>current
 
 : <a>  ( -- )  s" a" {html  ;
 : </a>  ( -- )  s" a" html}  ;
@@ -406,6 +391,8 @@ fendo_markup_wid >order definitions
 : <hgroup>  ( -- )  echo_cr s" hgroup" {html  ;
 : </hgroup>  ( -- )  echo_cr s" hgroup" html}  ;
 : <hr/>  ( -- )  s" hr" {html}  ;
+: <html>  ( -- )  s" html" {html  ;
+: </html>  ( -- )  echo_cr s" html" html}  ;
 : <i>  ( -- )  s" i" {html  ;
 : </i>  ( -- )  s" i" html}  ;
 : <iframe>  ( -- )  s" iframe" {html  ;
@@ -516,7 +503,7 @@ entity: &lt;
 entity: &nbsp;
 entity: &squot;
 
-previous definitions
+set-current
 
 .( fendo_markup_html.fs compiled) cr
 
