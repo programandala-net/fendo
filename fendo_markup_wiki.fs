@@ -36,8 +36,6 @@
 \   printable words); required in order to separate words.
 \ 2013-06-04 New: punctuation words, HTML entity words. More
 \   markups.
-\ 2013-06-04: Words to de/activate the parsing voc, in order to
-\   mix Forth code in the sources. Maybe '[forth]' and '[fendo]'.
 \ 2013-06-05 Change: '|' renamed to '_'; '|' will be needed for the
 \   table markup.
 \ 2013-06-05 New: Finished the code for entities; the common code for
@@ -48,15 +46,12 @@
 \ 2013-06-06 New: several new markups.
 \ 2013-06-06 Change: renamed from "fendo_markup.fs" to
 \   "fendo_markup_wiki.fs"; it is included from the new file <fendo_markup.fs>.
+\ 2013-06-06: New: Words for merging Forth code in the pages: '<:' and ':>'.
 
 \ **************************************************************
 \ Todo
 
-\ 2013-06-04: Creole table markup.
 \ 2013-06-04: Creole {{{...}}} markup.
-\ 2013-06-04: Rewrite 'markup': accept the xt of the HTML tags,
-\ not their names. This will let to add attributes to the Fendo
-\ markup.
 \ 2013-06-04: Nested lists.
 \ 2013-06-04: Also '*' for lists?
 \ 2013-06-04: Flag the first markup of the current line, in
@@ -70,11 +65,12 @@
 \ Generic tool words for markup and parsing
 
 \ Counters
-variable #markups    \ consecutive markups
-variable #printable  \ consecutive printable elements 
-variable #parsed     \ items already parsed in the current line (before the current item)
+\ xxx used only by the parser; but will be required here too
+variable #markups     \ consecutive markups parsed
+variable #nonmarkups  \ consecutive nonmarkups parsed
+variable #parsed      \ items already parsed in the current line (before the current item)
 
-: exhausted?  ( -- flag )
+: exhausted?  ( -- ff )
   \ Is the current source line exhausted?
   [false] [if]
     \ First version, doesn't work when there are trailing spaces
@@ -87,13 +83,13 @@ variable #parsed     \ items already parsed in the current line (before the curr
   [then]
   ;
 
-defer content
+defer content  ( ca len -- )
   \ Manage a string of content: print it and update the counters.
-  \ Defined in <fendo_content.fs>.
+  \ Defined in <fendo_parser.fs>.
 
-defer close_pending
+defer close_pending  ( -- )
   \ Close the pending markups.
-  \ Defined in <fendo_content.fs>.
+  \ Defined in <fendo_parser.fs>.
 
 : markups  ( xt1 xt2 a -- )
   \ Open or close a HTML tag.
@@ -107,26 +103,26 @@ defer close_pending
   then  r> !  execute
   ;
 
-variable #header              \ level of the opened heading
-variable opened_["""]?        \ is there an open block quote?
-variable opened_[""]?         \ is there an open inline quote?
-variable opened_[###]?        \ is there an open block code?
-variable opened_[##]?         \ is there an open inline code?
-variable opened_[**]?         \ is there an open '**'?
-variable opened_[,,]?         \ is there an open ',,'?
-variable opened_[--]?         \ is there an open '--'?
-variable opened_[//]?         \ is there an open '//'?
-variable opened_[=]?          \ is there an open heading?
-variable opened_[=|=]?        \ is there an open table caption?
-variable opened_[^^]?         \ is there an open '^^'?
-variable opened_[_]?          \ is there an open '_'?
-variable opened_[__]?         \ is there an open '__'?
+variable #heading       \ level of the opened heading  \ xxx not used yet
+variable opened_["""]?  \ is there an open block quote?
+variable opened_[""]?   \ is there an open inline quote?
+variable opened_[###]?  \ is there an open block code?
+variable opened_[##]?   \ is there an open inline code?
+variable opened_[**]?   \ is there an open '**'?
+variable opened_[,,]?   \ is there an open ',,'?
+variable opened_[--]?   \ is there an open '--'?
+variable opened_[//]?   \ is there an open '//'?
+variable opened_[=]?    \ is there an open heading?
+variable opened_[=|=]?  \ is there an open table caption?
+variable opened_[^^]?   \ is there an open '^^'?
+variable opened_[_]?    \ is there an open '_'?
+variable opened_[__]?   \ is there an open '__'?
 
 : <pre><code>  ( -- )
-  [fendo_markup_wid] <pre> <code> [previous]
+  [markup>order] <pre> <code> [previous]
   ;
 : </code></pre>  ( -- )
-  [fendo_markup_wid] </code> </pre> [previous]
+  [markup>order] </code> </pre> [previous]
   ;
 
 \ **************************************************************
@@ -138,7 +134,7 @@ variable numbered_list_items  \ counter
 : ((-))  ( a -- )
   \ List element.
   \ a = counter variable
-  [fendo_markup_wid]
+  [markup>order]
   dup @ if  </li>  then  <li>  1 swap +!  separate? off
   [previous]
   ;
@@ -157,18 +153,19 @@ variable numbered_list_items  \ counter
 variable #rows   \ counter for the current table
 variable #cells  \ counter for the current table
 
-: >tr<  ( -- )
+: (>tr<)  ( -- )
   \ New row in the current table.
-  #rows @
-  if    [fendo_markup_wid] </tr> [previous]
-  then
-  [fendo_markup_wid] <tr> [previous]
-  1 #rows +!  #cells off 
+  [markup>order] <tr> [previous]  1 #rows +!  #cells off 
+  ;
+: >tr<  ( -- )
+  \ New row in the current table; close the previous row if needed.
+  #rows @ if  [markup>order] </tr> [previous]  then  (>tr<)
   ;
 : close_pending_cell  ( -- )
+  \ Close a pending table cell.
   header_cell? @ 
-  if    [fendo_markup_wid] </th> [previous]
-  else  [fendo_markup_wid] </td> [previous]
+  if    [markup>order] </th> [previous]
+  else  [markup>order] </td> [previous]
   then
   ;
 : ((|))  ( xt -- )
@@ -180,23 +177,57 @@ variable #cells  \ counter for the current table
   else  execute  1 #cells +!
   then
   ;
-: first_cell?  ( -- flag )
-  \ Is the current cell the first one in the table?
-  \ xxx not used any more
-  #rows @ #cells @ + 0=
+: actual_cell?  ( -- ff )
+  \ The parsed cell markup is the first one of a table
+  \ but it's not at the start of the line?
+  \ ff = not a real cell?
+  table_started? @  #parsed @ 0=  or
   ;
 : (|)  ( xt -- )
   \ New data cell in the current table.
   \ xt = execution cell of the HTML tag (<td> or <th>)
   table_started? @ 0=
-  if  [fendo_markup_wid] <table> ." (|)" [previous]  then  ((|))
+  if  [markup>order] <table> [previous]  then  ((|))
   ;
 : <table><caption>  ( -- )
-  [fendo_markup_wid] <table> <caption> [previous]
+  [markup>order] <table> <caption> [previous]
+  ;
+
+\ **************************************************************
+\ Tool words for merged Forth code
+
+: :>?  ( ca1 len1 ca2 len2 -- ca1 len1 ff )
+  \ Add a new name to the parsed merged Forth code.
+  \ ca1 len1 = code already parsed in the code
+  \ ca2 len2 = new name parsed in the code
+  \ ff = is the name the end of the code?
+  2dup s" :>" str= >r  s+ s"  " s+  r>
+  ;
+: slurp<:  ( "forthcode :>" -- ca len )
+  \ Get the content of an merged Forth code. 
+  \ ca len = Forth code
+  s" "
+  begin
+    parse-name dup
+    if    :>?               \ end of the code?
+    else  2drop refill 0=   \ end of the parsing area?
+    then
+  until
   ;
 
 \ **************************************************************
 \ Tool words for punctuation
+
+\
+\ Punctuation markup is needed in order to print it properly
+\ after another markup:
+\
+\   This // emphasis // does the right spacing.  But this //
+\   emphasis // , well, needs to be followed by a markup comma.
+\
+\ The ',' markup prints the comma without a leading space.  If
+\ ',' were not a markup but an ordinary printable content, a
+\ leading space would be printed. 
 
 : :punctuation   ( ca len -- )
   \ Create a punctuation word.
@@ -216,18 +247,20 @@ variable #cells  \ counter for the current table
 \ The Fendo markup was inspired by Creole (http://wikicreole.org),
 \ text2tags (http://text2tags.org) and others.
 
-fendo_markup_wid >order definitions
+only forth markup>order definitions also forth fendo>order 
 
-\ Tool markup
+\ Merged Forth code
 
-: [+forth]  ( -- )
-  \ Set the vocabularies for inserting Forth code in the page content.
-  only fendo_wid >order fendo_markup_wid >order forth-wordlist >order
+: <:  ( "forthcode :>" -- )
+  \ Start and interpret a Forth block.
+  only fendo>order markup>order forth>order  forth_block? on
+  slurp<: evaluate
   ;  immediate
-: [-forth]  ( -- )
-  \ Set the vocabularies for parsing the page content.
-  only fendo_markup_wid >order
-  ;  immediate
+: :>  ( -- )
+  \ Finish a Forth block.
+  forth_block? @ 0= abort" ':>' without '<:'"
+  only markup>order  forth_block? off  separate? off
+  ; immediate
 
 \ Grouping
 
@@ -237,13 +270,11 @@ fendo_markup_wid >order definitions
   ;
 : ----  ( -- )
   \ Create a horizontal line.
-  [fendo_markup_wid] <hr/> [previous]
-  separate? off
+  <hr/> separate? off
   ;
 : \\  ( -- )
   \ Line break.
-  [fendo_markup_wid] <br/> [previous]
-  separate? off
+  <br/> separate? off
   ;
 
 \ Text
@@ -334,22 +365,16 @@ fendo_markup_wid >order definitions
   \ Numbered list item.
   numbered_list_items @ 0= if  <ol>  then  (+)
   ;
-: }content  ( -- )
-  \ Mark the end of the page content. 
-  \ xxx todo 'do_content?' is useless when there are several content
-  \ blocks in one page!
-  close_pending  do_content? on
-  ;
 
 \ Tables
 
 : |  ( -- )
   \ Mark a table data cell.
-  ['] <td> (|) 
+  actual_cell? if  ['] <td> (|)  else  s" |" content  then
   ;
 : |=  ( -- )
   \ Mark a table header cell.
-  ['] <th> (|)
+  actual_cell? if  ['] <th> (|)  else  s" |=" content  then
   ;
 : =|=  ( -- )
   \ Open or close a table caption; must be the first markup of a table.
@@ -381,6 +406,6 @@ punctuation: »
 punctuation: ]
 punctuation: }
 
-previous definitions
+only forth fendo>order definitions
 
 .( fendo_markup_wiki.fs compiled) cr

@@ -39,23 +39,13 @@
 require galope/minus-suffix.fs  \ '-suffix'
 
 \ **************************************************************
-\
 
-defer forth_extension
-: (forth_extension)  ( -- ca len )
-  s" .fs"
-  ;
-' forth_extension is (forth_extension)
-defer html_extension
-: (html_extension)  ( -- ca len )
-  s" .html"
-  ;
-' html_extension is (html_extension)
-
-: source>target  ( ca1 len1 -- ca2 len2 )
+: source>target_extension  ( ca1 len1 -- ca2 len2 )
   \ ca1 len1 = Forth source page file name
   \ ca2 len2 = target HTML page file name
-  forth_extension -suffix  html_extension s+
+  forth_extension $@ -suffix  html_extension $@ s+
   ;
+
+variable target_fid  \ file id of the HTML target page
 
 .( fendo_files.fs compiled) cr

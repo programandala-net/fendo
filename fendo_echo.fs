@@ -30,21 +30,40 @@
 \ Change history of this file
 
 \ 2013-06-04 Start.
+\ 2013-06-08 New: First code for output redirection.
 
 \ **************************************************************
-\ Main
+\ Output
+
+: target_file  ( -- ca len )
+  \ Return the full path to the target file.
+  target_dir $@
+  current_page source_file datum@ source>target_extension
+  s+
+  ;
+
+variable dry?  \ flag, dry run?: don't create the target files, echo to the screen instead
+dry? off
+
+\ **************************************************************
+\ Echo
+
+: (echo)  ( xt -- )
+  dry? @
+  if  execute  else  target_fid @ outfile-execute  then
+  ;
 
 : echo  ( ca len -- )
   \ Print a text string to the HTML file.
-  type  \ xxx todo
+  ['] type (echo)
   ;
 : echo_cr  ( -- )
   \ Print a carriage return to the HTML file.
-  cr  \ xxx todo
+  ['] cr (echo)
   ;
 : echo_space  ( -- )
   \ Print a space to the HTML file.
-  s"  " echo 
+  s"  " echo
   ;
 : echo_quote  ( -- )
   \ Print a double quote to the HTML file.
