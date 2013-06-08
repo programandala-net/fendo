@@ -24,7 +24,11 @@
 \ <http://gnu.org/licenses>.
 
 \ Fendo is written in Forth
-\ with Gforth (<http://www.bernd-paysan.de/gforth.html>).
+\   <http://forth.org>
+\ with Gforth
+\   <http://www.gnu.org/software/gforth/>
+\   <http://www.bernd-paysan.de/gforth.html>
+\   <http://www.complang.tuwien.ac.at/forth/gforth/>
 
 \ **************************************************************
 \ Change history of this file
@@ -110,7 +114,30 @@ anew --fendo--
   \ ca3 len3 = ca1+i len1-i 
   search 0= if  chars + 0  then
   ;
-: /sides  { ca1 len1 ca2 len2 -- ca1 len1' ca3 len3 }
+[false] [if]  \ first version
+: sides  ( ca0 len0 ca1 len2 -- ca3 len3 ca4 len4 )
+  \ ca0 len0 = string searched;
+  \   starts with the first substring found (ca2 len2)
+  \ len2 = length of the substring searched for
+  \ ca1 = old ca0, original starting address before the search
+  { ca1 len2 }
+  len2 - swap dup >r len2 + swap  \ left side
+  ca1 r> ca1 -                    \ right side
+  ;
+[else]  \ second version; does the same, but it's clearer
+: sides  { ca1' len1' ca1 len1 len2 -- ca3 len3 ca4 len4 }
+  \ ca1' len1' = string searched, starting with the first (ca2 len2)
+  \ ca1 len1 = original string, before the search
+  \ len2 = length of the substring searched for
+  \ ca1' len2 = substring found in ca1 len1
+  \ ca3 len3 = left side of ca1 len1, until and excluding ca1' len2
+  \ ca4 len4 = right side of ca1 len1, after ca1' len2
+  ca1  len1 len1' -          \ left side
+  ca1' len2 +  len1' len2 -  \ right side
+  ;
+[then]
+
+: /sides  { ca1 len1 ca2 len2 -- ca1 len1' ca3 len3 ff }
   \ Search a string ca1 len1
   \ for the first occurence of a substring ca2 len2.
   \ Divide the string ca1 len1 in two parts: return both sides
@@ -121,15 +148,33 @@ anew --fendo--
   \ (Charscan library, 2003-02-17, public domain).
   \ ca1 len1  = string
   \ ca2 len2  = substring
-  \ ca1 len1' = right side (or empty string if no match)
-  \ ca3 len3  = left side (or whole string if no match)
-  ca1 len1 ca2 len2 search if
-    len2 - swap dup >r len2 + swap  \ second half
-    ca1 r> ca1 - 1-                 \ first half
-  else  over 0 
-  then
+  \ ca1 len1' = left side (or whole string if not found)
+  \ ca3 len3  = right side (or empty string if not found)
+  \ ff = found?
+  \ Note: ca3 len3 can be empty also when ff is true.
+  ca1 len1 ca2 len2 search dup >r if
+    \ xxx first method
+    \ len2 - swap dup >r len2 + swap  \ left side
+    \ ca1 r> ca1 -                    \ right side
+    \ xxx second method
+    ca1 len1 len2 sides
+  else  over 0  \ fake right side
+  then  r>
   ;
-: sides/  { ca1 len1 ca2 len2 -- ca1 len1' ca3 len3 }
+: +/string  ( ca1 len1 -- ca2 len2 )
+  \ xxx not used
+  \ Step forward by one char in a buffer.
+  \ Inspired by Gforth's '+x/string'.
+  \ ca1 len1 = buffer or string
+  \ ca2 len2 = remaining buffer or string 
+  char- swap char+ swap
+  ;
+: str<>  ( ca1 len1 ca2 len2 -- ff )
+  \ Are two strings different?
+  compare 0<>
+  ;
+: sides/  { ca1 len1 ca2 len2 -- ca1 len1' ca3 len3 f }
+  \ xxx todo finish
   \ Search a string ca1 len1
   \ for the last occurence of a substring ca2 len2.
   \ Divide the string ca1 len1 in two parts: return both sides
@@ -140,18 +185,36 @@ anew --fendo--
   \ (Charscan library, 2003-02-17, public domain).
   \ ca1 len1  = string
   \ ca2 len2  = substring
-  \ ca1 len1' = right side (or empty string if no match)
-  \ ca3 len3  = left side (or whole string if no match)
-  ca1 len1
-
-  begin   2dup ca2 len2 search
-  while   2nip
+  \ ca1 len1' = left side (or whole string if not found) 
+  \ ca3 len3  = right side (or empty string if not found)
+  \ f = found?
+  \ Note: ca3 len3 can be empty also when ff is true.
+  ca1 len1 2dup
+  begin   ca2 len2 search
+  while   2nip 2dup +x/string   \ update the result and step forward
   repeat  2drop
-    len2 - swap dup >r len2 + swap  \ second half
-    ca1 r> ca1 - 1-                 \ first half
-
-\    over 0 
-
+  2dup ca1 len1 str<> dup >r  \ something found?
+  if
+    \ xxx first method
+    \ len2 - swap dup >r len2 + swap  \ left side
+    \ ca1 r> ca1 -                    \ right side
+    \ xxx second method
+    ca1 len1 len2 sides
+  else
+    over 0  \ fake right side
+  then  r>
+  ;
+: -path  ( ca len -- ca' len' )
+  \ Remove the file path and leave the filename.
+  \ ca len = filename with path
+  \ ca' len' = filename
+  s" /" sides/ if  2nip  else  2drop  then
+  ;
+: -filename  ( ca len -- ca' len' )
+  \ Remove the filename and leave the path (with ending slash).
+  \ ca len = filename with path
+  \ ca' len' = path (with ending slash)
+  s" /" sides/ if  2drop s" /" s+  else  2nip  then 
   ;
 
 \ **************************************************************

@@ -23,9 +23,6 @@
 \ License along with this program; if not, see
 \ <http://gnu.org/licenses>.
 
-\ Fendo is written in Forth
-\ with Gforth (<http://www.bernd-paysan.de/gforth.html>).
-
 \ **************************************************************
 \ Change history of this file
 
@@ -179,7 +176,7 @@ defer default_data  ( -- )
 :noname  ( -- )
   \ Set the default values of the page data.
   \ xxx todo finish
-  sourcefilename 'data @ source_file datum!
+  sourcefilename -path 'data @ source_file datum!
   ;
 is default_data
 : }data  ( -- )

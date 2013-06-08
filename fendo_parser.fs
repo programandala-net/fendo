@@ -23,9 +23,6 @@
 \ License along with this program; if not, see
 \ <http://gnu.org/licenses>.
 
-\ Fendo is written in Forth
-\ with Gforth (<http://www.bernd-paysan.de/gforth.html>).
-
 \ **************************************************************
 \ Change history of this file
 
@@ -39,17 +36,6 @@
 \ 2013-06-05 Fix: 'markup' now uses a name token; this was
 \   required in order to define '~', a markup that parses the
 \   next name is the source.
-
-\ **************************************************************
-\ Todo
-
-\ 2013-06-04: Flag the first markup of the current line, in
-\   order to use '--' both forth nested lists and delete.
-\ 2013-06-04: Additional vocabulary with Forth words allowed
-\   during parsing? E.g. 's"', 'place'. Or define them in the same voc?
-\   Or make them unnecesary? E.g. use 'class=' for parsing and
-\   storing the class attribute, instead of 's" bla" class
-\   place'.
 \ 2013-06-05: New: '#parsed', required for implementing the
 \   table markup.
 \ 2013-06-05: Change: clearer code for closing the pending
@@ -59,6 +45,18 @@
 \ 2013-06-06 New: template implemented.
 \ 2013-06-08 Improved: Template management.
 \ 2013-06-08 New: First code for output redirection.
+\ 2013-06-08 New: first implementation of target directories.
+
+\ **************************************************************
+\ Todo
+
+\ 2013-06-04: Flag the first markup of the current line, in
+\   order to use '--' both for nested lists and for delete.
+\ 2013-06-04: [OLD] Additional vocabulary with Forth words allowed
+\   during parsing? E.g. 's"', 'place'. Or define them in the same voc?
+\   Or make them unnecesary? E.g. use 'class=' for parsing and
+\   storing the class attribute, instead of 's" bla" class
+\   place'.
 
 
 \ **************************************************************
@@ -190,12 +188,20 @@ variable #nothings  \ counter of empty parsings
 \ Target file
 
 : target_file  ( a -- ca len )
+  \ Return the the target HTML page filename (with path).
+  \ xxx todo without path?
   \ a -- page-id
   \ ca len = target HTML page file name
-  source_file datum@ source>target_extension
+  source_file datum@ source>target_extension 
+  target_dir $@ 2swap s+
   ;
 : open_target  ( -- )
+  \ Open the target HTML page file.
   current_page target_file w/o create-file throw target_fid !
+  ;
+: close_target  ( -- )
+  \ Close the target HTML page file.
+  target_fid @ close-file throw
   ;
 
 \ Design template
@@ -213,7 +219,8 @@ variable #nothings  \ counter of empty parsings
   \ ca1 len1 = template content
   \ ca2 len2 = bottom half of the template content
   \ ca3 len3 = top half of the template content
-  content_markup $@ /sides 
+  content_markup $@ /sides 0=
+  abort" The content markup is missing in the template"
   ;
 : template_top  ( ca1 len1 -- ca2 len2 )
   \ Extract the top half of a template, above the page content.
@@ -259,7 +266,7 @@ variable template_content
 get-current markup>current
 : }content  ( -- )
   \ Finish the page content. 
-  close_pending  }template  do_content? on
+  close_pending }template close_target  do_content? on
   ;
 set-current
 
