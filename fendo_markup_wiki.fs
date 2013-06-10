@@ -44,6 +44,7 @@
 \ 2013-06-06 Change: renamed from "fendo_markup.fs" to
 \   "fendo_markup_wiki.fs"; it is included from the new file <fendo_markup.fs>.
 \ 2013-06-06: New: Words for merging Forth code in the pages: '<:' and ':>'.
+\ 2013-06-10: Change: the new '[markup<order]' substitutes '[previous]'.
 
 \ **************************************************************
 \ Todo
@@ -116,10 +117,10 @@ variable opened_[_]?    \ is there an open '_'?
 variable opened_[__]?   \ is there an open '__'?
 
 : <pre><code>  ( -- )
-  [markup>order] <pre> <code> [previous]
+  [markup>order] <pre> <code> [markup<order]
   ;
 : </code></pre>  ( -- )
-  [markup>order] </code> </pre> [previous]
+  [markup>order] </code> </pre> [markup<order]
   ;
 
 \ **************************************************************
@@ -133,7 +134,7 @@ variable numbered_list_items  \ counter
   \ a = counter variable
   [markup>order]
   dup @ if  </li>  then  <li>  1 swap +!  separate? off
-  [previous]
+  [markup<order]
   ;
 : (-)  ( -- )
   \ Bullet list item.
@@ -152,17 +153,17 @@ variable #cells  \ counter for the current table
 
 : (>tr<)  ( -- )
   \ New row in the current table.
-  [markup>order] <tr> [previous]  1 #rows +!  #cells off 
+  [markup>order] <tr> [markup<order]  1 #rows +!  #cells off 
   ;
 : >tr<  ( -- )
   \ New row in the current table; close the previous row if needed.
-  #rows @ if  [markup>order] </tr> [previous]  then  (>tr<)
+  #rows @ if  [markup>order] </tr> [markup<order]  then  (>tr<)
   ;
 : close_pending_cell  ( -- )
   \ Close a pending table cell.
   header_cell? @ 
-  if    [markup>order] </th> [previous]
-  else  [markup>order] </td> [previous]
+  if    [markup>order] </th> [markup<order]
+  else  [markup>order] </td> [markup<order]
   then
   ;
 : ((|))  ( xt -- )
@@ -175,19 +176,20 @@ variable #cells  \ counter for the current table
   then
   ;
 : actual_cell?  ( -- ff )
-  \ The parsed cell markup is the first one of a table
-  \ but it's not at the start of the line?
-  \ ff = not a real cell?
+  \ The parsed cell markup ("|" or "|=") is the first markup parsed
+  \ on the current line or there's an opened table?
+  \ This check lets those signs to be used as content in other contexts.
+  \ ff = is it an actual cell?
   table_started? @  #parsed @ 0=  or
   ;
 : (|)  ( xt -- )
   \ New data cell in the current table.
   \ xt = execution cell of the HTML tag (<td> or <th>)
   table_started? @ 0=
-  if  [markup>order] <table> [previous]  then  ((|))
+  if  [markup>order] <table> [markup<order]  then  ((|))
   ;
 : <table><caption>  ( -- )
-  [markup>order] <table> <caption> [previous]
+  [markup>order] <table> <caption> [markup<order]
   ;
 
 \ **************************************************************
@@ -250,13 +252,13 @@ only forth markup>order definitions also forth fendo>order
 
 : <:  ( "forthcode :>" -- )
   \ Start and interpret a Forth block.
-  only fendo>order markup>order forth>order  forth_block? on
+  only fendo>order markup>order forth>order  forth_code? on
   slurp<: evaluate
   ;  immediate
 : :>  ( -- )
   \ Finish a Forth block.
-  forth_block? @ 0= abort" ':>' without '<:'"
-  only markup>order  forth_block? off  separate? off
+  forth_code? @ 0= abort" ':>' without '<:'"
+  only markup>order  forth_code? off  separate? off
   ; immediate
 
 \ Grouping

@@ -45,4 +45,9 @@ require galope/minus-suffix.fs  \ '-suffix'
 
 variable target_fid  \ file id of the HTML target page
 
+: /sourcefilename  ( -- ca len )
+  \ Return the current source filename, without path.
+  sourcefilename -path
+  ;
+
 .( fendo_files.fs compiled) cr

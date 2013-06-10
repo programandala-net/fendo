@@ -34,9 +34,9 @@
 
 : target_file  ( -- ca len )
   \ Return the full path to the target file.
+  \ xxx todo combine with similar word in fendo_parser.fs
   target_dir $@
-  current_page source_file datum@ source>target_extension
-  s+
+  current_page source_file $@ source>target_extension  s+
   ;
 
 variable dry?  \ flag, dry run?: don't create the target files, echo to the screen instead

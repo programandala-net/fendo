@@ -28,6 +28,7 @@
 
 \ 2013-06-06 Start. This file is created with part of the old
 \   <fendo_html_tags.fs>.
+\ 2013-06-08 Change: 'forth_block?' renamed to 'forth_code?'.
 
 \ **************************************************************
 \ Generic tool words for markup and parsing
@@ -43,7 +44,7 @@ variable table_started?  \ flag, is a table open?
 
 variable execute_markup?  \ flag, execute the markup while parsing?
 execute_markup? on  \ execute by default; otherwise print it
-variable forth_block?  \ flag, parsing in a Forth code block?
+variable forth_code?  \ flag, parsing in a Forth code block?
 
 false [if]  \ xxx todo finish
 : :>?  ( ca1 len1 ca2 len2 -- ca1 len1 ff )
@@ -67,12 +68,12 @@ false [if]  \ xxx todo finish
   until
   ;
 [then]
-\ **************************************************************
-\ Main
 
-include fendo/fendo_markup_html.fs
-include fendo/fendo_markup_wiki.fs
+\ **************************************************************
+\ Modules
+
+include ./fendo_markup_html.fs
+include ./fendo_markup_wiki.fs
 
 .( fendo_markup.fs compiled) cr
-
 

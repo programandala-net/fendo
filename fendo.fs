@@ -61,36 +61,59 @@ require string.fs  \ dynamic strings
 
 require galope/anew.fs
 require galope/minus-leading.fs  \ '-leading'
+require galope/sconstant.fs  \ xxx used?
 require galope/svariable.fs  \ xxx used?
 require galope/bracket-false.fs  \ '[false]'
 
 anew --fendo--
 
-\ Generic tool words (canditates for the Galope library)
+\ Safer alternatives for words of Gforth's string.fs
 
-: $@len? ( $addr -- u )
+warnings @  warnings off
+: $@len ( $addr -- u )
   \ Return the length of a dynamic string variable,
   \ even if it's not initialized.
   \ $addr = dynamic string variable
   \ u = length
   @ dup if  @  then
   ;
+: $@ ( $addr1 -- addr2 u )
+  \ Return the content of a dynamic string variable,
+  \ even if it's not initialized.
+  \ $addr1 = string variable
+  \ addr2 u = string
+  @ dup if  dup cell+ swap @  else  pad swap  then 
+  ;
+warnings !
 
-: [previous]  ( -- ) previous ;  immediate : parse-name?  (
-"name" -- ca len f )
-  \ Parse the next name in the source.  ca len = parsed name f =
-  \ empty name?
-  parse-name dup 0= ; : :svariable  ( ca len -- )
-  \ Create a string variable with the given name.  ca len = name
-  \ of the new variable
-  nextname svariable ; : :create  ( ca len -- )
-  \ Create a 'create' word with the given name.  ca len = name
-  \ of the new word
-  nextname create ; : :alias  ( xt ca len -- )
-  \ Create an alias with the given name for the given xt.  ca
-  \ len = name of the new alias xt = execution token of the
-  \ original word
-  nextname alias ; : -bounds  ( ca1 len1 -- ca2 ca1 )
+\ Generic tool words (canditates for the Galope library)
+
+: [previous]  ( -- )
+  previous
+  ;  immediate
+: parse-name?  ( "name" -- ca len f )
+  \ Parse the next name in the source.
+  \ ca len = parsed name 
+  \ f = empty name?
+  parse-name dup 0=
+  ;
+: :svariable  ( ca len -- )
+  \ Create a string variable with the given name.
+  \ ca len = name of the new variable
+  nextname svariable
+  ;
+: :create  ( ca len -- )
+  \ Create a 'create' word with the given name.
+  \ ca len = name of the new word
+  nextname create
+  ;
+: :alias  ( xt ca len -- )
+  \ Create an alias with the given name for the given xt.
+  \ ca len = name of the new alias
+  \ xt = execution token of the original word
+  nextname alias
+  ;
+: -bounds  ( ca1 len1 -- ca2 ca1 )
   \ Convert an address and length to the parameters needed by a
   \ "do ... +loop" in order to examine that memory zone in
   \ reverse order.
@@ -144,7 +167,7 @@ anew --fendo--
   \ of the substring ca2 len2 (first occurence), excluding the
   \ substring ca2 len2 itself.
   \ 2013-06-07
-  \ This word was inspired by Wil Banden's 'hunt'
+  \ This word was inspired by Wil Baden's 'hunt'
   \ (Charscan library, 2003-02-17, public domain).
   \ ca1 len1  = string
   \ ca2 len2  = substring
@@ -152,12 +175,8 @@ anew --fendo--
   \ ca3 len3  = right side (or empty string if not found)
   \ ff = found?
   \ Note: ca3 len3 can be empty also when ff is true.
-  ca1 len1 ca2 len2 search dup >r if
-    \ xxx first method
-    \ len2 - swap dup >r len2 + swap  \ left side
-    \ ca1 r> ca1 -                    \ right side
-    \ xxx second method
-    ca1 len1 len2 sides
+  ca1 len1 ca2 len2 search dup >r
+  if    ca1 len1 len2 sides
   else  over 0  \ fake right side
   then  r>
   ;
@@ -194,14 +213,8 @@ anew --fendo--
   while   2nip 2dup +x/string   \ update the result and step forward
   repeat  2drop
   2dup ca1 len1 str<> dup >r  \ something found?
-  if
-    \ xxx first method
-    \ len2 - swap dup >r len2 + swap  \ left side
-    \ ca1 r> ca1 -                    \ right side
-    \ xxx second method
-    ca1 len1 len2 sides
-  else
-    over 0  \ fake right side
+  if    ca1 len1 len2 sides
+  else  over 0  \ fake right side
   then  r>
   ;
 : -path  ( ca len -- ca' len' )
@@ -220,35 +233,64 @@ anew --fendo--
 \ **************************************************************
 \ Wordlists
 
-wordlist constant fendo_wid  \ for the program words except the markup
-wordlist constant fendo_markup_wid  \ only for the markup
+table constant fendo_markup_html_entities_wid  \ HTML entities
+wordlist constant fendo_markup_wid  \ markup, except HTML entities
+wordlist constant fendo_wid  \ program, except markup and HTML entities
 
-: markup>current  ( -- )  fendo_markup_wid set-current  ;
-: markup>order    ( -- )  fendo_markup_wid >order  ;
-: [markup>order]  ( -- )  markup>order ;  immediate
-: fendo>current   ( -- )  fendo_wid set-current  ; 
-: fendo>order     ( -- )  fendo_wid >order  ; 
-: [fendo>order]   ( -- )  fendo>order  ;  immediate
-: forth>order     ( -- )  forth-wordlist >order  ;
-: [forth>order]   ( -- )  forth>order  ;  immediate
+: markup>current  ( -- )
+  fendo_markup_wid set-current
+  ;
+: entities>current  ( -- )
+  fendo_markup_html_entities_wid set-current
+  ;
+: markup>order  ( -- )  
+  fendo_markup_html_entities_wid >order
+  fendo_markup_wid >order 
+  ;
+: [markup>order]  ( -- )
+  markup>order
+  ;  immediate
+: markup<order  ( -- )  
+  previous previous
+  ;
+: [markup<order]  ( -- )
+  markup<order
+  ;  immediate
+: fendo>current  ( -- )
+  fendo_wid set-current
+  ; 
+: fendo>order  ( -- )
+  fendo_wid >order
+  ; 
+: [fendo>order]  ( -- )
+  fendo>order
+  ;  immediate
+: forth>order  ( -- )
+  forth-wordlist >order
+  ;
+: [forth>order]  ( -- )
+  forth>order
+  ;  immediate
 
 fendo>order definitions
+
+s" A-00-20130608" sconstant version
 
 \ **************************************************************
 \ Modules
 
 depth [if] abort [then]  \ xxx debugging
-include fendo_config.fs
+include ./fendo_config.fs
 depth [if] abort [then]  \ xxx debugging
-include fendo_files.fs
+include ./fendo_files.fs
 depth [if] abort [then]  \ xxx debugging
-include fendo_data.fs
+include ./fendo_data.fs
 depth [if] abort [then]  \ xxx debugging
-include fendo_echo.fs
+include ./fendo_echo.fs
 depth [if] abort [then]  \ xxx debugging
-include fendo_markup.fs
+include ./fendo_markup.fs
 depth [if] abort [then]  \ xxx debugging
-include fendo_parser.fs
+include ./fendo_parser.fs
 depth [if] abort [then]  \ xxx debugging
 
 .( fendo.fs compiled) cr
