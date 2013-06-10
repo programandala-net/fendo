@@ -58,6 +58,7 @@ variable designs_dir          \ HTML designs
 
 variable target_files_subdir  \ target files
 variable target_img_subdir    \ target images
+variable style_subdir         \ target style  \ xxx needed?
 
 \ Design and template
 

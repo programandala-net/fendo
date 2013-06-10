@@ -134,7 +134,7 @@ variable #nothings  \ counter of empty parsings
 : something  ( ca len -- )
   \ Manage something found on the page content.
   \ ca len = parsed item (markup, printable content or Forth code)
-  forth_block? @ if  evaluate  else  (something)  then
+  forth_code? @ if  evaluate  else  (something)  then
   ;
 
 \ Parser
@@ -187,17 +187,18 @@ variable #nothings  \ counter of empty parsings
 
 \ Target file
 
-: target_file  ( a -- ca len )
+: target_file_path  ( a -- ca len )
   \ Return the the target HTML page filename (with path).
   \ xxx todo without path?
+  \ xxx todo combine with similar word in fendo_echo.fs
   \ a -- page-id
   \ ca len = target HTML page file name
-  source_file datum@ source>target_extension 
+  source_file $@ source>target_extension 
   target_dir $@ 2swap s+
   ;
 : open_target  ( -- )
   \ Open the target HTML page file.
-  current_page target_file w/o create-file throw target_fid !
+  current_page target_file_path w/o create-file throw target_fid !
   ;
 : close_target  ( -- )
   \ Close the target HTML page file.
@@ -209,9 +210,9 @@ variable #nothings  \ counter of empty parsings
 : template_file  ( -- ca len )
   \ Return the full path to the template file.
   designs_dir $@
-  current_page design_dir datum@ dup 0=
+  current_page design_dir $@ dup 0=
   if  2drop default_design_dir $@  then  
-  current_page template datum@ dup 0=
+  current_page template $@ dup 0=
   if  2drop default_template $@ then  s+ s+
   ;
 : template_halves  ( ca1 len1 -- ca2 len2 ca3 len3 )
@@ -226,22 +227,27 @@ variable #nothings  \ counter of empty parsings
   \ Extract the top half of a template, above the page content.
   \ ca1 len1 = template content
   \ ca2 len2 = top half of the template content
-  template_halves 2nip
+  template_halves 2drop
   ;
 : template_bottom  ( ca1 len1 -- ca2 len2 )
   \ Extract the bottom half of a template, above the page content.
   \ ca1 len1 = template content
   \ ca2 len2 = bottom half of the template content
-  template_halves 2drop
+  template_halves 2nip
   ;
 variable template_content
+: get_template_first  ( -- ca len )
+  \ Return the template content, the first time.
+  template_file slurp-file 2dup template_content $!
+  ;
+: get_template_again  ( -- ca len )
+  \ Return the template content, the second time.
+  template_content $@  template_content $off
+  ;
 : get_template  ( -- ca len )
-  template_content $@len?
-  if  \ second time
-    template_content $@  template_content $off
-  else  \ first time
-    template_file slurp-file 2dup template_content $!
-  then
+  \ Return the template content.
+  template_content $@len
+  if  get_template_again  else  get_template_first  then
   ;
 : template{  ( -- )
   \ Echo the top half of the current template, above the page content.
@@ -267,6 +273,7 @@ get-current markup>current
 : }content  ( -- )
   \ Finish the page content. 
   close_pending }template close_target  do_content? on
+  cr .s cr ." end of }content key..." key drop
   ;
 set-current
 
