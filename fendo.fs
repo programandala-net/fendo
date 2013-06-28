@@ -36,11 +36,17 @@
 \ 2012-06-30 Start.
 \ 2013-04-28 New: <fendo_data.fs>, <fendo_content.fs>.
 \ 2013-05-07 New: <fendo_require.fs>.
+\ 2013-06 New: Generic tool words; wordlists.
 
 \ **************************************************************
 \ Todo
 
 \ 2013-06-08 Let line comments in data header.
+
+\ **************************************************************
+\ Debug
+
+false value [bug_thread] immediate
 
 \ **************************************************************
 \ Requirements
@@ -86,7 +92,7 @@ warnings @  warnings off
   ;
 warnings !
 
-\ Generic tool words (canditates for the Galope library)
+\ Generic tool words (candidates for the Galope library)
 
 : [previous]  ( -- )
   previous
@@ -118,6 +124,24 @@ warnings !
   \ "do ... +loop" in order to examine that memory zone in
   \ reverse order.
   2dup + 1- nip 
+  ;
+: csides/  ( ca1 len1 c -- ca2 len2 ca3 len3 )
+  \ 2013-06-11 Start, based on '-extension'. Unfinished.
+  \ Search a string ca1 len1
+  \ for the last occurence of a character c.
+  \ Divide the string ca1 len1 in two parts: return both sides
+  \ of the character c (last occurence), excluding the
+  \ character itself.
+  \ ca1 len1 = string to search
+  \ c = bound character to search for
+  \ ca2 len2 = left part of ca1 len1, until and excluding the last c
+  \ ca3 len3 = right part of ca1 len1, from and excluding the last c
+  { character }
+  2dup -bounds 1+ 2swap  \ default raw return values
+  -bounds ?do
+    i c@ character = if  drop i  leave  then
+  -1 +loop  ( ca1 ca1' )  \ final raw return values
+  over -
   ;
 : -extension  ( ca1 len1 -- ca1 len1' | ca1 len1 )
   \ Remove the file extension of a filename.
@@ -193,7 +217,6 @@ warnings !
   compare 0<>
   ;
 : sides/  { ca1 len1 ca2 len2 -- ca1 len1' ca3 len3 f }
-  \ xxx todo finish
   \ Search a string ca1 len1
   \ for the last occurence of a substring ca2 len2.
   \ Divide the string ca1 len1 in two parts: return both sides

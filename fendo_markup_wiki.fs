@@ -45,19 +45,19 @@
 \   "fendo_markup_wiki.fs"; it is included from the new file <fendo_markup.fs>.
 \ 2013-06-06: New: Words for merging Forth code in the pages: '<:' and ':>'.
 \ 2013-06-10: Change: the new '[markup<order]' substitutes '[previous]'.
+\ 2013-06-18: New: some combined punctuation, e.g. "),".
 
 \ **************************************************************
 \ Todo
 
 \ 2013-06-04: Creole {{{...}}} markup.
 \ 2013-06-04: Nested lists.
-\ 2013-06-04: Also '*' for lists?
+\ 2013-06-04: Also '*' and '#' for lists?
 \ 2013-06-04: Flag the first markup of the current line, in
 \ order to use '--' both forth nested lists and delete, or '**'
 \ for list and for bold.
 \ 2013-06-05: Comments. '{*...*}'?
-\ 2013-06-05: divide files: fendo_markup.fs includes
-\ fendo_markup_html.fs and fendo_markup_own.fs ?
+\ 2013-06-19: Compare Creole's markups with txt2tags' markups.
 
 \ **************************************************************
 \ Generic tool words for markup and parsing
@@ -397,9 +397,16 @@ punctuation: :
 punctuation: ...
 punctuation: !
 punctuation: ?
-\ xxx needed?:
 punctuation: )
+punctuation: ).
+punctuation: );
+punctuation: ):
+punctuation: ),
 punctuation: "
+punctuation: ":
+punctuation: ",
+punctuation: ";
+punctuation: ".
 punctuation: '
 punctuation: »
 punctuation: ]

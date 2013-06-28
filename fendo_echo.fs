@@ -32,15 +32,10 @@
 \ **************************************************************
 \ Output
 
-: target_file  ( -- ca len )
-  \ Return the full path to the target file.
-  \ xxx todo combine with similar word in fendo_parser.fs
-  target_dir $@
-  current_page source_file $@ source>target_extension  s+
-  ;
-
 variable dry?  \ flag, dry run?: don't create the target files, echo to the screen instead
 dry? off
+
+true value redirection?  \ xxx debug
 
 \ **************************************************************
 \ Echo
@@ -52,11 +47,19 @@ dry? off
 
 : echo  ( ca len -- )
   \ Print a text string to the HTML file.
-  ['] type (echo)
+  [ redirection? ] [if]
+    ['] type (echo)
+  [else]
+    type
+  [then]
   ;
 : echo_cr  ( -- )
   \ Print a carriage return to the HTML file.
-  ['] cr (echo)
+  [ redirection? ] [if]
+    ['] cr (echo)
+  [else]
+    cr
+  [then]
   ;
 : echo_space  ( -- )
   \ Print a space to the HTML file.

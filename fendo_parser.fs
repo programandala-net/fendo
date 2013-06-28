@@ -27,10 +27,10 @@
 \ Change history of this file
 
 \ 2013-04-28 Start.
-\ 2013-05-18 New: Parser; 'skip_content{'.
-\ 2013-06-01 New: Parser rewritten from scratch. Management of
+\ 2013-05-18 New: parser; 'skip_content{'.
+\ 2013-06-01 New: parser rewritten from scratch. Management of
 \   empty names and empty lines.
-\ 2013-06-02 New: Counters for both types of elements (markups and
+\ 2013-06-02 New: counters for both types of elements (markups and
 \   printable words); required in order to separate words.
 \ 2013-06-04 Fix: lists were not properly closed by an empty space.
 \ 2013-06-05 Fix: 'markup' now uses a name token; this was
@@ -38,15 +38,25 @@
 \   next name is the source.
 \ 2013-06-05: New: '#parsed', required for implementing the
 \   table markup.
-\ 2013-06-05: Change: clearer code for closing the pending
+\ 2013-06-05 Change: clearer code for closing the pending
 \   markups.
 \ 2013-06-06 Change: renamed from "fendo_content.fs" to
 \   "fendo_parser.fs".
 \ 2013-06-06 New: template implemented.
 \ 2013-06-08 Improved: Template management.
-\ 2013-06-08 New: First code for output redirection.
+\ 2013-06-08 New: first code for output redirection.
 \ 2013-06-08 New: first implementation of target directories.
-
+\ 2013-06-11 Fix: the target file is opened and closed depending
+\   on the 'dry?' config variable.
+\ 2013-06-11 Fix: typo in comment of 'template_halves'.
+\ 2013-06-16 Change: The parser has been rewritten; now
+\   'search-wordlist' is used instead of 'parse-name' and
+\   'find-name'; this was needed to avoid matches in the Root wordlist.
+\ 2013-06-16 Fix: Now '}content' toggles the parsing off and sets
+\   the normal wordlist order.
+\ 2013-06-23 Change: design and template variables are renamed
+\   after the changes in the config module.
+\
 \ **************************************************************
 \ Todo
 
@@ -103,6 +113,7 @@ is close_pending
 \ **************************************************************
 \ Parser
 
+0 [if]  \ xxx old first version, with wordlist order and parse-name
 :noname  ( ca len -- )
   \ Manage a parsed string of content: print it and update the counters.
   #markups off  _echo  1 #nonmarkups +!
@@ -111,7 +122,8 @@ is content
 : (markup)  ( nt -- )
   \ Manage a parsed markup: execute it and update the counters.
   \ nt = name token of the markup
-  #nonmarkups off  name>int execute  1 #markups +!
+  \ xxx bug thread ends here, but dissapeared without reason!
+  #nonmarkups off name>int execute  1 #markups +!
   ;
 : markup  ( ca len nt -- )
   \ Manage a parsed markup: execute it and update the counters,
@@ -119,8 +131,11 @@ is content
   \ nt = name token of the markup
   \ ca len = name of the markup
   execute_markup? @
-  if    nip nip (markup)
-  else  drop content
+  if    
+    nip nip (markup)
+    \ nip nip drop  \ xxx bug thread
+  else
+    drop content
   then
   ;
 variable #nothings  \ counter of empty parsings
@@ -128,16 +143,24 @@ variable #nothings  \ counter of empty parsings
   \ Manage something found on the page content.
   \ ca len = parsed item (markup or printable content)
   #nothings off
-  2dup find-name dup if  markup  else  drop content  then
+  2dup find-name dup
+  if
+    markup \ xxx bug thread
+    \ drop 2drop  \ markup \ xxx bug thread
+  else
+    drop content
+  then
   1 #parsed +!
   ;
 : something  ( ca len -- )
   \ Manage something found on the page content.
   \ ca len = parsed item (markup, printable content or Forth code)
-  forth_code? @ if  evaluate  else  (something)  then
+  forth_code? @ if  \ xxx not needed
+    evaluate  \ xxx not needed
+  else
+    (something)  \ xxx bug thread
+  then
   ;
-
-\ Parser
 
 : nothing  ( -- )
   \ Manage a "nothing", a parsed empty name. 
@@ -150,9 +173,11 @@ variable #nothings  \ counter of empty parsings
 : (parse_content)  ( "text" -- )
   \ Actually parse the page content.
   \ The process is finished by the '}content' markup.
+  \ xxx fixme -- words in Root wordlist are executed!
+  \   search-wordlist must be used instead of parse-name.
   begin
     parse-name dup
-    if    something  true
+    if    something  true  \ xxx bug thread
     else  nothing  2drop refill
     then  0=
   until
@@ -166,60 +191,141 @@ variable #nothings  \ counter of empty parsings
   (parse_content)
   only forth fendo>order
   ;
+[then]
+
+\ xxx second version, with search-wordlist 
+
+:noname  ( ca len -- )
+  \ Manage a parsed string of content: print it and update the counters.
+  #markups off  _echo  1 #nonmarkups +!
+  ;
+is content
+: (markup)  ( xt -- )
+  \ Manage a parsed markup: execute it and update the counters.
+  \ xt = execution token of the markup
+  #nonmarkups off  execute  1 #markups +!
+  ;
+: markup  ( ca len xt -- )
+  \ Manage a parsed markup: execute it and update the counters,
+  \ if required.
+  \ ca len = name of the markup
+  \ xt = execution token of the markup
+  execute_markup? @
+  if    nip nip (markup)
+  else  drop content
+  then
+  ;
+variable #nothings  \ counter of empty parsings
+: something  ( ca len -- )
+  \ Manage something found on the page content.
+  \ ca len = parsed item (markup or printable content) 
+  #nothings off
+  2dup fendo_markup_wid search-wordlist
+  if  markup
+  else
+    2dup fendo_markup_html_entities_wid search-wordlist
+    if  markup  else  content  then
+  then
+  1 #parsed +!
+  ;
+: nothing  ( -- )
+  \ Manage a "nothing", a parsed empty name. 
+  \ The first empty name means the current line is finished;
+  \ the second consecutive empty name means the current line is empty.
+  #nothings @  \ not the first consecutive time?
+  if    close_pending  \ an empty line was parsed
+  then  1 #nothings +!  #parsed off
+  ;
+variable more?  \ flag: keep on parsing more words?; changed by '}content'
+: parse_content  ( "text" -- )
+  \ Parse the current input source.
+  \ The process is finished by the '}content' markup or the end
+  \ of the source.
+  separate? off  more? on
+  begin
+    parse-name ?dup
+    if    something more? @
+    else  drop nothing refill
+    then  0=
+  until
+  ;
 : parse_string  ( ca len -- )
   \ Parse a string. 
   \ ca len = content
-  ['] parse_content execute-parsing
+  ['] parse_content execute-parsing \ xxx bug thread
   ;
 : parse_file  ( ca len -- )
+  \ xxx not used
   \ Parse a file.
   \ ca len = filename
   slurp-file parse_string
   ;
 : skip_content  ( "text }content" -- )
   \ Skip the page content until the end of the content block.
-  begin   parse-name dup 0=
-    if    2drop refill 0= dup abort" Missing '}content'"
-    else  s" }content" str=
+  begin   parse-name ?dup 
+    if    s" }content" str=
+    else  drop refill 0= dup abort" Missing '}content'"
     then
   until   do_content? on
   ;
 
 \ Target file
 
-: target_file_path  ( a -- ca len )
-  \ Return the the target HTML page filename (with path).
-  \ xxx todo without path?
-  \ xxx todo combine with similar word in fendo_echo.fs
-  \ a -- page-id
+: target_file  ( a -- ca len )
+  \ Return a target HTML page filename. 
+  \ a = page-id
   \ ca len = target HTML page file name
   source_file $@ source>target_extension 
-  target_dir $@ 2swap s+
+  ;
+: target_path/file  ( a -- ca len )
+  \ Return a target HTML page filename, with its local path.
+  \ a = page-id
+  \ ca len = target HTML page file name
+  target_file target_dir $@ 2swap s+
+  2dup type cr  \ xxx debug check
+  ;
+: (open_target)  ( -- )
+  \ Open the target HTML page file.
+  current_page target_path/file w/o create-file throw target_fid !
+  \ ." target_fid just opened: " \ xxx
+  \ target_fid @ . cr key drop
   ;
 : open_target  ( -- )
-  \ Open the target HTML page file.
-  current_page target_file_path w/o create-file throw target_fid !
+  \ Open the target HTML page file, if needed.
+  dry? @ 0= if  (open_target)  then
+  ;
+: (close_target)  ( -- )
+  \ Close the target HTML page file.
+  \ xxx debug
+  target_fid @ close-file throw
   ;
 : close_target  ( -- )
-  \ Close the target HTML page file.
-  target_fid @ close-file throw
+  \ Close the target HTML page file, if needed.
+  dry? @ 0= if  (close_target)  then
   ;
 
 \ Design template
 
 : template_file  ( -- ca len )
   \ Return the full path to the template file.
-  designs_dir $@
-  current_page design_dir $@ dup 0=
-  if  2drop default_design_dir $@  then  
-  current_page template $@ dup 0=
-  if  2drop default_template $@ then  s+ s+
+  target_dir $@
+  [ true ] [if]  \ actual code
+    current_page design_subdir $@ dup 0=
+    if  2drop website_design_subdir $@  then  
+    current_page template $@ dup 0=
+    if  2drop website_template $@ then  s+ s+
+  [else]  \ xxx bug thread
+    website_design_subdir $@  \ xxx tmp
+    website_template $@  \ xxx tmp
+    s+ s+
+  [then]
+  \ ." template_file = " 2dup type cr  \ xxx debug check
   ;
 : template_halves  ( ca1 len1 -- ca2 len2 ca3 len3 )
   \ Divide the template in two parts, excluding the content holder.
   \ ca1 len1 = template content
-  \ ca2 len2 = bottom half of the template content
-  \ ca3 len3 = top half of the template content
+  \ ca2 len2 = top half of the template content
+  \ ca3 len3 = bottom half of the template content
   content_markup $@ /sides 0=
   abort" The content markup is missing in the template"
   ;
@@ -235,7 +341,9 @@ variable #nothings  \ counter of empty parsings
   \ ca2 len2 = bottom half of the template content
   template_halves 2nip
   ;
+\ xxx todo simplify, read the file twice?
 variable template_content
+\ svariable template_content  \ xxx tmp
 : get_template_first  ( -- ca len )
   \ Return the template content, the first time.
   template_file slurp-file 2dup template_content $!
@@ -251,7 +359,9 @@ variable template_content
   ;
 : template{  ( -- )
   \ Echo the top half of the current template, above the page content.
-  get_template template_top parse_string
+  get_template
+  template_top
+  parse_string \ xxx bug thread
   ;
 : }template  ( -- )
   \ Echo the bottom half of the current template, below the page content.
@@ -265,15 +375,24 @@ variable template_content
   \ The end of the content is marked with the '}content' markup.
   \ Only one 'content{ ... }content' block is allowed in the page.
   do_content? @
-  if    open_target template{ parse_content
+  if    
+    open_target
+    template{  \ xxx bug thread
+    parse_content
   else  skip_content
   then
   ;
 get-current markup>current
 : }content  ( -- )
   \ Finish the page content. 
-  close_pending }template close_target  do_content? on
-  cr .s cr ." end of }content key..." key drop
+  close_pending
+  }template  \ xxx bug thread
+  close_target \ xxx bug thread
+  more? off  \ finish the current parsing
+  do_content? on  \ default value for the next page
+  only fendo>order forth>order
+  \ cr .s cr ." end of }content -- press any key..." key drop  \ xxx
+  \ ." done!"
   ;
 set-current
 
