@@ -27,6 +27,9 @@
 \ Change history of this file
 
 \ 2013-06-07 Start.
+\ 2013-06-23 Change: 'style_subdir' and 'designs_dir' removed;
+\   one single subdir for files and images; design and template
+\   variables are renamed. This way all is a bit simpler.
 
 \ **************************************************************
 \ Requirements
@@ -45,53 +48,41 @@ require galope/svariable.fs
 
 \ Filename extensions
 
-variable forth_extension   \ filename extension of Forth source pages
-variable html_extension    \ filename extension of target HTML files
+variable forth_extension  \ filename extension of Forth source pages
+s" .fs" forth_extension $!
+
+variable html_extension  \ filename extension of target HTML files
+s" .html" html_extension $!
 
 \ Local absolute directories (with final slash)
 
-variable source_dir           \ Forth source pages
-variable target_dir           \ target HTML pages
-variable designs_dir          \ HTML designs
+variable source_dir  \ Forth source pages
+s" ~/forth/fendo-demo/pages/" source_dir $!
+
+variable target_dir  \ target HTML pages
+s" ~/forth/fendo-demo/html/" target_dir $!
 
 \ Target relative subdirectories (with final slash)
 
-variable target_files_subdir  \ target files
-variable target_img_subdir    \ target images
-variable style_subdir         \ target style  \ xxx needed?
+variable files_subdir  \ target files
+s" files/" files_subdir $!
 
-\ Design and template
+variable website_design_subdir \ default design
+s" designs/basic_minimal/" website_design_subdir $!
 
-variable default_design_dir \ design directory in the designs directory (with final slash)
-variable default_template   \ filename of the default HTML template
-variable content_markup     \ markup that represents the page content in the template
+variable website_template  \ filename of the default HTML template
+s" index.html" website_template $!
 
-\ **************************************************************
-\ Default values
-
-\ Filenames
-
-s" .fs" forth_extension $!
-s" .html" html_extension $!
-
-s" ~/forth/fendo-demo/pages/" source_dir $!
-s" ~/forth/fendo-demo/designs/" designs_dir $!
-s" ~/forth/fendo-demo/html/" target_dir $!
-
-s" files/arc/" target_files_subdir $!
-s" files/img/" target_img_subdir $!
-s" style/" style_subdir $!
-
-\ Design and template
-
-\ The actual design and template will be the default ones unless
-\ the current page defines its own in its metadata. Thus the
-\ 'design' and 'template' page metadata can be used to override
-\ the website's default values.
-
-s" basic_minimal/" default_design_dir $!
-s" index.html" default_template $!
+variable content_markup  \ markup that represents the page content in the template
 s" {CONTENT}" content_markup $!
+
+false [if] \ xxx bug thread
+: $! place ;
+: $@ count ;
+: $@len c@ ;
+[then]
+
+
 
 .( fendo_config.fs compiled) cr
 

@@ -70,6 +70,11 @@ false [if]  \ xxx todo finish
 [then]
 
 \ **************************************************************
+\ Config
+
+variable xhtml?  \ flag, XHTML syntax?
+
+\ **************************************************************
 \ Modules
 
 include ./fendo_markup_html.fs

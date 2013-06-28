@@ -3,6 +3,8 @@
 \ This file is part of
 \ Fendo ("Forth Engine for Net DOcuments") version A-00.
 
+\ File changed 2013-06-28 18
+
 \ This file defines the page data tools.
 
 \ Copyright (C) 2013 Marcos Cruz (programandala.net)
@@ -45,39 +47,36 @@
 \   removed.
 \ 2013-06-08 Fix: now 'datum@' returns an empty string if the
 \   datum was not set.
-\ 2013-06-08 Fix: '@' missing in 'default_data'.
+\ 2013-06-08 Fix: '@' missing in 'default_data'; beside, renamed
+\   to "set_default_data'.
+\ 2013-06-08 Change: 'datum@' and 'datum!' are removed;
+\   '$@' and '$!' are used instead (from Gforth's <string.fs>)).
+\ 2013-06-08 Fix: name clash (old 'source_filename' >
+\   '+source_path'; new 'source_filename' > '/sourcefilename').
+\ 2013-06-23 Change: design and template fields are renamed
+\   after the changes in the config module.
+\ 2013-06-28 Change: hierarchy metadata fields are renamed with
+\   the "_page" prefix, to avoid the clash with 'next' and make
+\   the code clearer; 'up' is renamed to 'upper_page'.
 
 \ **************************************************************
 \ Todo
 
+\ 2013-06-08 Can 'current_page' be used instead of ''data'?
 \ 2013-06-07 Calculated data: rendered_title plain_title
 \   ... same with description. Better: filter words!
 
 \ **************************************************************
 \ Page data engine
 
-variable 'data  \ address of the latest created data
-: datum!  ( ca len a -- )
-  \ Store a datum.
-  \ ca len = datum 
-  \ a = datum address
-  \ xxx todo free the memory
-  >r  dup 1+ allocate throw  ( ca len a1 )
-  dup >r place 
-  r> r> !
-  ;
+variable current_data  \ address of the latest created data
 : parse_datum  ( u "text<nl>" -- )
-  \ Parse and store a datum.
+  \ Parse a datum, remove its leading spaces and store it. 
   \ u = datum offset
   >r  0 parse  \ parse the rest of the current input line
-  -leading  \ no leading spaces
-  'data @ r> + datum!
-  ;
-: datum@  ( a -- ca len )
-  \ Fetch a datum.
-  \ a = datum address 
-  \ ca len = datum 
-  @ ?dup if  count  else  pad 0  then
+  -leading  
+  dup  if  ." Parsed datum: " 2dup type cr  then  \ xxx debug check
+  current_data @ r> + $!
   ;
 variable in_data_header?  \ flag to let the data fields to disguise the context
 variable /datum  \ byte offset of the currently created datum
@@ -86,14 +85,17 @@ variable /datum  \ byte offset of the currently created datum
   create  ( "name" -- )
     \ "name" = field name
     cell /datum dup @ , +!  \ store the offset and increment it
-  does>  ( a1 dfa | dfa "text<nl>" -- a2 | )
-    \ dfa = data field address of the datum word
-    \ u = datum offset
+  does>  ( a1 | "text<nl>" -- a2 | )
     \ a1 = page data address
     \ a2 = datum address
+    \ dfa = data field address of the datum word
+    \ u = datum offset
+    ( a1 dfa | dfa "text<nl>" )
     @  in_data_header? @  ( u ff )
-    if    ( u "datum<nl>" -- ) parse_datum
-    else  ( a1 u -- a2 ) + 
+    if    ( u "datum<nl>" ) parse_datum
+    else  ( a1 u ) +
+      \ xxx todo add '$@' here; data are not changed; but how to
+      \ adapt 'set_default_data'?
     then
   ;
 
@@ -102,64 +104,76 @@ variable /datum  \ byte offset of the currently created datum
 
 datum: source_file
 
-datum: language     \ ISO code of the page's language
-datum: title        \ page title; xxx can include markups?
+datum: language  \ ISO code of the page's language
+datum: title  \ page title; xxx can include markups?
 datum: description  \ page description; xxx can include markups?
-
-\ For special links (e.g. in breadcrumbs or menus):
-datum: button         \ link text 
-datum: button_tittle  \ link title
-' button_tittle alias button-title
 
 \ Dates in ISO format:
 datum: created  \ creation date
 datum: modifed  \ modification date
 
 datum: access_key  \ access key (one char)
-' access_key alias access-key
 
 \ Hierarchy data, indicated with a page-id (a page name):
-datum: up
-datum: prev
-datum: next
-datum: first
-datum: last
+datum: upper_page
+datum: previous_page
+datum: next_page
+datum: first_page
+datum: last_page
 
-datum: keywords   \ list of keywords, separated by commas
-datum: tags       \ list of tags, separated by commas
-datum: status     \ list of status ids, separated by commas
+datum: keywords  \ list of keywords, separated by commas
+datum: tags  \ list of tags, separated by commas
+datum: status  \ list of status ids, separated by commas
+datum: edit_summary
 
-datum: related            \ list of page-ids, xxx separated by commas?
+datum: related  \ list of page-ids, xxx separated by commas?
 datum: language_versions  \ list of page-ids, xxx separated by commas?
 
-datum: design_dir   \ design directory in the designs directory, with final slash
-datum: template     \ HTML template file
+\ Design and template
+
+\ Note: The actual design and template will be the default ones
+\ unless the current page defines its own in its metadata:
+
+datum: design_subdir  \ target relative path to the design, with final slash
+datum: template  \ HTML template filename in the design subdir
+
+\ **************************************************************
+\ Datum management
+
+: /csv  ( ca len -- ca#1 len#1 ... ca#u len#u u )
+  \ Divide a comma separated values in its values.
+  \ ca len = string with comma separated values
+  \ ca#1 len#1 ... ca#u len#u = one or more strings
+  \ u = number of string returned
+  depth >r
+  begin  s" ," /sides 0=  until  2drop
+  depth r> 2 - - 2/
+  ;
 
 \ **************************************************************
 \ Page-ids
 
 \ The first time a page is interpreted, its data is parsed and
-\ created, also when the content doesn't has to be parsered.
-\ Then a page-id and two aliases are created, based on the
-\ source filename. The execution of the page-id returns the
-\ address of the page data, in order to access the individual
-\ data fields.
+\ created, even if the content doesn't has to be parsered, in
+\ case the data has been required by other page).  Then a
+\ page-id and two aliases are created, based on the source
+\ filename. The execution of the page-id returns the address of
+\ the page data, in order to access the individual data fields.
 
 : "page-id"  ( -- ca len )
   \ Return the name of the main page-id.
   \ ca len = name of the main page-id
-  sourcefilename -extension
-  \ 2dup cr ." page-id = " type cr  \ xxx debugging
+  /sourcefilename -extension
   ;
 : :page_id  ( -- )
   \ Create the main page-id and init its data space.
-  "page-id" :create  here 'data !  /datum @ allot
+  "page-id" :create  here current_data !  /datum @ allot
   ;
 : :page_id_aliases  { xt -- }
   \ Create aliases of the main page-id.
   \ xt = execution token of the main page-id
-  xt sourcefilename :alias
-  xt sourcefilename source>target_extension :alias
+  xt /sourcefilename :alias  \ with the original source extension
+  xt /sourcefilename source>target_extension :alias  \ with target extension
   ;
 : :page_ids  ( -- )
   \ Create the default page-ids.
@@ -171,18 +185,17 @@ datum: template     \ HTML template file
 
 0 value current_page  \ page-id of the current page
 
-defer default_data  ( -- )
+defer set_default_data  ( -- )
   \ Set the default values of the page data.
-:noname  ( -- )
+: (set_default_data)  ( -- )
   \ Set the default values of the page data.
   \ xxx todo finish
-  sourcefilename -path 'data @ source_file datum!
+  /sourcefilename current_data @ source_file $!
   ;
-is default_data
+' (set_default_data) is set_default_data
 : }data  ( -- )
-  \ Mark the end of the page data and finish the data header.
-  in_data_header? off  \ end of header
-  default_data
+  \ Mark the end of the page data header and complete it.
+  in_data_header? off  set_default_data
   ;
 : skip_data{  ( "text }data" -- )
   \ Skip the page data.
@@ -194,7 +207,9 @@ is default_data
   ;
 : get_data{  ( "<text><spaces>}data" -- )
   \ Get the page data.
-  :page_ids  'data @ to current_page  in_data_header? on
+  :page_ids
+  current_data @ to current_page
+  in_data_header? on
   ;
 : data{  ( "<text><spaces>}data" -- )
   \ Mark the start of the page data.
@@ -212,16 +227,16 @@ is default_data
 
 variable do_content?  \ flag: do the page content? (otherwise, skip it)
 do_content? on
-: source_filename  ( ca1 len1 -- ca2 len2 )
+: +source_dir  ( ca1 len1 -- ca2 len2 )
   \ Complete a source page filename with its path.
-  source_dir count 2swap s+
+  source_dir $@ 2swap s+
   ;
 : require_data  ( "name" -- )
   \ Require a page file in order to get its data.
   \ "name" = file name
   do_content? @  do_content? off
   parse-name? abort" Filename expected in 'require_data'"
-  source_filename required
+  +source_dir required
   do_content? !
   ;
 

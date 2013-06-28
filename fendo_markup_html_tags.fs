@@ -27,16 +27,23 @@
 \ Change history of this file
 
 \ 2013-06-10 Start. Factored from <fendo_markup_html.fs>.
+\ 2013-06-15 Void tags are closed depending on HTML or XHTML
+\   syntaxes. Tag alias in both syntaxes.
 
 \ **************************************************************
 \ Printing
 
+: "/>"  ( -- ca len )
+  \ Return the closing of a void HTML tag,
+  \ ">" in HTML syntax or "/>" in XHTML syntax.
+  s" />" xhtml? @ 0= if  +/string  then
+  ;
 : {html}  ( ca len -- )
   \ Print an empty HTML tag (e.g. <br/>, <hr/>),
   \ with all previously defined attributes.
   \ ca len = HTML tag
-  s" <" echo echo echo_attributes s" />" echo  separate? off
-  -attributes
+  s" <" echo echo echo_attributes "/>" echo
+  separate? off  -attributes
   ;
 : {html  ( ca len -- )
   \ Print an opening HTML tag (e.g. <p>, <a>),
@@ -82,7 +89,7 @@ get-current markup>current
 : </blockquote>  ( -- )  echo_cr s" blockquote" html}  ;
 : <body>  ( -- )  s" body" {html  ;
 : </body>  ( -- )  echo_cr s" body" html}  ;
-: <br/>  ( -- )  s" br" {html}  ;
+: <br>  ( -- )  s" br" {html}  ;
 : <button>  ( -- )  s" button" {html  ;
 : </button>  ( -- )  s" button" html}  ;
 : <canvas>  ( -- )  s" canvas" {html  ;
@@ -141,14 +148,14 @@ get-current markup>current
 : </header>  ( -- )  s" header" html}  ;
 : <hgroup>  ( -- )  echo_cr s" hgroup" {html  ;
 : </hgroup>  ( -- )  echo_cr s" hgroup" html}  ;
-: <hr/>  ( -- )  s" hr" {html}  ;
+: <hr>  ( -- )  s" hr" {html}  ;
 : <html>  ( -- )  s" html" {html  ;
 : </html>  ( -- )  echo_cr s" html" html}  ;
 : <i>  ( -- )  s" i" {html  ;
 : </i>  ( -- )  s" i" html}  ;
 : <iframe>  ( -- )  s" iframe" {html  ;
 : </iframe>  ( -- )  s" iframe" html}  ;
-: <img/>  ( -- )  s" img" {html}  ;
+: <img>  ( -- )  s" img" {html}  ;
 : <input>  ( -- )  s" input" {html  ;
 : </input>  ( -- )  s" input" html}  ;
 : <ins>  ( -- )  s" ins" {html  ;
@@ -245,6 +252,14 @@ get-current markup>current
 : </video>  ( -- )  s" video" html}  ;
 : <!--  ( -- )  s" <!--" echo  ;  \ xxx todo parse the comment, don't evaulate the markups
 : -->  ( -- )  s" -->" echo  ;
+
+\ XHTML tags
+
+markup>order
+' <br> alias <br/>
+' <hr> alias <hr/>
+' <img> alias <img/>
+markup<order
 
 set-current
 
