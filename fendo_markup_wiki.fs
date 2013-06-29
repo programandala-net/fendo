@@ -51,6 +51,7 @@
 \   can not be nested.
 \ 2013-06-29: New: First changes to fix and improve the source
 \   code markups (the source region needs a special parsing).
+\ 2013-06-29: New: The image markups are rendered.
 
 \ **************************************************************
 \ Todo
@@ -63,6 +64,30 @@
 \ for list and for bold.
 \ 2013-06-05: Comments. '{*...*}'?
 \ 2013-06-19: Compare Creole's markups with txt2tags' markups.
+
+\ **************************************************************
+\ Debug tools
+
+: xxxtype  ( ca len -- ca len )
+  2dup ." «" type ." »"
+  ;
+: xxx.  ( x -- x )
+  dup ." «" . ." »"
+  ;
+
+\ **************************************************************
+\ Generic tool words for strings
+
+\ xxx todo move?
+
+: concatenate  ( ca1 len1 ca2 len2 -- ca1' len1' )
+  2swap dup if  s"  " s+   then  2swap s+
+  \ xxx faster alternative? benckmark
+  \ 2 pick if  2swap s"  " s+ 2swap  then  s+
+  ;
+: ?concatenate  ( ca1 len1 ca2 len2 f -- ca1' len1' )
+  if  concatenate  else  2drop  then
+  ;
 
 \ **************************************************************
 \ Generic tool words for markup and parsing
@@ -121,6 +146,7 @@ variable opened_[=|=]?  \ is there an open table caption?
 variable opened_[^^]?   \ is there an open '^^'?
 variable opened_[_]?    \ is there an open '_'?
 variable opened_[__]?   \ is there an open '__'?
+variable opened_link?   \ is there an open link?
 
 : <pre><code>  ( -- )
   [markup>order] <pre> <code> [markup<order]
@@ -290,41 +316,101 @@ variable #cells  \ counter for the current table
   ;
 
 \ **************************************************************
-\ Tool words for images and links
+\ Tool words for images 
 
-\ xxx todo unfinished
+: get_image_src_attribute  ( "filename<spc>" -- )
+  \ Parse and store the image src attribute.
+  files_subdir $@ parse-word s+ src=!
+  ;
+variable image_finished?  \ flag, no more image markup to parse?
+: end_of_image?  ( ca len -- ff )
+  \ ca len = latest name parsed in the alt attribute section
+  s" }}" str=  dup image_finished? !
+  ;
+: end_of_image_section?  ( ca len -- ff )
+  \ ca len = latest name parsed in the alt attribute section
+  2dup end_of_image? >r  s" |" str=  r> or 
+  ;
+: more_image?  ( -- ff )
+  \ Fill the input buffer or abort.
+  refill 0= dup abort" Missing '}}'"
+  ;
+: get_image_alt_attribute  ( "...<space>|<space>" | "...<space>}}}<space>"  -- )
+  \ Parse and store the image alt attribute.
+  s" "
+  begin   parse-name dup
+    if    2dup end_of_image_section?  dup >r 0= ?concatenate r>
+    else  2drop  more_image?
+    then  
+  until   alt=!
+  ;
+: get_image_raw_attributes  ( "...<space>}}}<space>"  -- )
+  \ Parse and store the image raw attributes.
+  s" "
+  begin   parse-name dup 
+    if    2dup end_of_image? dup >r 0= ?concatenate r>
+    else  2drop  more_image?
+    then  
+  until   raw=!
+  ;
+: parse_image  ( "imagemarkup}}}" -- )
+  \ Parse and store the image attributes.
+  get_image_src_attribute
+  parse-name end_of_image_section? 0=
+    abort" Space not allowed in image filename"
+  image_finished? @ 0= if
+    get_image_alt_attribute
+    image_finished? @ 0= if  get_image_raw_attributes  then
+  then
+  ;
 
-variable #|  \ counter of "|" separators
-variable rendering_image?   \ flag, currently rendering an image?
-variable rendering_link?   \ flag, currently rendering an image?
+\ **************************************************************
+\ Tool words for links
 
-: image|1  ( -- )
-  \ First separator in image.
-  [char] | parse alt=!
+: get_link_href_attribute  ( "filename<spc>" -- )
+  \ Parse and store the link href attribute.
+  parse-word href=!
   ;
-: image|2  ( -- )
-  \ Second separator in image.
-  [char] | parse raw=!
+variable link_finished?  \ flag, no more link markup to parse?
+: end_of_link?  ( ca len -- ff )
+  \ ca len = latest name parsed in the alt attribute section
+  s" ]]" str=  dup link_finished? !
   ;
-create 'image|  ' image|1 , ' image|2 ,  \ xt table
-: image|  ( compile-time: a -- ) ( run-time: -- ) 
-  \ Manage an image separator.
-  \ Execute the word corresponding to the count of separators.
-  \ ." image|"  \ xxx debug check
-  #| @ cells 'image| + perform  1 #| +!
+: end_of_link_section?  ( ca len -- ff )
+  \ ca len = latest name parsed in the alt attribute section
+  2dup end_of_link? >r  s" |" str=  r> or 
   ;
-
-: link|1  ( -- )
-  \ First separator in link.
+: more_link?  ( -- ff )
+  \ Fill the input buffer or abort.
+  refill 0= dup abort" Missing ']]'"
   ;
-: link|2  ( -- )
-  \ Second separator in link.
+: get_link_alt_attribute  ( "...<space>|<space>" | "...<space>}}}<space>"  -- )
+  \ Parse and store the link alt attribute.
+  s" "
+  begin   parse-name dup
+    if    2dup end_of_link_section?  dup >r 0= ?concatenate r>
+    else  2drop  more_link?
+    then  
+  until   alt=!
   ;
-create 'link|  ' link|1 , ' link|2 ,  \ xt table
-: link|  ( compile-time: a -- ) ( run-time: -- ) 
-  \ Manage a link separator.
-  \ Execute the word corresponding to the count of separators.
-  #| @ cells 'link| + perform  1 #| +!
+: get_link_raw_attributes  ( "...<space>}}}<space>"  -- )
+  \ Parse and store the link raw attributes.
+  s" "
+  begin   parse-name dup 
+    if    2dup end_of_link? dup >r 0= ?concatenate r>
+    else  2drop  more_link?
+    then  
+  until   raw=!
+  ;
+: parse_link  ( "linkmarkup}}}" -- )
+  \ Parse and store the link attributes.
+  get_link_href_attribute
+  parse-name end_of_link_section? 0=
+    abort" Space not allowed in link filename"
+  link_finished? @ 0= if
+    get_link_alt_attribute
+    link_finished? @ 0= if  get_link_raw_attributes  then
+  then
   ;
 
 \ **************************************************************
@@ -477,8 +563,10 @@ only forth markup>order definitions fendo>order
 : |  ( -- )
   \ Markup used as separator in tables, images and links.
   \ ." | rendered"  \ xxx debug check
+  [ 0 ] [if]  \ xxx old
   rendering_link? @ if  link| exit  then
   rendering_image? @ if  image| exit  then
+  [then]
   actual_cell? if  ['] <td> (|) exit  then
   content
   ;
@@ -497,22 +585,20 @@ only forth markup>order definitions fendo>order
 
 \ Images
 
-: {{  ( -- )
-  rendering_image? on  #| off
-  parse-word src=!
+: {{  ( "imagemarkup}}}" -- )
+  parse_image <img>
   ;
 : }}  ( -- )
-  <img>  rendering_image? off
+  true abort" '}}' without '{{'"
   ;
 
 \ Links
 
-: [[  ( -- )
-  rendering_link? on  #| off
-  s\" <img src=\""
+: [[  ( "linkmarkup}}}" -- )
+  opened_link? on  parse_link <a>
   ;
-: ]]  ( ca len -- )
-  <a> echo </a>  rendering_link? off
+: ]]  ( -- )
+  opened_link? @ 0= abort" ']]' without '[['"  </a>
   ;
 
 \ Escape
