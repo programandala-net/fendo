@@ -1,7 +1,7 @@
 .( fendo_parser.fs) cr
 
 \ This file is part of
-\ Fendo ("Forth Engine for Net DOcuments") version A-00.
+\ Fendo ("Forth Engine for Net DOcuments") version A-01.
 
 \ This file creates the parser.
 
@@ -56,6 +56,8 @@
 \   the normal wordlist order.
 \ 2013-06-23 Change: design and template variables are renamed
 \   after the changes in the config module.
+\ 2013-06-28 Change: '$@' is no longer required by metadata
+\   fields, after Fendo A-01.
 \
 \ **************************************************************
 \ Todo
@@ -67,7 +69,6 @@
 \   Or make them unnecesary? E.g. use 'class=' for parsing and
 \   storing the class attribute, instead of 's" bla" class
 \   place'.
-
 
 \ **************************************************************
 \ Pending markups
@@ -130,7 +131,7 @@ is content
   \ if required.
   \ nt = name token of the markup
   \ ca len = name of the markup
-  execute_markup? @
+  execute_markup? @  \ xxx used?
   if    
     nip nip (markup)
     \ nip nip drop  \ xxx bug thread
@@ -139,7 +140,7 @@ is content
   then
   ;
 variable #nothings  \ counter of empty parsings
-: (something)  ( ca len -- )
+: something  ( ca len -- )
   \ Manage something found on the page content.
   \ ca len = parsed item (markup or printable content)
   #nothings off
@@ -152,16 +153,6 @@ variable #nothings  \ counter of empty parsings
   then
   1 #parsed +!
   ;
-: something  ( ca len -- )
-  \ Manage something found on the page content.
-  \ ca len = parsed item (markup, printable content or Forth code)
-  forth_code? @ if  \ xxx not needed
-    evaluate  \ xxx not needed
-  else
-    (something)  \ xxx bug thread
-  then
-  ;
-
 : nothing  ( -- )
   \ Manage a "nothing", a parsed empty name. 
   \ The first empty name means the current line is finished;
@@ -232,6 +223,7 @@ variable #nothings  \ counter of empty parsings
   \ Manage a "nothing", a parsed empty name. 
   \ The first empty name means the current line is finished;
   \ the second consecutive empty name means the current line is empty.
+  preserve_eol? @ if  echo_cr  then  \ xxx tmp
   #nothings @  \ not the first consecutive time?
   if    close_pending  \ an empty line was parsed
   then  1 #nothings +!  #parsed off
@@ -275,7 +267,7 @@ variable more?  \ flag: keep on parsing more words?; changed by '}content'
   \ Return a target HTML page filename. 
   \ a = page-id
   \ ca len = target HTML page file name
-  source_file $@ source>target_extension 
+  source_file source>target_extension 
   ;
 : target_path/file  ( a -- ca len )
   \ Return a target HTML page filename, with its local path.
@@ -310,9 +302,9 @@ variable more?  \ flag: keep on parsing more words?; changed by '}content'
   \ Return the full path to the template file.
   target_dir $@
   [ true ] [if]  \ actual code
-    current_page design_subdir $@ dup 0=
+    current_page design_subdir dup 0=
     if  2drop website_design_subdir $@  then  
-    current_page template $@ dup 0=
+    current_page template dup 0=
     if  2drop website_template $@ then  s+ s+
   [else]  \ xxx bug thread
     website_design_subdir $@  \ xxx tmp

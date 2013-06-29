@@ -1,7 +1,7 @@
 .( fendo.fs ) cr
 
 \ This file is part of
-\ Fendo ("Forth Engine for Net DOcuments") version A-00.
+\ Fendo ("Forth Engine for Net DOcuments") version A-01.
 
 \ This file is the main one; it loads all the modules.
 
@@ -39,8 +39,17 @@
 \ 2013-06 New: Generic tool words; wordlists.
 
 \ **************************************************************
+\ Version history 
+
+\ 2012-06-30 Start of version A-00.
+\ 2013-06-28 Start of version A-01.
+
+\ **************************************************************
 \ Todo
 
+\ 2013-06-28 Make "plain_" data fields optional; they can be
+\ filled as default data, if empty.
+\
 \ 2013-06-08 Let line comments in data header.
 
 \ **************************************************************
@@ -304,8 +313,6 @@ s" A-00-20130608" sconstant version
 
 depth [if] abort [then]  \ xxx debugging
 include ./fendo_config.fs
-depth [if] abort [then]  \ xxx debugging
-include ./fendo_files.fs
 depth [if] abort [then]  \ xxx debugging
 include ./fendo_data.fs
 depth [if] abort [then]  \ xxx debugging

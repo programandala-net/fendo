@@ -1,7 +1,7 @@
 .( fendo_markup.fs ) cr
 
 \ This file is part of
-\ Fendo ("Forth Engine for Net DOcuments") version A-00.
+\ Fendo ("Forth Engine for Net DOcuments") version A-01.
 
 \ This file defines the markup.
 
@@ -29,6 +29,7 @@
 \ 2013-06-06 Start. This file is created with part of the old
 \   <fendo_html_tags.fs>.
 \ 2013-06-08 Change: 'forth_block?' renamed to 'forth_code?'.
+\ 2013-06-28 Change: 'forth_code?' changed to 'forth_code_depth', a counter.
 
 \ **************************************************************
 \ Generic tool words for markup and parsing
@@ -44,30 +45,8 @@ variable table_started?  \ flag, is a table open?
 
 variable execute_markup?  \ flag, execute the markup while parsing?
 execute_markup? on  \ execute by default; otherwise print it
-variable forth_code?  \ flag, parsing in a Forth code block?
-
-false [if]  \ xxx todo finish
-: :>?  ( ca1 len1 ca2 len2 -- ca1 len1 ff )
-  \ Add a new name to the parsed merged Forth code.
-  \ ca1 len1 = code already parsed in the code
-  \ ca2 len2 = new name parsed in the code
-  \ ff = is the name the end of the code?
-  2dup s" :>" str= >r  s+ s"  " s+  r>
-  ;
-: slurp-parse  ( ca1 len1 "forthcode :>" -- ca2 len2 )
-  \ Get the content of the input stream until a delimiter name is found.
-  \ Include that name and return the parsed content.
-  \ ca1 len1 = 
-  \ ca2 len2 = 
-  s" "
-  begin
-    parse-name dup
-    if    slurp:>?               \ end of the code?
-    else  2drop refill 0=   \ end of the parsing area?
-    then
-  until
-  ;
-[then]
+variable preserve_eol?  \ flag, preserve in the target the end of lines of the source?
+variable forth_code_depth  \ depth level of the parsed Forth code block?
 
 \ **************************************************************
 \ Config

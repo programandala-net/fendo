@@ -1,7 +1,7 @@
 .( fendo_echo.fs ) cr
 
 \ This file is part of
-\ Fendo ("Forth Engine for Net DOcuments") version A-00.
+\ Fendo ("Forth Engine for Net DOcuments") version A-01.
 
 \ This file defines the words that print to the target HTML file.
 
@@ -28,6 +28,7 @@
 
 \ 2013-06-04 Start.
 \ 2013-06-08 New: First code for output redirection.
+\ 2013-06-29 Change: 'target_fid' moved here from <fendo_files.fs>.
 
 \ **************************************************************
 \ Output
@@ -39,6 +40,8 @@ true value redirection?  \ xxx debug
 
 \ **************************************************************
 \ Echo
+
+variable target_fid  \ file id of the HTML target page
 
 : (echo)  ( xt -- )
   dry? @
