@@ -1,7 +1,7 @@
 .( fendo_data.fs) cr
 
 \ This file is part of
-\ Fendo ("Forth Engine for Net DOcuments") version A-00.
+\ Fendo ("Forth Engine for Net DOcuments") version A-01.
 
 \ File changed 2013-06-28 18
 
@@ -58,6 +58,16 @@
 \ 2013-06-28 Change: hierarchy metadata fields are renamed with
 \   the "_page" prefix, to avoid the clash with 'next' and make
 \   the code clearer; 'up' is renamed to 'upper_page'.
+\ 2013-06-28 Change: metadata fields return their values, not
+\   their addresses; a parallel word is created to return the
+\   address, only needed to set the default data;
+\   this change makes the code nicer.
+\ 2013-06-29 Change: '/sourcefilename' moved here from
+\   <fendo_files.fs>.
+\ 2013-06-29 Change: 'source>target_extension' moved here
+\   from <fendo_files.fs>.
+\ 2013-06-29 New: 'target_extension'; now target filename extension
+\   depends on the corresponding optional metadatum too.
 
 \ **************************************************************
 \ Todo
@@ -65,6 +75,11 @@
 \ 2013-06-08 Can 'current_page' be used instead of ''data'?
 \ 2013-06-07 Calculated data: rendered_title plain_title
 \   ... same with description. Better: filter words!
+
+\ **************************************************************
+\ Requirements
+
+require galope/minus-suffix.fs  \ '-suffix'
 
 \ **************************************************************
 \ Page data engine
@@ -75,15 +90,19 @@ variable current_data  \ address of the latest created data
   \ u = datum offset
   >r  0 parse  \ parse the rest of the current input line
   -leading  
-  dup  if  ." Parsed datum: " 2dup type cr  then  \ xxx debug check
+\  dup  if  ." Parsed datum: " 2dup type cr  then  \ xxx debug check
   current_data @ r> + $!
   ;
 variable in_data_header?  \ flag to let the data fields to disguise the context
-variable /datum  \ byte offset of the currently created datum
-: datum:  ( "name" -- )
-  \ Create a new page datum field.
-  create  ( "name" -- )
-    \ "name" = field name
+variable /datum  \ offset of the current datum; at the end, length of the data
+: :datum>value  ( ca len -- )
+  \ Create a page metadatum that returns its value.
+  \ This is the normal version of the metadatum: if executed in
+  \ the metada header (between 'data{' and '}data') it will
+  \ parse its datum from the input stream; out of the header it
+  \ will return the datum string.
+  \ ca len = datum name
+  nextname create
     cell /datum dup @ , +!  \ store the offset and increment it
   does>  ( a1 | "text<nl>" -- a2 | )
     \ a1 = page data address
@@ -93,10 +112,28 @@ variable /datum  \ byte offset of the currently created datum
     ( a1 dfa | dfa "text<nl>" )
     @  in_data_header? @  ( u ff )
     if    ( u "datum<nl>" ) parse_datum
-    else  ( a1 u ) +
-      \ xxx todo add '$@' here; data are not changed; but how to
-      \ adapt 'set_default_data'?
+    else  ( a1 u ) + $@
     then
+  ;
+: :datum>address  ( ca len -- )
+  \ Create a page metadatum that returns the address of its data.
+  \ ca len = datum name
+  s" '" 2swap s+ nextname
+  latestxt  \ of the word previously created by ':datum>value'
+  create  >body ,
+  does>  ( a1 -- a2 )
+    \ a1 = page data address
+    \ a2 = datum address
+    \ dfa = data field address of the datum word
+    \ u = datum offset
+    ( a1 dfa ) 
+    @ @
+\    dup ." datum offset = " .  \ xxx debug check
+    ( a1 u ) +
+  ;
+: datum:  ( "name" -- )
+  \ Create a page metadatum.
+  parse-name 2dup :datum>value :datum>address 
   ;
 
 \ **************************************************************
@@ -121,13 +158,15 @@ datum: next_page
 datum: first_page
 datum: last_page
 
-datum: keywords  \ list of keywords, separated by commas
-datum: tags  \ list of tags, separated by commas
-datum: status  \ list of status ids, separated by commas
-datum: edit_summary
+datum: keywords  \ list of HTML meta keywords, separated by commas
+datum: tags  \ list of public tags, separated by commas
+datum: properties  \ list of properties, separated by commas
+datum: edit_summary  \ description of the latest changes
 
 datum: related  \ list of page-ids, xxx separated by commas?
 datum: language_versions  \ list of page-ids, xxx separated by commas?
+
+datum: filename_extension  \ alternative target filename extension (with dot)
 
 \ Design and template
 
@@ -151,6 +190,26 @@ datum: template  \ HTML template filename in the design subdir
   ;
 
 \ **************************************************************
+\ File names
+
+0 value current_page  \ page-id of the current page
+
+: target_extension  ( -- ca len )
+  \ Return the target filename extension.
+  current_page filename_extension dup 0=
+  if  2drop html_extension $@   then 
+  ;
+: source>target_extension  ( ca1 len1 -- ca2 len2 )
+  \ ca1 len1 = Forth source page file name
+  \ ca2 len2 = target HTML page file name
+  forth_extension $@ -suffix  target_extension s+
+  ;
+: /sourcefilename  ( -- ca len )
+  \ Return the current source filename, without path.
+  sourcefilename -path
+  ;
+
+\ **************************************************************
 \ Page-ids
 
 \ The first time a page is interpreted, its data is parsed and
@@ -162,13 +221,13 @@ datum: template  \ HTML template filename in the design subdir
 
 : "page-id"  ( -- ca len )
   \ Return the name of the main page-id.
-  \ ca len = name of the main page-id
   /sourcefilename -extension
   ;
 : :page_id  ( -- )
   \ Create the main page-id and init its data space.
   "page-id" :create  here current_data !  /datum @ allot
   ;
+0 [if]  \ xxx old
 : :page_id_aliases  { xt -- }
   \ Create aliases of the main page-id.
   \ xt = execution token of the main page-id
@@ -179,18 +238,17 @@ datum: template  \ HTML template filename in the design subdir
   \ Create the default page-ids.
   :page_id  latestxt :page_id_aliases
   ;
+[then]
 
 \ **************************************************************
 \ Page data header
-
-0 value current_page  \ page-id of the current page
 
 defer set_default_data  ( -- )
   \ Set the default values of the page data.
 : (set_default_data)  ( -- )
   \ Set the default values of the page data.
   \ xxx todo finish
-  /sourcefilename current_data @ source_file $!
+  /sourcefilename current_data @ 'source_file $!
   ;
 ' (set_default_data) is set_default_data
 : }data  ( -- )
@@ -207,7 +265,7 @@ defer set_default_data  ( -- )
   ;
 : get_data{  ( "<text><spaces>}data" -- )
   \ Get the page data.
-  :page_ids
+  :page_id
   current_data @ to current_page
   in_data_header? on
   ;
