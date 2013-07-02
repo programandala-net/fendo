@@ -52,6 +52,11 @@
 \ 2013-06-29: New: First changes to fix and improve the source
 \   code markups (the source region needs a special parsing).
 \ 2013-06-29: New: The image markups are rendered.
+\ 2013-07-02: Change: Spaces found on filenames or URL don't abort
+\   any more, but print a 'xxx fixme' warning in an HTML comment instead.
+\   These undesired spaces are caused by a wrong rendering of "__" by
+\   Simplil2Fendo, difficult to fix. Thus manual fix will be
+\   required in the final .fs files.
 
 \ **************************************************************
 \ Todo
@@ -62,8 +67,10 @@
 \ 2013-06-04: Flag the first markup of the current line, in
 \ order to use '--' both forth nested lists and delete, or '**'
 \ for list and for bold.
-\ 2013-06-05: Comments. '{*...*}'?
 \ 2013-06-19: Compare Creole's markups with txt2tags' markups.
+\ 2013-06-29: xxx fixme rendering the whole site leavs >900
+\ numbers on the stack, strings. it seems caused by links or
+\ images.
 
 \ **************************************************************
 \ Debug tools
@@ -87,6 +94,9 @@
   ;
 : ?concatenate  ( ca1 len1 ca2 len2 f -- ca1' len1' )
   if  concatenate  else  2drop  then
+  ;
+: otherwise_concatenate  ( ca1 len1 ca2 len2 f -- ca1' len1' f )
+  dup >r 0= ?concatenate r>
   ;
 
 \ **************************************************************
@@ -146,7 +156,6 @@ variable opened_[=|=]?  \ is there an open table caption?
 variable opened_[^^]?   \ is there an open '^^'?
 variable opened_[_]?    \ is there an open '_'?
 variable opened_[__]?   \ is there an open '__'?
-variable opened_link?   \ is there an open link?
 
 : <pre><code>  ( -- )
   [markup>order] <pre> <code> [markup<order]
@@ -316,6 +325,14 @@ variable #cells  \ counter for the current table
   ;
 
 \ **************************************************************
+\ Tool words for images and links
+
+: or_end_of_section?  ( ca len ff1 -- ff2 )
+  \ ca len = latest name parsed in the alt attribute section
+  >r  s" |" str=  r> or 
+  ;
+
+\ **************************************************************
 \ Tool words for images 
 
 : get_image_src_attribute  ( "filename<spc>" -- )
@@ -324,93 +341,134 @@ variable #cells  \ counter for the current table
   ;
 variable image_finished?  \ flag, no more image markup to parse?
 : end_of_image?  ( ca len -- ff )
-  \ ca len = latest name parsed in the alt attribute section
+  \ ca len = latest name parsed 
   s" }}" str=  dup image_finished? !
   ;
 : end_of_image_section?  ( ca len -- ff )
-  \ ca len = latest name parsed in the alt attribute section
-  2dup end_of_image? >r  s" |" str=  r> or 
+  \ ca len = latest name parsed 
+  2dup end_of_image? or_end_of_section?
   ;
 : more_image?  ( -- ff )
   \ Fill the input buffer or abort.
   refill 0= dup abort" Missing '}}'"
   ;
-: get_image_alt_attribute  ( "...<space>|<space>" | "...<space>}}}<space>"  -- )
+: get_image_alt_attribute  ( "...<space>|<space>" | "...<space>}}<space>"  -- )
   \ Parse and store the image alt attribute.
   s" "
   begin   parse-name dup
-    if    2dup end_of_image_section?  dup >r 0= ?concatenate r>
+    if    2dup end_of_image_section?  otherwise_concatenate
     else  2drop  more_image?
     then  
   until   alt=!
   ;
-: get_image_raw_attributes  ( "...<space>}}}<space>"  -- )
+: get_image_raw_attributes  ( "...<space>}}<space>"  -- )
   \ Parse and store the image raw attributes.
   s" "
   begin   parse-name dup 
-    if    2dup end_of_image? dup >r 0= ?concatenate r>
+    if    2dup end_of_image?  otherwise_concatenate
     else  2drop  more_image?
     then  
   until   raw=!
   ;
-: parse_image  ( "imagemarkup}}}" -- )
+: parse_image  ( "imagemarkup}}" -- )
   \ Parse and store the image attributes.
   get_image_src_attribute
-  parse-name end_of_image_section? 0=
-    abort" Space not allowed in image filename"
+  [ false ] [if]  \ simple version
+    parse-name end_of_image_section? 0=
+      abort" Space not allowed in image filename"
+  [else]  \ no abort
+    begin  parse-name end_of_image_section? 0=
+    while  s" <!-- xxx fixme space in image filename -->" echo
+    repeat
+  [then]
   image_finished? @ 0= if
     get_image_alt_attribute
     image_finished? @ 0= if  get_image_raw_attributes  then
   then
   ;
+: ({{)  ( "imagemarkup}}" -- )
+  parse_image [markup>order] <img> [markup<order]
+  ;
 
 \ **************************************************************
 \ Tool words for links
 
+variable link_text  \ used as a dynamic string
 : get_link_href_attribute  ( "filename<spc>" -- )
   \ Parse and store the link href attribute.
   parse-word href=!
   ;
 variable link_finished?  \ flag, no more link markup to parse?
 : end_of_link?  ( ca len -- ff )
-  \ ca len = latest name parsed in the alt attribute section
+  \ ca len = latest name parsed 
   s" ]]" str=  dup link_finished? !
   ;
 : end_of_link_section?  ( ca len -- ff )
-  \ ca len = latest name parsed in the alt attribute section
-  2dup end_of_link? >r  s" |" str=  r> or 
+  \ ca len = latest name parsed 
+  2dup end_of_link? or_end_of_section?
   ;
 : more_link?  ( -- ff )
   \ Fill the input buffer or abort.
   refill 0= dup abort" Missing ']]'"
   ;
-: get_link_alt_attribute  ( "...<space>|<space>" | "...<space>}}}<space>"  -- )
+: parse_link_text  ( "...<space>|<space>" | "...<space>]]<space>"  -- )
   \ Parse and store the link alt attribute.
   s" "
   begin   parse-name dup
-    if    2dup end_of_link_section?  dup >r 0= ?concatenate r>
+    if    
+          2dup s" {{" str=
+          if
+            2drop
+            echo>string ({{) echoed $@ echo>file
+            false
+            \ xxx fixme create the <img> before the <a> and uses its attributes
+          else
+            2dup end_of_link_section?
+            otherwise_concatenate
+          then
     else  2drop  more_link?
-    then  
-  until   alt=!
+    then  ( ca len ff )
+  until   link_text $!
   ;
-: get_link_raw_attributes  ( "...<space>}}}<space>"  -- )
+: get_link_raw_attributes  ( "...<space>}}<space>"  -- )
   \ Parse and store the link raw attributes.
   s" "
   begin   parse-name dup 
-    if    2dup end_of_link? dup >r 0= ?concatenate r>
+    if    2dup end_of_link?  otherwise_concatenate
     else  2drop  more_link?
     then  
   until   raw=!
   ;
-: parse_link  ( "linkmarkup}}}" -- )
+: parse_link  ( "linkmarkup]]" -- )
   \ Parse and store the link attributes.
   get_link_href_attribute
-  parse-name end_of_link_section? 0=
-    abort" Space not allowed in link filename"
+  [ false ] [if]  \ simple version
+    parse-name end_of_link_section? 0=
+      abort" Space not allowed in link filename or URL"
+  [else]  \ no abort
+    begin  parse-name end_of_link_section? 0=
+    while  s" <!-- xxx fixme space in link filename or URL -->" echo
+    repeat
+  [then]
   link_finished? @ 0= if
-    get_link_alt_attribute
+    parse_link_text 
     link_finished? @ 0= if  get_link_raw_attributes  then
   then
+  ;
+: ([[)  ( "linkmarkup]]" -- )
+  \ xxx todo
+  \ ca len = link text
+  \ Parse the link attributes and prepare them; return the link
+  \ text.
+  s" " link_text $!
+  parse_link
+
+  link_text $@len 0= if  href= count link_text $!  then
+
+  \ xxx fixme use 'target_extension' instead, to get the
+  \ extension of the destination file! there are links to Atom
+  \ files, with their own extensions.
+  href= count current_target_extension s+ href=!
   ;
 
 \ **************************************************************
@@ -558,21 +616,13 @@ only forth markup>order definitions fendo>order
   numbered_list_items @ 0= if  <ol>  then  (+)
   ;
 
-\ Markup for different uses
+\ Tables
 
 : |  ( -- )
   \ Markup used as separator in tables, images and links.
   \ ." | rendered"  \ xxx debug check
-  [ 0 ] [if]  \ xxx old
-  rendering_link? @ if  link| exit  then
-  rendering_image? @ if  image| exit  then
-  [then]
-  actual_cell? if  ['] <td> (|) exit  then
-  content
+  actual_cell? if  ['] <td> (|)  else  s" |" content  then
   ;
-
-\ Tables
-
 : |=  ( -- )
   \ Mark a table header cell.
   actual_cell? if  ['] <th> (|)  else  s" |=" content  then
@@ -585,8 +635,8 @@ only forth markup>order definitions fendo>order
 
 \ Images
 
-: {{  ( "imagemarkup}}}" -- )
-  parse_image <img>
+: {{  ( "imagemarkup}}" -- )
+  ({{)
   ;
 : }}  ( -- )
   true abort" '}}' without '{{'"
@@ -594,11 +644,11 @@ only forth markup>order definitions fendo>order
 
 \ Links
 
-: [[  ( "linkmarkup}}}" -- )
-  opened_link? on  parse_link <a>
+: [[  ( "linkmarkup]]" -- )
+  ([[) <a> link_text $@ echo </a> 
   ;
 : ]]  ( -- )
-  opened_link? @ 0= abort" ']]' without '[['"  </a>
+  true abort" ']]' without '[['"
   ;
 
 \ Escape
