@@ -29,41 +29,65 @@
 \ 2013-06-04 Start.
 \ 2013-06-08 New: First code for output redirection.
 \ 2013-06-29 Change: 'target_fid' moved here from <fendo_files.fs>.
+\ 2013-07-03 Change: 'dry?' renamed to 'echo>screen?'.
+\ 2013-07-03 New: tools to redirect the output to a dynamic
+\   string.
 
 \ **************************************************************
 \ Output
 
-variable dry?  \ flag, dry run?: don't create the target files, echo to the screen instead
-dry? off
+variable echo>screen?  \ flag, don't create the target files, echo to the screen instead
+variable echo>string?  \ flag, temporarily echo to the 'echoed' string.
+variable echoed  \ used as dynamic string
 
-true value redirection?  \ xxx debug
+: echo>string  ( -- )
+  \ Redirect the output to the dynamic string 'echoed'.
+  echo>string? on
+  0 echoed $!len
+  ;
+: echo>file  ( -- )
+  \ Redirect the output to the target file.
+  echo>string? off
+  echo>screen? off
+  ;
+: echo>screen  ( -- )
+  \ Redirect the output to the target file.
+  echo>string? off
+  echo>screen? on
+  ;
+
+echo>file
 
 \ **************************************************************
 \ Echo
 
 variable target_fid  \ file id of the HTML target page
 
-: (echo)  ( xt -- )
-  dry? @
-  if  execute  else  target_fid @ outfile-execute  then
+: (echo)  ( xt | ca len xt -- )
+  echo>screen? @
+  if    execute
+  else  target_fid @ outfile-execute
+  then
   ;
-
+: (echo>string)  ( ca len -- )
+  \ Add a string to to the 'echoed' string.
+  echoed $+! 
+  ;
 : echo  ( ca len -- )
   \ Print a text string to the HTML file.
-  [ redirection? ] [if]
-    ['] type (echo)
-  [else]
-    type
-  [then]
+  echo>string? @
+  if    (echo>string)
+  else  ['] type (echo)
+  then
   ;
 : echo_cr  ( -- )
   \ Print a carriage return to the HTML file.
-  [ redirection? ] [if]
-    ['] cr (echo)
-  [else]
-    cr
-  [then]
+  echo>string? @
+  if    s\" \n"  (echo>string)
+  else  ['] cr (echo)
+  then
   ;
+
 : echo_space  ( -- )
   \ Print a space to the HTML file.
   s"  " echo

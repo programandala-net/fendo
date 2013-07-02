@@ -58,6 +58,8 @@
 \   after the changes in the config module.
 \ 2013-06-28 Change: '$@' is no longer required by metadata
 \   fields, after Fendo A-01.
+\ 2013-07-03 Change: 'dry?' renamed to 'echo>screen?', after the
+\   changes in the echo module.
 \
 \ **************************************************************
 \ Todo
@@ -284,7 +286,7 @@ variable more?  \ flag: keep on parsing more words?; changed by '}content'
   ;
 : open_target  ( -- )
   \ Open the target HTML page file, if needed.
-  dry? @ 0= if  (open_target)  then
+  echo>screen? @ 0= if  (open_target)  then
   ;
 : (close_target)  ( -- )
   \ Close the target HTML page file.
@@ -293,7 +295,7 @@ variable more?  \ flag: keep on parsing more words?; changed by '}content'
   ;
 : close_target  ( -- )
   \ Close the target HTML page file, if needed.
-  dry? @ 0= if  (close_target)  then
+  echo>screen? @ 0= if  (close_target)  then
   ;
 
 \ Design template

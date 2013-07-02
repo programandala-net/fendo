@@ -27,10 +27,15 @@
 \ Change history of this file
 
 \ 2013-06-10 Start. Factored from <fendo_markup_html.fs>.
+\ 2013-06-29 Fix: the 'raw=' attribute, the last in the table,
+\   wasn't cleared by '-attributes'.
 
 \ **************************************************************
 \ Todo
 
+\ 2013-07-03 create a secondary set of attributes, selectable
+\ with a variable, in order to let nested markups
+\ 2013-06-29 use dynamic string for attributes
 
 \ **************************************************************
 \ Requirements
@@ -79,7 +84,7 @@ require galope/3dup.fs
   \ xt = execution token of the attribute variable
   \ ca len = name of the attribute variable
   get-current fendo>current 
-  parse-name? abort" Parseable name expected in 'attribute:'"
+  parse-name? abort" Missing name after 'attribute:'"
   2dup :svariable latestxt  ( ca len xt )  dup >r
   3dup :attribute" 3dup :attribute! :attribute@
   set-current  r>
@@ -212,7 +217,7 @@ create 'attributes_xt  \ table for the xt of the attribute variables
 
 : -attributes  ( -- )
   \ Clear all HTML attributes.
-  'attributes_xt #attributes 1- cells bounds ?do
+  'attributes_xt #attributes cells bounds ?do
     i perform off
   cell +loop
   ;
