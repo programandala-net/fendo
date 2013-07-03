@@ -29,13 +29,13 @@
 \ 2013-06-10 Start. Factored from <fendo_markup_html.fs>.
 \ 2013-06-29 Fix: the 'raw=' attribute, the last in the table,
 \   wasn't cleared by '-attributes'.
+\ 2013-07-03 New: secondary set of attributes, selectable
+\ with a variable, in order to let nested markups.
+\ 2013-07-03 Change: attributes are stored in dynamic strings.
 
 \ **************************************************************
 \ Todo
 
-\ 2013-07-03 create a secondary set of attributes, selectable
-\ with a variable, in order to let nested markups
-\ 2013-06-29 use dynamic string for attributes
 
 \ **************************************************************
 \ Requirements
@@ -54,7 +54,7 @@ require galope/3dup.fs
   s" @" s+ :create  \ create a word with the name 'attribute@'.
   r> ,
   does>  ( -- ca1 len1 )
-    ( dfa ) perform count
+    ( dfa ) perform $@
   ;
 : :attribute!  ( ca len xt -- )
   \ Create a word that stores an attribute.
@@ -65,7 +65,7 @@ require galope/3dup.fs
   s" !" s+ nextname create  \ create a word with the name 'attribute!'.
   r> ,
   does>  ( ca1 len1 -- )
-    ( dfa ) perform place
+    ( dfa ) perform $!
   ;
 : :attribute"  ( ca len xt -- )
   \ Create a word that parses and stores an attribute.
@@ -75,17 +75,37 @@ require galope/3dup.fs
   s\" \"" s+ nextname create  \ create a word with the name 'attribute"'.
   r> ,
   does>  ( "text<quote>" -- )
-    ( dfa ) [char] " parse  rot perform place
+    ( dfa ) [char] " parse  rot perform $!
   ; 
-: attribute:  ( "name" -- xt )
-  \ Create (in the markup vocabulary)
-  \ a string variable for an attribute, and two words to manage it.
-  \ "name" = name of the attribute variable
-  \ xt = execution token of the attribute variable
+
+variable attributes_set  \ 0 or 1; to select the attributes set
+: >attributes<  ( -- )
+  \ Exchange the attributes set (0->1, 1->0)
+  attributes_set @ 0= abs  attributes_set !
+  ;
+
+: (attribute:)  ( ca len -- xt )
+  \ Create an attribute variable.
+  \ It consists of two actual variables.
+  \ The 'attributes_set' variable lets to choose which of both
+  \ variables is actually used.
   \ ca len = name of the attribute variable
+  \ xt = xt of the attribute variable
+  :create   latestxt >r  0 , 0 ,  r>
+            ." [(attribute:) created with xt " dup . ." ]"  \ xxx debug check
+  does>     ( -- ) ( dfa -- ) 
+            ." [executing an attribute variable]"  \ xxx debug check
+            attributes_set @ cells + 
+  ;
+: attribute:  ( "name" -- xt )
+  \ Create an attribute variable in the markup vocabulary,
+  \ and three words to manage it.
+  \ "name" = ca len = name of the attribute variable
+  \ xt = xt of the attribute variable
   get-current fendo>current 
   parse-name? abort" Missing name after 'attribute:'"
-  2dup :svariable latestxt  ( ca len xt )  dup >r
+  cr ." attribute: " 2dup type cr  \ xxx debug check
+  2dup (attribute:) ( ca len xt )  dup >r
   3dup :attribute" 3dup :attribute! :attribute@
   set-current  r>
   ;
