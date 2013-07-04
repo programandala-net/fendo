@@ -57,6 +57,8 @@
 \   These undesired spaces are caused by a wrong rendering of "__" by
 \   Simplil2Fendo, difficult to fix. Thus manual fix will be
 \   required in the final .fs files.
+\ 2013-07-04: New: language markup.
+\ 2013-07-04: Fix: separation after punctuation markup.
 
 \ **************************************************************
 \ Todo
@@ -96,6 +98,9 @@
   if  concatenate  else  2drop  then
   ;
 : otherwise_concatenate  ( ca1 len1 ca2 len2 f -- ca1' len1' f )
+  \ Wrapper for '?concatenate'.
+  \ If f is false, concatenate ca1 len1 and ca2 len2;
+  \ if f is true, drop ca2 len2. 
   dup >r 0= ?concatenate r>
   ;
 
@@ -137,7 +142,7 @@ defer close_pending  ( -- )
   \ a = markup flag variable: is the markup already open?
   dup >r @
   if    nip false
-        execute_markup? on  preserve_eol? off  \ xxx tmp
+        \ execute_markup? on  preserve_eol? off  \ xxx tmp
   else  drop true
   then  r> !  execute
   ;
@@ -165,7 +170,7 @@ variable opened_[__]?   \ is there an open '__'?
   ;
 
 \ **************************************************************
-\ Tool words for lists
+\ Tools for lists
 
 variable bullet_list_items    \ counter 
 variable numbered_list_items  \ counter 
@@ -187,7 +192,7 @@ variable numbered_list_items  \ counter
   ;
 
 \ **************************************************************
-\ Tool words for tables
+\ Tools for tables
 
 variable #rows   \ counter for the current table
 variable #cells  \ counter for the current table
@@ -234,7 +239,7 @@ variable #cells  \ counter for the current table
   ;
 
 \ **************************************************************
-\ Tool words for merged Forth code
+\ Tools for merged Forth code
 
 : (forth_code_end?)  ( ca len -- ff )
   \ Is a name a valid end markup of the Forth code?
@@ -274,7 +279,7 @@ variable #cells  \ counter for the current table
   ;
 
 \ **************************************************************
-\ Tool words for punctuation
+\ Tools for punctuation
 
 \
 \ Punctuation markup is needed in order to print it properly
@@ -290,17 +295,17 @@ variable #cells  \ counter for the current table
 : :punctuation   ( ca len -- )
   \ Create a punctuation word.
   \ ca len = punctuation --and name of its punctuation word
-  :echo_name  separate? on
+  :echo_name_
   ;
 : punctuation:   ( "name" -- )
   \ Create a punctuation word.
   \ "name" = punctuation --and name of its punctuation word
-  parse-name? abort" Parseable name expected in 'punctuation:'"
+  parse-name? abort" Missing name in 'punctuation:'"
   :punctuation
   ;
 
 \ **************************************************************
-\ Tool words for code markup
+\ Tools for code markup
 
 : ?_echo  ( ca len -- )  \ xxx todo move
   if  _echo  else  2drop  then
@@ -325,7 +330,7 @@ variable #cells  \ counter for the current table
   ;
 
 \ **************************************************************
-\ Tool words for images and links
+\ Tools for images and links
 
 : or_end_of_section?  ( ca len ff1 -- ff2 )
   \ ca len = latest name parsed in the alt attribute section
@@ -333,7 +338,7 @@ variable #cells  \ counter for the current table
   ;
 
 \ **************************************************************
-\ Tool words for images 
+\ Tools for images 
 
 : get_image_src_attribute  ( "filename<spc>" -- )
   \ Parse and store the image src attribute.
@@ -391,7 +396,7 @@ variable image_finished?  \ flag, no more image markup to parse?
   ;
 
 \ **************************************************************
-\ Tool words for links
+\ Tools for links
 
 variable link_text  \ used as a dynamic string
 : get_link_href_attribute  ( "filename<spc>" -- )
@@ -411,23 +416,26 @@ variable link_finished?  \ flag, no more link markup to parse?
   \ Fill the input buffer or abort.
   refill 0= dup abort" Missing ']]'"
   ;
+: parse_nested_image  ( -- ca len )
+  \ Parse and render an image markup nested in other markup
+  \ (currently only used in link texts).
+  \ ca len = HTML of the image markup
+  >attributes<
+  echo> @ echo>string  ({{)  echo> !
+  >attributes<  echoed $@ 
+  ;
 : parse_link_text  ( "...<space>|<space>" | "...<space>]]<space>"  -- )
-  \ Parse and store the link alt attribute.
+  \ Parse and store the link text. 
   s" "
-  begin   parse-name dup
-    if    
-          2dup s" {{" str=
-          if
-            2drop
-            echo>string ({{) echoed $@ echo>file
-            false
-            \ xxx fixme create the <img> before the <a> and uses its attributes
-          else
-            2dup end_of_link_section?
-            otherwise_concatenate
+  begin
+    parse-name dup
+    if    2dup s" {{" str=
+          if    2drop  parse_nested_image s+  false
+          else  2dup end_of_link_section?
+                otherwise_concatenate
           then
     else  2drop  more_link?
-    then  ( ca len ff )
+    then  
   until   link_text $!
   ;
 : get_link_raw_attributes  ( "...<space>}}<space>"  -- )
@@ -463,12 +471,36 @@ variable link_finished?  \ flag, no more link markup to parse?
   s" " link_text $!
   parse_link
 
-  link_text $@len 0= if  href= count link_text $!  then
+  link_text $@len 0= if  href= $@ link_text $!  then
 
   \ xxx fixme use 'target_extension' instead, to get the
   \ extension of the destination file! there are links to Atom
   \ files, with their own extensions.
-  href= count current_target_extension s+ href=!
+  href= $@ current_target_extension s+ href=!
+  ;
+
+\ **************************************************************
+\ Tools for languages
+
+: (xml:)lang=  ( -- a )
+  \ Return the proper language attribute.
+  xhtml? @ if  xml:lang=  else  lang=  then
+  ;
+: ((:  ( "name" -- )
+  \ Create a language inline markup.
+  \ name = ISO code of a language
+  parse-name? abort" Missing language code"
+  2dup s" ((" s+ :create s,
+  does>  ( -- ) ( dfa )
+    count (xml:)lang= $! [markup>order] <span> [markup<order]
+  ;
+: (((:  ( "name" -- )
+  \ Create a language block markup.
+  \ name = ISO code of a language
+  parse-name? abort" Missing language code"
+  2dup s" (((" s+ :create s,
+  does>  ( -- ) ( dfa )
+    count (xml:)lang= $! [markup>order] <div> [markup<order]
   ;
 
 \ **************************************************************
@@ -581,27 +613,27 @@ only forth markup>order definitions fendo>order
 \ Headings
 
 : =  ( -- )
-  \ Open or close a <h1> region.
+  \ Open or close a <h1> heading.
   ['] <h1> ['] </h1> opened_[=]? markups
   ;
 : ==  ( -- )
-  \ Open or close a <h2> region.
+  \ Open or close a <h2> heading.
   ['] <h2> ['] </h2> opened_[=]? markups
   ;
 : ===  ( -- )
-  \ Open or close a <h3> region.
+  \ Open or close a <h3> heading.
   ['] <h3> ['] </h3> opened_[=]? markups
   ;
 : ====  ( -- )
-  \ Open or close a <h4> region.
+  \ Open or close a <h4> heading.
   ['] <h4> ['] </h4> opened_[=]? markups
   ;
 : =====  ( -- )
-  \ Open or close a <h5> region.
+  \ Open or close a <h5> heading.
   ['] <h5> ['] </h5> opened_[=]? markups
   ;
 : ======  ( -- )
-  \ Open or close a <h6> region.
+  \ Open or close a <h6> heading.
   ['] <h6> ['] </h6> opened_[=]? markups
   ;
 
@@ -649,6 +681,19 @@ only forth markup>order definitions fendo>order
   ;
 : ]]  ( -- )
   true abort" ']]' without '[['"
+  ;
+
+\ Language
+
+((: en  (((: en  \ create 'en((' and 'en((('
+((: eo  (((: eo  \ create 'eo((' and 'eo((('
+((: es  (((: es  \ create 'es((' and 'es((('
+
+: ))  ( -- )
+  </span> separate? on
+  ;
+: )))  ( -- )
+  </div> separate? on
   ;
 
 \ Escape

@@ -37,8 +37,15 @@
 : :echo_name   ( ca len -- )
   \ Create a word that prints its own name.
   \ ca len = word name 
-  2dup nextname  create  s,
-  does>  ( dfa )  count echo
+  2dup :create  s,
+  does>  ( -- ) ( dfa )  count echo
+  ;
+: :echo_name_   ( ca len -- )
+  \ Create a word that prints its own name
+  \ and forces separation from the following text.
+  \ ca len = word name 
+  2dup :create  s,
+  does>  ( -- ) ( dfa )  count echo  separate? on
   ;
 variable header_cell?  \ flag, is it a header cell the latest opened cell in the table?
 variable table_started?  \ flag, is a table open?

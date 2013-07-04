@@ -42,7 +42,7 @@
   \ Print an empty HTML tag (e.g. <br/>, <hr/>),
   \ with all previously defined attributes.
   \ ca len = HTML tag
-  s" <" echo echo echo_attributes "/>" echo
+  s" <" _echo echo echo_attributes "/>" echo
   separate? off  -attributes
   ;
 : {html  ( ca len -- )
