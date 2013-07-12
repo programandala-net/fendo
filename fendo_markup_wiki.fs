@@ -1,4 +1,4 @@
-.( fendo_markup_wiki.fs ) cr
+.( fendo_markup_wiki.fs ) 
 
 \ This file is part of
 \ Fendo ("Forth Engine for Net DOcuments") version A-01.
@@ -26,39 +26,7 @@
 \ **************************************************************
 \ Change history of this file
 
-\ 2013-05-18 Start. First HTML tags.
-\ 2013-06-01 Paragraphs, lists, headings, delete.
-\ 2013-06-02 New: also 'previous_space?'.
-\   New: Counters for both types of elements (markups and
-\   printable words); required in order to separate words.
-\ 2013-06-04 New: punctuation words, HTML entity words. More
-\   markups.
-\ 2013-06-05 Change: '|' renamed to '_'; '|' will be needed for the
-\   table markup.
-\ 2013-06-05 New: Finished the code for entities; the common code for
-\   entities and punctuation has been factored.
-\ 2013-06-06 Change: HTML entities moved to <fendo_markup_html.fs>.
-\ 2013-06-06 New: First version of table markup, based on Creole
-\   and text2tags: data cells and header cells. Also caption.
-\ 2013-06-06 New: several new markups.
-\ 2013-06-06 Change: renamed from "fendo_markup.fs" to
-\   "fendo_markup_wiki.fs"; it is included from the new file <fendo_markup.fs>.
-\ 2013-06-06: New: Words for merging Forth code in the pages: '<:' and ':>'.
-\ 2013-06-10: Change: the new '[markup<order]' substitutes '[previous]'.
-\ 2013-06-18: New: some combined punctuation, e.g. "),".
-\ 2013-06-28: Change: Forth code wiki markups can be nested.
-\ 2013-06-28: New: Markups for comments, "{*" and "*}";
-\   can not be nested.
-\ 2013-06-29: New: First changes to fix and improve the source
-\   code markups (the source region needs a special parsing).
-\ 2013-06-29: New: The image markups are rendered.
-\ 2013-07-02: Change: Spaces found on filenames or URL don't abort
-\   any more, but print a 'xxx fixme' warning in an HTML comment instead.
-\   These undesired spaces are caused by a wrong rendering of "__" by
-\   Simplil2Fendo, difficult to fix. Thus manual fix will be
-\   required in the final .fs files.
-\ 2013-07-04: New: language markup.
-\ 2013-07-04: Fix: separation after punctuation markup.
+\ See at the end of the file.
 
 \ **************************************************************
 \ Todo
@@ -113,6 +81,10 @@ variable #markups     \ consecutive markups parsed
 variable #nonmarkups  \ consecutive nonmarkups parsed
 variable #parsed      \ items already parsed in the current line (before the current item)
 
+: first_on_the_line?  ( -- ff )
+  \ Is the last parsed name the first one on the current line?
+  #parsed @ 0=
+  ;
 : exhausted?  ( -- ff )
   \ Is the current source line exhausted?
   [false] [if]
@@ -184,11 +156,13 @@ variable numbered_list_items  \ counter
   ;
 : (-)  ( -- )
   \ Bullet list item.
-  bullet_list_items ((-))
+  bullet_list_items dup @ 0=
+  if  [markup>order] <ul> [markup<order]  then  ((-))
   ;
 : (+)  ( -- )
   \ Numbered list item.
-  numbered_list_items ((-))
+  numbered_list_items dup @ 0=
+  if  [markup>order] <ol> [markup<order]  then  ((-))
   ;
 
 \ **************************************************************
@@ -226,7 +200,7 @@ variable #cells  \ counter for the current table
   \ on the current line or there's an opened table?
   \ This check lets those signs to be used as content in other contexts.
   \ ff = is it an actual cell?
-  table_started? @  #parsed @ 0=  or
+  table_started? @  first_on_the_line?  or
   ;
 : (|)  ( xt -- )
   \ New data cell in the current table.
@@ -307,9 +281,6 @@ variable #cells  \ counter for the current table
 \ **************************************************************
 \ Tools for code markup
 
-: ?_echo  ( ca len -- )  \ xxx todo move
-  if  _echo  else  2drop  then
-  ;
 : (##)  ( "source code ##" -- )
   \ Parse an inline source code region.
   \ xxx fixme preserve spaces; translate < and &
@@ -319,13 +290,29 @@ variable #cells  \ counter for the current table
     then
   until
   ;
+0 [if]  \ xxx old
 : (###)  ( "source code ###" -- )
   \ Parse a block source code region.
-  \ xxx fixme preserve spaces; translate < and &
+  \ xxx todo preserve spaces (reading complete lines)
+  \ xxx todo translate < and &
   begin   parse-name dup 
     if    2dup s" ###" str= dup >r 0= ?_echo r>
     else  2drop echo_cr refill 0= dup abort" Missing closing '###'"
     then
+  until
+  ;
+[then]
+s" /counted-string" environment? 0=
+[if]  255  [then]  dup constant /###-line
+2 chars + buffer: ###-line
+: (###)  ( "source code ###" -- )
+  \ Parse a block source code region.
+  \ xxx todo preserve spaces (reading complete lines)
+  \ xxx todo translate < and &
+  begin   
+    ###-line dup /###-line source-id read-line throw 
+    0= abort" Missing closing '###'"
+    2dup s" ###" str= dup >r 0= ?_echo r>
   until
   ;
 
@@ -463,16 +450,35 @@ variable link_finished?  \ flag, no more link markup to parse?
     link_finished? @ 0= if  get_link_raw_attributes  then
   then
   ;
+: http://?  ( ca1 len1 -- ff )
+  \ Does a string starts with "http://"?
+  s" http://" string-prefix?
+  ;
+wordlist constant links_wid  \ for bookmarked links
+: link:?  ( ca1 len1 --  xt -1 | 0 )
+  \ Is a string the name of a bookmarked link?
+  links_wid search-wordlist
+  ;
+: missing_link:_link_text  ( -- )
+  \ Set the proper link text of a link: link when missing.
+  \ xxx todo
+  ;
+: missing_http://_link_text  ( -- )
+  \ Set the proper link text of a http:// link when missing.
+  \ xxx todo
+  ;
+: missing_link_text  ( -- )
+  \ Set the proper link text when missing.
+  \ xxx todo
+  href=@ link:?  if  missing_link:_link_text exit  then
+  href=@ http://?  if  missing_http://_link_text exit  then
+  href=@ link_text $!
+  ;
 : ([[)  ( "linkmarkup]]" -- )
   \ xxx todo
-  \ ca len = link text
-  \ Parse the link attributes and prepare them; return the link
-  \ text.
-  s" " link_text $!
-  parse_link
-
-  link_text $@len 0= if  href= $@ link_text $!  then
-
+  \ Parse the link attributes and prepare them.
+  s" " link_text $!  parse_link
+  link_text $@len 0= if  missing_link_text  then
   \ xxx fixme use 'target_extension' instead, to get the
   \ extension of the destination file! there are links to Atom
   \ files, with their own extensions.
@@ -480,7 +486,26 @@ variable link_finished?  \ flag, no more link markup to parse?
   ;
 
 \ **************************************************************
+\ Tools for bookmarked links
+
+: link:  ( ca1 len1 ca2 len2 ca3 len3 "name" -- )
+  \ Create a bookmarked link.
+  \ ca1 len1 = raw attributes
+  \ ca2 len2 = link text
+  \ ca3 len4 = URL or local page or bookmarked link
+  \ "name" = link name 
+  parse-name? abort" Missing link: name"
+  get-current >r  links_wid set-current
+  :create  $!, $!, $!,
+  r> set-current
+  does>  ( -- ca1 len1 ca2 len2 ca3 len3 ) 
+    ( dfa ) dup >r $@ r@ cell + $@ r> 2 cells + $@
+  ;
+
+\ **************************************************************
 \ Tools for languages
+
+\ xxx todo nested, with depth counter
 
 : (xml:)lang=  ( -- a )
   \ Return the proper language attribute.
@@ -529,7 +554,7 @@ only forth markup>order definitions fendo>order
 \ Merged Forth code
 
 : <:  ( "forthcode :>" -- )
-  \ Start and interpret a Forth block.
+  \ Start, parse and interpret a Forth block.
   1 forth_code_depth +!
   only fendo>order markup>order forth>order 
   forth_code evaluate
@@ -537,9 +562,9 @@ only forth markup>order definitions fendo>order
 : :>  ( -- )
   \ Finish a Forth block.
   forth_code_depth @
-\  dup 
+\  dup   \ xxx
   0= abort" ':>' without '<:'"
-\  1 = if
+\  1 = if  \ xxx
 \    only markup>order
 \    separate? off
 \  then
@@ -557,7 +582,7 @@ only forth markup>order definitions fendo>order
   <hr/> separate? off
   ;
 : \\  ( -- )
-  \ Line break.
+  \ Create a line break.
   <br/> separate? off
   ;
 
@@ -618,6 +643,7 @@ only forth markup>order definitions fendo>order
   ;
 : ==  ( -- )
   \ Open or close a <h2> heading.
+\  cr ." opened_[=]? = " opened_[=]? ? key drop  \ xxx debug check
   ['] <h2> ['] </h2> opened_[=]? markups
   ;
 : ===  ( -- )
@@ -641,12 +667,14 @@ only forth markup>order definitions fendo>order
 
 : -  ( -- )
   \ Bullet list item.
-  bullet_list_items @ 0= if  <ul>  then  (-)
+  first_on_the_line? if  (-)  else  s" -" content  then
   ;
+' - alias *
 : +  ( -- )
   \ Numbered list item.
-  numbered_list_items @ 0= if  <ol>  then  (+)
+  first_on_the_line? if  (+)  else  s" +" content  then
   ;
+' + alias #
 
 \ Tables
 
@@ -729,4 +757,53 @@ punctuation: }
 
 only forth fendo>order definitions
 
-.( fendo_markup_wiki.fs compiled) cr
+.( fendo_markup_wiki.fs compiled ) cr
+
+0 [if]
+
+\ **************************************************************
+\ Change history of this file
+
+\ 2013-05-18 Start. First HTML tags.
+\ 2013-06-01 Paragraphs, lists, headings, delete.
+\ 2013-06-02 New: also 'previous_space?'.
+\   New: Counters for both types of elements (markups and
+\   printable words); required in order to separate words.
+\ 2013-06-04 New: punctuation words, HTML entity words. More
+\   markups.
+\ 2013-06-05 Change: '|' renamed to '_'; '|' will be needed for the
+\   table markup.
+\ 2013-06-05 New: Finished the code for entities; the common code for
+\   entities and punctuation has been factored.
+\ 2013-06-06 Change: HTML entities moved to <fendo_markup_html.fs>.
+\ 2013-06-06 New: First version of table markup, based on Creole
+\   and text2tags: data cells and header cells. Also caption.
+\ 2013-06-06 New: several new markups.
+\ 2013-06-06 Change: renamed from "fendo_markup.fs" to
+\   "fendo_markup_wiki.fs"; it is included from the new file <fendo_markup.fs>.
+\ 2013-06-06: New: Words for merging Forth code in the pages: '<:' and ':>'.
+\ 2013-06-10: Change: the new '[markup<order]' substitutes '[previous]'.
+\ 2013-06-18: New: some combined punctuation, e.g. "),".
+\ 2013-06-28: Change: Forth code wiki markups can be nested.
+\ 2013-06-28: New: Markups for comments, "{*" and "*}";
+\   can not be nested.
+\ 2013-06-29: New: First changes to fix and improve the source
+\   code markups (the source region needs a special parsing).
+\ 2013-06-29: New: The image markups are rendered.
+\ 2013-07-02: Change: Spaces found on filenames or URL don't abort
+\   any more, but print a 'xxx fixme' warning in an HTML comment instead.
+\   These undesired spaces are caused by a wrong rendering of "__" by
+\   Simplil2Fendo, difficult to fix. Thus manual fix will be
+\   required in the final .fs files.
+\ 2013-07-04: New: language markup.
+\ 2013-07-04: Fix: separation after punctuation markup.
+\ 2013-07-04: Fix: now list markups work only at the start of
+\   the line.
+\ 2013-07-05: New: Creole's '*' and '#' are alias of '-' and
+\   '+', for easier migration (so far converting the lists markups
+\   in the original sources with Simplilo2Fendo seems difficult).
+\ 2013-07-12: Finished 'link:'; changed 'link:?'.
+\ 2013-07-12: Change: '?_echo' moved to <fendo_echo.fs>.
+\ 2013-07-12: Change: '(###)' rewritten to parse whole lines.
+
+[then]

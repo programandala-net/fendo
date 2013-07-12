@@ -1,4 +1,4 @@
-.( fendo_data.fs) cr
+.( fendo_data.fs ) 
 
 \ This file is part of
 \ Fendo ("Forth Engine for Net DOcuments") version A-01.
@@ -75,11 +75,6 @@
 \ 2013-06-08 Can 'current_page' be used instead of ''data'?
 \ 2013-06-07 Calculated data: rendered_title plain_title
 \   ... same with description. Better: filter words!
-
-\ **************************************************************
-\ Requirements
-
-require galope/minus-suffix.fs  \ '-suffix'
 
 \ **************************************************************
 \ Page data engine
@@ -194,15 +189,19 @@ datum: template  \ HTML template filename in the design subdir
 
 0 value current_page  \ page-id of the current page
 
-: target_extension  ( -- ca len )
+: target_extension  ( a -- ca len )
   \ Return the target filename extension.
-  current_page filename_extension dup 0=
+  \ a = page id
+  filename_extension dup 0=
   if  2drop html_extension $@   then 
+  ;
+: current_target_extension  ( -- ca len )
+  current_page target_extension 
   ;
 : source>target_extension  ( ca1 len1 -- ca2 len2 )
   \ ca1 len1 = Forth source page file name
   \ ca2 len2 = target HTML page file name
-  forth_extension $@ -suffix  target_extension s+
+  forth_extension $@ -suffix  current_target_extension s+
   ;
 : /sourcefilename  ( -- ca len )
   \ Return the current source filename, without path.
@@ -248,12 +247,16 @@ defer set_default_data  ( -- )
 : (set_default_data)  ( -- )
   \ Set the default values of the page data.
   \ xxx todo finish
-  /sourcefilename current_data @ 'source_file $!
+  /sourcefilename 
+\  2dup ." «" type ." »" \ xxx debug check
+  current_data @ 'source_file $!
   ;
 ' (set_default_data) is set_default_data
 : }data  ( -- )
   \ Mark the end of the page data header and complete it.
-  in_data_header? off  set_default_data
+  in_data_header? @
+  if    set_default_data
+  then  in_data_header? off 
   ;
 : skip_data{  ( "text }data" -- )
   \ Skip the page data.
@@ -296,6 +299,24 @@ do_content? on
   parse-name? abort" Filename expected in 'require_data'"
   +source_dir required
   do_content? !
+  ;
+
+\ **************************************************************
+\ Calculated data
+
+: (hierarchy)  ( ca len -- u )
+  \ Return the hierarchy level of a page (0 is the top level).
+  \ ca len = page id (source page filename without extension)
+  \ (The method used works also with UTF-8 strings).
+  0 rot rot  \ counter
+  bounds ?do
+    i c@ [char] . = abs +
+  loop
+  ;
+: hierarchy  ( a -- u )
+  \ Return the hierarchy level of a page (0 is the top level).
+  \ a = page id (address of its data)
+  source_file (hierarchy) 1-
   ;
 
 .( fendo_data.fs compiled) cr
