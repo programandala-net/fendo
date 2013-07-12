@@ -1,4 +1,4 @@
-.( fendo_echo.fs ) cr
+.( fendo_echo.fs ) 
 
 \ This file is part of
 \ Fendo ("Forth Engine for Net DOcuments") version A-01.
@@ -32,28 +32,40 @@
 \ 2013-07-03 Change: 'dry?' renamed to 'echo>screen?'.
 \ 2013-07-03 New: tools to redirect the output to a dynamic
 \   string.
+\ 2013-07-12 New: '?_echo' moved here from <fendo_markup_wiki.fs>.
 
 \ **************************************************************
 \ Output
 
-variable echo>screen?  \ flag, don't create the target files, echo to the screen instead
-variable echo>string?  \ flag, temporarily echo to the 'echoed' string.
+variable echo>  \ destination of the output
+\ Possible values of 'echo>':
+0 constant >screen
+1 constant >file
+2 constant >string
+
 variable echoed  \ used as dynamic string
 
 : echo>string  ( -- )
   \ Redirect the output to the dynamic string 'echoed'.
-  echo>string? on
-  0 echoed $!len
+  >string echo> !  0 echoed $!len
   ;
 : echo>file  ( -- )
   \ Redirect the output to the target file.
-  echo>string? off
-  echo>screen? off
+  >file echo> !
   ;
 : echo>screen  ( -- )
-  \ Redirect the output to the target file.
-  echo>string? off
-  echo>screen? on
+  \ Redirect the output to the screen.
+  >screen echo> !
+  ;
+
+: echo>file?  ( -- ff )
+  echo> @ >file =
+  ;
+: echo>screen?  ( -- ff )
+  echo> @ >screen =
+  ;
+: echo>string?  ( -- ff )
+  echo> @ >string =
   ;
 
 echo>file
@@ -64,7 +76,7 @@ echo>file
 variable target_fid  \ file id of the HTML target page
 
 : (echo)  ( xt | ca len xt -- )
-  echo>screen? @
+  echo>screen?
   if    execute
   else  target_fid @ outfile-execute
   then
@@ -75,14 +87,15 @@ variable target_fid  \ file id of the HTML target page
   ;
 : echo  ( ca len -- )
   \ Print a text string to the HTML file.
-  echo>string? @
+\  2dup cr type  key drop  \ xxx debug check
+  echo>string?
   if    (echo>string)
   else  ['] type (echo)
   then
   ;
 : echo_cr  ( -- )
   \ Print a carriage return to the HTML file.
-  echo>string? @
+  echo>string?
   if    s\" \n"  (echo>string)
   else  ['] cr (echo)
   then
@@ -104,6 +117,9 @@ variable separate?  \ flag: separate the next tag or word from the current one?
 : _echo  ( ca len -- ) 
   \ Print a text string to the HTML file, with a previous space if needed.
   _separate echo 
+  ;
+: ?_echo  ( ca len -- )  \ xxx todo move
+  if  _echo  else  2drop  then
   ;
 
 .( fendo_echo.fs compiled) cr

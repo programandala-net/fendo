@@ -1,4 +1,4 @@
-.( fendo.fs ) cr
+.( fendo.fs )
 
 \ This file is part of
 \ Fendo ("Forth Engine for Net DOcuments") version A-01.
@@ -37,6 +37,7 @@
 \ 2013-04-28 New: <fendo_data.fs>, <fendo_content.fs>.
 \ 2013-05-07 New: <fendo_require.fs>.
 \ 2013-06 New: Generic tool words; wordlists.
+\ 2013-07-09 Change: 'parse-name?' moved to Galope.
 
 \ **************************************************************
 \ Version history 
@@ -75,10 +76,20 @@ require string.fs  \ dynamic strings
 \ From Galope
 
 require galope/anew.fs
-require galope/minus-leading.fs  \ '-leading'
-require galope/sconstant.fs  \ xxx used?
-require galope/svariable.fs  \ xxx used?
 require galope/bracket-false.fs  \ '[false]'
+require galope/bracket-previous.fs  \ '[previous]'
+require galope/buffer-colon.fs  \ 'buffer:'
+require galope/colon-alias.fs  \ ':alias'
+require galope/colon-create.fs  \ ':create'
+require galope/dollar-store-comma.fs  \ '$!,'
+require galope/minus-bounds.fs  \ '-bounds'
+require galope/minus-extension.fs  \ '-extension'
+require galope/minus-leading.fs  \ '-leading'
+require galope/minus-path.fs  \ '-path'
+require galope/minus-suffix.fs  \ '-suffix'
+require galope/parse-name-question.fs  \ 'parse-name?'
+require galope/sconstant.fs  \ 'sconstant'
+require galope/slash-sides.fs  \ '/sides'
 
 anew --fendo--
 
@@ -100,167 +111,6 @@ warnings @  warnings off
   @ dup if  dup cell+ swap @  else  pad swap  then 
   ;
 warnings !
-
-\ Generic tool words (candidates for the Galope library)
-
-: [previous]  ( -- )
-  previous
-  ;  immediate
-: parse-name?  ( "name" -- ca len f )
-  \ Parse the next name in the source.
-  \ ca len = parsed name 
-  \ f = empty name?
-  parse-name dup 0=
-  ;
-: :svariable  ( ca len -- )
-  \ Create a string variable with the given name.
-  \ ca len = name of the new variable
-  nextname svariable
-  ;
-: :create  ( ca len -- )
-  \ Create a 'create' word with the given name.
-  \ ca len = name of the new word
-  nextname create
-  ;
-: :alias  ( xt ca len -- )
-  \ Create an alias with the given name for the given xt.
-  \ ca len = name of the new alias
-  \ xt = execution token of the original word
-  nextname alias
-  ;
-: -bounds  ( ca1 len1 -- ca2 ca1 )
-  \ Convert an address and length to the parameters needed by a
-  \ "do ... +loop" in order to examine that memory zone in
-  \ reverse order.
-  2dup + 1- nip 
-  ;
-: csides/  ( ca1 len1 c -- ca2 len2 ca3 len3 )
-  \ 2013-06-11 Start, based on '-extension'. Unfinished.
-  \ Search a string ca1 len1
-  \ for the last occurence of a character c.
-  \ Divide the string ca1 len1 in two parts: return both sides
-  \ of the character c (last occurence), excluding the
-  \ character itself.
-  \ ca1 len1 = string to search
-  \ c = bound character to search for
-  \ ca2 len2 = left part of ca1 len1, until and excluding the last c
-  \ ca3 len3 = right part of ca1 len1, from and excluding the last c
-  { character }
-  2dup -bounds 1+ 2swap  \ default raw return values
-  -bounds ?do
-    i c@ character = if  drop i  leave  then
-  -1 +loop  ( ca1 ca1' )  \ final raw return values
-  over -
-  ;
-: -extension  ( ca1 len1 -- ca1 len1' | ca1 len1 )
-  \ Remove the file extension of a filename.
-  2dup -bounds 1+ 2swap  \ default raw return values
-  -bounds ?do
-    i c@ '.' = if  drop i  leave  then
-  -1 +loop  ( ca1 ca1' )  \ final raw return values
-  over -
-  ;
-: hunt  ( ca1 len1 ca2 len2 -- ca3 len3 )  \ xxx not used
-  \ Search a string ca2 len1 for a substring ca2 len2.
-  \ Return the part of ca1 len1 that starts with the first
-  \ occurence of ca2 len2.
-  \ From Wil Banden's Charscan library (2003-02-17), public domain.
-  \ ca1 len1 = string
-  \ ca2 len2 = substring
-  \ ca3 len3 = ca1+i len1-i 
-  search 0= if  chars + 0  then
-  ;
-[false] [if]  \ first version
-: sides  ( ca0 len0 ca1 len2 -- ca3 len3 ca4 len4 )
-  \ ca0 len0 = string searched;
-  \   starts with the first substring found (ca2 len2)
-  \ len2 = length of the substring searched for
-  \ ca1 = old ca0, original starting address before the search
-  { ca1 len2 }
-  len2 - swap dup >r len2 + swap  \ left side
-  ca1 r> ca1 -                    \ right side
-  ;
-[else]  \ second version; does the same, but it's clearer
-: sides  { ca1' len1' ca1 len1 len2 -- ca3 len3 ca4 len4 }
-  \ ca1' len1' = string searched, starting with the first (ca2 len2)
-  \ ca1 len1 = original string, before the search
-  \ len2 = length of the substring searched for
-  \ ca1' len2 = substring found in ca1 len1
-  \ ca3 len3 = left side of ca1 len1, until and excluding ca1' len2
-  \ ca4 len4 = right side of ca1 len1, after ca1' len2
-  ca1  len1 len1' -          \ left side
-  ca1' len2 +  len1' len2 -  \ right side
-  ;
-[then]
-
-: /sides  { ca1 len1 ca2 len2 -- ca1 len1' ca3 len3 ff }
-  \ Search a string ca1 len1
-  \ for the first occurence of a substring ca2 len2.
-  \ Divide the string ca1 len1 in two parts: return both sides
-  \ of the substring ca2 len2 (first occurence), excluding the
-  \ substring ca2 len2 itself.
-  \ 2013-06-07
-  \ This word was inspired by Wil Baden's 'hunt'
-  \ (Charscan library, 2003-02-17, public domain).
-  \ ca1 len1  = string
-  \ ca2 len2  = substring
-  \ ca1 len1' = left side (or whole string if not found)
-  \ ca3 len3  = right side (or empty string if not found)
-  \ ff = found?
-  \ Note: ca3 len3 can be empty also when ff is true.
-  ca1 len1 ca2 len2 search dup >r
-  if    ca1 len1 len2 sides
-  else  over 0  \ fake right side
-  then  r>
-  ;
-: +/string  ( ca1 len1 -- ca2 len2 )
-  \ xxx not used
-  \ Step forward by one char in a buffer.
-  \ Inspired by Gforth's '+x/string'.
-  \ ca1 len1 = buffer or string
-  \ ca2 len2 = remaining buffer or string 
-  char- swap char+ swap
-  ;
-: str<>  ( ca1 len1 ca2 len2 -- ff )
-  \ Are two strings different?
-  compare 0<>
-  ;
-: sides/  { ca1 len1 ca2 len2 -- ca1 len1' ca3 len3 f }
-  \ Search a string ca1 len1
-  \ for the last occurence of a substring ca2 len2.
-  \ Divide the string ca1 len1 in two parts: return both sides
-  \ of the substring ca2 len2 (last occurence), excluding the
-  \ substring ca2 len2 itself.
-  \ 2013-06-07
-  \ This word was inspired by Wil Banden's 'hunt'
-  \ (Charscan library, 2003-02-17, public domain).
-  \ ca1 len1  = string
-  \ ca2 len2  = substring
-  \ ca1 len1' = left side (or whole string if not found) 
-  \ ca3 len3  = right side (or empty string if not found)
-  \ f = found?
-  \ Note: ca3 len3 can be empty also when ff is true.
-  ca1 len1 2dup
-  begin   ca2 len2 search
-  while   2nip 2dup +x/string   \ update the result and step forward
-  repeat  2drop
-  2dup ca1 len1 str<> dup >r  \ something found?
-  if    ca1 len1 len2 sides
-  else  over 0  \ fake right side
-  then  r>
-  ;
-: -path  ( ca len -- ca' len' )
-  \ Remove the file path and leave the filename.
-  \ ca len = filename with path
-  \ ca' len' = filename
-  s" /" sides/ if  2nip  else  2drop  then
-  ;
-: -filename  ( ca len -- ca' len' )
-  \ Remove the filename and leave the path (with ending slash).
-  \ ca len = filename with path
-  \ ca' len' = path (with ending slash)
-  s" /" sides/ if  2drop s" /" s+  else  2nip  then 
-  ;
 
 \ **************************************************************
 \ Wordlists
