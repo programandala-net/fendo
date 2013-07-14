@@ -309,11 +309,14 @@ s" /counted-string" environment? 0=
   \ Parse a block source code region.
   \ xxx todo preserve spaces (reading complete lines)
   \ xxx todo translate < and &
+  \ cr ." (###) code = "  \ xxx debug check
   begin   
     ###-line dup /###-line source-id read-line throw 
     0= abort" Missing closing '###'"
-    2dup s" ###" str= dup >r 0= ?_echo r>
+    \ 2dup cr type  \ xxx debug check
+    2dup s" ###" str= dup >r 0= ?echo_line r>
   until
+  ." ### end!"  \ xxx debug check
   ;
 
 \ **************************************************************
@@ -805,5 +808,6 @@ only forth fendo>order definitions
 \ 2013-07-12: Finished 'link:'; changed 'link:?'.
 \ 2013-07-12: Change: '?_echo' moved to <fendo_echo.fs>.
 \ 2013-07-12: Change: '(###)' rewritten to parse whole lines.
+\ 2013-07-14: New: '(###)' finished.
 
 [then]
