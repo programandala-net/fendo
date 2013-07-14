@@ -33,6 +33,7 @@
 \ 2013-07-03 New: tools to redirect the output to a dynamic
 \   string.
 \ 2013-07-12 New: '?_echo' moved here from <fendo_markup_wiki.fs>.
+\ 2013-07-14 New: '?echo_line'.
 
 \ **************************************************************
 \ Output
@@ -118,8 +119,11 @@ variable separate?  \ flag: separate the next tag or word from the current one?
   \ Print a text string to the HTML file, with a previous space if needed.
   _separate echo 
   ;
-: ?_echo  ( ca len -- )  \ xxx todo move
+: ?_echo  ( ca len -- )  \ xxx used?
   if  _echo  else  2drop  then
+  ;
+: ?echo_line  ( ca len -- )
+  if  echo echo_cr  else  2drop  then
   ;
 
 .( fendo_echo.fs compiled) cr
