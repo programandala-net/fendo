@@ -309,14 +309,14 @@ s" /counted-string" environment? 0=
   \ Parse a block source code region.
   \ xxx todo preserve spaces (reading complete lines)
   \ xxx todo translate < and &
-  \ cr ." (###) code = "  \ xxx debug check
+\ cr ." (###) code = "  \ xxx debug check
   begin   
     ###-line dup /###-line source-id read-line throw 
     0= abort" Missing closing '###'"
-    \ 2dup cr type  \ xxx debug check
+\   2dup cr type  \ xxx debug check
     2dup s" ###" str= dup >r 0= ?echo_line r>
   until
-  ." ### end!"  \ xxx debug check
+\ ." ### end!"  \ xxx debug check
   ;
 
 \ **************************************************************
@@ -683,7 +683,7 @@ only forth markup>order definitions fendo>order
 
 : |  ( -- )
   \ Markup used as separator in tables, images and links.
-  \ ." | rendered"  \ xxx debug check
+\ ." | rendered"  \ xxx debug check
   actual_cell? if  ['] <td> (|)  else  s" |" content  then
   ;
 : |=  ( -- )
