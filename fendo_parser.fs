@@ -1,4 +1,4 @@
-.( fendo_parser.fs) cr
+.( fendo_parser.fs ) 
 
 \ This file is part of
 \ Fendo ("Forth Engine for Net DOcuments") version A-01.
@@ -60,17 +60,14 @@
 \   fields, after Fendo A-01.
 \ 2013-07-03 Change: 'dry?' renamed to 'echo>screen?', after the
 \   changes in the echo module.
+\ 2013-07-03 Change: words that check the current echo have been
+\ renamed, after the  changes in the echo module.
 \
 \ **************************************************************
 \ Todo
 
 \ 2013-06-04: Flag the first markup of the current line, in
 \   order to use '--' both for nested lists and for delete.
-\ 2013-06-04: [OLD] Additional vocabulary with Forth words allowed
-\   during parsing? E.g. 's"', 'place'. Or define them in the same voc?
-\   Or make them unnecesary? E.g. use 'class=' for parsing and
-\   storing the class attribute, instead of 's" bla" class
-\   place'.
 
 \ **************************************************************
 \ Pending markups
@@ -280,22 +277,25 @@ variable more?  \ flag: keep on parsing more words?; changed by '}content'
   ;
 : (open_target)  ( -- )
   \ Open the target HTML page file.
-  current_page target_path/file w/o create-file throw target_fid !
-  \ ." target_fid just opened: " \ xxx
+  current_page target_path/file
+  cr ." target file =  " 2dup type \ xxx debug check
+  w/o create-file throw target_fid !
+  \ ." target file just opened: " \ xxx debug check
   \ target_fid @ . cr key drop
   ;
 : open_target  ( -- )
   \ Open the target HTML page file, if needed.
-  echo>screen? @ 0= if  (open_target)  then
+  echo>file? if  (open_target)  then
   ;
 : (close_target)  ( -- )
   \ Close the target HTML page file.
-  \ xxx debug
   target_fid @ close-file throw
+  \ ." target_fid just closed. " \ xxx debug check
   ;
 : close_target  ( -- )
   \ Close the target HTML page file, if needed.
-  echo>screen? @ 0= if  (close_target)  then
+  target_fid @ if  (close_target)  then
+  target_fid off
   ;
 
 \ Design template
@@ -379,15 +379,15 @@ variable template_content
 get-current markup>current
 : }content  ( -- )
   \ Finish the page content. 
+  \ cr .s cr ." start of }content " \ xxx debug check
   close_pending
   }template  \ xxx bug thread
   close_target \ xxx bug thread
   more? off  \ finish the current parsing
   do_content? on  \ default value for the next page
   only fendo>order forth>order
-  \ cr .s cr ." end of }content -- press any key..." key drop  \ xxx
-  \ ." done!"
+  \ cr .s cr ." end of }content -- press any key..." key drop  \ xxx debug check
   ;
 set-current
 
-.( fendo_parser.fs compiled) cr
+.( fendo_parser.fs compiled ) cr
