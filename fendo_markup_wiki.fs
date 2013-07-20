@@ -31,16 +31,17 @@
 \ **************************************************************
 \ Todo
 
+\ 2013-07-20: Idea for nested lists: prefix words to increase
+\ and decrease the depth: >> << . Example:
+\
+\ 
+\
 \ 2013-06-04: Creole {{{...}}} markup.
 \ 2013-06-04: Nested lists.
-\ 2013-06-04: Also '*' and '#' for lists?
 \ 2013-06-04: Flag the first markup of the current line, in
 \ order to use '--' both forth nested lists and delete, or '**'
 \ for list and for bold.
 \ 2013-06-19: Compare Creole's markups with txt2tags' markups.
-\ 2013-06-29: xxx fixme rendering the whole site leavs >900
-\ numbers on the stack, strings. it seems caused by links or
-\ images.
 
 \ **************************************************************
 \ Debug tools
@@ -388,10 +389,57 @@ variable image_finished?  \ flag, no more image markup to parse?
 \ **************************************************************
 \ Tools for links
 
-variable link_text  \ used as a dynamic string
+: file://?  ( ca len -- ff )
+  \ Does a string starts with "file://" (so it's a file link)?
+  s" file://" string-prefix?
+  ;
+: http://?  ( ca len -- ff )
+  \ Does a string starts with "http://" (so it's an external link)?
+  s" http://" string-prefix?
+  ;
+wordlist constant links_wid  \ for bookmarked links
+: link:?  ( ca len --  xt -1 | 0 )
+  \ Is a string the name of a bookmarked link?
+  links_wid search-wordlist
+  ;
+variable link_text  \ dynamic string
+variable link_anchor  \ dynamic string
+: extract_link_anchor  ( ca len -- ca' len' )
+  \ Extract the anchor from a href attribute and store it.
+  s" #" sides/ drop link_anchor $!
+  ;
+variable link_type
+1 enum local_link
+  enum external_link
+  enum bookmarked_link  
+  enum file_link  drop
+: >link_type_id  ( ca len -- n )
+  \ Convert an href attribute to its type id.
+  2dup link:? if  drop 2drop bookmarked_link exit  then
+  2dup http://? if  2drop external_link exit  then
+  file://? if  file_link exit  then
+  local_link 
+  ;
+: set_link_type  ( ca len -- )
+  \ Get and store the type id of an href attribute.
+  >link_type_id link_type !
+  ;
+: bookmarked_link?  ( -- ff )
+  link_type @ bookmarked_link =
+  ;
+: external_link?  ( -- ff )
+  link_type @ external_link =
+  ;
+: local_link?  ( -- ff )
+  link_type @ local_link =
+  ;
+: file_link?  ( -- ff )
+  link_type @ file_link =
+  ;
 : get_link_href_attribute  ( "filename<spc>" -- )
   \ Parse and store the link href attribute.
-  parse-word href=!
+  parse-word extract_link_anchor
+  href=!
   ;
 variable link_finished?  \ flag, no more link markup to parse?
 : end_of_link?  ( ca len -- ff )
@@ -416,6 +464,7 @@ variable link_finished?  \ flag, no more link markup to parse?
   ;
 : parse_link_text  ( "...<space>|<space>" | "...<space>]]<space>"  -- )
   \ Parse and store the link text. 
+  \ xxx todo factor
   s" "
   begin
     parse-name dup
@@ -430,6 +479,7 @@ variable link_finished?  \ flag, no more link markup to parse?
   ;
 : get_link_raw_attributes  ( "...<space>}}<space>"  -- )
   \ Parse and store the link raw attributes.
+  \ xxx todo factor
   s" "
   begin   parse-name dup 
     if    2dup end_of_link?  otherwise_concatenate
@@ -449,33 +499,44 @@ variable link_finished?  \ flag, no more link markup to parse?
     repeat
   [then]
   link_finished? @ 0= if
-    parse_link_text 
-    link_finished? @ 0= if  get_link_raw_attributes  then
+    parse_link_text link_finished? @ 0= if  get_link_raw_attributes  then
   then
   ;
-: http://?  ( ca1 len1 -- ff )
-  \ Does a string starts with "http://"?
-  s" http://" string-prefix?
-  ;
-wordlist constant links_wid  \ for bookmarked links
-: link:?  ( ca1 len1 --  xt -1 | 0 )
-  \ Is a string the name of a bookmarked link?
-  links_wid search-wordlist
-  ;
-: missing_link:_link_text  ( -- )
-  \ Set the proper link text of a link: link when missing.
+: missing_local_link_text  ( -- )
+  \ Set the proper link text of a local link when missing.
   \ xxx todo
   ;
-: missing_http://_link_text  ( -- )
-  \ Set the proper link text of a http:// link when missing.
+: missing_external_link_text  ( -- )
+  \ Set the proper link text of an external link when missing.
+  \ xxx todo
+  ;
+: missing_bookmarked_link_text  ( -- )
+  \ Set the proper link text of a bookmarked link when missing.
   \ xxx todo
   ;
 : missing_link_text  ( -- )
   \ Set the proper link text when missing.
   \ xxx todo
-  href=@ link:?  if  missing_link:_link_text exit  then
-  href=@ http://?  if  missing_http://_link_text exit  then
+  local_link?  if  missing_local_link_text exit  then
+  bookmarked_link?  if  missing_bookmarked_link_text exit  then
+\  external_link?  if  missing_external_link_text exit  then  \  xxx 
+\  file_link?  if  missing_file_link_text exit  then  \ xxx
   href=@ link_text $!
+  ;
+: (anchor+)  ( ca1 len1 ca2 len2 -- ca3 len3 )
+  \ Add a link anchor to a href attribute.
+  \ ca1 len1 = href attribute
+  \ ca2 len2 = anchor, without "#"
+  s" #" 2swap s+ s+ 
+  ;
+: anchor+  ( ca len -- ca' len' )
+  \ Add the link anchor, if any, to a href attribute.
+  link_anchor $@ dup if  (anchor+)  else  2drop  then
+  ;
+: link_target_extension+  ( ca len -- ca' len' )
+  \ Add the target file extension to a href attribute, if needed.
+  2dup space type   \ xxx debug check
+  local_link? if  ." .HTML" current_target_extension s+  then  space
   ;
 : ([[)  ( "linkmarkup]]" -- )
   \ xxx todo
@@ -485,7 +546,7 @@ wordlist constant links_wid  \ for bookmarked links
   \ xxx fixme use 'target_extension' instead, to get the
   \ extension of the destination file! there are links to Atom
   \ files, with their own extensions.
-  href= $@ current_target_extension s+ href=!
+  href= $@ link_target_extension+ anchor+ href=!
   ;
 
 \ **************************************************************
@@ -736,27 +797,30 @@ only forth markup>order definitions fendo>order
 
 \ Punctuation
 
-punctuation: .
-punctuation: ,
-punctuation: ;
-punctuation: :
-punctuation: ...
 punctuation: !
-punctuation: ?
-punctuation: )
-punctuation: ).
-punctuation: );
-punctuation: ):
-punctuation: ),
 punctuation: "
-punctuation: ":
 punctuation: ",
-punctuation: ";
 punctuation: ".
+punctuation: ":
+punctuation: ";
 punctuation: '
-punctuation: »
+punctuation: )
+punctuation: ),
+punctuation: ).
+punctuation: ):
+punctuation: );
+punctuation: ,
+punctuation: .
+punctuation: ...
+punctuation: ...),
+punctuation: ...).
+punctuation: ...);
+punctuation: :
+punctuation: ;
+punctuation: ?
 punctuation: ]
 punctuation: }
+punctuation: »
 
 only forth fendo>order definitions
 
@@ -809,5 +873,7 @@ only forth fendo>order definitions
 \ 2013-07-12: Change: '?_echo' moved to <fendo_echo.fs>.
 \ 2013-07-12: Change: '(###)' rewritten to parse whole lines.
 \ 2013-07-14: New: '(###)' finished.
+\ 2013-07-20: New: support for link anchors.
+\ 2013-07-20: Fix: target extensions is added only to local links.
 
 [then]

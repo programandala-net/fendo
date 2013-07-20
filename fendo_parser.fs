@@ -278,7 +278,7 @@ variable more?  \ flag: keep on parsing more words?; changed by '}content'
 : (open_target)  ( -- )
   \ Open the target HTML page file.
   current_page target_path/file
-  cr ." target file =  " 2dup type \ xxx debug check
+\  cr ." target file =  " 2dup type \ xxx debug check
   w/o create-file throw target_fid !
   \ ." target file just opened: " \ xxx debug check
   \ target_fid @ . cr key drop
