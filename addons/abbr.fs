@@ -34,6 +34,7 @@
 \ 2013-07-03 Fix: '(abbr)' refills the input stream until
 \   something is found. This makes it possible to separate the
 \   addon words and the actual abbreviation in different lines.
+\ 2013-07-20 New: '.abbr', 
 
 \ **************************************************************
 
@@ -46,17 +47,21 @@
   while   2drop refill 0= abort" Missing abbr"
   repeat
   ;
+: .abbr  ( ca len -- )
+  \ xxx todo
+  [markup>order] <abbr> [previous] echo [markup>order] </abbr> [previous]
+  ;
 : abbr ( "name" -- )
   \ xxx todo
-  (abbr) echo  \ xxx tmp
+  (abbr) .abbr  \ xxx tmp
   ;
 : abbr_meaning ( "name" -- )
   \ xxx todo
-  (abbr) echo  \ xxx tmp
+  (abbr) .abbr  \ xxx tmp
   ;
 : abbr_translation ( "name" -- )
   \ xxx todo
-  (abbr) echo  \ xxx tmp
+  (abbr) .abbr  \ xxx tmp
   ;
 : abbrs_list ( u -- )
   \ xxx todo
