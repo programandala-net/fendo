@@ -62,10 +62,15 @@
 \   changes in the echo module.
 \ 2013-07-03 Change: words that check the current echo have been
 \ renamed, after the  changes in the echo module.
+\ 2013-07-28 New: 'parse_link_text' moved here from
+\   <fendo_markup_wiki.fs>.
 \
 \ **************************************************************
 \ Todo
 
+\ 2013-07-20: redirect the parser output to a string. This will
+\ let to parse the link texts that have markups!
+\
 \ 2013-06-04: Flag the first markup of the current line, in
 \   order to use '--' both for nested lists and for delete.
 
@@ -259,6 +264,21 @@ variable more?  \ flag: keep on parsing more words?; changed by '}content'
     then
   until   do_content? on
   ;
+: parsed_link_text  ( "...<space>|<space>" | "...<space>]]<space>"  -- ca len )
+  \ Parse and return the link text. 
+  \ xxx todo 
+  echo> @ echo>string  separate? off 
+  begin   parse-name dup
+    if    2dup end_of_link_section? if  2drop true  else  something false  then
+    else  2drop more_link?
+    then  0=
+  until   echo> !  echoed $@ 
+  ;
+: (parse_link_text)  ( "...<space>|<space>" | "...<space>]]<space>"  -- )
+  \ Parse the link text and store it into 'link_text'.
+  parsed_link_text link_text $!
+  ;
+' (parse_link_text) is parse_link_text
 
 \ Target file
 
@@ -273,7 +293,7 @@ variable more?  \ flag: keep on parsing more words?; changed by '}content'
   \ a = page-id
   \ ca len = target HTML page file name
   target_file target_dir $@ 2swap s+
-  2dup type cr  \ xxx debug check
+\  2dup type cr  \ xxx debug check
   ;
 : (open_target)  ( -- )
   \ Open the target HTML page file.
@@ -379,14 +399,14 @@ variable template_content
 get-current markup>current
 : }content  ( -- )
   \ Finish the page content. 
-  \ cr .s cr ." start of }content " \ xxx debug check
+\ cr .s cr ." start of }content " \ xxx debug check
   close_pending
   }template  \ xxx bug thread
   close_target \ xxx bug thread
   more? off  \ finish the current parsing
   do_content? on  \ default value for the next page
   only fendo>order forth>order
-  \ cr .s cr ." end of }content -- press any key..." key drop  \ xxx debug check
+\ cr .s cr ." end of }content -- press any key..." key drop  \ xxx debug check
   ;
 set-current
 
