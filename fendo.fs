@@ -75,43 +75,46 @@ require string.fs  \ dynamic strings
 
 \ From Galope
 
-require galope/anew.fs
-require galope/bracket-false.fs  \ '[false]'
-require galope/bracket-previous.fs  \ '[previous]'
-require galope/buffer-colon.fs  \ 'buffer:'
-require galope/colon-alias.fs  \ ':alias'
-require galope/colon-create.fs  \ ':create'
-require galope/dollar-store-comma.fs  \ '$!,'
-require galope/enum.fs  \ 'enum'
-require galope/minus-bounds.fs  \ '-bounds'
-require galope/minus-extension.fs  \ '-extension'
-require galope/minus-leading.fs  \ '-leading'
-require galope/minus-path.fs  \ '-path'
-require galope/minus-suffix.fs  \ '-suffix'
-require galope/parse-name-question.fs  \ 'parse-name?'
-require galope/sconstant.fs  \ 'sconstant'
-require galope/slash-sides.fs  \ '/sides'
+require ../galope/3dup.fs
+require ../galope/anew.fs
+require ../galope/bracket-false.fs  \ '[false]'
+require ../galope/buffer-colon.fs  \ 'buffer:'
+require ../galope/colon-alias.fs  \ ':alias'
+require ../galope/colon-create.fs  \ ':create'
+require ../galope/dollar-store-comma.fs  \ '$!,'
+require ../galope/enum.fs  \ 'enum'
+require ../galope/minus-bounds.fs  \ '-bounds'
+require ../galope/minus-extension.fs  \ '-extension'
+require ../galope/minus-leading.fs  \ '-leading'
+require ../galope/minus-path.fs  \ '-path'
+require ../galope/minus-suffix.fs  \ '-suffix'
+require ../galope/parse-name-question.fs  \ 'parse-name?'
+require ../galope/sconstant.fs  \ 'sconstant'
+require ../galope/slash-sides.fs  \ '/sides'
+
+\ require ../galope/sb.fs  \ string buffer
+\ 1024 heap_sb
 
 anew --fendo--
 
-\ Safer alternatives for words of Gforth's string.fs
+true dup constant ffl-strings?  immediate
+0= constant gforth-strings?  immediate
 
+0 [if]
+\ Safer alternatives for words of Gforth's string.fs
 warnings @  warnings off
-: $@len ( $addr -- u )
+: $@len  ( $a -- len )
   \ Return the length of a dynamic string variable,
   \ even if it's not initialized.
-  \ $addr = dynamic string variable
-  \ u = length
   @ dup if  @  then
   ;
-: $@ ( $addr1 -- addr2 u )
+: $@  ( $a -- ca len )
   \ Return the content of a dynamic string variable,
   \ even if it's not initialized.
-  \ $addr1 = string variable
-  \ addr2 u = string
   @ dup if  dup cell+ swap @  else  pad swap  then 
   ;
 warnings !
+[then]
 
 \ **************************************************************
 \ Wordlists
@@ -127,8 +130,7 @@ wordlist constant fendo_wid  \ program, except markup and HTML entities
   fendo_markup_html_entities_wid set-current
   ;
 : markup>order  ( -- )  
-  fendo_markup_html_entities_wid >order
-  fendo_markup_wid >order 
+  fendo_markup_html_entities_wid >order  fendo_markup_wid >order 
   ;
 : [markup>order]  ( -- )
   markup>order
