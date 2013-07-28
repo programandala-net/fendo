@@ -59,11 +59,11 @@
 \ xxx todo move?
 
 : concatenate  ( ca1 len1 ca2 len2 -- ca1' len1' )
-  2swap dup if  s"  " s+   then  2swap s+
-  \ xxx faster alternative? benckmark
-  \ 2 pick if  2swap s"  " s+ 2swap  then  s+
+  \ Concatenates two string with a joining space.
+  2swap dup if  s"  " s+ 2swap s+ exit  then  2drop  
   ;
 : ?concatenate  ( ca1 len1 ca2 len2 f -- ca1' len1' )
+  \ Concatenates two string with a joining space.
   if  concatenate  else  2drop  then
   ;
 : otherwise_concatenate  ( ca1 len1 ca2 len2 f -- ca1' len1' f )
@@ -240,17 +240,21 @@ variable #cells  \ counter for the current table
   0= and  \ empty the name if it's the end of the code
   s+ s"  " s+  r>
   ;
-: forth_code  ( "forthcode :>" -- ca len )
+: parse_forth_code  ( "forthcode :>" -- ca len )
   \ Get the content of a merged Forth code. 
   \ Parse the input stream until a valid ":>" markup is found.
   \ ca len = Forth code
   s" "
   begin   parse-name dup
-    if    forth_code_end?
-    else  2drop  s\" \n" s+ refill 0=
+    if    \ 2dup ." { " type ." }"  \ xxx debug check
+          forth_code_end?
+    else  2drop  
+          \ s\" \n" s+ 
+          s"  " s+ 
+          refill 0=
     then
   until
-\  cr ." <<<" 2dup type ." >>>" cr key drop  \ xxx debug check
+  cr ." <: " 2dup type ." :>" cr  \ xxx debug check
   ;
 
 \ **************************************************************
@@ -258,12 +262,12 @@ variable #cells  \ counter for the current table
 
 \
 \ Punctuation markup is needed in order to print it properly
-\ after another markup:
+\ after another markup. Example:
 \
 \   This // emphasis // does the right spacing.  But this //
 \   emphasis // , well, needs to be followed by a markup comma.
 \
-\ The ',' markup prints the comma without a leading space.  If
+\ The ',' markup must print a comma without a leading space.  If
 \ ',' were not a markup but an ordinary printable content, a
 \ leading space would be printed. 
 
@@ -438,8 +442,7 @@ variable link_type
   ;
 : get_link_href_attribute  ( "filename<spc>" -- )
   \ Parse and store the link href attribute.
-  parse-word extract_link_anchor
-  href=!
+  parse-word extract_link_anchor  2dup set_link_type  href=!
   ;
 variable link_finished?  \ flag, no more link markup to parse?
 : end_of_link?  ( ca len -- ff )
@@ -454,6 +457,8 @@ variable link_finished?  \ flag, no more link markup to parse?
   \ Fill the input buffer or abort.
   refill 0= dup abort" Missing ']]'"
   ;
+
+0 [if]  \ first version
 : parse_nested_image  ( -- ca len )
   \ Parse and render an image markup nested in other markup
   \ (currently only used in link texts).
@@ -477,6 +482,11 @@ variable link_finished?  \ flag, no more link markup to parse?
     then  
   until   link_text $!
   ;
+[then]
+
+defer parse_link_text  ( "...<space>|<space>" | "...<space>]]<space>"  -- )
+  \ Parse the link text and store it into 'link_text'.
+
 : get_link_raw_attributes  ( "...<space>}}<space>"  -- )
   \ Parse and store the link raw attributes.
   \ xxx todo factor
@@ -490,6 +500,7 @@ variable link_finished?  \ flag, no more link markup to parse?
 : parse_link  ( "linkmarkup]]" -- )
   \ Parse and store the link attributes.
   get_link_href_attribute
+\  external_link? if  ." EXTERNAL LINK: " href=@ type cr  then  \ xxx debug check
   [ false ] [if]  \ simple version
     parse-name end_of_link_section? 0=
       abort" Space not allowed in link filename or URL"
@@ -535,8 +546,7 @@ variable link_finished?  \ flag, no more link markup to parse?
   ;
 : link_target_extension+  ( ca len -- ca' len' )
   \ Add the target file extension to a href attribute, if needed.
-  2dup space type   \ xxx debug check
-  local_link? if  ." .HTML" current_target_extension s+  then  space
+  local_link? if  current_target_extension s+  then
   ;
 : ([[)  ( "linkmarkup]]" -- )
   \ xxx todo
@@ -546,7 +556,14 @@ variable link_finished?  \ flag, no more link markup to parse?
   \ xxx fixme use 'target_extension' instead, to get the
   \ extension of the destination file! there are links to Atom
   \ files, with their own extensions.
-  href= $@ link_target_extension+ anchor+ href=!
+  href=@ 
+\  ." 1)" 2dup type cr  \ xxx debug check
+  link_target_extension+
+\  ." 2)" 2dup type cr  \ xxx debug check
+  anchor+
+\  ." 3)" 2dup type cr  \ xxx debug check
+  href=!
+\  ." 4)" href=@ type cr
   ;
 
 \ **************************************************************
@@ -621,7 +638,7 @@ only forth markup>order definitions fendo>order
   \ Start, parse and interpret a Forth block.
   1 forth_code_depth +!
   only fendo>order markup>order forth>order 
-  forth_code evaluate
+  parse_forth_code evaluate
   ;  immediate
 : :>  ( -- )
   \ Finish a Forth block.
@@ -649,6 +666,7 @@ only forth markup>order definitions fendo>order
   \ Create a line break.
   <br/> separate? off
   ;
+' echo_cr alias \n
 
 \ Text
 
@@ -769,7 +787,9 @@ only forth markup>order definitions fendo>order
 \ Links
 
 : [[  ( "linkmarkup]]" -- )
-  ([[) <a> link_text $@ echo </a> 
+  ([[) 
+\  ." 5)" href=@ type cr  \ xxx debug check
+  <a> link_text $@ echo </a> 
   ;
 : ]]  ( -- )
   true abort" ']]' without '[['"
@@ -796,6 +816,7 @@ only forth markup>order definitions fendo>order
   ; 
 
 \ Punctuation
+\ xxx todo complete as required
 
 punctuation: !
 punctuation: "
@@ -815,12 +836,14 @@ punctuation: ...
 punctuation: ...),
 punctuation: ...).
 punctuation: ...);
+punctuation: .»
 punctuation: :
 punctuation: ;
 punctuation: ?
 punctuation: ]
 punctuation: }
 punctuation: »
+punctuation: »,
 
 only forth fendo>order definitions
 
@@ -875,5 +898,8 @@ only forth fendo>order definitions
 \ 2013-07-14: New: '(###)' finished.
 \ 2013-07-20: New: support for link anchors.
 \ 2013-07-20: Fix: target extensions is added only to local links.
+\ 2013-07-26: New: '\n' as an alias for 'echo_cr'; this lets to
+\   make the final HTML cleaner, especially in the template.
+\ 2013-07-26: '»,' and '.»' punctuations.
 
 [then]

@@ -68,6 +68,7 @@
 \   from <fendo_files.fs>.
 \ 2013-06-29 New: 'target_extension'; now target filename extension
 \   depends on the corresponding optional metadatum too.
+\ 2013-07-28 New: 'required_data'.
 
 \ **************************************************************
 \ Todo
@@ -292,12 +293,22 @@ do_content? on
   \ Complete a source page filename with its path.
   source_dir $@ 2swap s+
   ;
+
+: (required_data)  ( ca len -- )
+  \ Require a page file in order to get its data.
+  +source_dir required
+  ;
+: required_data  ( ca len -- )
+  \ Require a page file in order to get its data.
+  \ ca len = file name
+  do_content? @  do_content? off  (required_data)  do_content? !
+  ;
 : require_data  ( "name" -- )
   \ Require a page file in order to get its data.
   \ "name" = file name
   do_content? @  do_content? off
   parse-name? abort" Filename expected in 'require_data'"
-  +source_dir required
+  (required_data)
   do_content? !
   ;
 
