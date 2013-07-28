@@ -216,6 +216,8 @@ variable #cells  \ counter for the current table
 \ **************************************************************
 \ Tools for merged Forth code
 
+0 [if]  \ xxx first version
+
 : (forth_code_end?)  ( ca len -- ff )
   \ Is a name a valid end markup of the Forth code?
   \ ca len = latest name parsed 
@@ -255,6 +257,40 @@ variable #cells  \ counter for the current table
     then
   until
   cr ." <: " 2dup type ." :>" cr  \ xxx debug check
+  ;
+
+[then]
+
+: forth_code_end?  ( ca len -- ff )
+  \ Is a name a valid end markup of the Forth code?
+  \ ca len = latest name parsed 
+\  ." «" 2dup type ." » "  \ xxx debug check
+\  2dup type space \ xxx debug check
+  2dup s" <:" str= abs forth_code_depth +!
+       s" :>" str= dup forth_code_depth +! 
+  forth_code_depth @
+\  dup ." {" . ." }" \ xxx debug check
+  0= and
+\  dup  if ." END!" then  \ xxx debug check
+\  key drop  \ xxx debug check
+  ;
+variable forth_code$  \ dynamic string
+: forth_code$+  ( ca len -- )
+  \ Append a string to the parsed Forth code.
+  forth_code$ $@  s"  " s+ 2swap s+  forth_code$ $!
+  ;
+: parse_forth_code  ( "forthcode :>" -- ca len )
+  \ Get the content of a merged Forth code. 
+  \ Parse the input stream until a valid ":>" markup is found.
+  \ ca len = Forth code
+  s" " forth_code$ $!
+  begin   parse-name dup
+    if    2dup ." { " type ." }"  \ xxx debug check
+          2dup forth_code_end? dup >r if  2drop  else  forth_code$+  then r>
+    else  2drop s"  " forth_code$+  refill 0=
+    then
+  until   forth_code$ $@
+  cr ." <: " 2dup type ."  :>" cr  \ xxx debug check
   ;
 
 \ **************************************************************
@@ -458,7 +494,8 @@ variable link_finished?  \ flag, no more link markup to parse?
   refill 0= dup abort" Missing ']]'"
   ;
 
-0 [if]  \ first version
+0 [if]
+\ first version, only images are recognized in link texts
 : parse_nested_image  ( -- ca len )
   \ Parse and render an image markup nested in other markup
   \ (currently only used in link texts).
@@ -486,6 +523,7 @@ variable link_finished?  \ flag, no more link markup to parse?
 
 defer parse_link_text  ( "...<space>|<space>" | "...<space>]]<space>"  -- )
   \ Parse the link text and store it into 'link_text'.
+  \ Defined in <fendo_parser.fs>.
 
 : get_link_raw_attributes  ( "...<space>}}<space>"  -- )
   \ Parse and store the link raw attributes.
@@ -901,5 +939,6 @@ only forth fendo>order definitions
 \ 2013-07-26: New: '\n' as an alias for 'echo_cr'; this lets to
 \   make the final HTML cleaner, especially in the template.
 \ 2013-07-26: '»,' and '.»' punctuations.
+\ 2013-07-28: simpler and more legible 'parse_forth_code'.
 
 [then]
