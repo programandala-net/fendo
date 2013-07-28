@@ -64,6 +64,9 @@
 \ renamed, after the  changes in the echo module.
 \ 2013-07-28 New: 'parse_link_text' moved here from
 \   <fendo_markup_wiki.fs>.
+\ 2013-07-28 Fix: old '[previous]' changed to '[markup<order]';
+\   this was the reason the so many wordlists remained in the
+\   search order.
 \
 \ **************************************************************
 \ Todo
@@ -79,11 +82,11 @@
 
 : close_pending_bullet_list  ( -- )
   \ Close a pending bullet list.
-  [markup>order] </li> </ul> [previous]  bullet_list_items off
+  [markup>order] </li> </ul> [markup<order]  bullet_list_items off
   ;
 : close_pending_numbered_list  ( -- )
   \ Close a pending numbered list.
-  [markup>order] </li> </ol> [previous]  numbered_list_items off
+  [markup>order] </li> </ol> [markup<order]  numbered_list_items off
   ;
 : close_pending_list  ( -- )
   \ Close a pending list, if needed.
@@ -94,98 +97,97 @@
 : close_pending_heading  ( -- )
   \ Close a pending heading, if needed.
   \ xxx not used yet
-  opened_[=]? @ if  [markup>order] = [previous]  then
+  opened_[=]? @ if  [markup>order] = [markup<order]  then
   ;
 : close_pending_paragraph  ( -- )
   \ Close a pending paragraph, if needed.
-  opened_[_]? @ if  [markup>order] _ [previous]  then
+  opened_[_]? @ if  [markup>order] _ [markup<order]  then
   ;
 : close_pending_table  ( -- )
   \ Close a pending table, if needed.
   #rows @ if
-    [markup>order] </tr> </table> [previous]
+    [markup>order] </tr> </table> [markup<order]
     #rows off  #cells off
   then
   ;
-:noname  ( -- )
+: close_pending  ( -- )
   \ Close the pending markups.
   \ Invoked when an empty line if parsed, and at the end of the
   \ parsing.
   close_pending_list close_pending_paragraph close_pending_table echo_cr
   ;
-is close_pending
 
 \ **************************************************************
 \ Parser
 
 0 [if]  \ xxx old first version, with wordlist order and parse-name
-:noname  ( ca len -- )
-  \ Manage a parsed string of content: print it and update the counters.
-  #markups off  _echo  1 #nonmarkups +!
-  ;
-is content
-: (markup)  ( nt -- )
-  \ Manage a parsed markup: execute it and update the counters.
-  \ nt = name token of the markup
-  \ xxx bug thread ends here, but dissapeared without reason!
-  #nonmarkups off name>int execute  1 #markups +!
-  ;
-: markup  ( ca len nt -- )
-  \ Manage a parsed markup: execute it and update the counters,
-  \ if required.
-  \ nt = name token of the markup
-  \ ca len = name of the markup
-  execute_markup? @  \ xxx used?
-  if    
-    nip nip (markup)
-    \ nip nip drop  \ xxx bug thread
-  else
-    drop content
-  then
-  ;
-variable #nothings  \ counter of empty parsings
-: something  ( ca len -- )
-  \ Manage something found on the page content.
-  \ ca len = parsed item (markup or printable content)
-  #nothings off
-  2dup find-name dup
-  if
-    markup \ xxx bug thread
-    \ drop 2drop  \ markup \ xxx bug thread
-  else
-    drop content
-  then
-  1 #parsed +!
-  ;
-: nothing  ( -- )
-  \ Manage a "nothing", a parsed empty name. 
-  \ The first empty name means the current line is finished;
-  \ the second consecutive empty name means the current line is empty.
-  #nothings @  \ not the first consecutive time?
-  if    close_pending  \ an empty line was parsed
-  then  1 #nothings +!  #parsed off
-  ;
-: (parse_content)  ( "text" -- )
-  \ Actually parse the page content.
-  \ The process is finished by the '}content' markup.
-  \ xxx fixme -- words in Root wordlist are executed!
-  \   search-wordlist must be used instead of parse-name.
-  begin
-    parse-name dup
-    if    something  true  \ xxx bug thread
-    else  nothing  2drop refill
-    then  0=
-  until
-  ;
-: parse_content  ( "text" -- )
-  \ Parse the current input source.
-  \ The process is finished by the '}content' markup or the end
-  \ of the source.
-  separate? off
-  only markup>order
-  (parse_content)
-  only forth fendo>order
-  ;
+\    :noname  ( ca len -- )
+\      \ Manage a parsed string of content: print it and update the counters.
+\      #markups off  _echo  1 #nonmarkups +!
+\      ;
+\    is content
+\    : (markup)  ( nt -- )
+\      \ Manage a parsed markup: execute it and update the counters.
+\      \ nt = name token of the markup
+\      \ xxx bug thread ends here, but dissapeared without reason!
+\      #nonmarkups off name>int execute  1 #markups +!
+\      ;
+\    : markup  ( ca len nt -- )
+\      \ Manage a parsed markup: execute it and update the counters,
+\      \ if required.
+\      \ nt = name token of the markup
+\      \ ca len = name of the markup
+\      execute_markup? @  \ xxx used?
+\      if    
+\        nip nip (markup)
+\        \ nip nip drop  \ xxx bug thread
+\      else
+\        drop content
+\      then
+\      ;
+\    variable #nothings  \ counter of empty parsings
+\    : something  ( ca len -- )
+\      \ Manage something found on the page content.
+\      \ ca len = parsed item (markup or printable content)
+\      #nothings off
+\      2dup find-name dup
+\      if
+\        markup \ xxx bug thread
+\        \ drop 2drop  \ markup \ xxx bug thread
+\      else
+\        drop content
+\      then
+\      1 #parsed +!
+\      ;
+\    : nothing  ( -- )
+\      \ Manage a "nothing", a parsed empty name. 
+\      \ The first empty name means the current line is finished;
+\      \ the second consecutive empty name means the current line is empty.
+\      #nothings @  \ not the first consecutive time?
+\      if    close_pending  \ an empty line was parsed
+\      then  1 #nothings +!  #parsed off
+\      ;
+\    : (parse_content)  ( "text" -- )
+\      \ Actually parse the page content.
+\      \ The process is finished by the '}content' markup.
+\      \ xxx fixme -- words in Root wordlist are executed!
+\      \   search-wordlist must be used instead of parse-name.
+\      begin
+\        parse-name dup
+\        if    something  true  \ xxx bug thread
+\        else  nothing  2drop refill
+\        then  0=
+\      until
+\      ;
+\    : parse_content  ( "text" -- )
+\      \ Parse the current input source.
+\      \ The process is finished by the '}content' markup or the end
+\      \ of the source.
+\      separate? off
+\      only markup>order
+\      (parse_content)
+\      only forth fendo>order
+\      ;
 [then]
 
 \ xxx second version, with search-wordlist 

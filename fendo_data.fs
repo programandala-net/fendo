@@ -93,7 +93,7 @@ variable /datum  \ offset of the current datum; at the end, length of the data
 : :datum>value  ( ca len -- )
   \ Create a page metadatum that returns its value.
   \ This is the normal version of the metadatum: if executed in
-  \ the metada header (between 'data{' and '}data') it will
+  \ the metadata header (between 'data{' and '}data') it will
   \ parse its datum from the input stream; out of the header it
   \ will return the datum string.
   \ ca len = datum name
@@ -178,7 +178,7 @@ datum: template  \ HTML template filename in the design subdir
   \ Divide a comma separated values in its values.
   \ ca len = string with comma separated values
   \ ca#1 len#1 ... ca#u len#u = one or more strings
-  \ u = number of string returned
+  \ u = number of strings returned
   depth >r
   begin  s" ," /sides 0=  until  2drop
   depth r> 2 - - 2/
