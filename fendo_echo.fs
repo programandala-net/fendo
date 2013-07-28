@@ -34,6 +34,9 @@
 \   string.
 \ 2013-07-12 New: '?_echo' moved here from <fendo_markup_wiki.fs>.
 \ 2013-07-14 New: '?echo_line'.
+\ 2013-07-21 New: 'echo.'. This somehow fixes the print corruption
+\   caused by using 's>d <# #s #> echo' in the HTML template.
+\ 2013-07-21 New: 'echo_line'.
 
 \ **************************************************************
 \ Output
@@ -83,7 +86,7 @@ variable target_fid  \ file id of the HTML target page
   then
   ;
 : (echo>string)  ( ca len -- )
-  \ Add a string to to the 'echoed' string.
+  \ Add a string to the 'echoed' string.
   echoed $+! 
   ;
 : echo  ( ca len -- )
@@ -119,13 +122,17 @@ variable separate?  \ flag: separate the next tag or word from the current one?
   \ Print a text string to the HTML file, with a previous space if needed.
   _separate echo 
   ;
-: ?_echo  ( ca len -- )  \ xxx used?
+: ?_echo  ( ca len f -- )  \ xxx used?
   if  _echo  else  2drop  then
   ;
-: ?echo_line  ( ca len -- )
-  if  echo echo_cr  else  2drop  then
+: echo_line  ( ca len -- )
+  echo echo_cr 
   ;
-
+: ?echo_line  ( ca len f -- )
+  if  echo_line  else  2drop  then
+  ;
+: echo.  ( n -- )
+  s>d <# #s #> echo
+  ;
 .( fendo_echo.fs compiled) cr
-
 

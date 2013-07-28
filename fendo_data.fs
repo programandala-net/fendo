@@ -3,8 +3,6 @@
 \ This file is part of
 \ Fendo ("Forth Engine for Net DOcuments") version A-01.
 
-\ File changed 2013-06-28 18
-
 \ This file defines the page data tools.
 
 \ Copyright (C) 2013 Marcos Cruz (programandala.net)
@@ -68,7 +66,8 @@
 \   from <fendo_files.fs>.
 \ 2013-06-29 New: 'target_extension'; now target filename extension
 \   depends on the corresponding optional metadatum too.
-\ 2013-07-28 New: 'required_data'.
+\ 2013-07-28 New: 'required_data', '-forth_extension',
+\   '+forth_extension'.
 
 \ **************************************************************
 \ Todo
@@ -199,10 +198,20 @@ datum: template  \ HTML template filename in the design subdir
 : current_target_extension  ( -- ca len )
   current_page target_extension 
   ;
+: -forth_extension  ( ca len -- ca' len' )
+  \ Remove the Forth extension from a filename.
+  forth_extension $@ -suffix
+  ;
+: +forth_extension  ( ca len -- ca' len' )
+  \ Add the Forth extension to a filename.
+  forth_extension $@ s+
+  ;
 : source>target_extension  ( ca1 len1 -- ca2 len2 )
-  \ ca1 len1 = Forth source page file name
-  \ ca2 len2 = target HTML page file name
-  forth_extension $@ -suffix  current_target_extension s+
+  \ Change the Forth extension to the current target extension.
+  \ ca1 len1 = Forth source page filename
+  \ ca2 len2 = target HTML page filename
+  \ xxx todo rename to current_source>target ?
+  -forth_extension current_target_extension s+
   ;
 : /sourcefilename  ( -- ca len )
   \ Return the current source filename, without path.
@@ -296,19 +305,21 @@ do_content? on
 
 : (required_data)  ( ca len -- )
   \ Require a page file in order to get its data.
-  +source_dir required
+  \ ca len = filename
+  +source_dir 
+  cr 2dup ."  (required_data) from " type key drop \ xxx debug check
+  required
   ;
 : required_data  ( ca len -- )
   \ Require a page file in order to get its data.
-  \ ca len = file name
-  do_content? @  do_content? off  (required_data)  do_content? !
+  \ ca len = filename
+  do_content? @ >r do_content? off  (required_data)  r> do_content? !
   ;
 : require_data  ( "name" -- )
   \ Require a page file in order to get its data.
-  \ "name" = file name
+  \ "name" = filename
   do_content? @  do_content? off
-  parse-name? abort" Filename expected in 'require_data'"
-  (required_data)
+  parse-name? abort" File name expected in 'require_data'"  (required_data)
   do_content? !
   ;
 
