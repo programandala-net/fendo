@@ -120,77 +120,83 @@
 \ **************************************************************
 \ Parser
 
+variable more?  \ flag: keep on parsing more words?; changed by '}content'
+
 0 [if]  \ xxx old first version, with wordlist order and parse-name
-\    :noname  ( ca len -- )
-\      \ Manage a parsed string of content: print it and update the counters.
-\      #markups off  _echo  1 #nonmarkups +!
-\      ;
-\    is content
-\    : (markup)  ( nt -- )
-\      \ Manage a parsed markup: execute it and update the counters.
-\      \ nt = name token of the markup
-\      \ xxx bug thread ends here, but dissapeared without reason!
-\      #nonmarkups off name>int execute  1 #markups +!
-\      ;
-\    : markup  ( ca len nt -- )
-\      \ Manage a parsed markup: execute it and update the counters,
-\      \ if required.
-\      \ nt = name token of the markup
-\      \ ca len = name of the markup
-\      execute_markup? @  \ xxx used?
-\      if    
-\        nip nip (markup)
-\        \ nip nip drop  \ xxx bug thread
-\      else
-\        drop content
-\      then
-\      ;
-\    variable #nothings  \ counter of empty parsings
-\    : something  ( ca len -- )
-\      \ Manage something found on the page content.
-\      \ ca len = parsed item (markup or printable content)
-\      #nothings off
-\      2dup find-name dup
-\      if
-\        markup \ xxx bug thread
-\        \ drop 2drop  \ markup \ xxx bug thread
-\      else
-\        drop content
-\      then
-\      1 #parsed +!
-\      ;
-\    : nothing  ( -- )
-\      \ Manage a "nothing", a parsed empty name. 
-\      \ The first empty name means the current line is finished;
-\      \ the second consecutive empty name means the current line is empty.
-\      #nothings @  \ not the first consecutive time?
-\      if    close_pending  \ an empty line was parsed
-\      then  1 #nothings +!  #parsed off
-\      ;
-\    : (parse_content)  ( "text" -- )
-\      \ Actually parse the page content.
-\      \ The process is finished by the '}content' markup.
-\      \ xxx fixme -- words in Root wordlist are executed!
-\      \   search-wordlist must be used instead of parse-name.
-\      begin
-\        parse-name dup
-\        if    something  true  \ xxx bug thread
-\        else  nothing  2drop refill
-\        then  0=
-\      until
-\      ;
-\    : parse_content  ( "text" -- )
-\      \ Parse the current input source.
-\      \ The process is finished by the '}content' markup or the end
-\      \ of the source.
-\      separate? off
-\      only markup>order
-\      (parse_content)
-\      only forth fendo>order
-\      ;
+
+:noname  ( ca len -- )
+  \ Manage a parsed string of content: print it and update the counters.
+  #markups off  _echo  1 #nonmarkups +!
+  ;
+is content
+: (markup)  ( nt -- )
+  \ Manage a parsed markup: execute it and update the counters.
+  \ nt = name token of the markup
+  \ xxx bug thread ends here, but dissapeared without reason!
+  #nonmarkups off name>int execute  1 #markups +!
+  ;
+: markup  ( ca len nt -- )
+  \ Manage a parsed markup: execute it and update the counters,
+  \ if required.
+  \ nt = name token of the markup
+  \ ca len = name of the markup
+\  >r 2dup type key drop r>  \ xxx debug check
+  execute_markup? @  \ xxx used?
+  if    
+    nip nip (markup)
+    \ nip nip drop  \ xxx bug thread
+  else
+    drop content
+  then
+  ;
+variable #nothings  \ counter of empty parsings
+: something  ( ca len -- )
+  \ Manage something found on the page content.
+  \ ca len = parsed item (markup or printable content)
+  #nothings off
+  2dup find-name dup
+  if
+    markup \ xxx bug thread
+    \ drop 2drop  \ markup \ xxx bug thread
+  else
+    drop content
+  then
+  1 #parsed +!
+  ;
+: nothing  ( -- )
+  \ Manage a "nothing", a parsed empty name. 
+  \ The first empty name means the current line is finished;
+  \ the second consecutive empty name means the current line is empty.
+  #nothings @  \ not the first consecutive time?
+  if    close_pending  \ an empty line was parsed
+  then  1 #nothings +!  #parsed off
+  ;
+: (parse_content)  ( "text" -- )
+  \ Actually parse the page content.
+  \ The process is finished by the '}content' markup.
+  \ xxx fixme -- words in Root wordlist are executed!
+  \   search-wordlist must be used instead of parse-name.
+  begin
+    parse-name dup
+    if    something  true  \ xxx bug thread
+    else  nothing  2drop refill
+    then  0=
+  until
+  ;
+: parse_content  ( "text" -- )
+  \ Parse the current input source.
+  \ The process is finished by the '}content' markup or the end
+  \ of the source.
+  separate? off
+  only markup>order
+  (parse_content)
+  only forth fendo>order
+  ;
+
 [then]
 
-\ xxx second version, with search-wordlist 
+
+true [if] \ xxx second version, with search-wordlist 
 
 :noname  ( ca len -- )
   \ Manage a parsed string of content: print it and update the counters.
@@ -225,6 +231,43 @@ variable #nothings  \ counter of empty parsings
   then
   1 #parsed +!
   ;
+
+[then]
+
+0 [if]  \ 2013-08-10 third version, with direct execution of Forth code; unfinished
+
+: something_in_code_zone  ( ca len -- )
+  \ Manage something found in a Forth code zone.
+  \ ca len = parsed item 
+  2dup fendo_markup_wid search-wordlist
+  if  markup
+  else
+    2dup fendo_markup_html_entities_wid search-wordlist
+    if  markup  else  content  then
+  then
+  1 #parsed +!
+  ;
+: something_in_ordinary_zone  ( ca len -- )
+  \ Manage something found out of Forth code zones.
+  \ ca len = parsed item (markup or printable content) 
+  2dup fendo_markup_wid search-wordlist
+  if  markup
+  else
+    2dup fendo_markup_html_entities_wid search-wordlist
+    if  markup  else  content  then
+  then
+  1 #parsed +!
+  ;
+: something  ( ca len -- )
+  \ Manage something found on the page content.
+  \ ca len = parsed item (markup, Forth code or printable content) 
+  #nothings off  forth_code_depth @
+  if    something_in_code_zone
+  else  something_in_ordinary_zone
+  then
+  ;
+[then]
+
 : nothing  ( -- )
   \ Manage a "nothing", a parsed empty name. 
   \ The first empty name means the current line is finished;
@@ -234,7 +277,6 @@ variable #nothings  \ counter of empty parsings
   if    close_pending  \ an empty line was parsed
   then  1 #nothings +!  #parsed off
   ;
-variable more?  \ flag: keep on parsing more words?; changed by '}content'
 : parse_content  ( "text" -- )
   \ Parse the current input source.
   \ The process is finished by the '}content' markup or the end
@@ -247,6 +289,9 @@ variable more?  \ flag: keep on parsing more words?; changed by '}content'
     then  0=
   until
   ;
+
+[then]
+
 : parse_string  ( ca len -- )
   \ Parse a string. 
   \ ca len = content
@@ -312,7 +357,7 @@ variable more?  \ flag: keep on parsing more words?; changed by '}content'
 : (close_target)  ( -- )
   \ Close the target HTML page file.
   target_fid @ close-file throw
-  \ ." target_fid just closed. " \ xxx debug check
+\  ." target_fid just closed. " \ xxx debug check
   ;
 : close_target  ( -- )
   \ Close the target HTML page file, if needed.
