@@ -92,15 +92,25 @@ require ../galope/parse-name-question.fs  \ 'parse-name?'
 require ../galope/sconstant.fs  \ 'sconstant'
 require ../galope/slash-sides.fs  \ '/sides'
 
-\ require ../galope/sb.fs  \ string buffer
-\ 1024 heap_sb
+require ../galope/sb.fs  \ string buffer
+1024 10 * heap_sb
+' bs" alias s"  immediate
+' bs+ alias s+
+' bs& alias s&
+\ 2013-08-10 Withouth the string buffer, the input
+\ stream gets corrupted at the end of the template.
+\ Didn't find the bug yet. It seems a problem with
+\ Gforth's 's"'.
 
 anew --fendo--
 
-true dup constant ffl-strings?  immediate
-0= constant gforth-strings?  immediate
+false  \ Gforth's dynamic strings instead of FFL's?
+dup     constant gforth-strings?
+dup     constant [gforth-strings?]  immediate
+0= dup  constant ffl-strings?
+        constant [ffl-strings?]  immediate
 
-0 [if]
+true [if]
 \ Safer alternatives for words of Gforth's string.fs
 warnings @  warnings off
 : $@len  ( $a -- len )

@@ -54,6 +54,11 @@
   ;
 
 \ **************************************************************
+
+require ../galope/n-to-r.fs  \ 'n>r'
+require ../galope/n-r-from.fs  \ 'nr>'
+
+\ **************************************************************
 \ Generic tool words for strings
 
 \ xxx todo move?
@@ -216,7 +221,7 @@ variable #cells  \ counter for the current table
 \ **************************************************************
 \ Tools for merged Forth code
 
-0 [if]  \ xxx first version
+false [if]  \ xxx first version
 
 : (forth_code_end?)  ( ca len -- ff )
   \ Is a name a valid end markup of the Forth code?
@@ -248,18 +253,65 @@ variable #cells  \ counter for the current table
   \ ca len = Forth code
   s" "
   begin   parse-name dup
-    if    \ 2dup ." { " type ." }"  \ xxx debug check
-          forth_code_end?
+    if    \ 2dup ." { " type ." } "  \ xxx debug check
+          2dup forth_code_end?
+          dup >r
+          0= and  s+ s"  " s+ r>
     else  2drop  
           \ s\" \n" s+ 
           s"  " s+ 
           refill 0=
     then
   until
-  cr ." <: " 2dup type ." :>" cr  \ xxx debug check
+  \ cr ." <: " 2dup type ." :>" cr key drop  \ xxx debug check
   ;
 
 [then]
+
+true [if]  \ xxx 2013-08-10 second version, more legible
+
+: "<:"=  ( -- ff )
+  s" <:" str= 
+  ;
+: ":>"=  ( -- ff )
+  s" :>" str= 
+  ;
+: update_forth_code_depth  ( ca len -- )
+  \ ca len = latest name parsed 
+  2dup "<:"= abs >r ":>"= r> + forth_code_depth +! 
+  ;
+: forth_code_end?  ( ca len -- ff )
+  ":>"= forth_code_depth @ 0= and
+  ;
+: bl+  ( ca len -- ca' len' )
+  s"  " s+
+  ;
+: remaining   ( -- )  \ xxx debug check
+  >in @ source 2 pick - -rot + swap
+  64 min
+  cr ." ***> " type ."  <***" cr
+  ;
+: parse_forth_code  ( "forthcode :>" -- ca len )
+  \ Get the content of a merged Forth code. 
+  \ Parse the input stream until a valid ":>" markup is found.
+  \ ca len = Forth code
+  s" "
+  begin   parse-name dup
+    if    
+          \ 2dup ." { " type ." } "  \ xxx debug check
+          \ ." { " input-lexeme 2@ type ." } "  \ xxx debug check
+          \ remaining  key drop  \ xxx debug check
+          2dup update_forth_code_depth
+          2dup forth_code_end?
+          dup >r if  2drop  else  s+ bl+  then  r>
+    else  2drop bl+  refill 0=
+    then
+  until
+  ;
+
+[then]
+
+false [if]  \ experimental version with dynamic string, not finished
 
 : forth_code_end?  ( ca len -- ff )
   \ Is a name a valid end markup of the Forth code?
@@ -285,13 +337,14 @@ variable forth_code$  \ dynamic string
   \ ca len = Forth code
   s" " forth_code$ $!
   begin   parse-name dup
-    if    2dup ." { " type ." }"  \ xxx debug check
+    if    \ 2dup ." { " type ." }"  \ xxx debug check
           2dup forth_code_end? dup >r if  2drop  else  forth_code$+  then r>
     else  2drop s"  " forth_code$+  refill 0=
     then
   until   forth_code$ $@
-  cr ." <: " 2dup type ."  :>" cr  \ xxx debug check
+\  cr ." <: " 2dup type ."  :>" cr  \ xxx debug check
   ;
+[then]
 
 \ **************************************************************
 \ Tools for punctuation
@@ -672,14 +725,25 @@ only forth markup>order definitions fendo>order
 
 \ Merged Forth code
 
+true [if]  \ xxx first version
+
+: evaluate_forth_code  ( i*x ca len -- j*x )
+  get-order n>r
+  only fendo>order markup>order forth>order 
+  evaluate
+  nr> set-order
+  \ cr ." <:..:> done!" key drop  \ xxx debug check
+  ;
 : <:  ( "forthcode :>" -- )
   \ Start, parse and interpret a Forth block.
   1 forth_code_depth +!
-  only fendo>order markup>order forth>order 
-  parse_forth_code evaluate
+  parse_forth_code 
+\  cr ." <: " 2dup type ." :>" cr  \ xxx debug check
+  evaluate_forth_code  \ xxx debug check
   ;  immediate
 : :>  ( -- )
   \ Finish a Forth block.
+  \ xxx todo
   forth_code_depth @
 \  dup   \ xxx
   0= abort" ':>' without '<:'"
@@ -689,6 +753,29 @@ only forth markup>order definitions fendo>order
 \  then
   -1 forth_code_depth +!
   ; immediate
+
+[then]
+
+false [if]  \ experimental version
+
+\ quite different approach
+\ xxx todo interpret numbers
+
+: <:  ( "forthcode :>" -- )
+  \ Start a Forth code block.
+  1 forth_code_depth +!
+  forth>order 
+  ; 
+: :>  ( -- )
+  \ Finish a Forth block.
+  forth_code_depth @
+  0= abort" ':>' without '<:'"
+  previous
+  -1 forth_code_depth +!
+  ; 
+
+[then]
+
 
 \ Grouping
 
@@ -850,7 +937,7 @@ only forth markup>order definitions fendo>order
 
 : ~  ( "name" -- )
   \ Escape a name: Parse and echo it, even if it's a markup.
-  parse-name? abort" Parseable name expected in '~'"  content
+  parse-name? abort" Parseable name expected by '~'"  content
   ; 
 
 \ Punctuation
@@ -874,7 +961,9 @@ punctuation: ...
 punctuation: ...),
 punctuation: ...).
 punctuation: ...);
-punctuation: .»
+punctuation: ...»
+punctuation: ...».
+punctuation: ...»;
 punctuation: :
 punctuation: ;
 punctuation: ?
@@ -882,6 +971,7 @@ punctuation: ]
 punctuation: }
 punctuation: »
 punctuation: »,
+punctuation: ».
 
 only forth fendo>order definitions
 
@@ -940,5 +1030,11 @@ only forth fendo>order definitions
 \   make the final HTML cleaner, especially in the template.
 \ 2013-07-26: '»,' and '.»' punctuations.
 \ 2013-07-28: simpler and more legible 'parse_forth_code'.
+\ 2013-08-10: Fix: 'evaluate_forth_code' factored from '<:', and
+\   fixed with 'get-order' and 'set-order'.
+\ 2013-08-10: bug: the Forth code parsed by '<:' still gets
+\   corrupted at the end of the template. No clue yet.
+\ 2013-08-10: Change: 'parse_forth_code' rewritten, more
+\   legible.
 
 [then]
