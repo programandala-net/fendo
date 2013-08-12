@@ -105,7 +105,7 @@ variable /datum  \ offset of the current datum; at the end, length of the data
     \ dfa = data field address of the datum word
     \ u = datum offset
     ( a1 dfa | dfa "text<nl>" )
-    @  in_data_header? @  ( u ff )
+    @  in_data_header? @  ( u wf )
     if    ( u "datum<nl>" ) parse_datum
     else  ( a1 u ) + $@
     then

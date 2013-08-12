@@ -62,13 +62,13 @@ variable echoed  \ used as dynamic string
   >screen echo> !
   ;
 
-: echo>file?  ( -- ff )
+: echo>file?  ( -- wf )
   echo> @ >file =
   ;
-: echo>screen?  ( -- ff )
+: echo>screen?  ( -- wf )
   echo> @ >screen =
   ;
-: echo>string?  ( -- ff )
+: echo>string?  ( -- wf )
   echo> @ >string =
   ;
 

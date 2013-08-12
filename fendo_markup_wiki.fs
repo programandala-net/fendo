@@ -57,6 +57,7 @@
 
 require ../galope/n-to-r.fs  \ 'n>r'
 require ../galope/n-r-from.fs  \ 'nr>'
+require ../galope/minus-prefix.fs  \ '-prefix'
 
 \ **************************************************************
 \ Generic tool words for strings
@@ -87,11 +88,11 @@ variable #markups     \ consecutive markups parsed
 variable #nonmarkups  \ consecutive nonmarkups parsed
 variable #parsed      \ items already parsed in the current line (before the current item)
 
-: first_on_the_line?  ( -- ff )
+: first_on_the_line?  ( -- wf )
   \ Is the last parsed name the first one on the current line?
   #parsed @ 0=
   ;
-: exhausted?  ( -- ff )
+: exhausted?  ( -- wf )
   \ Is the current source line exhausted?
   [false] [if]
     \ First version, doesn't work when there are trailing spaces
@@ -201,11 +202,11 @@ variable #cells  \ counter for the current table
   else  execute  1 #cells +!
   then
   ;
-: actual_cell?  ( -- ff )
+: actual_cell?  ( -- wf )
   \ The parsed cell markup ("|" or "|=") is the first markup parsed
   \ on the current line or there's an opened table?
   \ This check lets those signs to be used as content in other contexts.
-  \ ff = is it an actual cell?
+  \ wf = is it an actual cell?
   table_started? @  first_on_the_line?  or
   ;
 : (|)  ( xt -- )
@@ -223,7 +224,7 @@ variable #cells  \ counter for the current table
 
 false [if]  \ xxx first version
 
-: (forth_code_end?)  ( ca len -- ff )
+: (forth_code_end?)  ( ca len -- wf )
   \ Is a name a valid end markup of the Forth code?
   \ ca len = latest name parsed 
 \  ." «" 2dup type ." » "  \ xxx debug check
@@ -236,13 +237,13 @@ false [if]  \ xxx first version
 \  dup  if ." END!" then  \ xxx debug check
 \  key drop  \ xxx debug check
   ;
-: forth_code_end?  ( ca1 len1 ca2 len2 -- ca1' len1' ff )
+: forth_code_end?  ( ca1 len1 ca2 len2 -- ca1' len1' wf )
   \ Add a new name to the parsed merged Forth code
   \ and check if it's the end of the Forth code.
   \ ca1 len1 = code already parsed 
   \ ca1' len1' = code already parsed, with ca2 len2 added
   \ ca2 len2 = latest name parsed 
-  \ ff = is ca2 len2 the right markup for the end of the code?
+  \ wf = is ca2 len2 the right markup for the end of the code?
   2dup (forth_code_end?) dup >r
   0= and  \ empty the name if it's the end of the code
   s+ s"  " s+  r>
@@ -253,7 +254,8 @@ false [if]  \ xxx first version
   \ ca len = Forth code
   s" "
   begin   parse-name dup
-    if    \ 2dup ." { " type ." } "  \ xxx debug check
+    if    
+\          2dup ." { " type ." } "  \ xxx debug check
           2dup forth_code_end?
           dup >r
           0= and  s+ s"  " s+ r>
@@ -263,30 +265,31 @@ false [if]  \ xxx first version
           refill 0=
     then
   until
-  \ cr ." <: " 2dup type ." :>" cr key drop  \ xxx debug check
+\  cr ." <: " 2dup type ." :>" cr key drop  \ xxx debug check
   ;
 
 [then]
 
 true [if]  \ xxx 2013-08-10 second version, more legible
 
-: "<:"=  ( -- ff )
+: "<:"=  ( -- wf )
   s" <:" str= 
   ;
-: ":>"=  ( -- ff )
+: ":>"=  ( -- wf )
   s" :>" str= 
   ;
 : update_forth_code_depth  ( ca len -- )
   \ ca len = latest name parsed 
   2dup "<:"= abs >r ":>"= r> + forth_code_depth +! 
   ;
-: forth_code_end?  ( ca len -- ff )
+: forth_code_end?  ( ca len -- wf )
   ":>"= forth_code_depth @ 0= and
   ;
 : bl+  ( ca len -- ca' len' )
   s"  " s+
   ;
-: remaining   ( -- )  \ xxx debug check
+: remaining   ( -- )
+\ xxx debug check
   >in @ source 2 pick - -rot + swap
   64 min
   cr ." ***> " type ."  <***" cr
@@ -298,9 +301,9 @@ true [if]  \ xxx 2013-08-10 second version, more legible
   s" "
   begin   parse-name dup
     if    
-          \ 2dup ." { " type ." } "  \ xxx debug check
-          \ ." { " input-lexeme 2@ type ." } "  \ xxx debug check
-          \ remaining  key drop  \ xxx debug check
+\           2dup ." { " type ." } "  \ xxx debug check
+\           ." { " input-lexeme 2@ type ." } "  \ xxx debug check
+\           remaining  key drop  \ xxx debug check
           2dup update_forth_code_depth
           2dup forth_code_end?
           dup >r if  2drop  else  s+ bl+  then  r>
@@ -313,7 +316,7 @@ true [if]  \ xxx 2013-08-10 second version, more legible
 
 false [if]  \ experimental version with dynamic string, not finished
 
-: forth_code_end?  ( ca len -- ff )
+: forth_code_end?  ( ca len -- wf )
   \ Is a name a valid end markup of the Forth code?
   \ ca len = latest name parsed 
 \  ." «" 2dup type ." » "  \ xxx debug check
@@ -337,7 +340,8 @@ variable forth_code$  \ dynamic string
   \ ca len = Forth code
   s" " forth_code$ $!
   begin   parse-name dup
-    if    \ 2dup ." { " type ." }"  \ xxx debug check
+    if    
+\          2dup ." { " type ." }"  \ xxx debug check
           2dup forth_code_end? dup >r if  2drop  else  forth_code$+  then r>
     else  2drop s"  " forth_code$+  refill 0=
     then
@@ -416,7 +420,7 @@ s" /counted-string" environment? 0=
 \ **************************************************************
 \ Tools for images and links
 
-: or_end_of_section?  ( ca len ff1 -- ff2 )
+: or_end_of_section?  ( ca len wf1 -- wf2 )
   \ ca len = latest name parsed in the alt attribute section
   >r  s" |" str=  r> or 
   ;
@@ -429,15 +433,15 @@ s" /counted-string" environment? 0=
   files_subdir $@ parse-word s+ src=!
   ;
 variable image_finished?  \ flag, no more image markup to parse?
-: end_of_image?  ( ca len -- ff )
+: end_of_image?  ( ca len -- wf )
   \ ca len = latest name parsed 
   s" }}" str=  dup image_finished? !
   ;
-: end_of_image_section?  ( ca len -- ff )
+: end_of_image_section?  ( ca len -- wf )
   \ ca len = latest name parsed 
   2dup end_of_image? or_end_of_section?
   ;
-: more_image?  ( -- ff )
+: more_image?  ( -- wf )
   \ Fill the input buffer or abort.
   refill 0= dup abort" Missing '}}'"
   ;
@@ -482,11 +486,11 @@ variable image_finished?  \ flag, no more image markup to parse?
 \ **************************************************************
 \ Tools for links
 
-: file://?  ( ca len -- ff )
+: file://?  ( ca len -- wf )
   \ Does a string starts with "file://" (so it's a file link)?
   s" file://" string-prefix?
   ;
-: http://?  ( ca len -- ff )
+: http://?  ( ca len -- wf )
   \ Does a string starts with "http://" (so it's an external link)?
   s" http://" string-prefix?
   ;
@@ -497,7 +501,7 @@ wordlist constant links_wid  \ for bookmarked links
   ;
 variable link_text  \ dynamic string
 variable link_anchor  \ dynamic string
-: extract_link_anchor  ( ca len -- ca' len' )
+: -anchor  ( ca len -- ca' len' )
   \ Extract the anchor from a href attribute and store it.
   s" #" sides/ drop link_anchor $!
   ;
@@ -517,32 +521,37 @@ variable link_type
   \ Get and store the type id of an href attribute.
   >link_type_id link_type !
   ;
-: bookmarked_link?  ( -- ff )
+: bookmarked_link?  ( -- wf )
   link_type @ bookmarked_link =
   ;
-: external_link?  ( -- ff )
+: external_link?  ( -- wf )
   link_type @ external_link =
   ;
-: local_link?  ( -- ff )
+: local_link?  ( -- wf )
   link_type @ local_link =
   ;
-: file_link?  ( -- ff )
+: file_link?  ( -- wf )
   link_type @ file_link =
   ;
-: get_link_href_attribute  ( "filename<spc>" -- )
+: convert_link_href  ( ca len -- ca' len' )
+  \ xxx todo finish
+  2dup set_link_type
+  file_link? if  s" file://" -prefix  then
+  ;
+: get_link_href_attribute  ( "href_attribute<spaces>" -- )
   \ Parse and store the link href attribute.
-  parse-word extract_link_anchor  2dup set_link_type  href=!
+  parse-word -anchor convert_link_href 2dup cr type cr href=!
   ;
 variable link_finished?  \ flag, no more link markup to parse?
-: end_of_link?  ( ca len -- ff )
+: end_of_link?  ( ca len -- wf )
   \ ca len = latest name parsed 
   s" ]]" str=  dup link_finished? !
   ;
-: end_of_link_section?  ( ca len -- ff )
+: end_of_link_section?  ( ca len -- wf )
   \ ca len = latest name parsed 
   2dup end_of_link? or_end_of_section?
   ;
-: more_link?  ( -- ff )
+: more_link?  ( -- wf )
   \ Fill the input buffer or abort.
   refill 0= dup abort" Missing ']]'"
   ;
@@ -574,11 +583,11 @@ variable link_finished?  \ flag, no more link markup to parse?
   ;
 [then]
 
-defer parse_link_text  ( "...<space>|<space>" | "...<space>]]<space>"  -- )
+defer parse_link_text  ( "...<spaces>|<spaces>" | "...<spaces>]]<spaces>"  -- )
   \ Parse the link text and store it into 'link_text'.
   \ Defined in <fendo_parser.fs>.
 
-: get_link_raw_attributes  ( "...<space>}}<space>"  -- )
+: get_link_raw_attributes  ( "...<space>]]<space>"  -- )
   \ Parse and store the link raw attributes.
   \ xxx todo factor
   s" "
@@ -591,18 +600,21 @@ defer parse_link_text  ( "...<space>|<space>" | "...<space>]]<space>"  -- )
 : parse_link  ( "linkmarkup]]" -- )
   \ Parse and store the link attributes.
   get_link_href_attribute
+\  ." ---> " href=@ type cr  \ xxx debug check
 \  external_link? if  ." EXTERNAL LINK: " href=@ type cr  then  \ xxx debug check
   [ false ] [if]  \ simple version
     parse-name end_of_link_section? 0=
-      abort" Space not allowed in link filename or URL"
+    abort" Space not allowed in link filename or URL"
   [else]  \ no abort
     begin  parse-name end_of_link_section? 0=
     while  s" <!-- xxx fixme space in link filename or URL -->" echo
     repeat
   [then]
+\  ." ---> " href=@ type cr  \ xxx debug check
   link_finished? @ 0= if
     parse_link_text link_finished? @ 0= if  get_link_raw_attributes  then
   then
+\  ." ---> " href=@ type cr  \ xxx debug check
   ;
 : missing_local_link_text  ( -- )
   \ Set the proper link text of a local link when missing.
@@ -648,13 +660,14 @@ defer parse_link_text  ( "...<space>|<space>" | "...<space>]]<space>"  -- )
   \ extension of the destination file! there are links to Atom
   \ files, with their own extensions.
   href=@ 
+  \ xxx todo
 \  ." 1)" 2dup type cr  \ xxx debug check
   link_target_extension+
 \  ." 2)" 2dup type cr  \ xxx debug check
   anchor+
 \  ." 3)" 2dup type cr  \ xxx debug check
   href=!
-\  ." 4)" href=@ type cr
+\  ." 4)" href=@ type cr key drop
   ;
 
 \ **************************************************************
@@ -683,21 +696,29 @@ defer parse_link_text  ( "...<space>|<space>" | "...<space>]]<space>"  -- )
   \ Return the proper language attribute.
   xhtml? @ if  xml:lang=  else  lang=  then
   ;
+: :create_markup  ( ca len -- )
+  \ Create a 'create' word with the given name in the markup
+  \ wordlist.
+  \ This is used by definining words that may be invoked by the website
+  \ application to create specific markups.
+  2dup cr type cr
+  get-current >r  fendo_markup_wid set-current :create  r> set-current
+  ;
 : ((:  ( "name" -- )
   \ Create a language inline markup.
   \ name = ISO code of a language
   parse-name? abort" Missing language code"
-  2dup s" ((" s+ :create s,
+  2dup s" ((" s+ :create_markup s,
   does>  ( -- ) ( dfa )
-    count (xml:)lang= $! [markup>order] <span> [markup<order]
+    count (xml:)lang= attribute! [markup>order] <span> [markup<order]
   ;
 : (((:  ( "name" -- )
   \ Create a language block markup.
   \ name = ISO code of a language
   parse-name? abort" Missing language code"
-  2dup s" (((" s+ :create s,
+  2dup s" (((" s+ :create_markup s,
   does>  ( -- ) ( dfa )
-    count (xml:)lang= $! [markup>order] <div> [markup<order]
+    count (xml:)lang= attribute! [markup>order] <div> [markup<order]
   ;
 
 \ **************************************************************
@@ -732,14 +753,14 @@ true [if]  \ xxx first version
   only fendo>order markup>order forth>order 
   evaluate
   nr> set-order
-  \ cr ." <:..:> done!" key drop  \ xxx debug check
+\  cr ." <:..:> done!" key drop  \ xxx debug check
   ;
 : <:  ( "forthcode :>" -- )
   \ Start, parse and interpret a Forth block.
   1 forth_code_depth +!
   parse_forth_code 
 \  cr ." <: " 2dup type ." :>" cr  \ xxx debug check
-  evaluate_forth_code  \ xxx debug check
+  evaluate_forth_code
   ;  immediate
 : :>  ( -- )
   \ Finish a Forth block.
@@ -922,9 +943,18 @@ false [if]  \ experimental version
 
 \ Language
 
-((: en  (((: en  \ create 'en((' and 'en((('
-((: eo  (((: eo  \ create 'eo((' and 'eo((('
-((: es  (((: es  \ create 'es((' and 'es((('
+0 [if]
+
+\ The website application must create the language markups used
+\ in the content, this way:
+
+get-current fendo-markup
+((: en  (((: en  \ create 'en((' and 'en(((' for English
+((: eo  (((: eo  \ create 'eo((' and 'eo(((' for Esperanto
+((: es  (((: es  \ create 'es((' and 'es(((' for Spanish
+set-current
+
+[then]
 
 : ))  ( -- )
   </span> separate? on
@@ -1032,9 +1062,16 @@ only forth fendo>order definitions
 \ 2013-07-28: simpler and more legible 'parse_forth_code'.
 \ 2013-08-10: Fix: 'evaluate_forth_code' factored from '<:', and
 \   fixed with 'get-order' and 'set-order'.
-\ 2013-08-10: bug: the Forth code parsed by '<:' still gets
-\   corrupted at the end of the template. No clue yet.
+\ 2013-08-10: Fix: the Forth code parsed by '<:' got
+\   corrupted at the end of the template. It seemed a Gforth
+\   issue. The Galope's circular string buffer has been used as
+\   as layer for 's"' and 's+' and the problem dissapeared.
 \ 2013-08-10: Change: 'parse_forth_code' rewritten, more
 \   legible.
+\ 2013-08-10: Bug: sometimes the content of 'href='
+\ gets corrupted at the end of '([[)'. Gforth issue again?
+\ Todo: Try FFL's dynamic strings for HTML attributes.
+\ 2013-08-12: Fix: '(xml:)lang=' was modifed with '$!', even in
+\   when FFL-strings were chosen in the configuration.
 
 [then]

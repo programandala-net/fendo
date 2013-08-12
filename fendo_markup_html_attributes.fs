@@ -32,15 +32,37 @@
 \ 2013-07-03 New: secondary set of attributes, selectable
 \ with a variable, in order to let nested markups.
 \ 2013-07-03 Change: attributes are stored in dynamic strings.
+\ 2013-07-21 Change: code rearranged a bit.
+\ 2013-08-10 Change: FFL's strings as a compile option.
+\ 2013-08-12 New: 'attribute!' and 'attribute@' hide the conditional
+\   compilation required to change the string system.
 
 \ **************************************************************
 \ Todo
 
+\ 2013-08-10 Alternative to Gforth's strings: FFL's strings.
 
 \ **************************************************************
 \ Requirements
 
-require galope/3dup.fs
+require ../galope/3dup.fs
+
+\ Dynamic strings system used for attributes
+false  \ Gforth strings instead of FFL strings?
+dup constant [gforth_strings_for_attributes?]  immediate
+[if]    require string.fs
+[else]  require ffl/str.fs
+[then]
+
+\ **************************************************************
+\ Fetch and store
+
+: attribute@  ( a -- ca len )
+  [gforth_strings_for_attributes?] [if]  $@  [else]  @ str-get  [then] 
+  ;
+: attribute!  ( ca len a -- )
+  [gforth_strings_for_attributes?] [if]  $!  [else]  @ str-set  [then] 
+  ;
 
 \ **************************************************************
 \ Defining words
@@ -50,61 +72,57 @@ require galope/3dup.fs
   \ ca len = name of the attribute variable
   \ xt = execution token of the attribute variable
   \ ca1 len1 = attribute value
-  >r
-  s" @" s+ :create  \ create a word with the name 'attribute@'.
-  r> ,
+  rot rot s" @" s+ :create ,
   does>  ( -- ca1 len1 )
-    ( dfa ) perform $@
+    ( dfa ) perform attribute@
   ;
 : :attribute!  ( ca len xt -- )
   \ Create a word that stores an attribute.
   \ ca len = name of the attribute variable
   \ xt = execution token of the attribute variable
   \ ca1 len1 = attribute value
-  >r
-  s" !" s+ nextname create  \ create a word with the name 'attribute!'.
-  r> ,
+  rot rot s" !" s+ :create  ,
   does>  ( ca1 len1 -- )
-    ( dfa ) perform $!
+    ( ca1 len1 dfa ) perform attribute!
   ;
 : :attribute"  ( ca len xt -- )
   \ Create a word that parses and stores an attribute.
   \ ca len = name of the attribute variable
   \ xt = execution token of the attribute variable
-  >r
-  s\" \"" s+ nextname create  \ create a word with the name 'attribute"'.
-  r> ,
+  rot rot s\" \"" s+ :create  ,
   does>  ( "text<quote>" -- )
-    ( dfa ) [char] " parse  rot perform $!
+    ( dfa ) [char] " parse  rot perform attribute!
   ; 
 
-variable attributes_set  \ 0 or 1; to select the attributes set
+variable attributes_set  \ 0 or 1
 : >attributes<  ( -- )
   \ Exchange the attributes set (0->1, 1->0)
   attributes_set @ 0= abs  attributes_set !
   ;
 
+: ((attribute:))  ( -- )
+  \ Compile and init one of the two dynamic strings of an attribute.
+  [gforth_strings_for_attributes?]
+  [if]    s" " here 0 , $!
+  [else]  str-new dup , str-init
+  [then]
+  ;
 : (attribute:)  ( ca len -- xt )
   \ Create an attribute variable.
-  \ It consists of two actual variables.
-  \ The 'attributes_set' variable lets to choose which of both
-  \ variables is actually used.
+  \ It holds two values. The 'attributes_set' variable
+  \ lets to choose which value is pointed to.
   \ ca len = name of the attribute variable
-  \ xt = xt of the attribute variable
-  :create   latestxt >r  0 , 0 ,  r>
-            ." [(attribute:) created with xt " dup . ." ]"  \ xxx debug check
-  does>     ( -- ) ( dfa -- ) 
-            ." [executing an attribute variable]"  \ xxx debug check
-            attributes_set @ cells + 
+  \ xt = execution token of the attribute variable
+  :create   latestxt >r  ((attribute:)) ((attribute:))  r>
+  does>     ( -- a )  ( dfa ) attributes_set @ cells + 
   ;
 : attribute:  ( "name" -- xt )
   \ Create an attribute variable in the markup vocabulary,
   \ and three words to manage it.
   \ "name" = ca len = name of the attribute variable
-  \ xt = xt of the attribute variable
+  \ xt = execution token of the attribute variable
   get-current fendo>current 
   parse-name? abort" Missing name after 'attribute:'"
-  cr ." attribute: " 2dup type cr  \ xxx debug check
   2dup (attribute:) ( ca len xt )  dup >r
   3dup :attribute" 3dup :attribute! :attribute@
   set-current  r>
@@ -118,7 +136,7 @@ depth [if]
   abort
 [then]
 
-\ The first attribute defined (thus the last in the table) is a
+\ The first attribute defined (thus the last one in the table) is a
 \ special one that lets to include any raw content in the HTML
 \ tag, without label or surrounding quotes:
 attribute: raw=
@@ -229,55 +247,65 @@ attribute: xml:lang=
 \ Table
 
 depth constant #attributes  \ count of defined attributes
-create 'attributes_xt  \ table for the xt of the attribute variables
+create 'attributes_xt  \ table for the execution tokens of the attribute variables
 #attributes 0 [?do]  ,  [loop]  \ fill the table
 
 \ **************************************************************
-\ Printing and manipulating 
+\ Tools
 
 : -attributes  ( -- )
-  \ Clear all HTML attributes.
+  \ Clear all HTML attributes with empty strings.
   'attributes_xt #attributes cells bounds ?do
-    i perform off
+    [gforth_strings_for_attributes?]
+    [if]    s" " i perform $!
+    [else]  i perform @ str-init
+    [then]
   cell +loop
   ;
+: attributes_xt_zone  ( -- ca len )
+  \ Return the start and length of the ''attribute_xt' table.
+  'attributes_xt #attributes 1- cells
+  ;
+
+\ **************************************************************
+\ Echo
 
 : ((+attribute))  ( ca1 len1 ca2 len2 -- )
-  \ Print an attribute.
+  \ Echo an attribute.
   \ ca1 len1 = attribute value
   \ ca2 len2 = attribute label
   \   (it includes the final "=", e.g. "alt=")
+\  2dup ." label<< " type ." >> " cr  \ xxx debug check
+\  2over ." value<< " type ." >> " cr  \ xxx debug check
   echo_space echo echo_quote echo echo_quote
   ;
 : (+attribute)  ( xt ca len -- )
-  \ Print an attribute.
+  \ Echo an attribute.
   \ xt = execution token of the attribute variable
-  \ ca1 len1 = attribute value
+  \ ca len = attribute value
   rot >name name>string ((+attribute))
   ;
 : echo_real_attribute  ( xt -- )
-  \ Print an attribute, if not empty.
+  \ Echo a real attribute, if not empty.
   \ xt = execution token of the attribute variable
-  dup execute count dup if  (+attribute)  else  2drop drop  then
+\  ." {{{ " dup >name ?dup if  id.  else  ." ?"  then  ." }}}"  \ xxx debug check
+  dup execute attribute@
+  dup if  (+attribute)  else  2drop drop  then
   ;
-: echo_raw_attribute  ( xt -- )
-  \ Print the special raw attribute, if not empty.
-  \ xt = execution token of the raw attribute variable.
-  execute count dup if  echo_space echo echo_space  else  2drop  then
-  ;
-: echo_real_attributes  ( a u -- )
-  \ Print all non-empty real attributes.
-  \ a = address of the first attribute's xt
-  \ u = count
-  cells bounds ?do
+: echo_real_attributes  ( -- )
+  \ Echo all non-empty real attributes.
+  attributes_xt_zone bounds ?do
     i @ echo_real_attribute
   cell +loop
   ;
+: echo_raw_attribute  ( -- )
+  \ Echo the special raw attribute, if not empty.
+  attributes_xt_zone + perform attribute@
+  dup if  echo_space echo echo_space  else  2drop  then
+  ;
 : echo_attributes  ( -- )
-  \ Print all non-empty attributes.
-  'attributes_xt #attributes 1-
-  2dup echo_real_attributes
-  cells + @ echo_raw_attribute
+  \ Echo all non-empty attributes.
+  echo_real_attributes  echo_raw_attribute
   ;
 
 .( fendo_markup_html_attributes.fs compiled) cr

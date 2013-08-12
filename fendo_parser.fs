@@ -67,6 +67,13 @@
 \ 2013-07-28 Fix: old '[previous]' changed to '[markup<order]';
 \   this was the reason the so many wordlists remained in the
 \   search order.
+\ 2013-08-10 Fix: wrong exit flags in 'parsed_link_text' caused
+\   only the first word was parsed.
+\ 2013-08-10 Fix: the alternative attributes set was needed in
+\   'parsed_link_text', to preserve the current attributes
+\   already used for the <a> tag.
+\ 2013-08-10 Change: 'parse_string' renamed to
+\   'evaluate_content'.
 \
 \ **************************************************************
 \ Todo
@@ -292,7 +299,7 @@ variable #nothings  \ counter of empty parsings
 
 [then]
 
-: parse_string  ( ca len -- )
+: evaluate_content  ( ca len -- )
   \ Parse a string. 
   \ ca len = content
   ['] parse_content execute-parsing \ xxx bug thread
@@ -301,7 +308,7 @@ variable #nothings  \ counter of empty parsings
   \ xxx not used
   \ Parse a file.
   \ ca len = filename
-  slurp-file parse_string
+  slurp-file evaluate_content
   ;
 : skip_content  ( "text }content" -- )
   \ Skip the page content until the end of the content block.
@@ -311,15 +318,17 @@ variable #nothings  \ counter of empty parsings
     then
   until   do_content? on
   ;
-: parsed_link_text  ( "...<space>|<space>" | "...<space>]]<space>"  -- ca len )
+: parsed_link_text  ( "text<spaces>|<spaces>" | "text<spaces>]]<spaces>"  -- ca len )
   \ Parse and return the link text. 
-  \ xxx todo 
-  echo> @ echo>string  separate? off 
+  echo> @  echo>string
+  >attributes< -attributes  \ use the alternative set and init it
+  separate? off 
   begin   parse-name dup
-    if    2dup end_of_link_section? if  2drop true  else  something false  then
+    if    2dup end_of_link_section?
+          if  2drop false  else  something true  then
     else  2drop more_link?
     then  0=
-  until   echo> !  echoed $@ 
+  until   echo> ! >attributes<  echoed $@
   ;
 : (parse_link_text)  ( "...<space>|<space>" | "...<space>]]<space>"  -- )
   \ Parse the link text and store it into 'link_text'.
@@ -347,7 +356,7 @@ variable #nothings  \ counter of empty parsings
   current_page target_path/file
 \  cr ." target file =  " 2dup type \ xxx debug check
   w/o create-file throw target_fid !
-  \ ." target file just opened: " \ xxx debug check
+\  ." target file just opened: " \ xxx debug check
   \ target_fid @ . cr key drop
   ;
 : open_target  ( -- )
@@ -380,7 +389,7 @@ variable #nothings  \ counter of empty parsings
     website_template $@  \ xxx tmp
     s+ s+
   [then]
-  \ ." template_file = " 2dup type cr  \ xxx debug check
+\  ." template_file = " 2dup type cr  \ xxx debug check
   ;
 : template_halves  ( ca1 len1 -- ca2 len2 ca3 len3 )
   \ Divide the template in two parts, excluding the content holder.
@@ -422,11 +431,11 @@ variable template_content
   \ Echo the top half of the current template, above the page content.
   get_template
   template_top
-  parse_string \ xxx bug thread
+  evaluate_content \ xxx bug thread
   ;
 : }template  ( -- )
   \ Echo the bottom half of the current template, below the page content.
-  get_template template_bottom parse_string
+  get_template template_bottom evaluate_content
   ;
 
 \ Markup
