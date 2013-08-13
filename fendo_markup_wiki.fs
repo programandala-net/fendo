@@ -534,13 +534,35 @@ variable link_type
   link_type @ file_link =
   ;
 : convert_link_href  ( ca len -- ca' len' )
-  \ xxx todo finish
-  2dup set_link_type
-  file_link? if  s" file://" -prefix  then
+  \ xxx tmp
+  \ xxx todo rewrite with a xt table
+  2dup set_link_type link_type @
+  case
+    local_link of
+      \ xxx todo 
+      current_target_extension s+ 
+    endof
+    external_link of
+      \ xxx todo 
+      exit
+    endof
+    file_link of
+      s" file://" -prefix  files_subdir $@ 2swap s+  exit
+    endof
+    bookmarked_link of
+      \ xxx todo 
+      exit
+    endof
+    local_link of
+      \ xxx todo 
+      exit
+    endof
+    abort" Unknown link type"
+  endcase
   ;
 : get_link_href_attribute  ( "href_attribute<spaces>" -- )
   \ Parse and store the link href attribute.
-  parse-word -anchor convert_link_href 2dup cr type cr href=!
+  parse-word -anchor convert_link_href href=!
   ;
 variable link_finished?  \ flag, no more link markup to parse?
 : end_of_link?  ( ca len -- wf )
@@ -647,10 +669,6 @@ defer parse_link_text  ( "...<spaces>|<spaces>" | "...<spaces>]]<spaces>"  -- )
   \ Add the link anchor, if any, to a href attribute.
   link_anchor $@ dup if  (anchor+)  else  2drop  then
   ;
-: link_target_extension+  ( ca len -- ca' len' )
-  \ Add the target file extension to a href attribute, if needed.
-  local_link? if  current_target_extension s+  then
-  ;
 : ([[)  ( "linkmarkup]]" -- )
   \ xxx todo
   \ Parse the link attributes and prepare them.
@@ -662,8 +680,6 @@ defer parse_link_text  ( "...<spaces>|<spaces>" | "...<spaces>]]<spaces>"  -- )
   href=@ 
   \ xxx todo
 \  ." 1)" 2dup type cr  \ xxx debug check
-  link_target_extension+
-\  ." 2)" 2dup type cr  \ xxx debug check
   anchor+
 \  ." 3)" 2dup type cr  \ xxx debug check
   href=!
@@ -701,24 +717,39 @@ defer parse_link_text  ( "...<spaces>|<spaces>" | "...<spaces>]]<spaces>"  -- )
   \ wordlist.
   \ This is used by definining words that may be invoked by the website
   \ application to create specific markups.
-  2dup cr type cr
-  get-current >r  fendo_markup_wid set-current :create  r> set-current
+  get-current >r  markup>current :create  r> set-current
   ;
-: ((:  ( "name" -- )
+: (((:)  ( ca len -- )
   \ Create a language inline markup.
-  \ name = ISO code of a language
-  parse-name? abort" Missing language code"
+  \ ca len = ISO code of a language
   2dup s" ((" s+ :create_markup s,
   does>  ( -- ) ( dfa )
     count (xml:)lang= attribute! [markup>order] <span> [markup<order]
   ;
-: (((:  ( "name" -- )
-  \ Create a language block markup.
+: ((:  ( "name" -- )
+  \ Create a language inline markup.
   \ name = ISO code of a language
-  parse-name? abort" Missing language code"
+  parse-name? abort" Missing language code" (((:)
+  ;
+: ((((:)  ( ca len -- )
+  \ Create a language block markup.
+  \ ca len = ISO code of a language
   2dup s" (((" s+ :create_markup s,
   does>  ( -- ) ( dfa )
     count (xml:)lang= attribute! [markup>order] <div> [markup<order]
+  ;
+: (((:  ( "name" -- )
+  \ Create a language block markup.
+  \ name = ISO code of a language
+  parse-name? abort" Missing language code" ((((:)
+  ;
+: language_markups:  ( "name" -- )
+  \ Create inline and block language markups.
+  \ Used by the website application to create all
+  \ language markups used in the contents.
+  \ name = ISO code of a language
+  parse-name? abort" Missing language code"
+  2dup (((:) ((((:)
   ;
 
 \ **************************************************************
@@ -1073,5 +1104,7 @@ only forth fendo>order definitions
 \ Todo: Try FFL's dynamic strings for HTML attributes.
 \ 2013-08-12: Fix: '(xml:)lang=' was modifed with '$!', even in
 \   when FFL-strings were chosen in the configuration.
+\ 2013-08-12: New: ':create_markup'.
+\ 2013-08-12: New: 'language_markups:'.
 
 [then]
