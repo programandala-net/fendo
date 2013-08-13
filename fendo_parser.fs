@@ -139,7 +139,6 @@ is content
 : (markup)  ( nt -- )
   \ Manage a parsed markup: execute it and update the counters.
   \ nt = name token of the markup
-  \ xxx bug thread ends here, but dissapeared without reason!
   #nonmarkups off name>int execute  1 #markups +!
   ;
 : markup  ( ca len nt -- )
@@ -151,7 +150,6 @@ is content
   execute_markup? @  \ xxx used?
   if    
     nip nip (markup)
-    \ nip nip drop  \ xxx bug thread
   else
     drop content
   then
@@ -160,15 +158,8 @@ variable #nothings  \ counter of empty parsings
 : something  ( ca len -- )
   \ Manage something found on the page content.
   \ ca len = parsed item (markup or printable content)
-  #nothings off
-  2dup find-name dup
-  if
-    markup \ xxx bug thread
-    \ drop 2drop  \ markup \ xxx bug thread
-  else
-    drop content
-  then
-  1 #parsed +!
+  #nothings off  2dup find-name dup
+  if  markup  else  drop content  then  1 #parsed +!
   ;
 : nothing  ( -- )
   \ Manage a "nothing", a parsed empty name. 
@@ -185,7 +176,7 @@ variable #nothings  \ counter of empty parsings
   \   search-wordlist must be used instead of parse-name.
   begin
     parse-name dup
-    if    something  true  \ xxx bug thread
+    if    something  true
     else  nothing  2drop refill
     then  0=
   until
@@ -302,7 +293,7 @@ variable #nothings  \ counter of empty parsings
 : evaluate_content  ( ca len -- )
   \ Parse a string. 
   \ ca len = content
-  ['] parse_content execute-parsing \ xxx bug thread
+  ['] parse_content execute-parsing
   ;
 : parse_file  ( ca len -- )
   \ xxx not used
@@ -379,15 +370,13 @@ variable #nothings  \ counter of empty parsings
 : template_file  ( -- ca len )
   \ Return the full path to the template file.
   target_dir $@
-  [ true ] [if]  \ actual code
-    current_page design_subdir dup 0=
+  [ true ] [if]  \ xxx new version 
+    current_page design_subdir dup 0=  \ xxx useful?
     if  2drop website_design_subdir $@  then  
-    current_page template dup 0=
+    current_page template dup 0=  \ xxx individual page templates are useful
     if  2drop website_template $@ then  s+ s+
-  [else]  \ xxx bug thread
-    website_design_subdir $@  \ xxx tmp
-    website_template $@  \ xxx tmp
-    s+ s+
+  [else]  \ xxx old version, without page fields
+    website_design_subdir $@ website_template $@ s+ s+
   [then]
 \  ." template_file = " 2dup type cr  \ xxx debug check
   ;
@@ -411,9 +400,7 @@ variable #nothings  \ counter of empty parsings
   \ ca2 len2 = bottom half of the template content
   template_halves 2nip
   ;
-\ xxx todo simplify, read the file twice?
 variable template_content
-\ svariable template_content  \ xxx tmp
 : get_template_first  ( -- ca len )
   \ Return the template content, the first time.
   template_file slurp-file 2dup template_content $!
@@ -429,9 +416,7 @@ variable template_content
   ;
 : template{  ( -- )
   \ Echo the top half of the current template, above the page content.
-  get_template
-  template_top
-  evaluate_content \ xxx bug thread
+  get_template template_top evaluate_content
   ;
 : }template  ( -- )
   \ Echo the bottom half of the current template, below the page content.
@@ -440,25 +425,28 @@ variable template_content
 
 \ Markup
 
+: .sourcefilename  ( -- )
+  \ Print the name of the currently parsed file.
+  sourcefilename type cr
+  ;
+: (content{)  ( -- )
+  \ Create the top template part of the target page
+  \ and parse the page content.
+  open_target template{ parse_content
+  ;
 : content{  ( "text }content" -- )
-  \ Start the page content.
+  \ Create the page content, if needed.
   \ The end of the content is marked with the '}content' markup.
   \ Only one 'content{ ... }content' block is allowed in the page.
   do_content? @
-  if    
-    open_target
-    template{  \ xxx bug thread
-    parse_content
-  else  skip_content
-  then
+  if    .sourcefilename  (content{)
+  else  skip_content  then
   ;
 get-current markup>current
 : }content  ( -- )
   \ Finish the page content. 
 \ cr .s cr ." start of }content " \ xxx debug check
-  close_pending
-  }template  \ xxx bug thread
-  close_target \ xxx bug thread
+  close_pending }template close_target
   more? off  \ finish the current parsing
   do_content? on  \ default value for the next page
   only fendo>order forth>order
