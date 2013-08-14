@@ -487,18 +487,29 @@ variable image_finished?  \ flag, no more image markup to parse?
 \ Tools for links
 
 : file://?  ( ca len -- wf )
-  \ Does a string starts with "file://" (so it's a file link)?
+  \ Does a string starts with "file://"?
   s" file://" string-prefix?
   ;
+' file://? alias file_link?
 : http://?  ( ca len -- wf )
-  \ Does a string starts with "http://" (so it's an external link)?
+  \ Does a string starts with "http://"?
   s" http://" string-prefix?
   ;
+: ftp://?  ( ca len -- wf )
+  \ Does a string starts with "ftp://"?
+  s" ftp://" string-prefix?
+  ;
+: external_link?  ( ca len -- wf )
+  \ Is a href attribute external?
+  2dup http://? r> ftp://? r> or
+  ;
+false [if]  \ xxx old
 wordlist constant links_wid  \ for bookmarked links
 : link:?  ( ca len --  xt -1 | 0 )
   \ Is a string the name of a bookmarked link?
   links_wid search-wordlist
   ;
+[then]
 variable link_text  \ dynamic string
 variable link_anchor  \ dynamic string
 : -anchor  ( ca len -- ca' len' )
@@ -512,17 +523,13 @@ variable link_type
   enum file_link  drop
 : >link_type_id  ( ca len -- n )
   \ Convert an href attribute to its type id.
-  2dup link:? if  drop 2drop bookmarked_link exit  then
-  2dup http://? if  2drop external_link exit  then
-  file://? if  file_link exit  then
+  2dup external_link? if  2drop external_link exit  then
+  file_link? if  file_link exit  then
   local_link 
   ;
 : set_link_type  ( ca len -- )
   \ Get and store the type id of an href attribute.
   >link_type_id link_type !
-  ;
-: bookmarked_link?  ( -- wf )
-  link_type @ bookmarked_link =
   ;
 : external_link?  ( -- wf )
   link_type @ external_link =
@@ -533,9 +540,21 @@ variable link_type
 : file_link?  ( -- wf )
   link_type @ file_link =
   ;
+: unlink  ( ca len -- )
+  \ xxx choose better name for the word and the links concepts:
+  \ xxx unalias unfake
+  \ Unlink an href attribute:
+  \ if it's a link, execute it (to modify the link attributes)
+  \ and repeat the check.
+  \ ca len = href attribute
+  begin   fendo_links_wid search-wordlist
+  while   execute href=@
+  repeat
+  ;
 : convert_link_href  ( ca len -- ca' len' )
   \ xxx tmp
   \ xxx todo rewrite with a xt table
+  unlink href=@
   2dup set_link_type link_type @
   case
     local_link of
@@ -544,18 +563,38 @@ variable link_type
     endof
     external_link of
       \ xxx todo 
-      exit
     endof
     file_link of
-      s" file://" -prefix  files_subdir $@ 2swap s+  exit
+      s" file://" -prefix  files_subdir $@ 2swap s+  
     endof
     bookmarked_link of
       \ xxx todo 
-      exit
     endof
     local_link of
       \ xxx todo 
-      exit
+    endof
+    abort" Unknown link type"
+  endcase
+  ;
+: create_link_text  ( -- ca len )
+  \ xxx todo
+  \ Create a link text when it's empty.
+  2dup set_link_type link_type @
+  case
+    local_link of
+      \ xxx todo 
+    endof
+    external_link of
+      href=@  \ xxx todo  
+    endof
+    file_link of
+      href=@  \ xxx todo  
+    endof
+    \ bookmarked_link of
+    \  \ xxx todo 
+    \ endof
+    local_link of
+      \ xxx todo 
     endof
     abort" Unknown link type"
   endcase
@@ -654,7 +693,6 @@ defer parse_link_text  ( "...<spaces>|<spaces>" | "...<spaces>]]<spaces>"  -- )
   \ Set the proper link text when missing.
   \ xxx todo
   local_link?  if  missing_local_link_text exit  then
-  bookmarked_link?  if  missing_bookmarked_link_text exit  then
 \  external_link?  if  missing_external_link_text exit  then  \  xxx 
 \  file_link?  if  missing_file_link_text exit  then  \ xxx
   href=@ link_text $!
@@ -689,7 +727,9 @@ defer parse_link_text  ( "...<spaces>|<spaces>" | "...<spaces>]]<spaces>"  -- )
 \ **************************************************************
 \ Tools for bookmarked links
 
+false [if]  \ xxx old
 : link:  ( ca1 len1 ca2 len2 ca3 len3 "name" -- )
+  \ xxx old
   \ Create a bookmarked link.
   \ ca1 len1 = raw attributes
   \ ca2 len2 = link text
@@ -702,7 +742,13 @@ defer parse_link_text  ( "...<spaces>|<spaces>" | "...<spaces>]]<spaces>"  -- )
   does>  ( -- ca1 len1 ca2 len2 ca3 len3 ) 
     ( dfa ) dup >r $@ r@ cell + $@ r> 2 cells + $@
   ;
-
+[then]
+: link:  ( "name" -- )
+  \ xxx todo test it
+  get-current >r  fendo_links_wid set-current
+  postpone :
+  r> set-current
+  ; 
 \ **************************************************************
 \ Tools for languages
 
@@ -770,10 +816,10 @@ only forth markup>order definitions fendo>order
     else  2drop  refill 0=
     then
   until
-  ;
+  ;  immediate
 : *}  ( -- )
-  abort" '*}' without '{*'"
-  ;
+  true abort" '*}' without '{*'"
+  ;  immediate
 
 \ Merged Forth code
 
@@ -804,7 +850,7 @@ true [if]  \ xxx first version
 \    separate? off
 \  then
   -1 forth_code_depth +!
-  ; immediate
+  ;  immediate
 
 [then]
 
@@ -1104,7 +1150,10 @@ only forth fendo>order definitions
 \ Todo: Try FFL's dynamic strings for HTML attributes.
 \ 2013-08-12: Fix: '(xml:)lang=' was modifed with '$!', even in
 \   when FFL-strings were chosen in the configuration.
-\ 2013-08-12: New: ':create_markup'.
-\ 2013-08-12: New: 'language_markups:'.
+\ 2013-08-13: New: ':create_markup'.
+\ 2013-08-13: New: 'language_markups:'.
+\ 2013-08-14: New: 'ftp://?', 'external_link?', 'unlink';
+\   new version of 'link:'.
+\ 2013-08-14: Fix: 'abort"' in '*}' lacked a true flag.
 
 [then]
