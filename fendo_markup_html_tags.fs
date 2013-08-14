@@ -55,7 +55,7 @@
 : html}  ( ca len -- )
   \ Print a closing HTML tag (e.g. </p>, </a>).
   \ ca len = HTML tag
-  s" </" echo echo s" >" echo  separate? off
+  s" </" echo echo s" >" echo  separate? on
   ;
 
 \ **************************************************************
@@ -63,7 +63,9 @@
 
 get-current markup>current
 
-: <a>  ( -- )  s" a" {html  ;
+: <a>  ( -- )  
+\  ." 6)" href=@ type space id=@ type cr  \ xxx debug check
+  s" a" {html  ;
 : </a>  ( -- )  s" a" html}  ;
 : <abbr>  ( -- )  s" abbr" {html  ;
 : </abbr>  ( -- )  s" abbr" html}  ;
@@ -131,17 +133,17 @@ get-current markup>current
 : <footer>  ( -- )  s" footer" {html  ;
 : </footer>  ( -- )  s" footer" html}  ;
 : <h1>  ( -- )  s" h1" {html  ;
-: </h1>  ( -- )  s" h1" html}  ;
+: </h1>  ( -- )  s" h1" html} \n  ;
 : <h2>  ( -- )  s" h2" {html  ;
-: </h2>  ( -- )  s" h2" html}  ;
+: </h2>  ( -- )  s" h2" html} \n  ;
 : <h3>  ( -- )  s" h3" {html  ;
-: </h3>  ( -- )  s" h3" html}  ;
+: </h3>  ( -- )  s" h3" html} \n  ;
 : <h4>  ( -- )  s" h4" {html  ;
-: </h4>  ( -- )  s" h4" html}  ;
+: </h4>  ( -- )  s" h4" html} \n  ;
 : <h5>  ( -- )  s" h5" {html  ;
-: </h5>  ( -- )  s" h5" html}  ;
+: </h5>  ( -- )  s" h5" html} \n  ;
 : <h6>  ( -- )  s" h6" {html  ;
-: </h6>  ( -- )  s" h6" html}  ;
+: </h6>  ( -- )  s" h6" html} \n  ;
 : <head>  ( -- )  s" head" {html  ;
 : </head>  ( -- )  echo_cr s" head" html}  ;
 : <header>  ( -- )  s" header" {html  ;

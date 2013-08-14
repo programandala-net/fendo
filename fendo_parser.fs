@@ -74,6 +74,10 @@
 \   already used for the <a> tag.
 \ 2013-08-10 Change: 'parse_string' renamed to
 \   'evaluate_content'.
+\ 2013-08-14 Fix: '#nothings off' was needed at the end of
+\   '(evaluate_content)'. Otherwise '#nothings' activated
+\   'close_pending' before expected, e.g. this happened
+\   when a link was at the end of a line.
 \
 \ **************************************************************
 \ Todo
@@ -108,7 +112,9 @@
   ;
 : close_pending_paragraph  ( -- )
   \ Close a pending paragraph, if needed.
-  opened_[_]? @ if  [markup>order] _ [markup<order]  then
+  opened_[_]? @ if  [markup>order] _ 
+\  ." CLOSED PARAGRAPH " cr key drop  \ xxx debug check
+  [markup<order]  then
   ;
 : close_pending_table  ( -- )
   \ Close a pending table, if needed.
@@ -121,6 +127,7 @@
   \ Close the pending markups.
   \ Invoked when an empty line if parsed, and at the end of the
   \ parsing.
+\  ." close_pending because #nothings = " #nothings @ . cr  \ xxx debug check
   close_pending_list close_pending_paragraph close_pending_table echo_cr
   ;
 
@@ -128,73 +135,6 @@
 \ Parser
 
 variable more?  \ flag: keep on parsing more words?; changed by '}content'
-
-0 [if]  \ xxx old first version, with wordlist order and parse-name
-
-:noname  ( ca len -- )
-  \ Manage a parsed string of content: print it and update the counters.
-  #markups off  _echo  1 #nonmarkups +!
-  ;
-is content
-: (markup)  ( nt -- )
-  \ Manage a parsed markup: execute it and update the counters.
-  \ nt = name token of the markup
-  #nonmarkups off name>int execute  1 #markups +!
-  ;
-: markup  ( ca len nt -- )
-  \ Manage a parsed markup: execute it and update the counters,
-  \ if required.
-  \ nt = name token of the markup
-  \ ca len = name of the markup
-\  >r 2dup type key drop r>  \ xxx debug check
-  execute_markup? @  \ xxx used?
-  if    
-    nip nip (markup)
-  else
-    drop content
-  then
-  ;
-variable #nothings  \ counter of empty parsings
-: something  ( ca len -- )
-  \ Manage something found on the page content.
-  \ ca len = parsed item (markup or printable content)
-  #nothings off  2dup find-name dup
-  if  markup  else  drop content  then  1 #parsed +!
-  ;
-: nothing  ( -- )
-  \ Manage a "nothing", a parsed empty name. 
-  \ The first empty name means the current line is finished;
-  \ the second consecutive empty name means the current line is empty.
-  #nothings @  \ not the first consecutive time?
-  if    close_pending  \ an empty line was parsed
-  then  1 #nothings +!  #parsed off
-  ;
-: (parse_content)  ( "text" -- )
-  \ Actually parse the page content.
-  \ The process is finished by the '}content' markup.
-  \ xxx fixme -- words in Root wordlist are executed!
-  \   search-wordlist must be used instead of parse-name.
-  begin
-    parse-name dup
-    if    something  true
-    else  nothing  2drop refill
-    then  0=
-  until
-  ;
-: parse_content  ( "text" -- )
-  \ Parse the current input source.
-  \ The process is finished by the '}content' markup or the end
-  \ of the source.
-  separate? off
-  only markup>order
-  (parse_content)
-  only forth fendo>order
-  ;
-
-[then]
-
-
-true [if] \ xxx second version, with search-wordlist 
 
 :noname  ( ca len -- )
   \ Manage a parsed string of content: print it and update the counters.
@@ -216,11 +156,11 @@ is content
   else  drop content
   then
   ;
-variable #nothings  \ counter of empty parsings
 : something  ( ca len -- )
   \ Manage something found on the page content.
   \ ca len = parsed item (markup or printable content) 
   #nothings off
+\  ." #nothings = " #nothings @ . cr  \ xxx debug check
   2dup fendo_markup_wid search-wordlist
   if  markup
   else
@@ -230,9 +170,10 @@ variable #nothings  \ counter of empty parsings
   1 #parsed +!
   ;
 
-[then]
+0 [if]
 
-0 [if]  \ 2013-08-10 third version, with direct execution of Forth code; unfinished
+\ 2013-08-10 experimental new version, with direct execution of
+\ Forth code; unfinished
 
 : something_in_code_zone  ( ca len -- )
   \ Manage something found in a Forth code zone.
@@ -259,7 +200,9 @@ variable #nothings  \ counter of empty parsings
 : something  ( ca len -- )
   \ Manage something found on the page content.
   \ ca len = parsed item (markup, Forth code or printable content) 
-  #nothings off  forth_code_depth @
+  #nothings off
+\  ." #nothings = " #nothings @ . cr  \ xxx debug check
+  forth_code_depth @
   if    something_in_code_zone
   else  something_in_ordinary_zone
   then
@@ -271,9 +214,11 @@ variable #nothings  \ counter of empty parsings
   \ The first empty name means the current line is finished;
   \ the second consecutive empty name means the current line is empty.
   preserve_eol? @ if  echo_cr  then  \ xxx tmp
-  #nothings @  \ not the first consecutive time?
-  if    close_pending  \ an empty line was parsed
-  then  1 #nothings +!  #parsed off
+  #nothings @  \ an empty line was parsed?
+  if    close_pending
+  then  1 #nothings +!
+\  ." #nothings = " #nothings @ . cr  \ xxx debug check
+  #parsed off
   ;
 : parse_content  ( "text" -- )
   \ Parse the current input source.
@@ -290,17 +235,11 @@ variable #nothings  \ counter of empty parsings
 
 [then]
 
-: evaluate_content  ( ca len -- )
-  \ Parse a string. 
-  \ ca len = content
-  ['] parse_content execute-parsing
+: (evaluate_content)  ( ca len -- )
+  \ Evaluate a string as page content.
+  ['] parse_content execute-parsing  #nothings off
   ;
-: parse_file  ( ca len -- )
-  \ xxx not used
-  \ Parse a file.
-  \ ca len = filename
-  slurp-file evaluate_content
-  ;
+' (evaluate_content) is evaluate_content
 : skip_content  ( "text }content" -- )
   \ Skip the page content until the end of the content block.
   begin   parse-name ?dup 
@@ -320,10 +259,11 @@ variable #nothings  \ counter of empty parsings
     else  2drop more_link?
     then  0=
   until   echo> ! >attributes<  echoed $@
+  2dup ." result of parsed_link_text = " type cr  \ xxx debug check
   ;
 : (parse_link_text)  ( "...<space>|<space>" | "...<space>]]<space>"  -- )
   \ Parse the link text and store it into 'link_text'.
-  parsed_link_text link_text $!
+  s" " link_text!  parsed_link_text link_text!
   ;
 ' (parse_link_text) is parse_link_text
 

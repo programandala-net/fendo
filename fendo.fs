@@ -48,10 +48,35 @@
 \ **************************************************************
 \ Todo
 
+\ 2013-08-14 'raw=' is already converted by 'unraw_attributes';
+\ maybe the 'raw=' fake attribute can be removed.
+
+\ 2013-08-14 Fix: <p> is closed when ]] is at the end of line!
+
+\ 2013-08-14 Choose better names for different meanings of "content":
+\ 1) raw content of the page (printable content and markups)
+\ 2) printable content only, not executable markups
+
 \ 2013-06-28 Make "plain_" data fields optional; they can be
 \ filled as default data, if empty.
 \
 \ 2013-06-08 Let line comments in data header.
+ 
+\ **************************************************************
+\ Stack notation
+
+0 [if]
+
+Some stack notations used in this program are different from the
+common usage (shown in brackets):
+
+a         [addr]  address 
+ca        [c-addr]  character-aligned address 
+ca len    [c-addr u]  character string 
+f         [flag]  flag (0=false; other=true)
+wf        [flag]  well-formed flag (0=false; -1=true)
+
+[then]
 
 \ **************************************************************
 \ Debug
@@ -92,38 +117,46 @@ require ../galope/parse-name-question.fs  \ 'parse-name?'
 require ../galope/sconstant.fs  \ 'sconstant'
 require ../galope/slash-sides.fs  \ '/sides'
 
-require ../galope/sb.fs  \ string buffer
-1024 10 * heap_sb
-' bs" alias s"  immediate
-' bs+ alias s+
-' bs& alias s&
-\ 2013-08-10 Withouth the string buffer, the input
-\ stream gets corrupted at the end of the template.
-\ Didn't find the bug yet. It seems a problem with
-\ Gforth's 's"'.
+true [if]
+
+  \ 2013-08-10 Without this string buffer, the input stream gets
+  \ corrupted at the end of the template.  Didn't find the bug
+  \ yet. It seems a problem with Gforth's 's+'.
+
+  require ../galope/sb.fs  \ string buffer
+  1024 10 * heap_sb
+  \ ' bs" alias s"  immediate
+  ' bs+ alias s+
+  ' bs& alias s&
+
+[then]
 
 anew --fendo--
 
+false [if]  \ xxx todo
 false  \ Gforth's dynamic strings instead of FFL's?
 dup     constant gforth-strings?
 dup     constant [gforth-strings?]  immediate
 0= dup  constant ffl-strings?
         constant [ffl-strings?]  immediate
+[then]
 
 true [if]
+
 \ Safer alternatives for words of Gforth's string.fs
 warnings @  warnings off
-: $@len  ( $a -- len )
+: $@len  ( a -- len )
   \ Return the length of a dynamic string variable,
   \ even if it's not initialized.
   @ dup if  @  then
   ;
-: $@  ( $a -- ca len )
+: $@  ( a -- ca len )
   \ Return the content of a dynamic string variable,
   \ even if it's not initialized.
   @ dup if  dup cell+ swap @  else  pad swap  then 
   ;
 warnings !
+
 [then]
 
 \ **************************************************************
@@ -132,6 +165,7 @@ warnings !
 table constant fendo_markup_html_entities_wid  \ HTML entities
 wordlist constant fendo_markup_wid  \ markup, except HTML entities
 wordlist constant fendo_wid  \ program, except markup and HTML entities
+wordlist constant fendo_links_wid  \ user links
 
 : markup>current  ( -- )
   fendo_markup_wid set-current
@@ -169,7 +203,7 @@ wordlist constant fendo_wid  \ program, except markup and HTML entities
 
 fendo>order definitions
 
-s" A-00-20130608" sconstant version
+s" A-00-20130810" sconstant version
 
 \ **************************************************************
 \ Modules

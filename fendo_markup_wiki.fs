@@ -59,6 +59,8 @@ require ../galope/n-to-r.fs  \ 'n>r'
 require ../galope/n-r-from.fs  \ 'nr>'
 require ../galope/minus-prefix.fs  \ '-prefix'
 
+require ../ffl/str.fs  \ FFL's dynamic strings
+
 \ **************************************************************
 \ Generic tool words for strings
 
@@ -108,8 +110,11 @@ variable #parsed      \ items already parsed in the current line (before the cur
 defer content  ( ca len -- )
   \ Manage a string of content: print it and update the counters.
   \ Defined in <fendo_parser.fs>.
+defer evaluate_content  ( ca len -- )
+  \ Evaluate a string as page content.
+  \ Defined in <fendo_parser.fs>.
 
-defer close_pending  ( -- )
+\ defer close_pending  ( -- ) \ xxx tmp
   \ Close the pending markups.
   \ Defined in <fendo_parser.fs>.
 
@@ -424,6 +429,14 @@ s" /counted-string" environment? 0=
   \ ca len = latest name parsed in the alt attribute section
   >r  s" |" str=  r> or 
   ;
+str-create tmp-str
+: unraw_attributes  ( ca len -- )
+  \ Extract and store the individual attributes from
+  \ a string of raw verbatim attributes.
+  tmp-str str-set
+  s\" =\" " s\" =\"" tmp-str str-replace
+  tmp-str str-get evaluate
+  ;
 
 \ **************************************************************
 \ Tools for images 
@@ -461,14 +474,14 @@ variable image_finished?  \ flag, no more image markup to parse?
     if    2dup end_of_image?  otherwise_concatenate
     else  2drop  more_image?
     then  
-  until   raw=!
+  until   ( ca len ) unraw_attributes
   ;
 : parse_image  ( "imagemarkup}}" -- )
   \ Parse and store the image attributes.
   get_image_src_attribute
   [ false ] [if]  \ simple version
     parse-name end_of_image_section? 0=
-      abort" Space not allowed in image filename"
+    abort" Space not allowed in image filename"
   [else]  \ no abort
     begin  parse-name end_of_image_section? 0=
     while  s" <!-- xxx fixme space in image filename -->" echo
@@ -490,7 +503,7 @@ variable image_finished?  \ flag, no more image markup to parse?
   \ Does a string starts with "file://"?
   s" file://" string-prefix?
   ;
-' file://? alias file_link?
+' file://? alias file_href?
 : http://?  ( ca len -- wf )
   \ Does a string starts with "http://"?
   s" http://" string-prefix?
@@ -499,9 +512,9 @@ variable image_finished?  \ flag, no more image markup to parse?
   \ Does a string starts with "ftp://"?
   s" ftp://" string-prefix?
   ;
-: external_link?  ( ca len -- wf )
+: external_href?  ( ca len -- wf )
   \ Is a href attribute external?
-  2dup http://? r> ftp://? r> or
+  2dup http://? >r ftp://? r> or
   ;
 false [if]  \ xxx old
 wordlist constant links_wid  \ for bookmarked links
@@ -511,6 +524,16 @@ wordlist constant links_wid  \ for bookmarked links
   ;
 [then]
 variable link_text  \ dynamic string
+: link_text!  ( ca len -- )
+  link_text $!
+  ;
+: link_text@  ( -- ca len )
+  link_text $@
+  ;
+: evaluate_link_text  ( -- )
+  link_text@ evaluate_content
+  ;
+  
 variable link_anchor  \ dynamic string
 : -anchor  ( ca len -- ca' len' )
   \ Extract the anchor from a href attribute and store it.
@@ -519,17 +542,19 @@ variable link_anchor  \ dynamic string
 variable link_type
 1 enum local_link
   enum external_link
-  enum bookmarked_link  
   enum file_link  drop
 : >link_type_id  ( ca len -- n )
   \ Convert an href attribute to its type id.
-  2dup external_link? if  2drop external_link exit  then
-  file_link? if  file_link exit  then
+  2dup external_href? if  2drop external_link exit  then
+  file_href? if  file_link exit  then
   local_link 
   ;
 : set_link_type  ( ca len -- )
   \ Get and store the type id of an href attribute.
-  >link_type_id link_type !
+\  .s 2dup type ." --> "  \ xxx debug check
+  >link_type_id
+\  dup . ." link type" cr key drop  \ xxx debug check
+  link_type !
   ;
 : external_link?  ( -- wf )
   link_type @ external_link =
@@ -540,68 +565,36 @@ variable link_type
 : file_link?  ( -- wf )
   link_type @ file_link =
   ;
-: unlink  ( ca len -- )
-  \ xxx choose better name for the word and the links concepts:
-  \ xxx unalias unfake
-  \ Unlink an href attribute:
-  \ if it's a link, execute it (to modify the link attributes)
-  \ and repeat the check.
-  \ ca len = href attribute
+: unlink  ( ca len -- ca len | ca' len' )
+  \ xxx choose better name?: unalias, unfake...
+  \ Unlink an href attribute recursively.
+  \ ca len = href attribute 
+  \ ca' len' = actual href attribute
+  2dup href=!
+\  2dup ." unlink " type cr  \ xxx debug check
   begin   fendo_links_wid search-wordlist
   while   execute href=@
-  repeat
+\  2dup ." unlink " type cr  \ xxx debug check
+  repeat  href=@
   ;
-: convert_link_href  ( ca len -- ca' len' )
-  \ xxx tmp
-  \ xxx todo rewrite with a xt table
-  unlink href=@
-  2dup set_link_type link_type @
+: convert_local_link_href  ( ca len -- ca' len' )
+  dup if  current_target_extension s+  then
+  ;
+: convert_file_link_href  ( ca len -- ca' len' )
+  s" file://" -prefix  files_subdir $@ 2swap s+  
+  ;
+: convert_link_href  ( ca len -- ca len | ca' len' )
+  \ xxx todo rewrite with a xt table?
+  \ xxx todo do at the end of the link, with other conversion
+  \ tasks?
+  \ ca len = href attribute, without anchor
+  2dup set_link_type  link_type @
   case
-    local_link of
-      \ xxx todo 
-      current_target_extension s+ 
-    endof
-    external_link of
-      \ xxx todo 
-    endof
-    file_link of
-      s" file://" -prefix  files_subdir $@ 2swap s+  
-    endof
-    bookmarked_link of
-      \ xxx todo 
-    endof
-    local_link of
-      \ xxx todo 
-    endof
-    abort" Unknown link type"
+    local_link    of  convert_local_link_href  endof
+    file_link     of  convert_file_link_href  endof
+    external_link of  endof
+    true abort" Unknown link type"  \ xxx tmp
   endcase
-  ;
-: create_link_text  ( -- ca len )
-  \ xxx todo
-  \ Create a link text when it's empty.
-  2dup set_link_type link_type @
-  case
-    local_link of
-      \ xxx todo 
-    endof
-    external_link of
-      href=@  \ xxx todo  
-    endof
-    file_link of
-      href=@  \ xxx todo  
-    endof
-    \ bookmarked_link of
-    \  \ xxx todo 
-    \ endof
-    local_link of
-      \ xxx todo 
-    endof
-    abort" Unknown link type"
-  endcase
-  ;
-: get_link_href_attribute  ( "href_attribute<spaces>" -- )
-  \ Parse and store the link href attribute.
-  parse-word -anchor convert_link_href href=!
   ;
 variable link_finished?  \ flag, no more link markup to parse?
 : end_of_link?  ( ca len -- wf )
@@ -616,86 +609,61 @@ variable link_finished?  \ flag, no more link markup to parse?
   \ Fill the input buffer or abort.
   refill 0= dup abort" Missing ']]'"
   ;
-
-0 [if]
-\ first version, only images are recognized in link texts
-: parse_nested_image  ( -- ca len )
-  \ Parse and render an image markup nested in other markup
-  \ (currently only used in link texts).
-  \ ca len = HTML of the image markup
-  >attributes<
-  echo> @ echo>string  ({{)  echo> !
-  >attributes<  echoed $@ 
-  ;
-: parse_link_text  ( "...<space>|<space>" | "...<space>]]<space>"  -- )
-  \ Parse and store the link text. 
-  \ xxx todo factor
-  s" "
-  begin
-    parse-name dup
-    if    2dup s" {{" str=
-          if    2drop  parse_nested_image s+  false
-          else  2dup end_of_link_section?
-                otherwise_concatenate
-          then
-    else  2drop  more_link?
-    then  
-  until   link_text $!
-  ;
-[then]
-
 defer parse_link_text  ( "...<spaces>|<spaces>" | "...<spaces>]]<spaces>"  -- )
   \ Parse the link text and store it into 'link_text'.
   \ Defined in <fendo_parser.fs>.
-
 : get_link_raw_attributes  ( "...<space>]]<space>"  -- )
   \ Parse and store the link raw attributes.
-  \ xxx todo factor
   s" "
   begin   parse-name dup 
     if    2dup end_of_link?  otherwise_concatenate
     else  2drop  more_link?
     then  
-  until   raw=!
+  until   ( ca len ) unraw_attributes
+  ;
+: get_link_href_attribute  ( "href_attribute<spaces>" -- )
+  \ Parse and store the link href attribute.
+  parse-word unlink -anchor convert_link_href href=!
+\  ." ---> " href=@ type cr  \ xxx debug check
+\  external_link? if  ." EXTERNAL LINK: " href=@ type cr  then  \ xxx debug check
+  [ true ] [if]  \ simple version
+    parse-name end_of_link_section? 0=
+    abort" Space not allowed in link href"
+  [else]  \ no abort  \ xxx tmp
+    begin  parse-name end_of_link_section? 0=
+    while  s" <!-- xxx fixme space in link filename or URL -->" echo
+    repeat
+  [then]
   ;
 : parse_link  ( "linkmarkup]]" -- )
   \ Parse and store the link attributes.
   get_link_href_attribute
 \  ." ---> " href=@ type cr  \ xxx debug check
-\  external_link? if  ." EXTERNAL LINK: " href=@ type cr  then  \ xxx debug check
-  [ false ] [if]  \ simple version
-    parse-name end_of_link_section? 0=
-    abort" Space not allowed in link filename or URL"
-  [else]  \ no abort
-    begin  parse-name end_of_link_section? 0=
-    while  s" <!-- xxx fixme space in link filename or URL -->" echo
-    repeat
-  [then]
-\  ." ---> " href=@ type cr  \ xxx debug check
   link_finished? @ 0= if
-    parse_link_text link_finished? @ 0= if  get_link_raw_attributes  then
+    parse_link_text link_finished? @ 0=
+    if  get_link_raw_attributes  then
   then
 \  ." ---> " href=@ type cr  \ xxx debug check
   ;
-: missing_local_link_text  ( -- )
-  \ Set the proper link text of a local link when missing.
+: missing_local_link_text  ( -- ca len )
   \ xxx todo
+  s" XXX TMP LINK TEXT" 
   ;
-: missing_external_link_text  ( -- )
-  \ Set the proper link text of an external link when missing.
-  \ xxx todo
+: missing_external_link_text  ( -- ca len )
+  href=@ 
   ;
-: missing_bookmarked_link_text  ( -- )
-  \ Set the proper link text of a bookmarked link when missing.
-  \ xxx todo
+: missing_file_link_text  ( -- ca len )
+  cr ." missing_file_link_text " 
+  href=@  2dup type ." --> "
+  -path 2dup type cr
   ;
-: missing_link_text  ( -- )
+: missing_link_text  ( -- ca len )
   \ Set the proper link text when missing.
   \ xxx todo
   local_link?  if  missing_local_link_text exit  then
-\  external_link?  if  missing_external_link_text exit  then  \  xxx 
-\  file_link?  if  missing_file_link_text exit  then  \ xxx
-  href=@ link_text $!
+  external_link?  if  missing_external_link_text exit  then  \  xxx 
+  file_link?  if  missing_file_link_text exit  then  \ xxx
+  true abort" Wrong link type"  \ xxx tmp
   ;
 : (anchor+)  ( ca1 len1 ca2 len2 -- ca3 len3 )
   \ Add a link anchor to a href attribute.
@@ -707,21 +675,15 @@ defer parse_link_text  ( "...<spaces>|<spaces>" | "...<spaces>]]<spaces>"  -- )
   \ Add the link anchor, if any, to a href attribute.
   link_anchor $@ dup if  (anchor+)  else  2drop  then
   ;
+: tune_link  ( -- )
+  \ Tune the attributes parsed from the link.
+  link_text@ 
+  ." link_text in tune_link = " 2dup type cr  \ xxx debug check
+  nip 0= if  missing_link_text link_text!  then
+  href=@ anchor+ href=!
+  ;
 : ([[)  ( "linkmarkup]]" -- )
-  \ xxx todo
-  \ Parse the link attributes and prepare them.
-  s" " link_text $!  parse_link
-  link_text $@len 0= if  missing_link_text  then
-  \ xxx fixme use 'target_extension' instead, to get the
-  \ extension of the destination file! there are links to Atom
-  \ files, with their own extensions.
-  href=@ 
-  \ xxx todo
-\  ." 1)" 2dup type cr  \ xxx debug check
-  anchor+
-\  ." 3)" 2dup type cr  \ xxx debug check
-  href=!
-\  ." 4)" href=@ type cr key drop
+  parse_link tune_link
   ;
 
 \ **************************************************************
@@ -745,9 +707,7 @@ false [if]  \ xxx old
 [then]
 : link:  ( "name" -- )
   \ xxx todo test it
-  get-current >r  fendo_links_wid set-current
-  postpone :
-  r> set-current
+  get-current >r  fendo_links_wid set-current :  r> set-current
   ; 
 \ **************************************************************
 \ Tools for languages
@@ -797,6 +757,8 @@ false [if]  \ xxx old
   parse-name? abort" Missing language code"
   2dup (((:) ((((:)
   ;
+
+variable #nothings  \ counter of empty parsings \ xxx tmp moved from <fendo_parser.fs>
 
 \ **************************************************************
 \ Actual markup
@@ -1010,9 +972,15 @@ false [if]  \ experimental version
 \ Links
 
 : [[  ( "linkmarkup]]" -- )
+\  ." #nothings at the start of [[ = " #nothings @ . cr  \ xxx debug check
   ([[) 
+\  ." #nothings after ([[) = " #nothings @ . cr  \ xxx debug check
 \  ." 5)" href=@ type cr  \ xxx debug check
-  <a> link_text $@ echo </a> 
+  href=@ nip 
+  if    <a> evaluate_link_text </a>  
+  else  echo_space evaluate_link_text
+  then
+\  ." #nothings at the end of [[ = " #nothings @ . cr  \ xxx debug check
   ;
 : ]]  ( -- )
   true abort" ']]' without '[['"
@@ -1155,5 +1123,7 @@ only forth fendo>order definitions
 \ 2013-08-14: New: 'ftp://?', 'external_link?', 'unlink';
 \   new version of 'link:'.
 \ 2013-08-14: Fix: 'abort"' in '*}' lacked a true flag.
+\ 2013-08-14: New: 'link_text!', 'link_text@'.
+\ 2013-08-14: New: 'unraw_attributes'.
 
 [then]
