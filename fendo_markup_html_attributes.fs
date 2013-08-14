@@ -36,6 +36,9 @@
 \ 2013-08-10 Change: FFL's strings as a compile option.
 \ 2013-08-12 New: 'attribute!' and 'attribute@' hide the conditional
 \   compilation required to change the string system.
+\ 2013-08-14 Change: The 'raw=' attributte is removed; the word
+\   'unraw_attributes' (defined in <fendo_markup_wiki.fs>)
+\   makes it unnecessary.
 
 \ **************************************************************
 \ Todo
@@ -139,7 +142,7 @@ depth [if]
 \ The first attribute defined (thus the last one in the table) is a
 \ special one that lets to include any raw content in the HTML
 \ tag, without label or surrounding quotes:
-attribute: raw=
+\ attribute: raw=
 
 \ Real attributes
 \ References:
@@ -298,14 +301,17 @@ create 'attributes_xt  \ table for the execution tokens of the attribute variabl
     i @ echo_real_attribute
   cell +loop
   ;
+[defined] raw= [if]
 : echo_raw_attribute  ( -- )
   \ Echo the special raw attribute, if not empty.
   attributes_xt_zone + perform attribute@
   dup if  echo_space echo echo_space  else  2drop  then
   ;
+[then]
 : echo_attributes  ( -- )
   \ Echo all non-empty attributes.
-  echo_real_attributes  echo_raw_attribute
+  echo_real_attributes
+  [defined] raw= [if]  echo_raw_attribute  [then]
   ;
 
 .( fendo_markup_html_attributes.fs compiled) cr

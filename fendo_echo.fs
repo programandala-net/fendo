@@ -104,6 +104,7 @@ variable target_fid  \ file id of the HTML target page
   else  ['] cr (echo)
   then
   ;
+' echo_cr alias \n
 
 : echo_space  ( -- )
   \ Print a space to the HTML file.
