@@ -142,7 +142,12 @@ depth [if]
 \ The first attribute defined (thus the last one in the table) is a
 \ special one that lets to include any raw content in the HTML
 \ tag, without label or surrounding quotes:
-\ attribute: raw=
+\ attribute: raw=  \ xxx old
+
+false dup constant link_text_as_attribute? [if]  \ xxx tmp
+  attribute: link_text
+[then]
+\ xxx fixme -- the first attribute is not managed by the attributes loops
 
 \ Real attributes
 \ References:

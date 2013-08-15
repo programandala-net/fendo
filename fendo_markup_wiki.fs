@@ -523,6 +523,7 @@ wordlist constant links_wid  \ for bookmarked links
   links_wid search-wordlist
   ;
 [then]
+link_text_as_attribute? 0= [if]  \ xxx tmp
 variable link_text  \ dynamic string
 : link_text!  ( ca len -- )
   link_text $!
@@ -530,6 +531,7 @@ variable link_text  \ dynamic string
 : link_text@  ( -- ca len )
   link_text $@
   ;
+[then]
 : evaluate_link_text  ( -- )
   link_text@ evaluate_content
   ;
@@ -565,17 +567,27 @@ variable link_type
 : file_link?  ( -- wf )
   link_type @ file_link =
   ;
+: unlink?  ( xt1 xt2 1|-1  |  xt1 0  --  xt2 xt2 true  |  0 )
+  \ Execute xt2 if it's different than xt1.
+  \ xt1 = old xt (former loop)
+  \ xt2 = new xt
+  if    2dup <> if  nip dup true  else  2drop false  then
+  else  drop false
+  then
+  ;
 : unlink  ( ca len -- ca len | ca' len' )
   \ xxx choose better name?: unalias, unfake...
   \ Unlink an href attribute recursively.
   \ ca len = href attribute 
   \ ca' len' = actual href attribute
   2dup href=!
-\  2dup ." unlink " type cr  \ xxx debug check
-  begin   fendo_links_wid search-wordlist
+  0 rot rot  \ fake xt
+  2dup ." unlink " type  \ xxx debug check
+  begin   ( xt ca len ) fendo_links_wid search-wordlist unlink?
   while   execute href=@
-\  2dup ." unlink " type cr  \ xxx debug check
+  2dup ." --> " type  \ xxx debug check
   repeat  href=@
+  cr  \ xxx debug check
   ;
 : convert_local_link_href  ( ca len -- ca' len' )
   dup if  current_target_extension s+  then
@@ -653,9 +665,11 @@ defer parse_link_text  ( "...<spaces>|<spaces>" | "...<spaces>]]<spaces>"  -- )
   href=@ 
   ;
 : missing_file_link_text  ( -- ca len )
-  cr ." missing_file_link_text " 
-  href=@  2dup type ." --> "
-  -path 2dup type cr
+\  cr ." missing_file_link_text "  \ xxx debug check
+  href=@
+\   2dup type ." --> "  \ xxx debug check
+  -path
+\  2dup type cr  \ xxx debug check
   ;
 : missing_link_text  ( -- ca len )
   \ Set the proper link text when missing.
@@ -675,12 +689,17 @@ defer parse_link_text  ( "...<spaces>|<spaces>" | "...<spaces>]]<spaces>"  -- )
   \ Add the link anchor, if any, to a href attribute.
   link_anchor $@ dup if  (anchor+)  else  2drop  then
   ;
+: external_class  ( -- )
+  \ Add "external" to the class attribute.
+  class=@ s" external" s& class=!
+  ;
 : tune_link  ( -- )
   \ Tune the attributes parsed from the link.
   link_text@ 
-  ." link_text in tune_link = " 2dup type cr  \ xxx debug check
+\  ." link_text in tune_link = " 2dup type cr cr  \ xxx debug check
   nip 0= if  missing_link_text link_text!  then
   href=@ anchor+ href=!
+  external_link?  if  external_class  then
   ;
 : ([[)  ( "linkmarkup]]" -- )
   parse_link tune_link
@@ -979,7 +998,7 @@ false [if]  \ experimental version
   href=@ nip 
   if    <a> evaluate_link_text </a>  
   else  echo_space evaluate_link_text
-  then
+  then  s" " link_text!
 \  ." #nothings at the end of [[ = " #nothings @ . cr  \ xxx debug check
   ;
 : ]]  ( -- )
@@ -1125,5 +1144,7 @@ only forth fendo>order definitions
 \ 2013-08-14: Fix: 'abort"' in '*}' lacked a true flag.
 \ 2013-08-14: New: 'link_text!', 'link_text@'.
 \ 2013-08-14: New: 'unraw_attributes'.
+\ 2013-08-15: Fix: now '[[' empties 'link_text' at the end.
+\ 2013-08-15: New: 'external_class' to mark the external links.
 
 [then]
