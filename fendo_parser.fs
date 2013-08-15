@@ -248,22 +248,29 @@ is content
     then
   until   do_content? on
   ;
+: more_link_text?  ( ca len -- wf )
+  \ Manage a parsed name of a link text.
+  2dup end_of_link_section?
+  if  2drop false  else  something true  then
+  ;
 : parsed_link_text  ( "text<spaces>|<spaces>" | "text<spaces>]]<spaces>"  -- ca len )
   \ Parse and return the link text. 
   echo> @  echo>string
   >attributes< -attributes  \ use the alternative set and init it
   separate? off 
   begin   parse-name dup
-    if    2dup end_of_link_section?
-          if  2drop false  else  something true  then
+    if    more_link_text?
     else  2drop more_link?
     then  0=
   until   echo> ! >attributes<  echoed $@
-  2dup ." result of parsed_link_text = " type cr  \ xxx debug check
+\  2dup ." result of parsed_link_text = " type cr  \ xxx debug check
   ;
 : (parse_link_text)  ( "...<space>|<space>" | "...<space>]]<space>"  -- )
   \ Parse the link text and store it into 'link_text'.
-  s" " link_text!  parsed_link_text link_text!
+  s" " link_text!
+  parsed_link_text 
+\  2dup ." link_text in (parse_link_text) = " type key drop cr  \ xxx debug check  \ xxx debug check
+  link_text!
   ;
 ' (parse_link_text) is parse_link_text
 
@@ -285,10 +292,10 @@ is content
 : (open_target)  ( -- )
   \ Open the target HTML page file.
   current_page target_path/file
-\  cr ." target file =  " 2dup type \ xxx debug check
+\  cr ." target file =  " 2dup type  \ xxx debug check
   w/o create-file throw target_fid !
-\  ." target file just opened: " \ xxx debug check
-  \ target_fid @ . cr key drop
+\  ." target file just opened: "  \ xxx debug check
+\  target_fid @ . cr key drop  \ xxx debug check
   ;
 : open_target  ( -- )
   \ Open the target HTML page file, if needed.
