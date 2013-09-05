@@ -115,14 +115,13 @@ variable /datum  \ offset of the current datum; at the end, length of the data
   \ ca len = datum name
   s" '" 2swap s+ nextname
   latestxt  \ of the word previously created by ':datum>value'
-  create  >body ,
+  create  ( xt ) >body ,
   does>  ( a1 -- a2 )
     \ a1 = page data address
     \ a2 = datum address
     \ dfa = data field address of the datum word
     \ u = datum offset
-    ( a1 dfa ) 
-    @ @
+    ( a1 dfa )  @ @
 \    dup ." datum offset = " .  \ xxx debug check
     ( a1 u ) +
   ;
@@ -137,8 +136,10 @@ variable /datum  \ offset of the current datum; at the end, length of the data
 datum: source_file
 
 datum: language  \ ISO code of the page's language
-datum: title  \ page title; xxx can include markups?
-datum: description  \ page description; xxx can include markups?
+datum: title  \ page title; can include markups
+datum: plain_title  \ the same without markups
+datum: description  \ page description; can include markups?
+datum: plain_description  \ the same without markups
 
 \ Dates in ISO format:
 datum: created  \ creation date
@@ -219,35 +220,23 @@ datum: template  \ HTML template filename in the design subdir
   ;
 
 \ **************************************************************
-\ Page-ids
+\ Page-id
 
 \ The first time a page is interpreted, its data is parsed and
-\ created, even if the content doesn't has to be parsered, in
-\ case the data has been required by other page).  Then a
-\ page-id and two aliases are created, based on the source
-\ filename. The execution of the page-id returns the address of
+\ created (even if the content doesn't has to be parsered, e.g.
+\ when the data has been required by other page).  Then a
+\ page-id is created: its name is source filename without
+\ extension. The execution of the page-id returns the address of
 \ the page data, in order to access the individual data fields.
 
 : "page-id"  ( -- ca len )
-  \ Return the name of the main page-id.
+  \ Return the name of the current page id.
   /sourcefilename -extension
   ;
 : :page_id  ( -- )
   \ Create the main page-id and init its data space.
   "page-id" :create  here current_data !  /datum @ allot
   ;
-0 [if]  \ xxx old
-: :page_id_aliases  { xt -- }
-  \ Create aliases of the main page-id.
-  \ xt = execution token of the main page-id
-  xt /sourcefilename :alias  \ with the original source extension
-  xt /sourcefilename source>target_extension :alias  \ with target extension
-  ;
-: :page_ids  ( -- )
-  \ Create the default page-ids.
-  :page_id  latestxt :page_id_aliases
-  ;
-[then]
 
 \ **************************************************************
 \ Page data header
@@ -284,16 +273,10 @@ defer set_default_data  ( -- )
   ;
 : data{  ( "<text><spaces>}data" -- )
   \ Mark the start of the page data.
-  [false] [if]  \ xxx old and buggy
-    save-input parse-name find-name >r
-    restore-input abort" 'restore-input' failed in 'data{'"
-    r> if  skip_data{  else  get_data{  then
-  [else]  \ xxx new
-    \ xxx how to access the page-ids in the markup?
-    \ xxx include them in the markup wordlist? create a wordlist?
-    "page-id" fendo_wid search-wordlist
-    if  drop skip_data{  else  get_data{  then
-  [then]
+  \ xxx todo how to access the page-ids in the markup?...
+  \ xxx ...include them in the markup wordlist? create a wordlist?
+  "page-id" fendo_wid search-wordlist
+  if  drop skip_data{  else  get_data{  then
   ;
 
 variable do_content?  \ flag: do the page content? (otherwise, skip it)
@@ -302,12 +285,15 @@ do_content? on
   \ Complete a source page filename with its path.
   source_dir $@ 2swap s+
   ;
-
+: +current_dir  ( ca1 len1 -- ca2 len2 )  \ xxx tmp
+  s" ./" 2swap s+
+  ;
 : (required_data)  ( ca len -- )
   \ Require a page file in order to get its data.
   \ ca len = filename
-  +source_dir 
-  cr 2dup ."  (required_data) from " type key drop \ xxx debug check
+  \ +source_dir  \ xxx tmp
+  +current_dir  \ xxx tmp
+\  cr 2dup ."  (required_data) from " type key drop  \ xxx debug check
   required
   ;
 : required_data  ( ca len -- )

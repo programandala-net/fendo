@@ -39,6 +39,7 @@
 \ 2013-08-14 Change: The 'raw=' attributte is removed; the word
 \   'unraw_attributes' (defined in <fendo_markup_wiki.fs>)
 \   makes it unnecessary.
+\ 2013-08-15 New: ':attribute?!', required by the bookmarked links.
 
 \ **************************************************************
 \ Todo
@@ -54,7 +55,13 @@ require ../galope/3dup.fs
 false  \ Gforth strings instead of FFL strings?
 dup constant [gforth_strings_for_attributes?]  immediate
 [if]    require string.fs
-[else]  require ffl/str.fs
+[else]
+\  .included
+\  .( about to require ffl/str.fs)
+\  key drop
+  require ffl/str.fs 
+\  .( after requiring ffl/str.fs)
+\  key drop
 [then]
 
 \ **************************************************************
@@ -87,6 +94,18 @@ dup constant [gforth_strings_for_attributes?]  immediate
   rot rot s" !" s+ :create  ,
   does>  ( ca1 len1 -- )
     ( ca1 len1 dfa ) perform attribute!
+  ;
+: :attribute?!  ( ca len xt -- )
+  \ xxx not used
+  \ Create a word that stores an attribute,
+  \ if it's empty.
+  \ ca len = name of the attribute variable
+  \ xt = execution token of the attribute variable
+  \ ca1 len1 = attribute value
+  rot rot s" ?!" s+ :create  ,
+  does>  ( ca1 len1 -- )
+    ( ca1 len1 dfa ) perform
+    dup attribute@ empty? if  attribute!  else  drop 2drop  then
   ;
 : :attribute"  ( ca len xt -- )
   \ Create a word that parses and stores an attribute.
@@ -121,13 +140,13 @@ variable attributes_set  \ 0 or 1
   ;
 : attribute:  ( "name" -- xt )
   \ Create an attribute variable in the markup vocabulary,
-  \ and three words to manage it.
+  \ and four words to manage it.
   \ "name" = ca len = name of the attribute variable
   \ xt = execution token of the attribute variable
   get-current fendo>current 
   parse-name? abort" Missing name after 'attribute:'"
   2dup (attribute:) ( ca len xt )  dup >r
-  3dup :attribute" 3dup :attribute! :attribute@
+  3dup :attribute" 3dup :attribute! 3dup :attribute?! :attribute@
   set-current  r>
   ;
 
