@@ -48,6 +48,9 @@
 \ **************************************************************
 \ Todo
 
+\ 2013-08-15 defered words at the start (and end?) of tags,
+\ to let the website application insert hooks.
+
 \ 2013-08-14 'raw=' is already converted by 'unraw_attributes';
 \ maybe the 'raw=' fake attribute can be removed.
 
@@ -81,6 +84,8 @@ wf        [flag]  well-formed flag (0=false; -1=true)
 \ **************************************************************
 \ Debug
 
+\ cr .( LOADING fendo.fs ) key drop  \ xxx debug check
+
 false value [bug_thread] immediate
 
 \ **************************************************************
@@ -94,9 +99,9 @@ require string.fs  \ dynamic strings
 
 \ From Forth Foundation Library
 
-\ require ffl/str.fs
-\ require ffl/tos.fs
-\ require ffl/xos.fs
+\ require ../ffl/str.fs
+\ require ../ffl/tos.fs
+\ require ../ffl/xos.fs
 
 \ From Galope
 
@@ -158,6 +163,11 @@ warnings @  warnings off
 warnings !
 
 [then]
+
+: empty?  ( ca len -- wf )
+  \ Is a string empty?
+  nip 0=
+  ;
 
 \ **************************************************************
 \ Wordlists

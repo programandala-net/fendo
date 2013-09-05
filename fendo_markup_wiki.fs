@@ -59,7 +59,7 @@ require ../galope/n-to-r.fs  \ 'n>r'
 require ../galope/n-r-from.fs  \ 'nr>'
 require ../galope/minus-prefix.fs  \ '-prefix'
 
-require ../ffl/str.fs  \ FFL's dynamic strings
+require ffl/str.fs  \ FFL's dynamic strings
 
 \ **************************************************************
 \ Generic tool words for strings
@@ -103,7 +103,7 @@ variable #parsed      \ items already parsed in the current line (before the cur
   [else]
     \ Second version, works fine when there are trailing spaces
     \ at the end of the line:
-    save-input  parse-name nip 0= >r  restore-input throw  r>
+    save-input  parse-name empty? >r  restore-input throw  r>
   [then]
   ;
 
@@ -531,6 +531,9 @@ variable link_text  \ dynamic string
 : link_text@  ( -- ca len )
   link_text $@
   ;
+: link_text?!  ( ca len -- )
+  link_text@ empty? if  link_text!  else  2drop  then
+  ;
 [then]
 : evaluate_link_text  ( -- )
   link_text@ evaluate_content
@@ -568,7 +571,7 @@ variable link_type
   link_type @ file_link =
   ;
 : unlink?  ( xt1 xt2 1|-1  |  xt1 0  --  xt2 xt2 true  |  0 )
-  \ Execute xt2 if it's different than xt1.
+  \ Execute xt2 if it's different from xt1.
   \ xt1 = old xt (former loop)
   \ xt2 = new xt
   if    2dup <> if  nip dup true  else  2drop false  then
@@ -582,31 +585,12 @@ variable link_type
   \ ca' len' = actual href attribute
   2dup href=!
   0 rot rot  \ fake xt
-  2dup ." unlink " type  \ xxx debug check
+\  2dup ." unlink " type  \ xxx debug check
   begin   ( xt ca len ) fendo_links_wid search-wordlist unlink?
   while   execute href=@
-  2dup ." --> " type  \ xxx debug check
+\  2dup ." --> " type  \ xxx debug check
   repeat  href=@
-  cr  \ xxx debug check
-  ;
-: convert_local_link_href  ( ca len -- ca' len' )
-  dup if  current_target_extension s+  then
-  ;
-: convert_file_link_href  ( ca len -- ca' len' )
-  s" file://" -prefix  files_subdir $@ 2swap s+  
-  ;
-: convert_link_href  ( ca len -- ca len | ca' len' )
-  \ xxx todo rewrite with a xt table?
-  \ xxx todo do at the end of the link, with other conversion
-  \ tasks?
-  \ ca len = href attribute, without anchor
-  2dup set_link_type  link_type @
-  case
-    local_link    of  convert_local_link_href  endof
-    file_link     of  convert_file_link_href  endof
-    external_link of  endof
-    true abort" Unknown link type"  \ xxx tmp
-  endcase
+\  cr  \ xxx debug check
   ;
 variable link_finished?  \ flag, no more link markup to parse?
 : end_of_link?  ( ca len -- wf )
@@ -635,13 +619,17 @@ defer parse_link_text  ( "...<spaces>|<spaces>" | "...<spaces>]]<spaces>"  -- )
   ;
 : get_link_href_attribute  ( "href_attribute<spaces>" -- )
   \ Parse and store the link href attribute.
-  parse-word unlink -anchor convert_link_href href=!
+  parse-word unlink 2dup set_link_type -anchor href=!
 \  ." ---> " href=@ type cr  \ xxx debug check
 \  external_link? if  ." EXTERNAL LINK: " href=@ type cr  then  \ xxx debug check
-  [ true ] [if]  \ simple version
+  [ false ] [if]  \ simple version
     parse-name end_of_link_section? 0=
     abort" Space not allowed in link href"
   [else]  \ no abort  \ xxx tmp
+    \ This code is required until the migration from Simplilo is finished
+    \ because some URL have "__",
+    \ what simplilo2fendo converts to " __ "
+    \ (e.g. page <es.diario.2010.08.29.txt>)
     begin  parse-name end_of_link_section? 0=
     while  s" <!-- xxx fixme space in link filename or URL -->" echo
     repeat
@@ -665,14 +653,10 @@ defer parse_link_text  ( "...<spaces>|<spaces>" | "...<spaces>]]<spaces>"  -- )
   href=@ 
   ;
 : missing_file_link_text  ( -- ca len )
-\  cr ." missing_file_link_text "  \ xxx debug check
-  href=@
-\   2dup type ." --> "  \ xxx debug check
-  -path
-\  2dup type cr  \ xxx debug check
+  href=@ -path
   ;
 : missing_link_text  ( -- ca len )
-  \ Set the proper link text when missing.
+  \ Set a proper link text if it's missing.
   \ xxx todo
   local_link?  if  missing_local_link_text exit  then
   external_link?  if  missing_external_link_text exit  then  \  xxx 
@@ -693,16 +677,47 @@ defer parse_link_text  ( "...<spaces>|<spaces>" | "...<spaces>]]<spaces>"  -- )
   \ Add "external" to the class attribute.
   class=@ s" external" s& class=!
   ;
-: tune_link  ( -- )
+: convert_local_link_href  ( ca len -- ca' len' )
+  dup if  current_target_extension s+  then
+  ;
+: convert_file_link_href  ( ca len -- ca' len' )
+  s" file://" -prefix  files_subdir $@ 2swap s+  
+  ;
+: convert_link_href  ( ca len -- ca' len' )
+  \ ca len = href attribute, without anchor
+  link_type @ case
+    local_link  of  convert_local_link_href  endof
+    file_link   of  convert_file_link_href   endof
+  endcase
+  ;
+: tune_local_link  ( ca len -- )
+  \ xxx todo fetch alternative language title and description
+  \ ca len = href attribute
+  2drop exit  \ xxx tmp
+  2dup +forth_extension required_data
+  evaluate ( page-id ) >r
+  r@ plain_description title=?!
+  r@ title evaluate_content link_text?!
+  r@ language hreflang=?!
+  r> access_key accesskey=?!
+  ;
+: tune_link  ( -- )  \ xxx todo
   \ Tune the attributes parsed from the link.
+  local_link? if  href=@ tune_local_link  then
+  href=@ convert_link_href href=!
   link_text@ 
 \  ." link_text in tune_link = " 2dup type cr cr  \ xxx debug check
-  nip 0= if  missing_link_text link_text!  then
+  empty? if  missing_link_text link_text!  then
   href=@ anchor+ href=!
-  external_link?  if  external_class  then
+  external_link? if  external_class  then
   ;
 : ([[)  ( "linkmarkup]]" -- )
-  parse_link tune_link
+  parse_link
+\  .s depth abort" depth 1!"  \ xxx debug check
+\  cr ." order ===> " order cr  \ xxx debug check
+  tune_link
+\  cr 2dup type cr  \ xxx debug check
+\  ." depth ===> " depth dup . abort" stack not empty at the end of ([[)"  \ xxx debug check
   ;
 
 \ **************************************************************
@@ -1146,5 +1161,6 @@ only forth fendo>order definitions
 \ 2013-08-14: New: 'unraw_attributes'.
 \ 2013-08-15: Fix: now '[[' empties 'link_text' at the end.
 \ 2013-08-15: New: 'external_class' to mark the external links.
+\ 2013-09-05: Fix: 'tune_link'.
 
 [then]
