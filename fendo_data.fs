@@ -68,6 +68,8 @@
 \   depends on the corresponding optional metadatum too.
 \ 2013-07-28 New: 'required_data', '-forth_extension',
 \   '+forth_extension'.
+\ 2013-09-06 Fix: '(required_data)' didn't save 'current_page'.
+\ 2013-09-06 New: 'property?', 'draft?'.
 
 \ **************************************************************
 \ Todo
@@ -85,7 +87,7 @@ variable current_data  \ address of the latest created data
   \ u = datum offset
   >r  0 parse  \ parse the rest of the current input line
   -leading  
-\  dup  if  ." Parsed datum: " 2dup type cr  then  \ xxx debug check
+\  dup  if  ." Parsed datum: " 2dup type cr  then  \ xxx informer
   current_data @ r> + $!
   ;
 variable in_data_header?  \ flag to let the data fields to disguise the context
@@ -122,7 +124,7 @@ variable /datum  \ offset of the current datum; at the end, length of the data
     \ dfa = data field address of the datum word
     \ u = datum offset
     ( a1 dfa )  @ @
-\    dup ." datum offset = " .  \ xxx debug check
+\    dup ." datum offset = " .  \ xxx informer
     ( a1 u ) +
   ;
 : datum:  ( "name" -- )
@@ -147,7 +149,7 @@ datum: modifed  \ modification date
 
 datum: access_key  \ access key (one char)
 
-\ Hierarchy data, indicated with a page-id (a page name):
+\ Hierarchy data, indicated with a page id (a page name):
 datum: upper_page
 datum: previous_page
 datum: next_page
@@ -159,8 +161,8 @@ datum: tags  \ list of public tags, separated by commas
 datum: properties  \ list of properties, separated by commas
 datum: edit_summary  \ description of the latest changes
 
-datum: related  \ list of page-ids, xxx separated by commas?
-datum: language_versions  \ list of page-ids, xxx separated by commas?
+datum: related  \ list of page ids, xxx separated by commas?
+datum: language_versions  \ list of page ids, xxx separated by commas?
 
 datum: filename_extension  \ alternative target filename extension (with dot)
 
@@ -184,11 +186,24 @@ datum: template  \ HTML template filename in the design subdir
   begin  s" ," /sides 0=  until  2drop
   depth r> 2 - - 2/
   ;
+false [if]  \ xxx todo
+: /csv  ( ca len -- ca#1 len#1 ... ca#u len#u u )
+  \ Divide a comma separated values in its values,
+  \ remove their trailing and leading spaces
+  \ and remove the empty values.
+  \ ca len = string with comma separated values
+  \ ca#1 len#1 ... ca#u len#u = one or more strings
+  \ u = number of strings returned
+  (/csv) depth 1- >r 0 ?do
+    -leading -trailing dup 0= if  2drop  then
+  loop  r> depth - 2/
+  ;
+[then]
 
 \ **************************************************************
 \ File names
 
-0 value current_page  \ page-id of the current page
+0 value current_page  \ page id of the current page
 
 : target_extension  ( a -- ca len )
   \ Return the target filename extension.
@@ -218,15 +233,28 @@ datum: template  \ HTML template filename in the design subdir
   \ Return the current source filename, without path.
   sourcefilename -path
   ;
+: target_file  ( a -- ca len )
+  \ Return a target HTML page filename. 
+  \ a = page id
+  \ ca len = target HTML page file name
+  source_file source>target_extension 
+  ;
+: target_path/file  ( a -- ca len )
+  \ Return a target HTML page filename, with its local path.
+  \ a = page id
+  \ ca len = target HTML page file name, with its local path.
+  target_file target_dir $@ 2swap s+
+\  2dup type cr  \ xxx informer
+  ;
 
 \ **************************************************************
-\ Page-id
+\ Page id
 
 \ The first time a page is interpreted, its data is parsed and
 \ created (even if the content doesn't has to be parsered, e.g.
 \ when the data has been required by other page).  Then a
-\ page-id is created: its name is source filename without
-\ extension. The execution of the page-id returns the address of
+\ page id is created: its name is source filename without
+\ extension. The execution of the page id returns the address of
 \ the page data, in order to access the individual data fields.
 
 : "page-id"  ( -- ca len )
@@ -234,7 +262,7 @@ datum: template  \ HTML template filename in the design subdir
   /sourcefilename -extension
   ;
 : :page_id  ( -- )
-  \ Create the main page-id and init its data space.
+  \ Create the main page id and init its data space.
   "page-id" :create  here current_data !  /datum @ allot
   ;
 
@@ -247,36 +275,41 @@ defer set_default_data  ( -- )
   \ Set the default values of the page data.
   \ xxx todo finish
   /sourcefilename 
-\  2dup ." «" type ." »" \ xxx debug check
+\  2dup ." «" type ." »" \ xxx informer
   current_data @ 'source_file $!
   ;
 ' (set_default_data) is set_default_data
 : }data  ( -- )
   \ Mark the end of the page data header and complete it.
-  in_data_header? @
-  if    set_default_data
-  then  in_data_header? off 
+  in_data_header? @ if  set_default_data  then
+  in_data_header? off 
   ;
-: skip_data{  ( "text }data" -- )
+: skip_data{  ( xt "<text><space>}data" -- )
   \ Skip the page data.
+  \ xt = execution token of the current page id
+  execute to current_page
+  ." skip_data{" cr  \ xxx informer
   begin   parse-name dup 0=
     if    2drop refill 0= dup abort" Missing '}data'"
-    else  s" }data" str=
-    then
+    else  s" }data" str=  then
   until   }data
   ;
-: get_data{  ( "<text><spaces>}data" -- )
+: get_data{  ( "<text><space>}data" -- )
   \ Get the page data.
+  ." get_data{" cr  \ xxx informer
   :page_id
-  current_data @ to current_page
+  current_data @ 
+  ." current_data copied to current_page =  " dup . cr  \ xxx informer
+  to current_page
   in_data_header? on
   ;
 : data{  ( "<text><spaces>}data" -- )
   \ Mark the start of the page data.
-  \ xxx todo how to access the page-ids in the markup?...
+  \ xxx todo how to access the page ids in the markup?...
   \ xxx ...include them in the markup wordlist? create a wordlist?
+  cr cr ." =========== data{" cr  \ xxx informer
   "page-id" fendo_wid search-wordlist
-  if  drop skip_data{  else  get_data{  then
+  if  skip_data{  else  get_data{  then
   ;
 
 variable do_content?  \ flag: do the page content? (otherwise, skip it)
@@ -291,15 +324,39 @@ do_content? on
 : (required_data)  ( ca len -- )
   \ Require a page file in order to get its data.
   \ ca len = filename
+  current_page 
+  ." current_page saved = " dup . cr \ xxx informer
+  >r  \ save
   \ +source_dir  \ xxx tmp
   +current_dir  \ xxx tmp
-\  cr 2dup ."  (required_data) from " type key drop  \ xxx debug check
+\  cr 2dup ."  (required_data) from " type  \ xxx informer
   required
+  r> 
+  ." current_page restored = " dup . cr \ xxx informer
+  to current_page  \ restore
   ;
 : required_data  ( ca len -- )
   \ Require a page file in order to get its data.
   \ ca len = filename
-  do_content? @ >r do_content? off  (required_data)  r> do_content? !
+  cr ." required_data " 2dup type cr  \ xxx informer
+  do_content? @ >r
+  do_content? off  (required_data)
+  r> do_content? !
+  ;
+: required_data<id  ( a -- )
+  \ Require a page file in order to get its data.
+  \ a = page id (address of its data)
+  source_file required_data
+  ;
+: required_data<id$  ( ca len -- )
+  \ Require a page file in order to get its data.
+  \ ca len = page id
+  +forth_extension required_data
+  ;
+: required_data<target  ( ca len -- )
+  \ Require a page file in order to get its data.
+  \ ca len = target file
+  -extension required_data<id$
   ;
 : require_data  ( "name" -- )
   \ Require a page file in order to get its data.
@@ -311,6 +368,22 @@ do_content? on
 
 \ **************************************************************
 \ Calculated data
+
+: property?  ( ca len a -- wf )
+             { D: property page_id }
+  \ ca len = property to check
+  \ a = page id (address of its data)
+  \ wf = is the property in the properties field?
+  page_id properties  false { result }
+  /csv 0 ?do
+    -trailing -leading property str= result or to result
+  loop  result
+  ;
+: draft?  ( a -- wf )
+  \ a = page id (address of its data)
+  \ wf = is "draft" in the properties field?
+  s" draft" rot property?
+  ;
 
 : (hierarchy)  ( ca len -- u )
   \ Return the hierarchy level of a page (0 is the top level).

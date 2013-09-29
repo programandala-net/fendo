@@ -78,7 +78,14 @@
 \   '(evaluate_content)'. Otherwise '#nothings' activated
 \   'close_pending' before expected, e.g. this happened
 \   when a link was at the end of a line.
-\
+\ 2013-09-06: New: 'do_page?'.
+\ 2013-09-06: Fix: 'content{' doesn't call 'skip_content'
+\   anymore but '\eof'; the reason is 'skip_content' parsed
+\   until "}content" was found, what was wrong when this word
+\   was mentioned in the content itself! That happened in one page
+\   and was hard to solve. It's simpler to ignore the whole
+\   file. 'skip_content' has been removed.
+
 \ **************************************************************
 \ Todo
 
@@ -113,7 +120,7 @@
 : close_pending_paragraph  ( -- )
   \ Close a pending paragraph, if needed.
   opened_[_]? @ if  [markup>order] _ 
-\  ." CLOSED PARAGRAPH " cr key drop  \ xxx debug check
+\  ." CLOSED PARAGRAPH " cr  \ xxx informer
   [markup<order]  then
   ;
 : close_pending_table  ( -- )
@@ -127,7 +134,7 @@
   \ Close the pending markups.
   \ Invoked when an empty line if parsed, and at the end of the
   \ parsing.
-\  ." close_pending because #nothings = " #nothings @ . cr  \ xxx debug check
+\  ." close_pending because #nothings = " #nothings @ . cr  \ xxx informer
   close_pending_list close_pending_paragraph close_pending_table echo_cr
   ;
 
@@ -139,8 +146,7 @@ variable more?  \ flag: keep on parsing more words?; changed by '}content'
 :noname  ( ca len -- )
   \ Manage a parsed string of content: print it and update the counters.
   #markups off  _echo  1 #nonmarkups +!
-  ;
-is content
+  ;  is content
 : (markup)  ( xt -- )
   \ Manage a parsed markup: execute it and update the counters.
   \ xt = execution token of the markup
@@ -160,7 +166,7 @@ is content
   \ Manage something found on the page content.
   \ ca len = parsed item (markup or printable content) 
   #nothings off
-\  ." #nothings = " #nothings @ . cr  \ xxx debug check
+\  ." #nothings = " #nothings @ . cr  \ xxx informer
   2dup fendo_markup_wid search-wordlist
   if  markup
   else
@@ -201,7 +207,7 @@ is content
   \ Manage something found on the page content.
   \ ca len = parsed item (markup, Forth code or printable content) 
   #nothings off
-\  ." #nothings = " #nothings @ . cr  \ xxx debug check
+\  ." #nothings = " #nothings @ . cr  \ xxx informer
   forth_code_depth @
   if    something_in_code_zone
   else  something_in_ordinary_zone
@@ -217,7 +223,7 @@ is content
   #nothings @  \ an empty line was parsed?
   if    close_pending
   then  1 #nothings +!
-\  ." #nothings = " #nothings @ . cr  \ xxx debug check
+\  ." #nothings = " #nothings @ . cr  \ xxx informer
   #parsed off
   ;
 : parse_content  ( "text" -- )
@@ -233,21 +239,11 @@ is content
   until
   ;
 
-[then]
-
 : (evaluate_content)  ( ca len -- )
   \ Evaluate a string as page content.
   ['] parse_content execute-parsing  #nothings off
   ;
 ' (evaluate_content) is evaluate_content
-: skip_content  ( "text }content" -- )
-  \ Skip the page content until the end of the content block.
-  begin   parse-name ?dup 
-    if    s" }content" str=
-    else  drop refill 0= dup abort" Missing '}content'"
-    then
-  until   do_content? on
-  ;
 : more_link_text?  ( ca len -- wf )
   \ Manage a parsed name of a link text.
   2dup end_of_link_section?
@@ -263,39 +259,29 @@ is content
     else  2drop more_link?
     then  0=
   until   echo> ! >attributes<  echoed $@
-\  2dup ." result of parsed_link_text = " type cr  \ xxx debug check
+\  2dup ." result of parsed_link_text = " type cr  \ xxx informer
   ;
 : (parse_link_text)  ( "...<space>|<space>" | "...<space>]]<space>"  -- )
   \ Parse the link text and store it into 'link_text'.
   s" " link_text!
   parsed_link_text 
-\  2dup ." link_text in (parse_link_text) = " type key drop cr  \ xxx debug check  \ xxx debug check
+\  2dup ." link_text in (parse_link_text) = " type cr  \ xxx informer  \ xxx informer
   link_text!
   ;
 ' (parse_link_text) is parse_link_text
 
 \ Target file
 
-: target_file  ( a -- ca len )
-  \ Return a target HTML page filename. 
-  \ a = page-id
-  \ ca len = target HTML page file name
-  source_file source>target_extension 
-  ;
-: target_path/file  ( a -- ca len )
-  \ Return a target HTML page filename, with its local path.
-  \ a = page-id
-  \ ca len = target HTML page file name
-  target_file target_dir $@ 2swap s+
-\  2dup type cr  \ xxx debug check
-  ;
 : (open_target)  ( -- )
   \ Open the target HTML page file.
-  current_page target_path/file
-\  cr ." target file =  " 2dup type  \ xxx debug check
+  current_page
+  cr ." current_page in (open_target) =  " dup .  \ xxx informer
+  target_path/file
+  cr ." target file =  " 2dup type cr key drop  \ xxx informer
   w/o create-file throw target_fid !
-\  ." target file just opened: "  \ xxx debug check
-\  target_fid @ . cr key drop  \ xxx debug check
+\  ." target file just opened: "  \ xxx informer
+\  target_fid @ . cr  \ xxx informer
+\  s" <!-- xxx -->" target_fid @ write-line throw  \ xxx debugging
   ;
 : open_target  ( -- )
   \ Open the target HTML page file, if needed.
@@ -304,12 +290,13 @@ is content
 : (close_target)  ( -- )
   \ Close the target HTML page file.
   target_fid @ close-file throw
-\  ." target_fid just closed. " \ xxx debug check
+\  ." target_fid just closed. " \ xxx informer
+  target_fid off
   ;
 : close_target  ( -- )
   \ Close the target HTML page file, if needed.
+  ." close_target" cr \ xxx informer
   target_fid @ if  (close_target)  then
-  target_fid off
   ;
 
 \ Design template
@@ -325,7 +312,7 @@ is content
   [else]  \ xxx old version, without page fields
     website_design_subdir $@ website_template $@ s+ s+
   [then]
-\  ." template_file = " 2dup type cr  \ xxx debug check
+\  ." template_file = " 2dup type cr  \ xxx informer
   ;
 : template_halves  ( ca1 len1 -- ca2 len2 ca3 len3 )
   \ Divide the template in two parts, excluding the content holder.
@@ -360,13 +347,16 @@ variable template_content
   \ Return the template content.
   template_content $@len
   if  get_template_again  else  get_template_first  then
+  \ .s  \ xxx informer
   ;
 : template{  ( -- )
-  \ Echo the top half of the current template, above the page content.
+  \ Echo the top half of the current template,
+  \ above the page content.
   get_template template_top evaluate_content
   ;
 : }template  ( -- )
-  \ Echo the bottom half of the current template, below the page content.
+  \ Echo the bottom half of the current template,
+  \ below the page content.
   get_template template_bottom evaluate_content
   ;
 
@@ -381,23 +371,36 @@ variable template_content
   \ and parse the page content.
   open_target template{ parse_content
   ;
+: do_page?  ( -- wf )
+\  current_page draft? if  ." DRAFT!" cr  then  \ xxx informer
+  do_content? @  current_page draft? 0=  and
+  ;
+: skip_page  ( -- )
+  \ No target page must be created; skip the current source page.
+  ." skip_page" cr  \ xxx informer
+  \eof  \ skip the rest of the file
+  do_content? on  \ set default for the next page
+  ;
 : content{  ( "text }content" -- )
   \ Create the page content, if needed.
   \ The end of the content is marked with the '}content' markup.
   \ Only one 'content{ ... }content' block is allowed in the page.
-  do_content? @
-  if    .sourcefilename  (content{)
-  else  skip_content  then
+  ." content{" cr  \ xxx informer
+  do_page?
+  if  .sourcefilename (content{)  else  skip_page  then
+  ;
+: finish_the_target  ( -- )
+  close_pending }template close_target
+  more? off  \ finish the current parsing
   ;
 get-current markup>current
 : }content  ( -- )
   \ Finish the page content. 
-\ cr .s cr ." start of }content " \ xxx debug check
-  close_pending }template close_target
-  more? off  \ finish the current parsing
-  do_content? on  \ default value for the next page
+\ cr .s cr ." start of }content " \ xxx informer
+  finish_the_target
+\  do_content? on  \ default value for the next page  \ xxx old
   only fendo>order forth>order
-\ cr .s cr ." end of }content -- press any key..." key drop  \ xxx debug check
+\ cr .s cr ." end of }content"  \ xxx informer
   ;
 set-current
 

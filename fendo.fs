@@ -84,7 +84,7 @@ wf        [flag]  well-formed flag (0=false; -1=true)
 \ **************************************************************
 \ Debug
 
-\ cr .( LOADING fendo.fs ) key drop  \ xxx debug check
+\ cr .( LOADING fendo.fs ) key drop  \ xxx informer
 
 false value [bug_thread] immediate
 
@@ -107,6 +107,7 @@ require string.fs  \ dynamic strings
 
 require ../galope/3dup.fs
 require ../galope/anew.fs
+require ../galope/backslash-end-of-file.fs  \ '\eof'
 require ../galope/bracket-false.fs  \ '[false]'
 require ../galope/buffer-colon.fs  \ 'buffer:'
 require ../galope/colon-alias.fs  \ ':alias'

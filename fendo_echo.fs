@@ -91,7 +91,7 @@ variable target_fid  \ file id of the HTML target page
   ;
 : echo  ( ca len -- )
   \ Print a text string to the HTML file.
-\  2dup cr type  key drop  \ xxx debug check
+\  2dup cr type  key drop  \ xxx informer
   echo>string?
   if    (echo>string)
   else  ['] type (echo)
