@@ -232,15 +232,15 @@ false [if]  \ xxx first version
 : (forth_code_end?)  ( ca len -- wf )
   \ Is a name a valid end markup of the Forth code?
   \ ca len = latest name parsed 
-\  ." «" 2dup type ." » "  \ xxx debug check
-\  2dup type space \ xxx debug check
+\  ." «" 2dup type ." » "  \ xxx informer
+\  2dup type space \ xxx informer
   2dup s" <:" str= abs forth_code_depth +!
        s" :>" str= dup forth_code_depth +! 
   forth_code_depth @
-\  dup ." {" . ." }" \ xxx debug check
+\  dup ." {" . ." }" \ xxx informer
   0= and
-\  dup  if ." END!" then  \ xxx debug check
-\  key drop  \ xxx debug check
+\  dup  if ." END!" then  \ xxx informer
+\  key drop  \ xxx informer
   ;
 : forth_code_end?  ( ca1 len1 ca2 len2 -- ca1' len1' wf )
   \ Add a new name to the parsed merged Forth code
@@ -260,7 +260,7 @@ false [if]  \ xxx first version
   s" "
   begin   parse-name dup
     if    
-\          2dup ." { " type ." } "  \ xxx debug check
+\          2dup ." { " type ." } "  \ xxx informer
           2dup forth_code_end?
           dup >r
           0= and  s+ s"  " s+ r>
@@ -270,7 +270,7 @@ false [if]  \ xxx first version
           refill 0=
     then
   until
-\  cr ." <: " 2dup type ." :>" cr key drop  \ xxx debug check
+\  cr ." <: " 2dup type ." :>" cr key drop  \ xxx informer
   ;
 
 [then]
@@ -294,7 +294,7 @@ true [if]  \ xxx 2013-08-10 second version, more legible
   s"  " s+
   ;
 : remaining   ( -- )
-\ xxx debug check
+\ xxx informer
   >in @ source 2 pick - -rot + swap
   64 min
   cr ." ***> " type ."  <***" cr
@@ -306,9 +306,9 @@ true [if]  \ xxx 2013-08-10 second version, more legible
   s" "
   begin   parse-name dup
     if    
-\           2dup ." { " type ." } "  \ xxx debug check
-\           ." { " input-lexeme 2@ type ." } "  \ xxx debug check
-\           remaining  key drop  \ xxx debug check
+\           2dup ." { " type ." } "  \ xxx informer
+\           ." { " input-lexeme 2@ type ." } "  \ xxx informer
+\           remaining  key drop  \ xxx informer
           2dup update_forth_code_depth
           2dup forth_code_end?
           dup >r if  2drop  else  s+ bl+  then  r>
@@ -324,15 +324,15 @@ false [if]  \ experimental version with dynamic string, not finished
 : forth_code_end?  ( ca len -- wf )
   \ Is a name a valid end markup of the Forth code?
   \ ca len = latest name parsed 
-\  ." «" 2dup type ." » "  \ xxx debug check
-\  2dup type space \ xxx debug check
+\  ." «" 2dup type ." » "  \ xxx informer
+\  2dup type space \ xxx informer
   2dup s" <:" str= abs forth_code_depth +!
        s" :>" str= dup forth_code_depth +! 
   forth_code_depth @
-\  dup ." {" . ." }" \ xxx debug check
+\  dup ." {" . ." }" \ xxx informer
   0= and
-\  dup  if ." END!" then  \ xxx debug check
-\  key drop  \ xxx debug check
+\  dup  if ." END!" then  \ xxx informer
+\  key drop  \ xxx informer
   ;
 variable forth_code$  \ dynamic string
 : forth_code$+  ( ca len -- )
@@ -346,12 +346,12 @@ variable forth_code$  \ dynamic string
   s" " forth_code$ $!
   begin   parse-name dup
     if    
-\          2dup ." { " type ." }"  \ xxx debug check
+\          2dup ." { " type ." }"  \ xxx informer
           2dup forth_code_end? dup >r if  2drop  else  forth_code$+  then r>
     else  2drop s"  " forth_code$+  refill 0=
     then
   until   forth_code$ $@
-\  cr ." <: " 2dup type ."  :>" cr  \ xxx debug check
+\  cr ." <: " 2dup type ."  :>" cr  \ xxx informer
   ;
 [then]
 
@@ -412,14 +412,14 @@ s" /counted-string" environment? 0=
   \ Parse a block source code region.
   \ xxx todo preserve spaces (reading complete lines)
   \ xxx todo translate < and &
-\ cr ." (###) code = "  \ xxx debug check
+\ cr ." (###) code = "  \ xxx informer
   begin   
     ###-line dup /###-line source-id read-line throw 
     0= abort" Missing closing '###'"
-\   2dup cr type  \ xxx debug check
+\   2dup cr type  \ xxx informer
     2dup s" ###" str= dup >r 0= ?echo_line r>
   until
-\ ." ### end!"  \ xxx debug check
+\ ." ### end!"  \ xxx informer
   ;
 
 \ **************************************************************
@@ -556,9 +556,9 @@ variable link_type
   ;
 : set_link_type  ( ca len -- )
   \ Get and store the type id of an href attribute.
-\  .s 2dup type ." --> "  \ xxx debug check
+\  .s 2dup type ." --> "  \ xxx informer
   >link_type_id
-\  dup . ." link type" cr key drop  \ xxx debug check
+\  dup . ." link type" cr key drop  \ xxx informer
   link_type !
   ;
 : external_link?  ( -- wf )
@@ -585,12 +585,12 @@ variable link_type
   \ ca' len' = actual href attribute
   2dup href=!
   0 rot rot  \ fake xt
-\  2dup ." unlink " type  \ xxx debug check
+\  2dup ." unlink " type  \ xxx informer
   begin   ( xt ca len ) fendo_links_wid search-wordlist unlink?
   while   execute href=@
-\  2dup ." --> " type  \ xxx debug check
+\  2dup ." --> " type  \ xxx informer
   repeat  href=@
-\  cr  \ xxx debug check
+\  cr  \ xxx informer
   ;
 variable link_finished?  \ flag, no more link markup to parse?
 : end_of_link?  ( ca len -- wf )
@@ -620,8 +620,8 @@ defer parse_link_text  ( "...<spaces>|<spaces>" | "...<spaces>]]<spaces>"  -- )
 : get_link_href_attribute  ( "href_attribute<spaces>" -- )
   \ Parse and store the link href attribute.
   parse-word unlink 2dup set_link_type -anchor href=!
-\  ." ---> " href=@ type cr  \ xxx debug check
-\  external_link? if  ." EXTERNAL LINK: " href=@ type cr  then  \ xxx debug check
+\  ." ---> " href=@ type cr  \ xxx informer
+\  external_link? if  ." EXTERNAL LINK: " href=@ type cr  then  \ xxx informer
   [ false ] [if]  \ simple version
     parse-name end_of_link_section? 0=
     abort" Space not allowed in link href"
@@ -638,16 +638,20 @@ defer parse_link_text  ( "...<spaces>|<spaces>" | "...<spaces>]]<spaces>"  -- )
 : parse_link  ( "linkmarkup]]" -- )
   \ Parse and store the link attributes.
   get_link_href_attribute
-\  ." ---> " href=@ type cr  \ xxx debug check
+\  ." ---> " href=@ type cr  \ xxx informer
   link_finished? @ 0= if
     parse_link_text link_finished? @ 0=
     if  get_link_raw_attributes  then
   then
-\  ." ---> " href=@ type cr  \ xxx debug check
+\  ." ---> " href=@ type cr  \ xxx informer
   ;
 : missing_local_link_text  ( -- ca len )
-  \ xxx todo
-  s" XXX TMP LINK TEXT" 
+  href=@ -extension 2dup required_data<id$
+  evaluate title
+  echo> @ >r echo>string
+  >attributes< -attributes  \ use the alternative set and init it
+  evaluate_content
+  r> echo> ! >attributes< echoed $@
   ;
 : missing_external_link_text  ( -- ca len )
   href=@ 
@@ -706,18 +710,18 @@ defer parse_link_text  ( "...<spaces>|<spaces>" | "...<spaces>]]<spaces>"  -- )
   local_link? if  href=@ tune_local_link  then
   href=@ convert_link_href href=!
   link_text@ 
-\  ." link_text in tune_link = " 2dup type cr cr  \ xxx debug check
+\  ." link_text in tune_link = " 2dup type cr cr  \ xxx informer
   empty? if  missing_link_text link_text!  then
   href=@ anchor+ href=!
   external_link? if  external_class  then
   ;
 : ([[)  ( "linkmarkup]]" -- )
   parse_link
-\  .s depth abort" depth 1!"  \ xxx debug check
-\  cr ." order ===> " order cr  \ xxx debug check
+\  .s depth abort" depth 1!"  \ xxx informer
+\  cr ." order ===> " order cr  \ xxx informer
   tune_link
-\  cr 2dup type cr  \ xxx debug check
-\  ." depth ===> " depth dup . abort" stack not empty at the end of ([[)"  \ xxx debug check
+\  cr 2dup type cr  \ xxx informer
+\  ." depth ===> " depth dup . abort" stack not empty at the end of ([[)"  \ xxx informer
   ;
 
 \ **************************************************************
@@ -826,13 +830,13 @@ true [if]  \ xxx first version
   only fendo>order markup>order forth>order 
   evaluate
   nr> set-order
-\  cr ." <:..:> done!" key drop  \ xxx debug check
+\  cr ." <:..:> done!" key drop  \ xxx informer
   ;
 : <:  ( "forthcode :>" -- )
   \ Start, parse and interpret a Forth block.
   1 forth_code_depth +!
   parse_forth_code 
-\  cr ." <: " 2dup type ." :>" cr  \ xxx debug check
+\  cr ." <: " 2dup type ." :>" cr  \ xxx informer
   evaluate_forth_code
   ;  immediate
 : :>  ( -- )
@@ -944,7 +948,7 @@ false [if]  \ experimental version
   ;
 : ==  ( -- )
   \ Open or close a <h2> heading.
-\  cr ." opened_[=]? = " opened_[=]? ? key drop  \ xxx debug check
+\  cr ." opened_[=]? = " opened_[=]? ? key drop  \ xxx informer
   ['] <h2> ['] </h2> opened_[=]? markups
   ;
 : ===  ( -- )
@@ -981,7 +985,7 @@ false [if]  \ experimental version
 
 : |  ( -- )
   \ Markup used as separator in tables, images and links.
-\ ." | rendered"  \ xxx debug check
+\ ." | rendered"  \ xxx informer
   actual_cell? if  ['] <td> (|)  else  s" |" content  then
   ;
 : |=  ( -- )
@@ -1006,15 +1010,15 @@ false [if]  \ experimental version
 \ Links
 
 : [[  ( "linkmarkup]]" -- )
-\  ." #nothings at the start of [[ = " #nothings @ . cr  \ xxx debug check
+\  ." #nothings at the start of [[ = " #nothings @ . cr  \ xxx informer
   ([[) 
-\  ." #nothings after ([[) = " #nothings @ . cr  \ xxx debug check
-\  ." 5)" href=@ type cr  \ xxx debug check
+\  ." #nothings after ([[) = " #nothings @ . cr  \ xxx informer
+\  ." 5)" href=@ type cr  \ xxx informer
   href=@ nip 
   if    <a> evaluate_link_text </a>  
   else  echo_space evaluate_link_text
   then  s" " link_text!
-\  ." #nothings at the end of [[ = " #nothings @ . cr  \ xxx debug check
+\  ." #nothings at the end of [[ = " #nothings @ . cr  \ xxx informer
   ;
 : ]]  ( -- )
   true abort" ']]' without '[['"

@@ -302,8 +302,8 @@ create 'attributes_xt  \ table for the execution tokens of the attribute variabl
   \ ca1 len1 = attribute value
   \ ca2 len2 = attribute label
   \   (it includes the final "=", e.g. "alt=")
-\  2dup ." label<< " type ." >> " cr  \ xxx debug check
-\  2over ." value<< " type ." >> " cr  \ xxx debug check
+\  2dup ." label<< " type ." >> " cr  \ xxx informer
+\  2over ." value<< " type ." >> " cr  \ xxx informer
   echo_space echo echo_quote echo echo_quote
   ;
 : (+attribute)  ( xt ca len -- )
@@ -315,7 +315,7 @@ create 'attributes_xt  \ table for the execution tokens of the attribute variabl
 : echo_real_attribute  ( xt -- )
   \ Echo a real attribute, if not empty.
   \ xt = execution token of the attribute variable
-\  ." {{{ " dup >name ?dup if  id.  else  ." ?"  then  ." }}}"  \ xxx debug check
+\  ." {{{ " dup >name ?dup if  id.  else  ." ?"  then  ." }}}"  \ xxx informer
   dup execute attribute@
   dup if  (+attribute)  else  2drop drop  then
   ;
