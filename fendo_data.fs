@@ -70,6 +70,9 @@
 \   '+forth_extension'.
 \ 2013-09-06 Fix: '(required_data)' didn't save 'current_page'.
 \ 2013-09-06 New: 'property?', 'draft?'.
+\ 2013-09-29 Fix: 'current_page' was not properly preserved
+\   when 'require_data' was used. This caused many pages were
+\   not created. This bug was difficult to find out.
 
 \ **************************************************************
 \ Todo
@@ -288,7 +291,7 @@ defer set_default_data  ( -- )
   \ Skip the page data.
   \ xt = execution token of the current page id
   execute to current_page
-  ." skip_data{" cr  \ xxx informer
+\  ." skip_data{" cr  \ xxx informer
   begin   parse-name dup 0=
     if    2drop refill 0= dup abort" Missing '}data'"
     else  s" }data" str=  then
@@ -296,10 +299,10 @@ defer set_default_data  ( -- )
   ;
 : get_data{  ( "<text><space>}data" -- )
   \ Get the page data.
-  ." get_data{" cr  \ xxx informer
+\  ." get_data{" cr  \ xxx informer
   :page_id
   current_data @ 
-  ." current_data copied to current_page =  " dup . cr  \ xxx informer
+\  ." current_data copied to current_page =  " dup . cr  \ xxx informer
   to current_page
   in_data_header? on
   ;
@@ -307,7 +310,7 @@ defer set_default_data  ( -- )
   \ Mark the start of the page data.
   \ xxx todo how to access the page ids in the markup?...
   \ xxx ...include them in the markup wordlist? create a wordlist?
-  cr cr ." =========== data{" cr  \ xxx informer
+\  cr cr ." =========== data{" cr  \ xxx informer
   "page-id" fendo_wid search-wordlist
   if  skip_data{  else  get_data{  then
   ;
@@ -324,24 +327,15 @@ do_content? on
 : (required_data)  ( ca len -- )
   \ Require a page file in order to get its data.
   \ ca len = filename
-  current_page 
-  ." current_page saved = " dup . cr \ xxx informer
-  >r  \ save
-  \ +source_dir  \ xxx tmp
-  +current_dir  \ xxx tmp
-\  cr 2dup ."  (required_data) from " type  \ xxx informer
-  required
-  r> 
-  ." current_page restored = " dup . cr \ xxx informer
-  to current_page  \ restore
+  do_content? off  required
   ;
 : required_data  ( ca len -- )
   \ Require a page file in order to get its data.
   \ ca len = filename
-  cr ." required_data " 2dup type cr  \ xxx informer
-  do_content? @ >r
-  do_content? off  (required_data)
-  r> do_content? !
+\  cr ." required_data " 2dup type cr  \ xxx informer
+  do_content? @ >r  current_page >r
+  (required_data)
+  r> to current_page  r> do_content? !
   ;
 : required_data<id  ( a -- )
   \ Require a page file in order to get its data.
@@ -361,9 +355,8 @@ do_content? on
 : require_data  ( "name" -- )
   \ Require a page file in order to get its data.
   \ "name" = filename
-  do_content? @  do_content? off
-  parse-name? abort" File name expected in 'require_data'"  (required_data)
-  do_content? !
+  parse-name? abort" File name expected in 'require_data'"
+  required_data
   ;
 
 \ **************************************************************

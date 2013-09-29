@@ -548,11 +548,15 @@ variable link_type
 1 enum local_link
   enum external_link
   enum file_link  drop
-: >link_type_id  ( ca len -- n )
+: (>link_type_id)  ( ca len -- n )
   \ Convert an href attribute to its type id.
   2dup external_href? if  2drop external_link exit  then
   file_href? if  file_link exit  then
   local_link 
+  ;
+: >link_type_id  ( ca len -- n | 0 )
+  \ Convert an href attribute to its type id, if not empty.
+  dup if  (>link_type_id)  else  nip  then
   ;
 : set_link_type  ( ca len -- )
   \ Get and store the type id of an href attribute.
@@ -578,6 +582,16 @@ variable link_type
   else  drop false
   then
   ;
+: (unlinked?)  ( xt ca len -- wf )
+  \ Is an href attribute a link different from xt?
+  \ ca len = href attribute (not empty)
+  fendo_links_wid search-wordlist unlink?
+  ;
+: unlinked?  ( xt ca len -- wf )
+  \ Is an href attribute a link different from xt?
+  \ ca len = href attribute (or an empty string)
+  dup  if  (unlinked?)  else  nip nip  then
+  ;
 : unlink  ( ca len -- ca len | ca' len' )
   \ xxx choose better name?: unalias, unfake...
   \ Unlink an href attribute recursively.
@@ -586,7 +600,7 @@ variable link_type
   2dup href=!
   0 rot rot  \ fake xt
 \  2dup ." unlink " type  \ xxx informer
-  begin   ( xt ca len ) fendo_links_wid search-wordlist unlink?
+  begin   ( xt ca len ) unlinked?
   while   execute href=@
 \  2dup ." --> " type  \ xxx informer
   repeat  href=@
@@ -950,6 +964,7 @@ false [if]  \ experimental version
   \ Open or close a <h2> heading.
 \  cr ." opened_[=]? = " opened_[=]? ? key drop  \ xxx informer
   ['] <h2> ['] </h2> opened_[=]? markups
+\  depth abort" stack not empty"  \ xxx informer
   ;
 : ===  ( -- )
   \ Open or close a <h3> heading.
@@ -1166,5 +1181,8 @@ only forth fendo>order definitions
 \ 2013-08-15: Fix: now '[[' empties 'link_text' at the end.
 \ 2013-08-15: New: 'external_class' to mark the external links.
 \ 2013-09-05: Fix: 'tune_link'.
+\ 2013-09-29: 'unlink' is factored with 'unlinked?'.
+\ 2013-09-29: '>link_type_id' now checks if the link is empty;
+\   and is factored with '(>link_type_id)'.
 
 [then]

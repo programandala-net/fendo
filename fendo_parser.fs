@@ -85,6 +85,9 @@
 \   was mentioned in the content itself! That happened in one page
 \   and was hard to solve. It's simpler to ignore the whole
 \   file. 'skip_content' has been removed.
+\ 2013-09-29: New: '}content?' flag is used to check if
+\   '}content' was executed; this way some markup
+\   errors can be detected.
 
 \ **************************************************************
 \ Todo
@@ -275,9 +278,9 @@ variable more?  \ flag: keep on parsing more words?; changed by '}content'
 : (open_target)  ( -- )
   \ Open the target HTML page file.
   current_page
-  cr ." current_page in (open_target) =  " dup .  \ xxx informer
+\  cr ." current_page in (open_target) =  " dup .  \ xxx informer
   target_path/file
-  cr ." target file =  " 2dup type cr key drop  \ xxx informer
+\  cr ." target file =  " 2dup type cr key drop  \ xxx informer
   w/o create-file throw target_fid !
 \  ." target file just opened: "  \ xxx informer
 \  target_fid @ . cr  \ xxx informer
@@ -289,13 +292,14 @@ variable more?  \ flag: keep on parsing more words?; changed by '}content'
   ;
 : (close_target)  ( -- )
   \ Close the target HTML page file.
+\  depth abort" stack not empty"  \ xxx informer
   target_fid @ close-file throw
 \  ." target_fid just closed. " \ xxx informer
   target_fid off
   ;
 : close_target  ( -- )
   \ Close the target HTML page file, if needed.
-  ." close_target" cr \ xxx informer
+\  ." close_target" cr \ xxx informer
   target_fid @ if  (close_target)  then
   ;
 
@@ -347,7 +351,7 @@ variable template_content
   \ Return the template content.
   template_content $@len
   if  get_template_again  else  get_template_first  then
-  \ .s  \ xxx informer
+\  .s  \ xxx informer
   ;
 : template{  ( -- )
   \ Echo the top half of the current template,
@@ -366,18 +370,22 @@ variable template_content
   \ Print the name of the currently parsed file.
   sourcefilename type cr
   ;
+variable }content?  \ flag: was '}content' executed?
 : (content{)  ( -- )
   \ Create the top template part of the target page
   \ and parse the page content.
-  open_target template{ parse_content
+  open_target template{
+  }content? off  parse_content
+  }content? @ 0= abort" Missing '}content' at the end of the page"
   ;
 : do_page?  ( -- wf )
 \  current_page draft? if  ." DRAFT!" cr  then  \ xxx informer
-  do_content? @  current_page draft? 0=  and
+\  do_content? @  current_page draft? 0=  and
+  do_content? @   \ xxx tmp
   ;
 : skip_page  ( -- )
   \ No target page must be created; skip the current source page.
-  ." skip_page" cr  \ xxx informer
+\  ." skip_page" cr  \ xxx informer
   \eof  \ skip the rest of the file
   do_content? on  \ set default for the next page
   ;
@@ -385,7 +393,7 @@ variable template_content
   \ Create the page content, if needed.
   \ The end of the content is marked with the '}content' markup.
   \ Only one 'content{ ... }content' block is allowed in the page.
-  ." content{" cr  \ xxx informer
+\  ." content{" cr  \ xxx informer
   do_page?
   if  .sourcefilename (content{)  else  skip_page  then
   ;
@@ -400,6 +408,7 @@ get-current markup>current
   finish_the_target
 \  do_content? on  \ default value for the next page  \ xxx old
   only fendo>order forth>order
+  }content? on
 \ cr .s cr ." end of }content"  \ xxx informer
   ;
 set-current
