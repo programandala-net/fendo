@@ -1,7 +1,7 @@
-.( fendo_files.fs) cr
+.( fendo_files.fs ) 
 
 \ This file is part of
-\ Fendo ("Forth Engine for Net DOcuments") version A-00.
+\ Fendo ("Forth Engine for Net DOcuments") version A-01.
 
 \ This file defines the file tools.
 
@@ -26,28 +26,68 @@
 \ **************************************************************
 \ Change history of this file
 
-\ 2013-05-17 Start.
-\ 2013-05-18 Rewritten with '-suffix'.
-\ 2013-06-01 Fix: typo in code.
-
-\ **************************************************************
-\ Requirements
-
-require galope/minus-suffix.fs  \ '-suffix'
-
 \ **************************************************************
 
-: source>target_extension  ( ca1 len1 -- ca2 len2 )
-  \ ca1 len1 = Forth source page file name
-  \ ca2 len2 = target HTML page file name
-  forth_extension $@ -suffix  html_extension $@ s+
+\ Target file
+
+: (open_target)  ( -- )
+  \ Open the target HTML page file.
+  current_page
+\  cr ." current_page in (open_target) =  " dup .  \ xxx informer
+  target_path/file
+\  cr ." target file =  " 2dup type cr key drop  \ xxx informer
+  w/o create-file throw target_fid !
+\  ." target file just opened: "  \ xxx informer
+\  target_fid @ . cr  \ xxx informer
+\  s" <!-- xxx -->" target_fid @ write-line throw  \ xxx debugging
+  ;
+: open_target  ( -- )
+  \ Open the target HTML page file, if needed.
+  echo>file? if  (open_target)  then
+  ;
+: (close_target)  ( -- )
+  \ Close the target HTML page file.
+\  depth abort" stack not empty"  \ xxx informer
+  target_fid @ close-file throw
+\  ." target_fid just closed. " \ xxx informer
+  target_fid off
+  ;
+: close_target  ( -- )
+  \ Close the target HTML page file, if needed.
+\  ." close_target" cr \ xxx informer
+  target_fid @ if  (close_target)  then
   ;
 
-variable target_fid  \ file id of the HTML target page
 
-: /sourcefilename  ( -- ca len )
-  \ Return the current source filename, without path.
-  sourcefilename -path
-  ;
+0 [if]
 
-.( fendo_files.fs compiled) cr
+: redirection{  ( -- )
+
+	\ 2007-11-29 Improved with more detailed PHP code.
+	\ 2009-01-01 Updated with domain vivirenbicicleta.info.
+  \ 2013-05-07 Improved: the domain is not hardcoded anymore,
+  \   but the config value. Renamed (formerly 'php-code{').
+
+	S" <?php" >>html
+	S" header( 'HTTP/1.1 301 Moved Permanently' );" >html
+	S" header( 'Status: 301 Moved Permanently' );" >html
+  \ old:
+	\ S" header('Location: http://vivirenbicicleta.info/" >html
+  \ 2012-07-31 new, localhost support:
+	S" header('Location: http://'." >html
+  S" ($_SERVER['HTTP_HOST']=='localhost'?'localhost/':'')" >>html
+  S" .'" >>html "site-domain" >>html S" /" >>html
+
+	;
+
+: }redirection  ( -- )
+
+	\ 2007-11-29 Improved with more detailed PHP code.
+  \ 2013-05-07 Renamed (formerly '}php-code').
+
+	S" ');" >>html
+	S" exit(0);" >html
+	S" ?>" >html
+
+	;
+[then]

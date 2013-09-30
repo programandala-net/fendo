@@ -48,6 +48,11 @@
 \ **************************************************************
 \ Todo
 
+\ 2013-09-29 'redirected' and 'redirect' will create a file
+\ with PHP code to redirect to the current page; this way,
+\ the redirections from old pages can be specified in the
+\ new page.
+
 \ 2013-08-15 defered words at the start (and end?) of tags,
 \ to let the website application insert hooks.
 
@@ -63,7 +68,7 @@
 \ 2013-06-28 Make "plain_" data fields optional; they can be
 \ filled as default data, if empty.
 \
-\ 2013-06-08 Let line comments in data header.
+\ 2013-06-08 line comments in data header.
  
 \ **************************************************************
 \ Stack notation
@@ -227,6 +232,8 @@ depth [if] abort [then]  \ xxx debugging
 include ./fendo_echo.fs
 depth [if] abort [then]  \ xxx debugging
 include ./fendo_markup.fs
+depth [if] abort [then]  \ xxx debugging
+include ./fendo_files.fs
 depth [if] abort [then]  \ xxx debugging
 include ./fendo_parser.fs
 depth [if] abort [then]  \ xxx debugging

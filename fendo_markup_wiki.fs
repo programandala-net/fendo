@@ -234,8 +234,8 @@ false [if]  \ xxx first version
   \ ca len = latest name parsed 
 \  ." «" 2dup type ." » "  \ xxx informer
 \  2dup type space \ xxx informer
-  2dup s" <:" str= abs forth_code_depth +!
-       s" :>" str= dup forth_code_depth +! 
+  2dup s" <[" str= abs forth_code_depth +!
+       s" ]>" str= dup forth_code_depth +! 
   forth_code_depth @
 \  dup ." {" . ." }" \ xxx informer
   0= and
@@ -253,9 +253,9 @@ false [if]  \ xxx first version
   0= and  \ empty the name if it's the end of the code
   s+ s"  " s+  r>
   ;
-: parse_forth_code  ( "forthcode :>" -- ca len )
+: parse_forth_code  ( "forthcode ]>" -- ca len )
   \ Get the content of a merged Forth code. 
-  \ Parse the input stream until a valid ":>" markup is found.
+  \ Parse the input stream until a valid "]>" markup is found.
   \ ca len = Forth code
   s" "
   begin   parse-name dup
@@ -270,25 +270,25 @@ false [if]  \ xxx first version
           refill 0=
     then
   until
-\  cr ." <: " 2dup type ." :>" cr key drop  \ xxx informer
+\  cr ." <[ " 2dup type ." ]>" cr key drop  \ xxx informer
   ;
 
 [then]
 
 true [if]  \ xxx 2013-08-10 second version, more legible
 
-: "<:"=  ( -- wf )
-  s" <:" str= 
+: "<["=  ( -- wf )
+  s" <[" str= 
   ;
-: ":>"=  ( -- wf )
-  s" :>" str= 
+: "]>"=  ( -- wf )
+  s" ]>" str= 
   ;
 : update_forth_code_depth  ( ca len -- )
   \ ca len = latest name parsed 
-  2dup "<:"= abs >r ":>"= r> + forth_code_depth +! 
+  2dup "<["= abs >r "]>"= r> + forth_code_depth +! 
   ;
 : forth_code_end?  ( ca len -- wf )
-  ":>"= forth_code_depth @ 0= and
+  "]>"= forth_code_depth @ 0= and
   ;
 : bl+  ( ca len -- ca' len' )
   s"  " s+
@@ -299,9 +299,9 @@ true [if]  \ xxx 2013-08-10 second version, more legible
   64 min
   cr ." ***> " type ."  <***" cr
   ;
-: parse_forth_code  ( "forthcode :>" -- ca len )
+: parse_forth_code  ( "forthcode ]>" -- ca len )
   \ Get the content of a merged Forth code. 
-  \ Parse the input stream until a valid ":>" markup is found.
+  \ Parse the input stream until a valid "]>" markup is found.
   \ ca len = Forth code
   s" "
   begin   parse-name dup
@@ -326,8 +326,8 @@ false [if]  \ experimental version with dynamic string, not finished
   \ ca len = latest name parsed 
 \  ." «" 2dup type ." » "  \ xxx informer
 \  2dup type space \ xxx informer
-  2dup s" <:" str= abs forth_code_depth +!
-       s" :>" str= dup forth_code_depth +! 
+  2dup s" <[" str= abs forth_code_depth +!
+       s" ]>" str= dup forth_code_depth +! 
   forth_code_depth @
 \  dup ." {" . ." }" \ xxx informer
   0= and
@@ -339,9 +339,9 @@ variable forth_code$  \ dynamic string
   \ Append a string to the parsed Forth code.
   forth_code$ $@  s"  " s+ 2swap s+  forth_code$ $!
   ;
-: parse_forth_code  ( "forthcode :>" -- ca len )
+: parse_forth_code  ( "forthcode ]>" -- ca len )
   \ Get the content of a merged Forth code. 
-  \ Parse the input stream until a valid ":>" markup is found.
+  \ Parse the input stream until a valid "]>" markup is found.
   \ ca len = Forth code
   s" " forth_code$ $!
   begin   parse-name dup
@@ -351,7 +351,7 @@ variable forth_code$  \ dynamic string
     else  2drop s"  " forth_code$+  refill 0=
     then
   until   forth_code$ $@
-\  cr ." <: " 2dup type ."  :>" cr  \ xxx informer
+\  cr ." <[ " 2dup type ."  ]>" cr  \ xxx informer
   ;
 [then]
 
@@ -844,21 +844,21 @@ true [if]  \ xxx first version
   only fendo>order markup>order forth>order 
   evaluate
   nr> set-order
-\  cr ." <:..:> done!" key drop  \ xxx informer
+\  cr ." <[..]> done!" key drop  \ xxx informer
   ;
-: <:  ( "forthcode :>" -- )
+: <[  ( "forthcode ]>" -- )
   \ Start, parse and interpret a Forth block.
   1 forth_code_depth +!
   parse_forth_code 
-\  cr ." <: " 2dup type ." :>" cr  \ xxx informer
+\  cr ." <[ " 2dup type ." ]>" cr  \ xxx informer
   evaluate_forth_code
   ;  immediate
-: :>  ( -- )
+: ]>  ( -- )
   \ Finish a Forth block.
   \ xxx todo
   forth_code_depth @
 \  dup   \ xxx
-  0= abort" ':>' without '<:'"
+  0= abort" ']>' without '<['"
 \  1 = if  \ xxx
 \    only markup>order
 \    separate? off
@@ -873,15 +873,15 @@ false [if]  \ experimental version
 \ quite different approach
 \ xxx todo interpret numbers
 
-: <:  ( "forthcode :>" -- )
+: <[  ( "forthcode ]>" -- )
   \ Start a Forth code block.
   1 forth_code_depth +!
   forth>order 
   ; 
-: :>  ( -- )
+: ]>  ( -- )
   \ Finish a Forth block.
   forth_code_depth @
-  0= abort" ':>' without '<:'"
+  0= abort" ']>' without '<['"
   previous
   -1 forth_code_depth +!
   ; 
@@ -1184,5 +1184,6 @@ only forth fendo>order definitions
 \ 2013-09-29: 'unlink' is factored with 'unlinked?'.
 \ 2013-09-29: '>link_type_id' now checks if the link is empty;
 \   and is factored with '(>link_type_id)'.
+\ 2013-10-01: Change: '<:' and ':>' renamed to '<[' and ']>'.
 
 [then]

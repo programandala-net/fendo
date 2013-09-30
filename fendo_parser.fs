@@ -273,6 +273,8 @@ variable more?  \ flag: keep on parsing more words?; changed by '}content'
   ;
 ' (parse_link_text) is parse_link_text
 
+0 [if]  \ xxx tmp moved to fendo_files.fs
+
 \ Target file
 
 : (open_target)  ( -- )
@@ -302,6 +304,8 @@ variable more?  \ flag: keep on parsing more words?; changed by '}content'
 \  ." close_target" cr \ xxx informer
   target_fid @ if  (close_target)  then
   ;
+
+[then]
 
 \ Design template
 
