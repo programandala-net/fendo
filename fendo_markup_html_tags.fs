@@ -29,6 +29,8 @@
 \ 2013-06-10 Start. Factored from <fendo_markup_html.fs>.
 \ 2013-06-15 Void tags are closed depending on HTML or XHTML
 \   syntaxes. Tag alias in both syntaxes.
+\ 2013-10-23 New: immediate version of some tags,
+\   for the user's application.
 
 \ **************************************************************
 \ Printing
@@ -264,6 +266,37 @@ markup>order
 markup<order
 
 set-current
+
+\ Immediate version of some usual tags, in the Fendo wordlist, in
+\ order to save code when they are used in the user's application (no
+\ '[markup>order]' and '[markup<order]' are required).
+
+markup>order
+: [<a>]  ( -- )
+  postpone <a> 
+  ;  immediate
+: [</a>]  ( -- )
+  postpone </a> 
+  ;  immediate
+: [<li>]  ( -- )
+  postpone <li> 
+  ;  immediate
+: [</li>]  ( -- )
+  postpone </li> postpone \n
+  ;  immediate
+: [<ul>]  ( -- )
+  postpone <ul> postpone \n
+  ;  immediate
+: [</ul>]  ( -- )
+  postpone </ul> postpone \n
+  ;  immediate
+: [<ol>]  ( -- )
+  postpone <ol> postpone \n
+  ;  immediate
+: [</ol>]  ( -- )
+  postpone </ol> postpone \n
+  ;  immediate
+markup<order
 
 .( fendo_markup_html_tags.fs compiled) cr
 

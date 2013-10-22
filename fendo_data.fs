@@ -77,6 +77,7 @@
 \   library, is used instead of '-trailing -leading'.
 \ 2013-10-22 Fix: 'parse_datum' now uses 'trim' instead of
 \   '-leading'.
+\ 2013-10-22 New: 'data<id$>id'.
 
 \ **************************************************************
 \ Todo
@@ -372,6 +373,11 @@ do_content? on
   \ "name" = filename
   parse-name? abort" File name expected in 'require_data'"
   required_data
+  ;
+: data<id$>id  ( ca len -- a )
+  \ ca len = page id
+  \ a = page id
+  2dup required_data<id$ evaluate 
   ;
 
 \ **************************************************************
