@@ -73,6 +73,10 @@
 \ 2013-09-29 Fix: 'current_page' was not properly preserved
 \   when 'require_data' was used. This caused many pages were
 \   not created. This bug was difficult to find out.
+\ 2013-10-22 Change: the new word 'trim', defined in the Galope
+\   library, is used instead of '-trailing -leading'.
+\ 2013-10-22 Fix: 'parse_datum' now uses 'trim' instead of
+\   '-leading'.
 
 \ **************************************************************
 \ Todo
@@ -89,7 +93,7 @@ variable current_data  \ address of the latest created data
   \ Parse a datum, remove its leading spaces and store it. 
   \ u = datum offset
   >r  0 parse  \ parse the rest of the current input line
-  -leading  
+  trim
 \  dup  if  ." Parsed datum: " 2dup type cr  then  \ xxx informer
   current_data @ r> + $!
   ;
@@ -198,7 +202,7 @@ false [if]  \ xxx todo
   \ ca#1 len#1 ... ca#u len#u = one or more strings
   \ u = number of strings returned
   (/csv) depth 1- >r 0 ?do
-    -leading -trailing dup 0= if  2drop  then
+    trim dup 0= if  2drop  then
   loop  r> depth - 2/
   ;
 [then]
@@ -242,11 +246,22 @@ false [if]  \ xxx todo
   \ ca len = target HTML page file name
   source_file source>target_extension 
   ;
+: current_target_file  ( -- ca len )
+  \ Return the target HTML page filename of the current page.
+  \ ca len = target HTML page file name
+  current_page target_file
+  ;
+: +target_dir  ( ca1 len1 -- ca2 len2 )
+  \ Add the target path to a file name.
+  \ ca1 len1 = file name
+  \ ca2 len2 = file name, with its target local path.
+  target_dir $@ 2swap s+
+  ;
 : target_path/file  ( a -- ca len )
   \ Return a target HTML page filename, with its local path.
   \ a = page id
   \ ca len = target HTML page file name, with its local path.
-  target_file target_dir $@ 2swap s+
+  target_file +target_dir 
 \  2dup type cr  \ xxx informer
   ;
 
@@ -369,7 +384,7 @@ do_content? on
   \ wf = is the property in the properties field?
   page_id properties  false { result }
   /csv 0 ?do
-    -trailing -leading property str= result or to result
+    trim property str= result or to result
   loop  result
   ;
 : draft?  ( a -- wf )
