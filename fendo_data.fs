@@ -1,7 +1,7 @@
 .( fendo_data.fs ) 
 
 \ This file is part of
-\ Fendo ("Forth Engine for Net DOcuments") version A-01.
+\ Fendo ("Forth Engine for Net DOcuments") version A-02.
 
 \ This file defines the page data tools.
 

@@ -1,7 +1,7 @@
 .( fendo_parser.fs ) 
 
 \ This file is part of
-\ Fendo ("Forth Engine for Net DOcuments") version A-01.
+\ Fendo ("Forth Engine for Net DOcuments") version A-02.
 
 \ This file creates the parser.
 

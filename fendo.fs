@@ -1,7 +1,7 @@
 .( fendo.fs )
 
 \ This file is part of
-\ Fendo ("Forth Engine for Net DOcuments") version A-01.
+\ Fendo ("Forth Engine for Net DOcuments") version A-02.
 
 \ This file is the main one; it loads all the modules.
 
@@ -182,7 +182,9 @@ warnings !
 table constant fendo_markup_html_entities_wid  \ HTML entities
 wordlist constant fendo_markup_wid  \ markup, except HTML entities
 wordlist constant fendo_wid  \ program, except markup and HTML entities
+false [if]  \ xxx old, 2013-10-22 moved to its own file <fendo_shortcuts.fs>
 wordlist constant fendo_links_wid  \ user links
+[then]
 
 : markup>current  ( -- )
   fendo_markup_wid set-current

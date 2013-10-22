@@ -1,7 +1,7 @@
 .( fendo_markup_wiki.fs ) 
 
 \ This file is part of
-\ Fendo ("Forth Engine for Net DOcuments") version A-01.
+\ Fendo ("Forth Engine for Net DOcuments") version A-02.
 
 \ This file defines the wiki markup. 
 
@@ -60,6 +60,8 @@ require ../galope/n-r-from.fs  \ 'nr>'
 require ../galope/minus-prefix.fs  \ '-prefix'
 
 require ffl/str.fs  \ FFL's dynamic strings
+
+require ./fendo_shortcuts.fs
 
 \ **************************************************************
 \ Generic tool words for strings
@@ -574,6 +576,7 @@ variable link_type
 : file_link?  ( -- wf )
   link_type @ file_link =
   ;
+false [if]  \ xxx old, 2013-10-22 moved to its own file <fendo_shortcuts.fs>
 : unlink?  ( xt1 xt2 1|-1  |  xt1 0  --  xt2 xt2 true  |  0 )
   \ Execute xt2 if it's different from xt1.
   \ xt1 = old xt (former loop)
@@ -606,6 +609,7 @@ variable link_type
   repeat  href=@
 \  cr  \ xxx informer
   ;
+[then]
 variable link_finished?  \ flag, no more link markup to parse?
 : end_of_link?  ( ca len -- wf )
   \ ca len = latest name parsed 
@@ -757,10 +761,12 @@ false [if]  \ xxx old
     ( dfa ) dup >r $@ r@ cell + $@ r> 2 cells + $@
   ;
 [then]
+false [if]  \ xxx old, 2013-10-22 moved to its own file <fendo_shortcuts.fs>
 : link:  ( "name" -- )
   \ xxx todo test it
   get-current >r  fendo_links_wid set-current :  r> set-current
   ; 
+[then]
 \ **************************************************************
 \ Tools for languages
 

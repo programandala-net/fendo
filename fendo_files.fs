@@ -1,7 +1,7 @@
 .( fendo_files.fs ) 
 
 \ This file is part of
-\ Fendo ("Forth Engine for Net DOcuments") version A-01.
+\ Fendo ("Forth Engine for Net DOcuments") version A-02.
 
 \ This file defines the file tools.
 
@@ -25,6 +25,10 @@
 
 \ **************************************************************
 \ Change history of this file
+
+\ 2013-10-01 File created for the page redirection tools; 'open_target' and
+\ 'close_target' are moved here from "fendo_parser.fs".
+\ 2013-10-02 Page redirection tools.
 
 \ **************************************************************
 
@@ -58,36 +62,29 @@
   target_fid @ if  (close_target)  then
   ;
 
+\ Redirection
 
-0 [if]
-
-: redirection{  ( -- )
-
-	\ 2007-11-29 Improved with more detailed PHP code.
-	\ 2009-01-01 Updated with domain vivirenbicicleta.info.
-  \ 2013-05-07 Improved: the domain is not hardcoded anymore,
-  \   but the config value. Renamed (formerly 'php-code{').
-
-	S" <?php" >>html
-	S" header( 'HTTP/1.1 301 Moved Permanently' );" >html
-	S" header( 'Status: 301 Moved Permanently' );" >html
-  \ old:
-	\ S" header('Location: http://vivirenbicicleta.info/" >html
-  \ 2012-07-31 new, localhost support:
-	S" header('Location: http://'." >html
-  S" ($_SERVER['HTTP_HOST']=='localhost'?'localhost/':'')" >>html
-  S" .'" >>html "site-domain" >>html S" /" >>html
-
+: (redirected) ( fid -- )
+  \ Create the content of a file that redirects to the current page.
+  >r  s" <?php" r@ write-line throw
+	s" header('HTTP/1.1 301 Moved Permanently');" r@ write-line throw
+	s" header('Status: 301 Moved Permanently');" r@ write-line throw
+	S" header('Location: http://'." 
+  s" ($_SERVER['HTTP_HOST']=='localhost'?'localhost/':'')" s+
+  s" .'" s+
+\	S" header('Location: http://localhost/"  \ xxx debugging
+  domain $@ s" /" s+ current_target_file s+ s+
+  s" ');" s+ r@ write-line throw
+	s" exit(0);" r@ write-line throw
+	s" ?>" r> write-line throw
 	;
-
-: }redirection  ( -- )
-
-	\ 2007-11-29 Improved with more detailed PHP code.
-  \ 2013-05-07 Renamed (formerly '}php-code').
-
-	S" ');" >>html
-	S" exit(0);" >html
-	S" ?>" >html
-
-	;
-[then]
+: redirected ( ca len -- )
+  \ Create a file that redirects to the current page.
+  \ ca len = old page, without domain
+  \ 2013-10-02 Start, based on code from ForthCMS.
+  +target_dir w/o create-file throw  dup (redirected)  close-file throw
+  ;
+: redirect ( "old_page" -- )
+  \ Create a file that redirects to the current page.
+  parse-name redirected
+  ;
