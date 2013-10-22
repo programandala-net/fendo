@@ -1,7 +1,7 @@
 \ fendo_alinome-bici.fs
 
 \ This file is part of
-\ Fendo ("Forth Engine for Net DOcuments") version A-00.
+\ Fendo ("Forth Engine for Net DOcuments") version A-02.
 
 \ This file adds a layer for backward compatibility
 \ with pages created with the alinome-bici engine

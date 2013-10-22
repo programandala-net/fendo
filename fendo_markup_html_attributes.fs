@@ -1,7 +1,7 @@
 .( fendo_markup_html_attributes.fs ) cr
 
 \ This file is part of
-\ Fendo ("Forth Engine for Net DOcuments") version A-00.
+\ Fendo ("Forth Engine for Net DOcuments") version A-02.
 
 \ This file defines the HTML attributes.
 

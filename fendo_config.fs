@@ -1,7 +1,7 @@
-.( fendo_config.fs) cr
+.( fendo_config.fs ) 
 
 \ This file is part of
-\ Fendo ("Forth Engine for Net DOcuments") version A-00.
+\ Fendo ("Forth Engine for Net DOcuments") version A-02.
 
 \ This file setups the default configuration.
 
@@ -36,8 +36,6 @@
 
 require string.fs  \ Gforth's dynamic strings
 
-require galope/svariable.fs
-
 \ **************************************************************
 \ Configurable variables
 
@@ -45,6 +43,9 @@ require galope/svariable.fs
 \ strings (with  '$!', '$@', etc.).
 
 \ All directories and subdirectories must have an ending slash.
+
+variable domain
+s" yourdomain.com" domain $!
 
 \ Filename extensions
 

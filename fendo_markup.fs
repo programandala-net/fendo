@@ -1,7 +1,7 @@
-.( fendo_markup.fs ) cr
+.( fendo_markup.fs ) 
 
 \ This file is part of
-\ Fendo ("Forth Engine for Net DOcuments") version A-01.
+\ Fendo ("Forth Engine for Net DOcuments") version A-02.
 
 \ This file defines the markup.
 
