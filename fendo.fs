@@ -127,6 +127,7 @@ require ../galope/minus-suffix.fs  \ '-suffix'
 require ../galope/parse-name-question.fs  \ 'parse-name?'
 require ../galope/sconstant.fs  \ 'sconstant'
 require ../galope/slash-sides.fs  \ '/sides'
+require ../galope/trim.fs  \ 'trim'
 
 true [if]
 
