@@ -27,16 +27,49 @@
 \ Change history of this file
 
 \ 2013-10-22 Created with code extracted from <fendo_markup_wiki.fs>
-\ and <fendo.fs>. Every "link" is renamed to "shortcut".
-
-\ See at the end of the file.
+\   and <fendo.fs>. New terminology: every "link" is renamed to
+\   "shortcut".
 
 wordlist constant fendo_shortcuts_wid  \ for user's shortcuts
 
 : shortcut:  ( "name" -- )
-  \ Define an user's shortcut.
+  \ Create an user's shortcut.
   get-current >r  fendo_shortcuts_wid set-current :  r> set-current
   ; 
+
+0 [if]
+
+\ Usage example of 'shortcut:'
+\
+\ User's shortcuts are used as recursive href parameters.
+\ They can be used to create mnemonics, redirections or
+\ "defered" links.
+
+shortcut: gforth
+  s" gforth_ext" href=!
+  ;
+shortcut: gforth_ext
+  s" http://www.gnu.org/software/gforth/" href=!
+  current_lang# case
+    en_language of
+      s" Gforth" link_text!
+      s" Information and main links on Gforth" title=!
+    endof
+    eo_language of
+      s" en(( Gforth ))" link_text!
+      s" en" hreflang=!
+      s" Informo kaj ĉefaj ligiloj pri Gforth" title=!
+    endof
+    es_language of
+      s" en(( Gforth ))" link_text!
+      s" en" hreflang=!
+      s" Información y enlaces principales sobre Gforth" title=!
+    endof
+  endcase
+  ;
+
+[then]
+
 : unshortcut?  ( xt1 xt2 1|-1  |  xt1 0  --  xt2 xt2 true  |  0 )
   \ Execute xt2 if it's different from xt1.
   \ xt1 = old xt (former loop)

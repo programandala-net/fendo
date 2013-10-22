@@ -42,6 +42,8 @@
 \ order to use '--' both forth nested lists and delete, or '**'
 \ for list and for bold.
 \ 2013-06-19: Compare Creole's markups with txt2tags' markups.
+\ 2013-10-22: New: 'link' creates links to local pages, at the
+\   application level.
 
 \ **************************************************************
 \ Debug tools
@@ -439,6 +441,17 @@ str-create tmp-str
   s\" =\" " s\" =\"" tmp-str str-replace
   tmp-str str-get evaluate
   ;
+: link  ( a ca len -- )
+  \ Create a link to a local page.
+  \ a = page id
+  \ ca len = text link, to be evaluated as content
+  rot dup plain_description title=!
+  dup target_file href=!
+  access_key accesskey=!
+  [markup>order] <a> [markup<order]
+  evaluate_content 
+  [markup>order] </a> [markup<order]
+  ;
 
 \ **************************************************************
 \ Tools for images 
@@ -637,7 +650,7 @@ defer parse_link_text  ( "...<spaces>|<spaces>" | "...<spaces>]]<spaces>"  -- )
   ;
 : get_link_href_attribute  ( "href_attribute<spaces>" -- )
   \ Parse and store the link href attribute.
-  parse-word unlink 2dup set_link_type -anchor href=!
+  parse-word unshortcut 2dup set_link_type -anchor href=!
 \  ." ---> " href=@ type cr  \ xxx informer
 \  external_link? if  ." EXTERNAL LINK: " href=@ type cr  then  \ xxx informer
   [ false ] [if]  \ simple version
@@ -1191,5 +1204,8 @@ only forth fendo>order definitions
 \ 2013-09-29: '>link_type_id' now checks if the link is empty;
 \   and is factored with '(>link_type_id)'.
 \ 2013-10-01: Change: '<:' and ':>' renamed to '<[' and ']>'.
+\ 2013-10-22: Change: all code about user's bookmark links and
+\   their "unlinking" is moved to its own file and the words
+\   are renamed: "(un)shortcut" is used instead of "(un)link".
 
 [then]
