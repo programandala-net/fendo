@@ -29,6 +29,7 @@
 \ 2013-10-22 Created with code extracted from <fendo_markup_wiki.fs>
 \   and <fendo.fs>. New terminology: every "link" is renamed to
 \   "shortcut".
+\ 2013-10-23 Fix: stack comments.
 
 wordlist constant fendo_shortcuts_wid  \ for user's shortcuts
 
@@ -70,34 +71,32 @@ shortcut: gforth_ext
 
 [then]
 
-: unshortcut?  ( xt1 xt2 1|-1  |  xt1 0  --  xt2 xt2 true  |  0 )
-  \ Execute xt2 if it's different from xt1.
+: ((shortcut?))  ( xt1 xt2 1|-1  |  xt1 0  --  xt2 xt2 true  |  false )
   \ xt1 = old xt (former loop)
   \ xt2 = new xt
   if    2dup <> if  nip dup true  else  2drop false  then
-  else  drop false
-  then
+  else  drop false  then
   ;
-: (shortcut?)  ( xt ca len -- f )
+: (shortcut?)  ( xt ca len -- xt xt true  |  false )
   \ Is an href attribute a shortcut different from xt?
   \ ca len = href attribute (not empty)
-  fendo_shortcuts_wid search-wordlist unshortcut?
+  fendo_shortcuts_wid search-wordlist ((shortcut?))
   ;
-: shortcut?  ( xt ca len -- f )
+: shortcut?  ( xt ca len -- xt xt true  |  false )
   \ Is an href attribute a shortcut different from xt?
   \ ca len = href attribute (or an empty string)
   dup  if  (shortcut?)  else  nip nip  then
   ;
-: unshortcut  ( ca len -- ca len | ca' len' )
+:noname  ( ca len -- ca len | ca' len' )
   \ Unshortcut an href attribute recursively.
   \ ca len = href attribute 
   \ ca' len' = actual href attribute
   2dup href=!
   0 rot rot  \ fake xt
 \  2dup ." unshortcut " type  \ xxx informer
-  begin   ( xt ca len ) shortcut?
+  begin   ( xt ca len ) shortcut?  ( xt' xt' true  |  false )
   while   execute href=@
 \  2dup ." --> " type  \ xxx informer
   repeat  href=@
 \  cr  \ xxx informer
-  ;
+  ;  is unshortcut  \ defered in <fendo.fs>

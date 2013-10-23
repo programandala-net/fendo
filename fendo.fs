@@ -132,11 +132,11 @@ require ../galope/trim.fs  \ 'trim'
 true [if]
 
   \ 2013-08-10 Without this string buffer, the input stream gets
-  \ corrupted at the end of the template.  Didn't find the bug
+  \ corrupted at the end of the template.  I didn't find the bug
   \ yet. It seems a problem with Gforth's 's+'.
 
   require ../galope/sb.fs  \ string buffer
-  1024 10 * heap_sb
+  1024 20 * heap_sb
   \ ' bs" alias s"  immediate
   ' bs+ alias s+
   ' bs& alias s&
@@ -230,6 +230,7 @@ s" A-00-20130810" sconstant version
 depth [if] abort [then]  \ xxx debugging
 include ./fendo_config.fs
 depth [if] abort [then]  \ xxx debugging
+defer unshortcut  \ defined in <fendo_shortcuts.fs>
 include ./fendo_data.fs
 depth [if] abort [then]  \ xxx debugging
 include ./fendo_echo.fs

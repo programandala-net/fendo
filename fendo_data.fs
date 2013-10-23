@@ -78,6 +78,8 @@
 \ 2013-10-22 Fix: 'parse_datum' now uses 'trim' instead of
 \   '-leading'.
 \ 2013-10-22 New: 'data<id$>id'.
+\ 2013-10-23 Improvement: 'unshortcut' is used in
+\   'required_data<id$' and 'data<id$>id'.
 
 \ **************************************************************
 \ Todo
@@ -358,10 +360,18 @@ do_content? on
   \ a = page id (address of its data)
   source_file required_data
   ;
-: required_data<id$  ( ca len -- )
+: (required_data<id$)  ( ca len -- )
   \ Require a page file in order to get its data.
   \ ca len = page id
   +forth_extension required_data
+  ;
+: required_data<id$  ( ca len -- )
+  \ Require a page file in order to get its data.
+  \ ca len = page id
+\  cr ." required_data<id$ " 2dup type cr  \ xxx informer
+  unshortcut
+\  cr ." required_data<id$ " 2dup type cr  \ xxx informer
+  (required_data<id$)
   ;
 : required_data<target  ( ca len -- )
   \ Require a page file in order to get its data.
@@ -377,7 +387,9 @@ do_content? on
 : data<id$>id  ( ca len -- a )
   \ ca len = page id
   \ a = page id
-  2dup required_data<id$ evaluate 
+  2drop s" es"  \ xxx tmp
+\  unshortcut  \ xxx tmp
+  2dup (required_data<id$) evaluate 
   ;
 
 \ **************************************************************

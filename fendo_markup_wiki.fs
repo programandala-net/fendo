@@ -63,7 +63,8 @@ require ../galope/minus-prefix.fs  \ '-prefix'
 
 require ffl/str.fs  \ FFL's dynamic strings
 
-require ./fendo_shortcuts.fs
+\ require ./fendo_shortcuts.fs  \ xxx old, moved to
+\ <fendo_markup.fs>
 
 \ **************************************************************
 \ Generic tool words for strings
