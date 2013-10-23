@@ -64,6 +64,7 @@ variable xhtml?  \ flag, XHTML syntax?
 \ Modules
 
 include ./fendo_markup_html.fs
+include ./fendo_shortcuts.fs
 include ./fendo_markup_wiki.fs
 
 .( fendo_markup.fs compiled) cr

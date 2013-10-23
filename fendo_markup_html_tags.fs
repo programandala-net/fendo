@@ -296,6 +296,42 @@ markup>order
 : [</ol>]  ( -- )
   postpone </ol> postpone \n
   ;  immediate
+: [<h1>]  ( -- )
+  postpone <h1> 
+  ;  immediate
+: [</h1>]  ( -- )
+  postpone </h1> postpone \n
+  ;  immediate
+: [<h2>]  ( -- )
+  postpone <h2> 
+  ;  immediate
+: [</h2>]  ( -- )
+  postpone </h2> postpone \n
+  ;  immediate
+: [<h3>]  ( -- )
+  postpone <h3> 
+  ;  immediate
+: [</h3>]  ( -- )
+  postpone </h3> postpone \n
+  ;  immediate
+: [<h4>]  ( -- )
+  postpone <h4> 
+  ;  immediate
+: [</h4>]  ( -- )
+  postpone </h4> postpone \n
+  ;  immediate
+: [<h5>]  ( -- )
+  postpone <h5> 
+  ;  immediate
+: [</h5>]  ( -- )
+  postpone </h5> postpone \n
+  ;  immediate
+: [<h6>]  ( -- )
+  postpone <h6> 
+  ;  immediate
+: [</h6>]  ( -- )
+  postpone </h6> postpone \n
+  ;  immediate
 markup<order
 
 .( fendo_markup_html_tags.fs compiled) cr
