@@ -30,12 +30,29 @@
 \   and <fendo.fs>. New terminology: every "link" is renamed to
 \   "shortcut".
 \ 2013-10-23 Fix: stack comments.
+\ 2013-10-25 New: debugging version of 'shortcut:'.
 
 wordlist constant fendo_shortcuts_wid  \ for user's shortcuts
 
+: (shortcut:)  ( -- )
+  ;
 : shortcut:  ( "name" -- )
   \ Create an user's shortcut.
+  [ false ] [if]  \ xxx normal version
   get-current >r  fendo_shortcuts_wid set-current :  r> set-current
+  [else]  \ xxx debugging version
+  \ xxx todo
+  get-current >r
+  fendo_shortcuts_wid set-current
+  parse-name
+  \ 2dup cr type 
+  2dup 2>r nextname
+  :
+  2r> 
+  \ space type
+  postpone sliteral postpone cr postpone type
+  r> set-current
+  [then]
   ; 
 
 0 [if]
