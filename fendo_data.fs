@@ -345,12 +345,15 @@ do_content? on
 : (required_data)  ( ca len -- )
   \ Require a page file in order to get its data.
   \ ca len = filename
-  do_content? off  required
+  do_content? off
+\  save-input  \ xxx tmp
+  required
+\  restore-input  \ xxx tmp
   ;
 : required_data  ( ca len -- )
   \ Require a page file in order to get its data.
   \ ca len = filename
-\  cr ." required_data " 2dup type cr  \ xxx informer
+  cr ." required_data " 2dup type cr  \ xxx informer
   do_content? @ >r  current_page >r
   (required_data)
   r> to current_page  r> do_content? !
@@ -387,8 +390,10 @@ do_content? on
 : data<id$>id  ( ca len -- a )
   \ ca len = page id
   \ a = page id
-  2drop s" es"  \ xxx tmp
-\  unshortcut  \ xxx tmp
+\  2drop s" es"  \ xxx tmp
+\  2drop s" es.programa.sideras"  \ xxx tmp
+\  2dup cr type ."  ( unshortcut in data<id$>id)" key drop  \ xxx informer
+  unshortcut  \ xxx tmp
   2dup (required_data<id$) evaluate 
   ;
 

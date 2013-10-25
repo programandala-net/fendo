@@ -44,6 +44,8 @@
 \ 2013-06-19: Compare Creole's markups with txt2tags' markups.
 \ 2013-10-22: New: 'link' creates links to local pages, at the
 \   application level.
+\ 2013-10-25: Change: '>sb' added before 'evaluate', just to get
+\   some clue about the string corruptions.
 
 \ **************************************************************
 \ Debug tools
@@ -316,10 +318,14 @@ true [if]  \ xxx 2013-08-10 second version, more legible
 \           remaining  key drop  \ xxx informer
           2dup update_forth_code_depth
           2dup forth_code_end?
-          dup >r if  2drop  else  s+ bl+  then  r>
+          dup >r if  2drop  else  
+\          2dup ." {{ " type ." }}"  \ xxx informer
+          s+ bl+  then  r>
     else  2drop bl+  refill 0=
     then
   until
+\  ." ]>" cr  \ xxx informer
+  cr ." <[ " 2dup type ." ]>" cr  \ xxx informer
   ;
 
 [then]
@@ -440,7 +446,9 @@ str-create tmp-str
   \ a string of raw verbatim attributes.
   tmp-str str-set
   s\" =\" " s\" =\"" tmp-str str-replace
-  tmp-str str-get evaluate
+  tmp-str str-get
+  >sb  \ xxx tmp
+  evaluate
   ;
 : link  ( a ca len -- )
   \ Create a link to a local page.
@@ -679,6 +687,7 @@ defer parse_link_text  ( "...<spaces>|<spaces>" | "...<spaces>]]<spaces>"  -- )
   ;
 : missing_local_link_text  ( -- ca len )
   href=@ -extension 2dup required_data<id$
+  >sb  \ xxx tmp
   evaluate title
   echo> @ >r echo>string
   >attributes< -attributes  \ use the alternative set and init it
@@ -731,6 +740,7 @@ defer parse_link_text  ( "...<spaces>|<spaces>" | "...<spaces>]]<spaces>"  -- )
   \ ca len = href attribute
   2drop exit  \ xxx tmp
   2dup +forth_extension required_data
+  >sb  \ xxx tmp
   evaluate ( page-id ) >r
   r@ plain_description title=?!
   r@ title evaluate_content link_text?!
@@ -862,6 +872,7 @@ true [if]  \ xxx first version
 : evaluate_forth_code  ( i*x ca len -- j*x )
   get-order n>r
   only fendo>order markup>order forth>order 
+  >sb  \ xxx tmp
   evaluate
   nr> set-order
 \  cr ." <[..]> done!" key drop  \ xxx informer
