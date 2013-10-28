@@ -119,8 +119,7 @@ variable /datum  \ offset of the current datum; at the end, length of the data
     ( a1 dfa | dfa "text<nl>" )
     @  in_data_header? @  ( u wf )
     if    ( u "datum<nl>" ) parse_datum
-    else  ( a1 u ) + $@
-    then
+    else  ( a1 u ) + $@  then
   ;
 : :datum>address  ( ca len -- )
   \ Create a page metadatum that returns the address of its data.
@@ -346,14 +345,14 @@ do_content? on
   \ Require a page file in order to get its data.
   \ ca len = filename
   do_content? off
-\  save-input  \ xxx tmp
+\  2>r save-input .s key drop 2r>  \ xxx tmp
   required
-\  restore-input  \ xxx tmp
+\  .s key drop restore-input  \ xxx tmp
   ;
 : required_data  ( ca len -- )
   \ Require a page file in order to get its data.
   \ ca len = filename
-  cr ." required_data " 2dup type cr  \ xxx informer
+\  cr ." required_data " 2dup type  \ xxx informer
   do_content? @ >r  current_page >r
   (required_data)
   r> to current_page  r> do_content? !
@@ -366,6 +365,7 @@ do_content? on
 : (required_data<id$)  ( ca len -- )
   \ Require a page file in order to get its data.
   \ ca len = page id
+\  2dup cr type ."  to require in (required_data<id$)"  \ xxx informer
   +forth_extension required_data
   ;
 : required_data<id$  ( ca len -- )
@@ -388,13 +388,23 @@ do_content? on
   required_data
   ;
 : data<id$>id  ( ca len -- a )
+  \ Require a page file in order to get its data
+  \ and convert its string page id to number page id.
   \ ca len = page id
   \ a = page id
-\  2drop s" es"  \ xxx tmp
-\  2drop s" es.programa.sideras"  \ xxx tmp
-\  2dup cr type ."  ( unshortcut in data<id$>id)" key drop  \ xxx informer
+\  2drop s" es"  \ xxx tmp, works, no shortcut
+\  2drop s" es.programa.sideras"  \ xxx tmp, works, one shortcut level
+\  2drop s" samforth"  \ xxx tmp, works, one shortcut level
+\  2drop s" local2"  \ xxx tmp, works, two shortcuts levels
+\  2drop s" local3"  \ xxx tmp, works, three shortcuts levels
+\  2drop s" en.program.samforth"  \ xxx tmp, works, no shortcut
+\  2dup cr type ."  to unshortcut in data<id$>id"  \ xxx informer
+\  key drop  \ xxx informer
   unshortcut  \ xxx tmp
-  2dup (required_data<id$) evaluate 
+  2dup (required_data<id$)
+\  evaluate  \ xxx first version
+  find-name name>int execute  \ xxx second version; no difference, same corruption of the input stream
+\  cr ." end of data<id$>id"  \ xxx informer
   ;
 
 \ **************************************************************

@@ -31,6 +31,8 @@
 \   syntaxes. Tag alias in both syntaxes.
 \ 2013-10-23 New: immediate version of some tags,
 \   for the user's application.
+\ 2013-10-26 New: immediate version of '<p>'.
+\ 2013-10-27 New: '<link/>' and its immediate version '[<link/>]'.
 
 \ **************************************************************
 \ Printing
@@ -172,8 +174,11 @@ get-current markup>current
 : </legend>  ( -- )  s" legend" html}  ;
 : <li>  ( -- )  echo_cr s" li" {html  ;
 : </li>  ( -- )  s" li" html}  ;
+false [if]  \ xxx old
 : <link>  ( -- )  s" link" {html  ;
 : </link>  ( -- )  s" link" html}  ;
+[then]
+: <link/>  ( -- )  s" link" {html}  ;
 : <map>  ( -- )  s" map" {html  ;
 : </map>  ( -- )  s" map" html}  ;
 : <mark>  ( -- )  s" mark" {html  ;
@@ -272,66 +277,29 @@ set-current
 \ '[markup>order]' and '[markup<order]' are required).
 
 markup>order
-: [<a>]  ( -- )
-  postpone <a> 
-  ;  immediate
-: [</a>]  ( -- )
-  postpone </a> 
-  ;  immediate
-: [<li>]  ( -- )
-  postpone <li> 
-  ;  immediate
-: [</li>]  ( -- )
-  postpone </li> postpone \n
-  ;  immediate
-: [<ul>]  ( -- )
-  postpone <ul> postpone \n
-  ;  immediate
-: [</ul>]  ( -- )
-  postpone </ul> postpone \n
-  ;  immediate
-: [<ol>]  ( -- )
-  postpone <ol> postpone \n
-  ;  immediate
-: [</ol>]  ( -- )
-  postpone </ol> postpone \n
-  ;  immediate
-: [<h1>]  ( -- )
-  postpone <h1> 
-  ;  immediate
-: [</h1>]  ( -- )
-  postpone </h1> postpone \n
-  ;  immediate
-: [<h2>]  ( -- )
-  postpone <h2> 
-  ;  immediate
-: [</h2>]  ( -- )
-  postpone </h2> postpone \n
-  ;  immediate
-: [<h3>]  ( -- )
-  postpone <h3> 
-  ;  immediate
-: [</h3>]  ( -- )
-  postpone </h3> postpone \n
-  ;  immediate
-: [<h4>]  ( -- )
-  postpone <h4> 
-  ;  immediate
-: [</h4>]  ( -- )
-  postpone </h4> postpone \n
-  ;  immediate
-: [<h5>]  ( -- )
-  postpone <h5> 
-  ;  immediate
-: [</h5>]  ( -- )
-  postpone </h5> postpone \n
-  ;  immediate
-: [<h6>]  ( -- )
-  postpone <h6> 
-  ;  immediate
-: [</h6>]  ( -- )
-  postpone </h6> postpone \n
-  ;  immediate
+: [<a>]  ( -- )  postpone <a>  ;  immediate
+: [</a>]  ( -- )  postpone </a>  ;  immediate
+: [<h1>]  ( -- )  postpone <h1>  ;  immediate
+: [</h1>]  ( -- )  postpone </h1> postpone \n  ;  immediate
+: [<h2>]  ( -- )  postpone <h2>  ;  immediate
+: [</h2>]  ( -- )  postpone </h2> postpone \n  ;  immediate
+: [<h3>]  ( -- )  postpone <h3>  ;  immediate
+: [</h3>]  ( -- )  postpone </h3> postpone \n  ;  immediate
+: [<h4>]  ( -- )  postpone <h4>  ;  immediate
+: [</h4>]  ( -- )  postpone </h4> postpone \n  ;  immediate
+: [<h5>]  ( -- )  postpone <h5>  ;  immediate
+: [</h5>]  ( -- )  postpone </h5> postpone \n  ;  immediate
+: [<h6>]  ( -- )  postpone <h6>  ;  immediate
+: [</h6>]  ( -- )  postpone </h6> postpone \n  ;  immediate
+: [<li>]  ( -- )  postpone <li>  ;  immediate
+: [</li>]  ( -- )  postpone </li> postpone \n  ;  immediate
+: [<link/>]  ( -- )  postpone <link/> postpone \n  ;  immediate
+: [<ol>]  ( -- )  postpone <ol> postpone \n  ;  immediate
+: [</ol>]  ( -- )  postpone </ol> postpone \n  ;  immediate
+: [<p>]  ( -- )  postpone <p>  ;  immediate
+: [</p>]  ( -- )  postpone </p> postpone \n  ;  immediate
+: [<ul>]  ( -- )  postpone <ul> postpone \n  ;  immediate
+: [</ul>]  ( -- )  postpone </ul> postpone \n  ;  immediate
 markup<order
 
 .( fendo_markup_html_tags.fs compiled) cr

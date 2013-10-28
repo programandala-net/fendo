@@ -342,6 +342,7 @@ variable more?  \ flag: keep on parsing more words?; changed by '}content'
   \ ca2 len2 = bottom half of the template content
   template_halves 2nip
   ;
+false [if]  \ xxx first method; the template file is read only once
 variable template_content
 : get_template_first  ( -- ca len )
   \ Return the template content, the first time.
@@ -357,6 +358,14 @@ variable template_content
   if  get_template_again  else  get_template_first  then
 \  .s  \ xxx informer
   ;
+[else]  \ xxx second method; the template file is read twice
+\ xxx 2013-10-27 this alternative is tried in order to see
+\ its effect on the strange corruption of the input stream.
+: get_template  ( -- ca len )
+  \ Return the template content.
+  template_file slurp-file 
+  ;
+[then]
 : template{  ( -- )
   \ Echo the top half of the current template,
   \ above the page content.
