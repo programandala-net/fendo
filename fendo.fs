@@ -44,14 +44,17 @@
 
 \ 2012-06-30 Start of version A-00.
 \ 2013-06-28 Start of version A-01.
+\ 2013-10-22 Start of version A-02.
 
 \ **************************************************************
 \ Todo
 
-\ 2013-09-29 'redirected' and 'redirect' will create a file
-\ with PHP code to redirect to the current page; this way,
-\ the redirections from old pages can be specified in the
-\ new page.
+\ 2013-10-28 distinction: 'language' (metadatum) and 'lang'
+\ (filename prefix).
+
+\ 2013-10-26 hardcode '.html'; use it in the page id.
+
+\ 2013-10-26 fix local links to draft pages!
 
 \ 2013-08-15 defered words at the start (and end?) of tags,
 \ to let the website application insert hooks.
@@ -136,7 +139,7 @@ true [if]
   \ yet. It seems a problem with Gforth's 's+'.
 
   require ../galope/sb.fs  \ string buffer
-  1024 20 * heap_sb
+  1024 100 * heap_sb
   \ ' bs" alias s"  immediate
   ' bs+ alias s+
   ' bs& alias s&
@@ -222,7 +225,7 @@ wordlist constant fendo_links_wid  \ user links
 
 fendo>order definitions
 
-s" A-00-20130810" sconstant version
+s" A-02-20131026" 2constant fendo_version
 
 \ **************************************************************
 \ Modules
