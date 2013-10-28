@@ -34,23 +34,22 @@
 
 wordlist constant fendo_shortcuts_wid  \ for user's shortcuts
 
-: (shortcut:)  ( -- )
-  ;
 : shortcut:  ( "name" -- )
   \ Create an user's shortcut.
-  [ false ] [if]  \ xxx normal version
+  [ true ] [if]  \ xxx normal version
   get-current >r  fendo_shortcuts_wid set-current :  r> set-current
   [else]  \ xxx debugging version
-  \ xxx todo
   get-current >r
   fendo_shortcuts_wid set-current
   parse-name
-  \ 2dup cr type 
   2dup 2>r nextname
   :
   2r> 
-  \ space type
-  postpone sliteral postpone cr postpone type
+  \ space 2dup type  \ xxx informer
+  postpone sliteral postpone cr
+  s" resolving shortcut " postpone sliteral
+  postpone type
+  postpone type
   r> set-current
   [then]
   ; 
@@ -110,7 +109,7 @@ shortcut: gforth_ext
   \ ca' len' = actual href attribute
   2dup href=!
   0 rot rot  \ fake xt
-\  2dup ." unshortcut " type  \ xxx informer
+\  2dup cr ." about to unshortcut " type  \ xxx informer
   begin   ( xt ca len ) shortcut?  ( xt' xt' true  |  false )
   while   execute href=@
 \  2dup ." --> " type  \ xxx informer

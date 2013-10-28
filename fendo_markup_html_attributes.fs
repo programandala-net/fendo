@@ -40,6 +40,8 @@
 \   'unraw_attributes' (defined in <fendo_markup_wiki.fs>)
 \   makes it unnecessary.
 \ 2013-08-15 New: ':attribute?!', required by the bookmarked links.
+\ 2013-10-27 New: '?hreflang=!', factored out from 'hierarchy_meta_link' in
+\   <addons/hierarchy_meta_links.fs>. 
 
 \ **************************************************************
 \ Todo
@@ -292,6 +294,13 @@ create 'attributes_xt  \ table for the execution tokens of the attribute variabl
 : attributes_xt_zone  ( -- ca len )
   \ Return the start and length of the ''attribute_xt' table.
   'attributes_xt #attributes 1- cells
+  ;
+: ?hreflang=!  ( a -- )
+  \ If the given page has a different language than the current one,
+  \ then update the 'hreflang' attribute.
+  \ a = page id
+  language 2dup current_page language compare
+  if  hreflang=!  else  2drop  then
   ;
 
 \ **************************************************************

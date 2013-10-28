@@ -277,7 +277,7 @@ false [if]  \ xxx first version
           refill 0=
     then
   until
-\  cr ." <[ " 2dup type ." ]>" cr key drop  \ xxx informer
+  cr ." <[ " 2dup type ." ]>" cr  \ xxx informer
   ;
 
 [then]
@@ -325,7 +325,7 @@ true [if]  \ xxx 2013-08-10 second version, more legible
     then
   until
 \  ." ]>" cr  \ xxx informer
-  cr ." <[ " 2dup type ." ]>" cr  \ xxx informer
+\  cr ." <[ " 2dup type ." ]>" cr  \ xxx informer
   ;
 
 [then]
