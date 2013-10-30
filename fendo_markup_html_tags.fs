@@ -33,6 +33,7 @@
 \   for the user's application.
 \ 2013-10-26 New: immediate version of '<p>'.
 \ 2013-10-27 New: '<link/>' and its immediate version '[<link/>]'.
+\ 2013-10-30 New: More immediate versions of tags.
 
 \ **************************************************************
 \ Printing
@@ -279,6 +280,10 @@ set-current
 markup>order
 : [<a>]  ( -- )  postpone <a>  ;  immediate
 : [</a>]  ( -- )  postpone </a>  ;  immediate
+: [<caption>]  ( -- )  postpone <caption> postpone \n  ;  immediate
+: [<code>]  ( -- )  postpone <code>  ;  immediate
+: [</code>]  ( -- )  postpone </code>  ;  immediate
+: [<div>]  ( -- )  postpone <div>  ;  immediate
 : [<h1>]  ( -- )  postpone <h1>  ;  immediate
 : [</h1>]  ( -- )  postpone </h1> postpone \n  ;  immediate
 : [<h2>]  ( -- )  postpone <h2>  ;  immediate
@@ -291,6 +296,7 @@ markup>order
 : [</h5>]  ( -- )  postpone </h5> postpone \n  ;  immediate
 : [<h6>]  ( -- )  postpone <h6>  ;  immediate
 : [</h6>]  ( -- )  postpone </h6> postpone \n  ;  immediate
+: [<img>]  ( -- )  postpone <img>  ;  immediate
 : [<li>]  ( -- )  postpone <li>  ;  immediate
 : [</li>]  ( -- )  postpone </li> postpone \n  ;  immediate
 : [<link/>]  ( -- )  postpone <link/> postpone \n  ;  immediate
@@ -298,6 +304,14 @@ markup>order
 : [</ol>]  ( -- )  postpone </ol> postpone \n  ;  immediate
 : [<p>]  ( -- )  postpone <p>  ;  immediate
 : [</p>]  ( -- )  postpone </p> postpone \n  ;  immediate
+: [<pre>]  ( -- )  postpone <pre>  ;  immediate
+: [</pre>]  ( -- )  postpone </pre> postpone \n  ;  immediate
+: [<span>]  ( -- )  postpone <span>  ;  immediate
+: [<table>]  ( -- )  postpone <table> postpone \n  ;  immediate
+: [</td>]  ( -- )  postpone </td> postpone \n  ;  immediate
+: [</th>]  ( -- )  postpone </th> postpone \n  ;  immediate
+: [<tr>]  ( -- )  postpone <tr>  ;  immediate
+: [</tr>]  ( -- )  postpone </tr> postpone \n  ;  immediate
 : [<ul>]  ( -- )  postpone <ul> postpone \n  ;  immediate
 : [</ul>]  ( -- )  postpone </ul> postpone \n  ;  immediate
 markup<order

@@ -1,4 +1,4 @@
-.( fendo_markup_wiki.fs ) 
+.( fendo_markup_wiki.fs ) cr
 
 \ This file is part of
 \ Fendo ("Forth Engine for Net DOcuments") version A-02.
@@ -31,11 +31,9 @@
 \ **************************************************************
 \ Todo
 
+\ 2013-10-30: Optional file size in file links.
 \ 2013-07-20: Idea for nested lists: prefix words to increase
-\ and decrease the depth: >> << . Example:
-\
-\ 
-\
+\ and decrease the depth: >> << .
 \ 2013-06-04: Creole {{{...}}} markup.
 \ 2013-06-04: Nested lists.
 \ 2013-06-04: Flag the first markup of the current line, in
@@ -155,10 +153,10 @@ variable opened_[_]?    \ is there an open '_'?
 variable opened_[__]?   \ is there an open '__'?
 
 : <pre><code>  ( -- )
-  [markup>order] <pre> <code> [markup<order]
+  [<pre>] [<code>]
   ;
 : </code></pre>  ( -- )
-  [markup>order] </code> </pre> [markup<order]
+  [</code>] [</pre>]
   ;
 
 \ **************************************************************
@@ -170,19 +168,17 @@ variable numbered_list_items  \ counter
 : ((-))  ( a -- )
   \ List element.
   \ a = counter variable
-  [markup>order]
-  dup @ if  </li>  then  <li>  1 swap +!  separate? off
-  [markup<order]
+  dup @ if  [</li>]  then  [<li>]  1 swap +!  separate? off
   ;
 : (-)  ( -- )
   \ Bullet list item.
   bullet_list_items dup @ 0=
-  if  [markup>order] <ul> [markup<order]  then  ((-))
+  if  [<ul>]  then  ((-))
   ;
 : (+)  ( -- )
   \ Numbered list item.
   numbered_list_items dup @ 0=
-  if  [markup>order] <ol> [markup<order]  then  ((-))
+  if  [<ol>]  then  ((-))
   ;
 
 \ **************************************************************
@@ -193,18 +189,15 @@ variable #cells  \ counter for the current table
 
 : (>tr<)  ( -- )
   \ New row in the current table.
-  [markup>order] <tr> [markup<order]  1 #rows +!  #cells off 
+  [<tr>]  1 #rows +!  #cells off 
   ;
 : >tr<  ( -- )
   \ New row in the current table; close the previous row if needed.
-  #rows @ if  [markup>order] </tr> [markup<order]  then  (>tr<)
+  #rows @ if  [</tr>]  then  (>tr<)
   ;
 : close_pending_cell  ( -- )
   \ Close a pending table cell.
-  header_cell? @ 
-  if    [markup>order] </th> [markup<order]
-  else  [markup>order] </td> [markup<order]
-  then
+  header_cell? @ if  [</th>]  else  [</td>]  then
   ;
 : ((|))  ( xt -- )
   \ New data cell in the current table.
@@ -225,11 +218,10 @@ variable #cells  \ counter for the current table
 : (|)  ( xt -- )
   \ New data cell in the current table.
   \ xt = execution cell of the HTML tag (<td> or <th>)
-  table_started? @ 0=
-  if  [markup>order] <table> [markup<order]  then  ((|))
+  table_started? @ 0= if  [<table>]  then  ((|))
   ;
 : <table><caption>  ( -- )
-  [markup>order] <table> <caption> [markup<order]
+  [<table>] [<caption>]
   ;
 
 \ **************************************************************
@@ -458,9 +450,7 @@ str-create tmp-str
   rot dup plain_description title=!
   dup target_file href=!
   access_key accesskey=!
-  [markup>order] <a> [markup<order]
-  evaluate_content 
-  [markup>order] </a> [markup<order]
+  [<a>] evaluate_content [</a>]
   ;
 
 \ **************************************************************
@@ -518,7 +508,7 @@ variable image_finished?  \ flag, no more image markup to parse?
   then
   ;
 : ({{)  ( "imagemarkup}}" -- )
-  parse_image [markup>order] <img> [markup<order]
+  parse_image [<img>]
   ;
 
 \ **************************************************************
@@ -758,13 +748,19 @@ defer parse_link_text  ( "...<spaces>|<spaces>" | "...<spaces>]]<spaces>"  -- )
   href=@ anchor+ href=!
   external_link? if  external_class  then
   ;
-: ([[)  ( "linkmarkup]]" -- )
-  parse_link
-\  .s depth abort" depth 1!"  \ xxx informer
-\  cr ." order ===> " order cr  \ xxx informer
-  tune_link
-\  cr 2dup type cr  \ xxx informer
-\  ." depth ===> " depth dup . abort" stack not empty at the end of ([[)"  \ xxx informer
+: echo_link_text  ( -- )
+  \ Echo just the link text.
+  echo_space evaluate_link_text
+  ;
+: (echo_link)  ( -- )
+  \ Echo the final link.
+  [<a>] evaluate_link_text [</a>]
+  ;
+: echo_link  ( -- )
+  \ Echo the final link, if possible.
+  href=@ nip
+  if  (echo_link)  else  echo_link_text  then
+  s" " link_text!
   ;
 
 \ **************************************************************
@@ -824,7 +820,7 @@ language_markups: es
   \ ca len = ISO code of a language
   2dup s" ((" s+ :create_markup s,
   does>  ( -- ) ( dfa )
-    count (xml:)lang= attribute! [markup>order] <span> [markup<order]
+    count (xml:)lang= attribute! [<span>]
   ;
 : ((:  ( "name" -- )
   \ Create a language inline markup.
@@ -836,7 +832,7 @@ language_markups: es
   \ ca len = ISO code of a language
   2dup s" (((" s+ :create_markup s,
   does>  ( -- ) ( dfa )
-    count (xml:)lang= attribute! [markup>order] <div> [markup<order]
+    count (xml:)lang= attribute! [<div>]
   ;
 : (((:  ( "name" -- )
   \ Create a language block markup.
@@ -1069,14 +1065,11 @@ false [if]  \ experimental version
 
 : [[  ( "linkmarkup]]" -- )
 \  ." #nothings at the start of [[ = " #nothings @ . cr  \ xxx informer
-  ([[) 
+  parse_link tune_link
 \  ." #nothings after ([[) = " #nothings @ . cr  \ xxx informer
 \  ." 5)" href=@ type cr  \ xxx informer
-  href=@ nip 
-  if    <a> evaluate_link_text </a>  
-  else  echo_space evaluate_link_text
-  then  s" " link_text!
 \  ." #nothings at the end of [[ = " #nothings @ . cr  \ xxx informer
+  echo_link
   ;
 : ]]  ( -- )
   true abort" ']]' without '[['"
@@ -1218,5 +1211,9 @@ only forth fendo>order definitions
 \ 2013-10-22: Change: all code about user's bookmark links and
 \   their "unlinking" is moved to its own file and the words
 \   are renamed: "(un)shortcut" is used instead of "(un)link".
+\ 2013-10-30: Change: '([[)' removed; the final code of '[[' has
+\   been factored out as 'echo_link', '(echo_link)' and
+\   'echo_link_text'.
+\ 2013-10-30 Change: More immediate versions of tags used.
 
 [then]
