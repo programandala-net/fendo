@@ -72,6 +72,11 @@
 \ filled as default data, if empty.
 \
 \ 2013-06-08 line comments in data header.
+
+\ 2013-10-30 Fix: 'forth-wordlist' is set to current before
+\   requiring the library files. The problem was <ffl/config.fs>
+\   created 'ffl.version' in the 'fendo' vocabulary, but searched for it
+\   in 'forth-wordlist'.
  
 \ **************************************************************
 \ Stack notation
@@ -99,7 +104,7 @@ false value [bug_thread] immediate
 \ **************************************************************
 \ Requirements
 
-only forth definitions
+forth-wordlist set-current
 
 \ From Gforth
 
@@ -107,30 +112,30 @@ require string.fs  \ dynamic strings
 
 \ From Forth Foundation Library
 
-\ require ../ffl/str.fs
-\ require ../ffl/tos.fs
-\ require ../ffl/xos.fs
+\ require ffl/str.fs
+\ require ffl/tos.fs
+\ require ffl/xos.fs
 
 \ From Galope
 
-require ../galope/3dup.fs
-require ../galope/anew.fs
-require ../galope/backslash-end-of-file.fs  \ '\eof'
-require ../galope/bracket-false.fs  \ '[false]'
-require ../galope/buffer-colon.fs  \ 'buffer:'
-require ../galope/colon-alias.fs  \ ':alias'
-require ../galope/colon-create.fs  \ ':create'
-require ../galope/dollar-store-comma.fs  \ '$!,'
-require ../galope/enum.fs  \ 'enum'
-require ../galope/minus-bounds.fs  \ '-bounds'
-require ../galope/minus-extension.fs  \ '-extension'
-require ../galope/minus-leading.fs  \ '-leading'
-require ../galope/minus-path.fs  \ '-path'
-require ../galope/minus-suffix.fs  \ '-suffix'
-require ../galope/parse-name-question.fs  \ 'parse-name?'
-require ../galope/sconstant.fs  \ 'sconstant'
-require ../galope/slash-sides.fs  \ '/sides'
-require ../galope/trim.fs  \ 'trim'
+require galope/3dup.fs
+require galope/anew.fs
+require galope/backslash-end-of-file.fs  \ '\eof'
+require galope/bracket-false.fs  \ '[false]'
+require galope/buffer-colon.fs  \ 'buffer:'
+require galope/colon-alias.fs  \ ':alias'
+require galope/colon-create.fs  \ ':create'
+require galope/dollar-store-comma.fs  \ '$!,'
+require galope/enum.fs  \ 'enum'
+require galope/minus-bounds.fs  \ '-bounds'
+require galope/minus-extension.fs  \ '-extension'
+require galope/minus-leading.fs  \ '-leading'
+require galope/minus-path.fs  \ '-path'
+require galope/minus-suffix.fs  \ '-suffix'
+require galope/parse-name-question.fs  \ 'parse-name?'
+require galope/sconstant.fs  \ 'sconstant'
+require galope/slash-sides.fs  \ '/sides'
+require galope/trim.fs  \ 'trim'
 
 true [if]
 
@@ -138,7 +143,7 @@ true [if]
   \ corrupted at the end of the template.  I didn't find the bug
   \ yet. It seems a problem with Gforth's 's+'.
 
-  require ../galope/sb.fs  \ string buffer
+  require galope/sb.fs  \ string buffer
   1024 100 * heap_sb
   \ ' bs" alias s"  immediate
   ' bs+ alias s+

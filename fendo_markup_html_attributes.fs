@@ -42,6 +42,10 @@
 \ 2013-08-15 New: ':attribute?!', required by the bookmarked links.
 \ 2013-10-27 New: '?hreflang=!', factored out from 'hierarchy_meta_link' in
 \   <addons/hierarchy_meta_links.fs>. 
+\ 2013-10-30 Fix: 'forth-wordlist' is set to current before
+\   requiring the library files. The problem was <ffl/config.fs>
+\   created 'ffl.version' in the 'fendo' vocabulary, but searched for it
+\   in 'forth-wordlist'.
 
 \ **************************************************************
 \ Todo
@@ -51,20 +55,24 @@
 \ **************************************************************
 \ Requirements
 
-require ../galope/3dup.fs
+get-current  forth-wordlist set-current
+
+require galope/3dup.fs
 
 \ Dynamic strings system used for attributes
 false  \ Gforth strings instead of FFL strings?
 dup constant [gforth_strings_for_attributes?]  immediate
 [if]    require string.fs
 [else]
-\  .included
-\  .( about to require ffl/str.fs)
-\  key drop
+\  .included  \ xxx informer
+\  .( about to require ffl/str.fs)  \ xxx informer
+\  key drop  \ xxx informer
   require ffl/str.fs 
-\  .( after requiring ffl/str.fs)
-\  key drop
+\  .( after requiring ffl/str.fs)  \ xxx informer
+\  key drop  \ xxx informer
 [then]
+
+set-current
 
 \ **************************************************************
 \ Fetch and store
