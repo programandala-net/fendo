@@ -59,14 +59,15 @@
 
 \ **************************************************************
 
-require ../galope/n-to-r.fs  \ 'n>r'
-require ../galope/n-r-from.fs  \ 'nr>'
-require ../galope/minus-prefix.fs  \ '-prefix'
+get-current  forth-wordlist set-current
+
+require galope/n-to-r.fs  \ 'n>r'
+require galope/n-r-from.fs  \ 'nr>'
+require galope/minus-prefix.fs  \ '-prefix'
 
 require ffl/str.fs  \ FFL's dynamic strings
 
-\ require ./fendo_shortcuts.fs  \ xxx old, moved to
-\ <fendo_markup.fs>
+set-current
 
 \ **************************************************************
 \ Generic tool words for strings
@@ -796,6 +797,17 @@ false [if]  \ xxx old, 2013-10-22 moved to its own file <fendo_shortcuts.fs>
 
 \ xxx todo nested, with depth counter
 
+0 [if]
+
+\ The website application must create the language specific
+\ markups for the languages used in the content, this way:
+
+language_markups: en
+language_markups: eo
+language_markups: es
+
+[then]
+
 : (xml:)lang=  ( -- a )
   \ Return the proper language attribute.
   xhtml? @ if  xml:lang=  else  lang=  then
@@ -1071,19 +1083,6 @@ false [if]  \ experimental version
   ;
 
 \ Language
-
-0 [if]
-
-\ The website application must create the language markups used
-\ in the content, this way:
-
-get-current fendo-markup
-((: en  (((: en  \ create 'en((' and 'en(((' for English
-((: eo  (((: eo  \ create 'eo((' and 'eo(((' for Esperanto
-((: es  (((: es  \ create 'es((' and 'es(((' for Spanish
-set-current
-
-[then]
 
 : ))  ( -- )
   </span> separate? on
