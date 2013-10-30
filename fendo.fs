@@ -1,4 +1,4 @@
-.( fendo.fs )
+.( fendo.fs ) cr
 
 \ This file is part of
 \ Fendo ("Forth Engine for Net DOcuments") version A-02.
@@ -145,9 +145,11 @@ true [if]
 
   require galope/sb.fs  \ string buffer
   1024 100 * heap_sb
+  warnings @  warnings off
   \ ' bs" alias s"  immediate
   ' bs+ alias s+
   ' bs& alias s&
+  warnings !
 
 [then]
 

@@ -1,4 +1,4 @@
-.( fendo_config.fs ) 
+.( fendo_config.fs ) cr
 
 \ This file is part of
 \ Fendo ("Forth Engine for Net DOcuments") version A-02.

@@ -1,4 +1,4 @@
-.( fendo_parser.fs ) 
+.( fendo_parser.fs ) cr
 
 \ This file is part of
 \ Fendo ("Forth Engine for Net DOcuments") version A-02.
@@ -393,8 +393,8 @@ variable }content?  \ flag: was '}content' executed?
   ;
 : do_page?  ( -- wf )
 \  current_page draft? if  ." DRAFT!" cr  then  \ xxx informer
-\  do_content? @  current_page draft? 0=  and
-  do_content? @   \ xxx tmp
+  do_content? @  current_page draft? 0=  and
+\  do_content? @   \ xxx tmp
   ;
 : skip_page  ( -- )
   \ No target page must be created; skip the current source page.

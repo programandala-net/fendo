@@ -1,4 +1,4 @@
-.( fendo_shortcuts.fs ) 
+.( fendo_shortcuts.fs ) cr
 
 \ This file is part of
 \ Fendo ("Forth Engine for Net DOcuments") version A-02.
@@ -116,3 +116,5 @@ shortcut: gforth_ext
   repeat  href=@
 \  cr  \ xxx informer
   ;  is unshortcut  \ defered in <fendo.fs>
+
+.( fendo_shortcuts.fs compiled ) cr

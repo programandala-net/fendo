@@ -1,4 +1,4 @@
-.( fendo_files.fs ) 
+.( fendo_files.fs ) cr
 
 \ This file is part of
 \ Fendo ("Forth Engine for Net DOcuments") version A-02.
@@ -88,3 +88,5 @@
   \ Create a file that redirects to the current page.
   parse-name redirected
   ;
+
+.( fendo_files.fs compiled ) cr
