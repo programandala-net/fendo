@@ -402,8 +402,8 @@ do_content? on
 \  key drop  \ xxx informer
   unshortcut  \ xxx tmp
   2dup (required_data<id$)
-\  evaluate  \ xxx first version
-  find-name name>int execute  \ xxx second version; no difference, same corruption of the input stream
+  evaluate  \ xxx first version
+\  find-name name>int execute  \ xxx second version; no difference, same corruption of the input stream
 \  cr ." end of data<id$>id"  \ xxx informer
   ;
 
