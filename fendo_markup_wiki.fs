@@ -266,7 +266,7 @@ false [if]  \ xxx first version
           refill 0=
     then
   until
-  cr ." <[ " 2dup type ." ]>" cr  \ xxx informer
+\  cr ." <[ " 2dup type ." ]>" cr  \ xxx informer
   ;
 
 [then]
@@ -543,9 +543,9 @@ variable link_text  \ dynamic string
   link_text $@
   ;
 : link_text?!  ( ca len -- )
-  \ Update the string variable 'link_text' with the given
-  \ string, if not empty.
-  link_text@ dup if  link_text!  else  2drop  then
+  \ If the the string variable 'link_text' is empty,
+  \ store the given string into it.
+  link_text@ empty? if  link_text!  else  2drop  then
   ;
 [then]
 : evaluate_link_text  ( -- )
@@ -555,6 +555,8 @@ variable link_text  \ dynamic string
 variable link_anchor  \ dynamic string
 : -anchor  ( ca len -- ca' len' )
   \ Extract the anchor from a href attribute and store it.
+  \ xxx todo fixme Galope's 'sides/' doesn't work fine yet, as
+  \ explained in its own file.
   s" #" sides/ drop link_anchor $!
   ;
 variable link_type
@@ -563,16 +565,19 @@ variable link_type
   enum file_link  drop
 : (>link_type_id)  ( ca len -- n )
   \ Convert an href attribute to its type id.
+  \ xxx todo no href means local, if there is/was an anchor label
   2dup external_href? if  2drop external_link exit  then
   file_href? if  file_link exit  then
   local_link 
   ;
 : >link_type_id  ( ca len -- n | 0 )
   \ Convert an href attribute to its type id, if not empty.
+  \ xxx todo no href means local, if there is/was an anchor label
   dup if  (>link_type_id)  else  nip  then
   ;
 : set_link_type  ( ca len -- )
   \ Get and store the type id of an href attribute.
+  \ xxx todo no href means local, if there is/was an anchor label
 \  .s 2dup type ." --> "  \ xxx informer
   >link_type_id
 \  dup . ." link type" cr key drop  \ xxx informer
@@ -648,6 +653,7 @@ defer parse_link_text  ( "...<spaces>|<spaces>" | "...<spaces>]]<spaces>"  -- )
   ;
 : get_link_href_attribute  ( "href_attribute<spaces>" -- )
   \ Parse and store the link href attribute.
+  \ xxx todo move '-anchor' before 'set_link_type'?
   parse-word unshortcut 2dup set_link_type -anchor href=!
 \  ." ---> " href=@ type cr  \ xxx informer
 \  external_link? if  ." EXTERNAL LINK: " href=@ type cr  then  \ xxx informer
@@ -669,10 +675,10 @@ defer parse_link_text  ( "...<spaces>|<spaces>" | "...<spaces>]]<spaces>"  -- )
   get_link_href_attribute
 \  ." ---> " href=@ type cr  \ xxx informer
   link_finished? @ 0= if
-    ." link not finished; href= " href=@ type cr  \ xxx informer
+\    ." link not finished; href= " href=@ type cr  \ xxx informer
     parse_link_text link_finished? @ 0=
     if  
-      ." link not finished; link text= " link_text $@ type cr  \ xxx informer
+\      ." link not finished; link text= " link_text $@ type cr  \ xxx informer
       get_link_raw_attributes 
       then
   then
@@ -731,35 +737,28 @@ defer parse_link_text  ( "...<spaces>|<spaces>" | "...<spaces>]]<spaces>"  -- )
 : tune_local_link  ( ca len -- )
   \ xxx todo fetch alternative language title and description
   \ ca len = href attribute
-  ." tune_local_link" cr  \ xxx informer
-\  2drop exit  \ xxx tmp
-  [ false ] [if]  \ xxx old first version
-  2dup +forth_extension required_data
-\  >sb  \ xxx tmp
-\  ." tune_local_link (1)" cr  \ xxx informer
-  evaluate ( page-id ) >r
-  [else]  \ xxx second version
+\  ." tune_local_link" cr  \ xxx informer
   data<id$>id >r
-  [then]
-\  ." tune_local_link (2)" cr  \ xxx informer
+\  link_text@ ." link_text in tune_local_link (0) = " type cr  \ xxx informer
+\  r@ title ." title in tune_local_link (1) = " type cr  \ xxx informer
   r@ plain_description title=?!
-\  ." tune_local_link (3)" cr  \ xxx informer
+\  link_text@ ." link_text in tune_local_link (1) = " type cr  \ xxx informer
   r@ title 
-  ." title = " 2dup type cr  \ xxx informer
-\  evaluate_content  \ xxx  removed
-\  ." tune_local_link (3a)" cr  \ xxx informer
-  link_text?!
-\  ." tune_local_link (4)" cr  \ xxx informer
+\  ." title in tune_local_link (2) = " 2dup type cr  \ xxx informer
+  link_text?!  \ xxx bug: this call corrupts 'link_text'
+\  link_text@ ." link_text in tune_local_link (2) = " type cr  \ xxx informer
   r@ language hreflang=?!
   r> access_key accesskey=?!
-  ." end of tune_local_link" cr  \ xxx informer
+\  ." end of tune_local_link" cr  \ xxx informer
   ;
 : tune_link  ( -- )  \ xxx todo
   \ Tune the attributes parsed from the link.
+\  link_text@ ." link_text in tune_link (0) = " type cr  \ xxx informer
   local_link? if  href=@ tune_local_link  then
+\  link_text@ ." link_text in tune_link (1) = " type cr  \ xxx informer
   href=@ convert_link_href href=!
   link_text@ 
-\  ." link_text in tune_link = " 2dup type cr cr  \ xxx informer
+\  ." link_text in tune_link (2) = " 2dup type cr  \ xxx informer
   empty? if  missing_link_text link_text!  then
   href=@ anchor+ href=!
   external_link? if  external_class  then
@@ -1235,6 +1234,10 @@ only forth fendo>order definitions
 \   been factored out as 'echo_link', '(echo_link)' and
 \   'echo_link_text'.
 \ 2013-10-30 Change: More immediate versions of tags used.
-\ 2013-11-05: Change: simpler 'tune_local_link'.
+\ 2013-11-05: Fix: 'tune_local_link' evaluated the title and
+\   consumed it.
+\ 2013-11-05: Fix: local links with only the page id (no text, no raw
+\   attrs), lacked the "html" extension.
+
 
 [then]

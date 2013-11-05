@@ -266,9 +266,9 @@ variable more?  \ flag: keep on parsing more words?; changed by '}content'
   ;
 : (parse_link_text)  ( "...<space>|<space>" | "...<space>]]<space>"  -- )
   \ Parse the link text and store it into 'link_text'.
-  s" " link_text!
+  s" " link_text!  \ xxx needed?
   parsed_link_text 
-\  2dup ." link_text in (parse_link_text) = " type cr  \ xxx informer  \ xxx informer
+\  ." link_text in (parse_link_text) = " 2dup type cr  \ xxx informer  \ xxx informer
   link_text!
   ;
 ' (parse_link_text) is parse_link_text
