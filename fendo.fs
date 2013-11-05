@@ -49,6 +49,14 @@
 \ **************************************************************
 \ Todo
 
+\ 2013-11-05 bug: when a link text is evaluated with
+\ 'evaluate_content', and it has markup, the attributes set for the
+\ link are used by the those markups. the attributes set must be an
+\ array pointed by a counter.
+
+\ 2013-11-05 bug: local link with only the page id (no text, no raw
+\ attrs), lack the "html" extension.
+
 \ 2013-10-28 distinction: 'language' (metadatum) and 'lang'
 \ (filename prefix).
 

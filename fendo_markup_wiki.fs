@@ -40,10 +40,6 @@
 \ order to use '--' both forth nested lists and delete, or '**'
 \ for list and for bold.
 \ 2013-06-19: Compare Creole's markups with txt2tags' markups.
-\ 2013-10-22: New: 'link' creates links to local pages, at the
-\   application level.
-\ 2013-10-25: Change: '>sb' added before 'evaluate', just to get
-\   some clue about the string corruptions.
 
 \ **************************************************************
 \ Debug tools
@@ -547,7 +543,9 @@ variable link_text  \ dynamic string
   link_text $@
   ;
 : link_text?!  ( ca len -- )
-  link_text@ empty? if  link_text!  else  2drop  then
+  \ Update the string variable 'link_text' with the given
+  \ string, if not empty.
+  link_text@ dup if  link_text!  else  2drop  then
   ;
 [then]
 : evaluate_link_text  ( -- )
@@ -666,13 +664,17 @@ defer parse_link_text  ( "...<spaces>|<spaces>" | "...<spaces>]]<spaces>"  -- )
     repeat
   [then]
   ;
-: parse_link  ( "linkmarkup]]" -- )
+: parse_link  ( "linkmarkup ]]" -- )
   \ Parse and store the link attributes.
   get_link_href_attribute
 \  ." ---> " href=@ type cr  \ xxx informer
   link_finished? @ 0= if
+    ." link not finished; href= " href=@ type cr  \ xxx informer
     parse_link_text link_finished? @ 0=
-    if  get_link_raw_attributes  then
+    if  
+      ." link not finished; link text= " link_text $@ type cr  \ xxx informer
+      get_link_raw_attributes 
+      then
   then
 \  ." ---> " href=@ type cr  \ xxx informer
   ;
@@ -729,14 +731,28 @@ defer parse_link_text  ( "...<spaces>|<spaces>" | "...<spaces>]]<spaces>"  -- )
 : tune_local_link  ( ca len -- )
   \ xxx todo fetch alternative language title and description
   \ ca len = href attribute
-  2drop exit  \ xxx tmp
+  ." tune_local_link" cr  \ xxx informer
+\  2drop exit  \ xxx tmp
+  [ false ] [if]  \ xxx old first version
   2dup +forth_extension required_data
-  >sb  \ xxx tmp
+\  >sb  \ xxx tmp
+\  ." tune_local_link (1)" cr  \ xxx informer
   evaluate ( page-id ) >r
+  [else]  \ xxx second version
+  data<id$>id >r
+  [then]
+\  ." tune_local_link (2)" cr  \ xxx informer
   r@ plain_description title=?!
-  r@ title evaluate_content link_text?!
+\  ." tune_local_link (3)" cr  \ xxx informer
+  r@ title 
+  ." title = " 2dup type cr  \ xxx informer
+\  evaluate_content  \ xxx  removed
+\  ." tune_local_link (3a)" cr  \ xxx informer
+  link_text?!
+\  ." tune_local_link (4)" cr  \ xxx informer
   r@ language hreflang=?!
   r> access_key accesskey=?!
+  ." end of tune_local_link" cr  \ xxx informer
   ;
 : tune_link  ( -- )  \ xxx todo
   \ Tune the attributes parsed from the link.
@@ -1211,9 +1227,14 @@ only forth fendo>order definitions
 \ 2013-10-22: Change: all code about user's bookmark links and
 \   their "unlinking" is moved to its own file and the words
 \   are renamed: "(un)shortcut" is used instead of "(un)link".
+\ 2013-10-22: New: 'link' creates links to local pages, at the
+\   application level.
+\ 2013-10-25: Change: '>sb' added before 'evaluate', just to get
+\   some clue about the string corruptions.
 \ 2013-10-30: Change: '([[)' removed; the final code of '[[' has
 \   been factored out as 'echo_link', '(echo_link)' and
 \   'echo_link_text'.
 \ 2013-10-30 Change: More immediate versions of tags used.
+\ 2013-11-05: Change: simpler 'tune_local_link'.
 
 [then]
