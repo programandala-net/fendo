@@ -31,10 +31,10 @@
 \ **************************************************************
 \ Todo
 
+\ 2013-11-07: make closing heading optional.
 \ 2013-10-30: Optional file size in file links.
 \ 2013-07-20: Idea for nested lists: prefix words to increase
 \ and decrease the depth: >> << .
-\ 2013-06-04: Creole {{{...}}} markup.
 \ 2013-06-04: Nested lists.
 \ 2013-06-04: Flag the first markup of the current line, in
 \ order to use '--' both forth nested lists and delete, or '**'
@@ -406,15 +406,15 @@ variable forth_code$  \ dynamic string
   ;
 [then]
 s" /counted-string" environment? 0=
-[if]  255  [then]  dup constant /###-line
-2 chars + buffer: ###-line
+[if]  255  [then]  dup constant /source-line
+2 chars + buffer: source-line
 : (###)  ( "source code ###" -- )
   \ Parse a block source code region.
   \ xxx todo preserve spaces (reading complete lines)
   \ xxx todo translate < and &
 \ cr ." (###) code = "  \ xxx informer
   begin   
-    ###-line dup /###-line source-id read-line throw 
+    source-line dup /source-line source-id read-line throw 
     0= abort" Missing closing '###'"
 \   2dup cr type  \ xxx informer
     2dup s" ###" str= dup >r 0= ?echo_line r>
@@ -519,13 +519,19 @@ variable image_finished?  \ flag, no more image markup to parse?
   \ Does a string starts with "http://"?
   s" http://" string-prefix?
   ;
+: https://?  ( ca len -- wf )
+  \ Does a string starts with "https://"?
+  s" https://" string-prefix?
+  ;
 : ftp://?  ( ca len -- wf )
   \ Does a string starts with "ftp://"?
   s" ftp://" string-prefix?
   ;
 : external_href?  ( ca len -- wf )
   \ Is a href attribute external?
-  2dup http://? >r ftp://? r> or
+  2dup http://? >r
+  2dup https://? >r
+  ftp://?  r> or r> or
   ;
 false [if]  \ xxx old
 wordlist constant links_wid  \ for bookmarked links
@@ -667,7 +673,8 @@ defer parse_link_text  ( "...<spaces>|<spaces>" | "...<spaces>]]<spaces>"  -- )
   ;
 : get_link_href  ( "href<spaces>" -- )
   \ Parse and store the link href attribute.
-  parse-word unshortcut -anchor href_checked
+  parse-word unshortcut -anchor 
+\  href_checked  \ xxx tmp
   2dup set_link_type href=!
 \  ." ---> " href=@ type cr  \ xxx informer
 \  external_link? if  ." EXTERNAL LINK: " href=@ type cr  then  \ xxx informer
@@ -739,13 +746,14 @@ defer parse_link_text  ( "...<spaces>|<spaces>" | "...<spaces>]]<spaces>"  -- )
     file_link   of  convert_file_link_href   endof
   endcase 
   ;
-: tune_local_link  ( ca len -- )
+variable local_link_to_draft_page?
+: tune_local_link  ( -- )
   \ xxx todo fetch alternative language title and description
-  \ ca len = href attribute
 \  ." tune_local_link" cr  \ xxx informer
-  (data<)id$>id  >r
+  href=@ (data<)id$>id  >r
 \  link_text@ ." link_text in tune_local_link (0) = " type cr  \ xxx informer
 \  r@ title ." title in tune_local_link (1) = " type cr  \ xxx informer
+  r@ draft? local_link_to_draft_page? !
   r@ plain_description title=?!
 \  link_text@ ." link_text in tune_local_link (1) = " type cr  \ xxx informer
   r@ title 
@@ -758,7 +766,7 @@ defer parse_link_text  ( "...<spaces>|<spaces>" | "...<spaces>]]<spaces>"  -- )
   ;
 : tune_link  ( -- )  \ xxx todo
   \ Tune the attributes parsed from the link.
-  local_link? if  href=@ tune_local_link  then
+  local_link? if  tune_local_link  then
   href=@ convert_link_href href=!
   link_text@ empty? if  missing_link_text link_text!  then
   external_link? if  external_class  then
@@ -771,11 +779,18 @@ defer parse_link_text  ( "...<spaces>|<spaces>" | "...<spaces>]]<spaces>"  -- )
   \ Echo the final link.
   [<a>] evaluate_link_text [</a>]
   ;
+: echo_link?  ( -- wf )
+  \ Can the current link be echoed?
+  href=@ nip  local_link_to_draft_page? @ 0=  and
+  ;
+: reset_link  ( -- )
+  \ Reset the link attributes that are not actual HTML attributes,
+  \ and are not reseted by the HTML tags layer.
+  s" " link_text!  local_link_to_draft_page? off
+  ;
 : echo_link  ( -- )
   \ Echo the final link, if possible.
-  href=@ nip
-  if  (echo_link)  else  echo_link_text  then
-  s" " link_text!
+  echo_link? if  (echo_link)  else  echo_link_text  then  reset_link
   ;
 
 \ **************************************************************
@@ -1093,11 +1108,31 @@ false [if]  \ experimental version
 \ Language
 
 : ))  ( -- )
+  \ End an inline language region.
   </span> separate? on
   ;
 : )))  ( -- )
+  \ End a block language region.
   </div> separate? on
   ;
+
+\ Verbatim or pass-through blocks
+
+: {{{  ( "text<space>}}}<space>" -- )
+  \ Open a verbatim or pass-through block.
+  \ Its content will be copied "as-is" to the target file.
+  \ xxx todo combine with '(###)'?
+  \ xxx todo preserve spaces (reading complete lines)
+  begin
+    source-line dup /source-line source-id read-line throw 
+    0= abort" Missing closing '}}}'"
+    2dup s" }}}" str= dup >r 0= ?echo_line r>
+  until
+  ;
+: }}}  ( -- )
+  \ Close a verbatim or pass-through block.
+  true abort" '}}}' without '{{{'"
+  ;  immediate
 
 \ Escape
 
@@ -1242,6 +1277,10 @@ only forth fendo>order definitions
 \ 2013-11-06: Improvement: 'get_link_href', '+anchor'.
 \ 2013-11-07: Fix: local links with anchors work fine in
 \   all cases.
-
+\ 2013-11-07: New: '{{{' and '}}}', after Creole markup.
+\ 2013-11-07: Change: '###-line' and '/###-line' renamed to
+\   'source-line' and '/source-line'.
+\ 2013-11-07: New: "https" links are recognized.
+\ 2013-11-07: New: links to draft local pages are recognized.
 
 [then]

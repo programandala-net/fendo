@@ -26,61 +26,7 @@
 \ **************************************************************
 \ Change history of this file
 
-\ 2013-04-28 Start.
-\ 2013-05-01 Fixed and finished the data system.
-\ 2013-05-17 Fix: There were two words with the name '>datum';
-\   it caused no problem in practice, but was confusing.
-\ 2013-05-17 Improvement: 'data{' gets the data only the first time.
-\ 2013-05-17 New: 'require_data' is moved here from its own file,
-\   and simplified. 
-\ 2013-05-18 Change: data fields return their offset, not their
-\   content (neccessary to write 'datum!'; '>datum' removed
-\   (now '+' can be used instead). 'datum!' is necessary in
-\   order to set default values to certain fields.
-\ 2013-05-18 New: 'parse_datum' is rewriten and factored out to
-\   'datum!'.
-\ 2013-06-07 Fix: The check in 'data{' was obsolete; it has been
-\   rewritten.
-\ 2013-06-08 Fix: The leading spaces of parsed data were not
-\   removed.
-\ 2013-06-08 Fix: now 'datum@' returns an empty string if the
-\   datum was not set.
-\ 2013-06-08 Fix: '@' missing in 'default_data'; beside, renamed
-\   to "set_default_data'.
-\ 2013-06-08 Change: 'datum@' and 'datum!' are removed;
-\   '$@' and '$!' are used instead (from Gforth's <string.fs>)).
-\ 2013-06-08 Fix: name clash (old 'source_filename' >
-\   '+source_path'; new 'source_filename' > '/sourcefilename').
-\ 2013-06-23 Change: design and template fields are renamed
-\   after the changes in the config module.
-\ 2013-06-28 Change: hierarchy metadata fields are renamed with
-\   the "_page" prefix, to avoid the clash with 'next' and make
-\   the code clearer; 'up' is renamed to 'upper_page'.
-\ 2013-06-28 Change: metadata fields return their values, not
-\   their addresses; a parallel word is created to return the
-\   address, only needed to set the default data;
-\   this change makes the code nicer.
-\ 2013-06-29 Change: '/sourcefilename' moved here from
-\   <fendo_files.fs>.
-\ 2013-06-29 Change: 'source>target_extension' moved here
-\   from <fendo_files.fs>.
-\ 2013-06-29 New: 'target_extension'; now target filename extension
-\   depends on the corresponding optional metadatum too.
-\ 2013-07-28 New: 'required_data', '-forth_extension',
-\   '+forth_extension'.
-\ 2013-09-06 Fix: '(required_data)' didn't save 'current_page'.
-\ 2013-09-06 New: 'property?', 'draft?'.
-\ 2013-09-29 Fix: 'current_page' was not properly preserved
-\   when 'require_data' was used. This caused many pages were
-\   not created. This bug was difficult to find out.
-\ 2013-10-22 Change: the new word 'trim', defined in the Galope
-\   library, is used instead of '-trailing -leading'.
-\ 2013-10-22 Fix: 'parse_datum' now uses 'trim' instead of
-\   '-leading'.
-\ 2013-10-22 New: 'data<id$>id'.
-\ 2013-10-23 Improvement: 'unshortcut' is used in
-\   'required_data<id$' and 'data<id$>id'.
-\ 2013-11-06 New: '(data<)id$>id'.
+\ See at the end of the file.
 
 \ **************************************************************
 \ Todo
@@ -342,13 +288,19 @@ do_content? on
 : +current_dir  ( ca1 len1 -- ca2 len2 )  \ xxx tmp
   s" ./" 2swap s+
   ;
+: .required_data_error  ( ca len -- )
+  cr ." Error requiring the data of the page <" type ." >" cr
+  ;
+: required_data_error  ( ca len ior -- )
+  >r .required_data_error r> throw
+  ;
 : (required_data)  ( ca len -- )
   \ Require a page file in order to get its data.
   \ ca len = filename
   do_content? off
-\  2>r save-input .s key drop 2r>  \ xxx tmp
-  required
-\  .s key drop restore-input  \ xxx tmp
+  2dup  ['] required catch  ?dup
+  if    nip nip required_data_error
+  else  2drop  then
   ;
 : required_data  ( ca len -- )
   \ Require a page file in order to get its data.
@@ -450,3 +402,71 @@ do_content? on
   ;
 
 .( fendo_data.fs compiled) cr
+
+0 [if]
+
+\ **************************************************************
+\ Change history of this file
+
+\ 2013-04-28 Start.
+\ 2013-05-01 Fixed and finished the data system.
+\ 2013-05-17 Fix: There were two words with the name '>datum';
+\   it caused no problem in practice, but was confusing.
+\ 2013-05-17 Improvement: 'data{' gets the data only the first time.
+\ 2013-05-17 New: 'require_data' is moved here from its own file,
+\   and simplified. 
+\ 2013-05-18 Change: data fields return their offset, not their
+\   content (neccessary to write 'datum!'; '>datum' removed
+\   (now '+' can be used instead). 'datum!' is necessary in
+\   order to set default values to certain fields.
+\ 2013-05-18 New: 'parse_datum' is rewriten and factored out to
+\   'datum!'.
+\ 2013-06-07 Fix: The check in 'data{' was obsolete; it has been
+\   rewritten.
+\ 2013-06-08 Fix: The leading spaces of parsed data were not
+\   removed.
+\ 2013-06-08 Fix: now 'datum@' returns an empty string if the
+\   datum was not set.
+\ 2013-06-08 Fix: '@' missing in 'default_data'; beside, renamed
+\   to "set_default_data'.
+\ 2013-06-08 Change: 'datum@' and 'datum!' are removed;
+\   '$@' and '$!' are used instead (from Gforth's <string.fs>)).
+\ 2013-06-08 Fix: name clash (old 'source_filename' >
+\   '+source_path'; new 'source_filename' > '/sourcefilename').
+\ 2013-06-23 Change: design and template fields are renamed
+\   after the changes in the config module.
+\ 2013-06-28 Change: hierarchy metadata fields are renamed with
+\   the "_page" prefix, to avoid the clash with 'next' and make
+\   the code clearer; 'up' is renamed to 'upper_page'.
+\ 2013-06-28 Change: metadata fields return their values, not
+\   their addresses; a parallel word is created to return the
+\   address, only needed to set the default data;
+\   this change makes the code nicer.
+\ 2013-06-29 Change: '/sourcefilename' moved here from
+\   <fendo_files.fs>.
+\ 2013-06-29 Change: 'source>target_extension' moved here
+\   from <fendo_files.fs>.
+\ 2013-06-29 New: 'target_extension'; now target filename extension
+\   depends on the corresponding optional metadatum too.
+\ 2013-07-28 New: 'required_data', '-forth_extension',
+\   '+forth_extension'.
+\ 2013-09-06 Fix: '(required_data)' didn't save 'current_page'.
+\ 2013-09-06 New: 'property?', 'draft?'.
+\ 2013-09-29 Fix: 'current_page' was not properly preserved
+\   when 'require_data' was used. This caused many pages were
+\   not created. This bug was difficult to find out.
+\ 2013-10-22 Change: the new word 'trim', defined in the Galope
+\   library, is used instead of '-trailing -leading'.
+\ 2013-10-22 Fix: 'parse_datum' now uses 'trim' instead of
+\   '-leading'.
+\ 2013-10-22 New: 'data<id$>id'.
+\ 2013-10-23 Improvement: 'unshortcut' is used in
+\   'required_data<id$' and 'data<id$>id'.
+\ 2013-11-06 New: '(data<)id$>id'.
+\ 2013-11-07 New: '(required_data)' traps the errors and show an
+\   additional error message that includes the filename. This is
+\   important because the actual filename could be different from
+\   the filename taken from the markup, because of the
+\   "unshortcuttting" system.
+
+[then]
