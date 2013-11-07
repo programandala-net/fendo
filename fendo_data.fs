@@ -80,6 +80,7 @@
 \ 2013-10-22 New: 'data<id$>id'.
 \ 2013-10-23 Improvement: 'unshortcut' is used in
 \   'required_data<id$' and 'data<id$>id'.
+\ 2013-11-06 New: '(data<)id$>id'.
 
 \ **************************************************************
 \ Todo
@@ -405,6 +406,13 @@ do_content? on
   evaluate  \ xxx first version
 \  find-name name>int execute  \ xxx second version; no difference, same corruption of the input stream
 \  cr ." end of data<id$>id"  \ xxx informer
+  ;
+: (data<)id$>id  ( ca len -- a )
+  \ Return a number page id from a string page id;
+  \ if it's different from the current page, require its data.
+  \ This word is needed to manage links to the current page
+  \ (href attributes that contain just an anchor).
+  dup if  data<id$>id  else  2drop current_page  then
   ;
 
 \ **************************************************************

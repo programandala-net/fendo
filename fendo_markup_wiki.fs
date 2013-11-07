@@ -553,28 +553,33 @@ variable link_text  \ dynamic string
   ;
   
 variable link_anchor  \ dynamic string
-: -anchor  ( ca len -- ca' len' )
+: -anchor  ( ca len -- ca len | ca' len' )
   \ Extract the anchor from a href attribute and store it.
-  \ xxx todo fixme Galope's 'sides/' doesn't work fine yet, as
-  \ explained in its own file.
+  \ ca len = href attribute
+  \ ca' len' = href attribute without anchor
   s" #" sides/ drop link_anchor $!
+  ;
+: +anchor  { ca1 len1 ca2 len2 -- ca3 len3 }
+  \ Add a link anchor to a href attribute.
+  \ ca1 len1 = href attribute
+  \ ca2 len2 = anchor, without "#"
+  ca1 len1 len2 if  s" #" s+ ca2 len2 s+  then
   ;
 variable link_type
 1 enum local_link
   enum external_link
   enum file_link  drop
-: (>link_type_id)  ( ca len -- n )
+: >link_type_id  ( ca len -- n )
   \ Convert an href attribute to its type id.
-  \ xxx todo no href means local, if there is/was an anchor label
   2dup external_href? if  2drop external_link exit  then
   file_href? if  file_link exit  then
   local_link 
   ;
-: >link_type_id  ( ca len -- n | 0 )
-  \ Convert an href attribute to its type id, if not empty.
-  \ xxx todo no href means local, if there is/was an anchor label
-  dup if  (>link_type_id)  else  nip  then
-  ;
+\ xxx old  
+\ : >link_type_id  ( ca len -- n | 0 )
+\  \ Convert an href attribute to its type id, if not empty.
+\  dup if  (>link_type_id)  else  nip  then
+\  ;
 : set_link_type  ( ca len -- )
   \ Get and store the type id of an href attribute.
   \ xxx todo no href means local, if there is/was an anchor label
@@ -651,10 +656,19 @@ defer parse_link_text  ( "...<spaces>|<spaces>" | "...<spaces>]]<spaces>"  -- )
     then  
   until   ( ca len ) unraw_attributes
   ;
-: get_link_href_attribute  ( "href_attribute<spaces>" -- )
+: (href_checked)  ( ca len -- ca len )
+  \ Check the given empty href attribute.
+  \ If there's no anchor, the href is not valid. 
+  link_anchor $@len 0= abort" Empty href link" 
+  ;
+: href_checked  ( ca len -- ca len )
+  \ Check the given href attribute, if it's empty.
+  dup 0= if  (href_checked)  then
+  ;
+: get_link_href  ( "href<spaces>" -- )
   \ Parse and store the link href attribute.
-  \ xxx todo move '-anchor' before 'set_link_type'?
-  parse-word unshortcut 2dup set_link_type -anchor href=!
+  parse-word unshortcut -anchor href_checked
+  2dup set_link_type href=!
 \  ." ---> " href=@ type cr  \ xxx informer
 \  external_link? if  ." EXTERNAL LINK: " href=@ type cr  then  \ xxx informer
   [ false ] [if]  \ simple version
@@ -672,7 +686,7 @@ defer parse_link_text  ( "...<spaces>|<spaces>" | "...<spaces>]]<spaces>"  -- )
   ;
 : parse_link  ( "linkmarkup ]]" -- )
   \ Parse and store the link attributes.
-  get_link_href_attribute
+  get_link_href
 \  ." ---> " href=@ type cr  \ xxx informer
   link_finished? @ 0= if
 \    ." link not finished; href= " href=@ type cr  \ xxx informer
@@ -707,22 +721,13 @@ defer parse_link_text  ( "...<spaces>|<spaces>" | "...<spaces>]]<spaces>"  -- )
   file_link?  if  missing_file_link_text exit  then  \ xxx
   true abort" Wrong link type"  \ xxx tmp
   ;
-: (anchor+)  ( ca1 len1 ca2 len2 -- ca3 len3 )
-  \ Add a link anchor to a href attribute.
-  \ ca1 len1 = href attribute
-  \ ca2 len2 = anchor, without "#"
-  s" #" 2swap s+ s+ 
-  ;
-: anchor+  ( ca len -- ca' len' )
-  \ Add the link anchor, if any, to a href attribute.
-  link_anchor $@ dup if  (anchor+)  else  2drop  then
-  ;
 : external_class  ( -- )
   \ Add "external" to the class attribute.
   class=@ s" external" s& class=!
   ;
 : convert_local_link_href  ( ca len -- ca' len' )
   dup if  current_target_extension s+  then
+  link_anchor $@ +anchor
   ;
 : convert_file_link_href  ( ca len -- ca' len' )
   s" file://" -prefix  files_subdir $@ 2swap s+  
@@ -732,13 +737,13 @@ defer parse_link_text  ( "...<spaces>|<spaces>" | "...<spaces>]]<spaces>"  -- )
   link_type @ case
     local_link  of  convert_local_link_href  endof
     file_link   of  convert_file_link_href   endof
-  endcase
+  endcase 
   ;
 : tune_local_link  ( ca len -- )
   \ xxx todo fetch alternative language title and description
   \ ca len = href attribute
 \  ." tune_local_link" cr  \ xxx informer
-  data<id$>id >r
+  (data<)id$>id  >r
 \  link_text@ ." link_text in tune_local_link (0) = " type cr  \ xxx informer
 \  r@ title ." title in tune_local_link (1) = " type cr  \ xxx informer
   r@ plain_description title=?!
@@ -753,14 +758,9 @@ defer parse_link_text  ( "...<spaces>|<spaces>" | "...<spaces>]]<spaces>"  -- )
   ;
 : tune_link  ( -- )  \ xxx todo
   \ Tune the attributes parsed from the link.
-\  link_text@ ." link_text in tune_link (0) = " type cr  \ xxx informer
   local_link? if  href=@ tune_local_link  then
-\  link_text@ ." link_text in tune_link (1) = " type cr  \ xxx informer
   href=@ convert_link_href href=!
-  link_text@ 
-\  ." link_text in tune_link (2) = " 2dup type cr  \ xxx informer
-  empty? if  missing_link_text link_text!  then
-  href=@ anchor+ href=!
+  link_text@ empty? if  missing_link_text link_text!  then
   external_link? if  external_class  then
   ;
 : echo_link_text  ( -- )
@@ -1238,6 +1238,10 @@ only forth fendo>order definitions
 \   consumed it.
 \ 2013-11-05: Fix: local links with only the page id (no text, no raw
 \   attrs), lacked the "html" extension.
+\ 2013-11-06: New: 'href_checked'.
+\ 2013-11-06: Improvement: 'get_link_href', '+anchor'.
+\ 2013-11-07: Fix: local links with anchors work fine in
+\   all cases.
 
 
 [then]

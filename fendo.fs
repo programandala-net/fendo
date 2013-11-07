@@ -49,18 +49,19 @@
 \ **************************************************************
 \ Todo
 
-\ 2013-11-06 bug: local links to anchors in the current page don't
-\ work. this featured is not implemented.
+\ 2013-11-07 bug: local links to draft pages don't wor.
+\ this featured is not implemented.
 
 \ 2013-11-05 bug: when a link text is evaluated with
 \ 'evaluate_content', and it has markup, the attributes set for the
 \ link are used by the those markups? not sure yet. the attributes set
 \ must be an array pointed by a counter.
+\ (2013-11-07 this seems solved after the implementation of anchors?)
 
 \ 2013-10-28 distinction: 'language' (metadatum) and 'lang'
 \ (filename prefix).
 
-\ 2013-10-26 hardcode '.html'; use it in the page id.
+\ 2013-10-26 hardcoded '.html'?; use it in the page id?
 
 \ 2013-10-26 fix local links to draft pages!
 
