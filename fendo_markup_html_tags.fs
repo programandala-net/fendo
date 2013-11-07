@@ -36,6 +36,11 @@
 \ 2013-10-30 New: More immediate versions of tags.
 
 \ **************************************************************
+\ Requirements
+
+require galope/plus-slash-string.fs
+
+\ **************************************************************
 \ Printing
 
 : "/>"  ( -- ca len )
