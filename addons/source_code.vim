@@ -12,17 +12,17 @@ let g:html_pre_wrap = 0
 let g:html_expand_tabs = 1
 let g:html_use_encoding = "UTF-8"
 
-TOhtml
+silent! TOhtml
 
 
 " Delete lines from the top to "<pre>":
 call search('<pre>','wc')
 normal mm
 call cursor(1,1) " Go to the top of the file.
-normal d'm
+silent! normal d'm
  
 " Delete lines from "</pre>" to the bottom:
 call search('</pre>','wc')
-normal dG
+silent! normal dG
 
-wqall 
+silent! wqall 
