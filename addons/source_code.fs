@@ -55,6 +55,7 @@ require string.fs  \ Gforth's dynamic strings
 require galope/module.fs
 require galope/minus-leading.fs  \ '-leading'
 require galope/sourcepath.fs  \ 'sourcepath'
+require galope/string-suffix-question.fs  \ 'string-suffix?'
 require ffl/chr.fs  \ 'chr-digit'
 
 module: source_code_fendo-programandala_addon_module
@@ -69,6 +70,10 @@ s" .xhtml" s+ 2constant output_file$
 s" vim -f " 2constant base_highlight_command$
 sourcepath s" source_code.vim " s+ 2constant vim_program$
 
+export
+variable filetype$  \ same values than Vim's 'filetype' 
+hide
+
 : program+  ( ca len -- ca' len' )
   \ Add the Vim program parameter to the Vim invocation.
   s" -S " s+ vim_program$ s+
@@ -76,7 +81,7 @@ sourcepath s" source_code.vim " s+ 2constant vim_program$
 : syntax+  ( ca len -- ca' len' )
   \ Add the desired syntax parameter to the Vim invocation.
   \ This parameter must be the first one in the command line.
-  s\" -c \"set filetype=forth\" " s+
+  s\" -c \"set filetype=basin\" " s+
   ;
 : file+  ( ca len -- ca' len' )
   \ Add the input file parameter to the Vim invocation.
@@ -102,12 +107,52 @@ sourcepath s" source_code.vim " s+ 2constant vim_program$
   $? abort" The highlighting command failed"
   <output_file
   ;
-variable highlighting?  \ flag
-highlighting? on
+variable highlighting?  highlighting? on
 : highlighted  ( ca1 len1 -- ca1 len1 | ca2 len2 )
   \ Highlight the given source code, if needed.
   highlighting? @ if  (highlighted)  then
   ;
+: filename>filetype  ( ca1 len1 -- ca2 len2 )
+  \ Convert a filename to a Vim filetype.
+	2dup s" .prg" string-suffix? if  s" clipper" exit  then
+  2dup s" .asm" string-suffix? if s" z80" exit  then
+  2dup s" .bac" string-suffix? if s" bacon" exit  then
+  2dup s" .bb" string-suffix? if s" beta_basic" exit  then
+  2dup s" .bbim" string-suffix? if s" bbim" exit  then
+  2dup s" .fs" string-suffix? if s" forth" exit  then
+  2dup s" .mb" string-suffix? if s" masterbasic" exit  then
+  2dup s" .mbim" string-suffix? if s" mbim" exit  then
+  2dup s" .opl" string-suffix? if s" oplplus" exit  then
+  2dup s" .opl.txt" string-suffix? if s" oplplus" exit  then
+  2dup s" .opp" string-suffix? if s" oplplus" exit  then
+  2dup s" .sbim" string-suffix? if s" sbim" exit  then
+  2dup s" .sdlbas" string-suffix? if s" sdlbasic" exit  then
+  2dup s" .xbas" string-suffix? if s" x11basic" exit  then
+  2dup s" .yab" string-suffix? if s" yabasic" exit  then
+  2dup s" _bas" string-suffix? if  s" superbasic" exit  then
+  2dup s" boot" str=  if  s" superbasic" exit  then
+  2drop
+  true abort" Unknown source code file type"
+  ;
+
+\ **************************************************************
+\ File encodings
+
+\ xxx todo
+
+0 [if]
+
+UTF-8 and Latin1 file encodings are managed by Vim during conversion
+to XHTML, but special encodings (e.g. BASin markups, Sinclar BASIC
+tokens and QL charset) require special conversions.
+
+[then]
+
+variable fileencoding  \ 0 if no special conversion is needed
+1 enum basin_fileenconding
+  enum sinclair_basic_fileencoding
+  enum ql_fileencoding
+drop
 
 \ **************************************************************
 \ Generic source code
@@ -150,19 +195,22 @@ previous markup<order
   while   append_source_code_line
   repeat  2drop  source_code$ $@
   ;
-: (source_code)  ( -- )
+: (opened_source_code)  ( -- )
   \ Read and echo the content of the opened source code file.
   slurp_source_code echo_source_code close_source_code 
   ;
-
 export
 
-: source_code  ( ca1 len1 ca2 len2 -- )
+: (source_code)  ( ca len -- )
   \ Read and echo the content of a source code file.
-  \ ca1 len1 = file name
-  \ ca2 len2 = file type
-  2drop  \ xxx todo
-  open_source_code (source_code)
+  \ ca len = file name
+  open_source_code (opened_source_code)
+  ;
+: source_code  ( ca len -- )
+  \ Read and echo the content of a source code file.
+  \ The Vim filetype is guessed from the filename.
+  \ ca len = file name
+  2dup filename>filetype filetype$ $!  (source_code)
   ;
 
 hide
@@ -240,7 +288,8 @@ s" Bloque" s" Bloko" s" Block" mlsconstant forth_block$
   \ Code adapted from my tool "scr2txt" (2005-2012).
   24 s>d source_code_fid reposition-file throw
   ;
-: (forth_blocks)  ( -- )
+: (forth_blocks_source_code)  ( -- )
+  s" forth" filetype$ $!
   0 forth_block !
   0 forth_block_line !
   0 forth_block_lenght !
@@ -252,22 +301,24 @@ s" Bloque" s" Bloko" s" Block" mlsconstant forth_block$
 
 export
 
-: forth_blocks  ( ca1 len1 ca2 len2 -- )
+: forth_blocks_source_code  ( ca len -- )
   \ Read the content of a Forth blocks file and echo it.
-  \ ca1 len1 = file name
-  \ ca2 len2 = file type
-  2drop  \ xxx todo
+  \ ca len = file name
   open_source_code (forth_blocks) close_source_code
   ;
-: abersoft_forth_blocks  ( ca len -- )
+: abersoft_forth_blocks_source_code  ( ca len -- )
   \ Read the content of a ZX Spectrum's Abersoft Forth blocks TAP file and echo it.
   \ xxx todo set the character set for this file type
-  \ xxx todo fixme at the end of the 11th block there's a rubbish
-  \ byte.
   \ ca len = file name
   abersoft_forth? on
-  open_source_code skip_tap_header (forth_blocks) close_source_code
+  open_source_code skip_tap_header (forth_blocks_source_code) close_source_code
   abersoft_forth? off
+  ;
+: ql_forth_blocks_source_code  ( ca len -- )
+  \ Read the content of a QL Forth blocks file and echo it.
+  \ xxx todo set the character set for this file type
+  \ ca len = file name
+  forth_blocks_source_code
   ;
 
 hide
@@ -295,7 +346,9 @@ export
   \ Read the content of a BASin file and echo it.
   \ xxx todo set the character set for this file type
   \ ca len = file name
-  open_source_code skip_basin_header (source_code)
+  s" basin" filetype$ $!
+  open_source_code skip_basin_header (opened_source_code)
   ;
 
 ;module
+
