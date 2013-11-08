@@ -37,6 +37,8 @@
 \   instead of '(echo_source_code)'.
 \ 2013-11-07 Change: Forth blocks are printed apart; empty blocks are
 \   omited; no line number are printed.
+\ 2013-11-08 Change: generic source code is not echoed by lines
+\   anymore, as a first step towards syntax highlighting with Vim.
 
 \ **************************************************************
 \ Todo
@@ -45,13 +47,21 @@
 \ 2013-11-07 Syntax highlighting, with Vim.
 
 \ **************************************************************
+\ Requirements
+
+require string.fs  \ Gforth's dynamic strings
+
+\ **************************************************************
 \ Undefined source code
 
 s" /counted-string" environment? 0=
 [if]  255  [then]  dup constant /source_code_line
 2 chars + buffer: source_code_line
 
+variable source_code$
+
 0 value source_code_fid
+
 : open_source_code  ( ca len -- )
   \ ca len = file name
   2>r target_dir $@ files_subdir $@ s+ 2r> s+
@@ -64,24 +74,46 @@ s" /counted-string" environment? 0=
 : read_source_code_line  ( -- ca len wf )
   source_code_line dup /source_code_line source_code_fid read-line throw
   ;
-: (echo_source_code)  ( -- )
-  \ Read and echo the content of the opened source code file.
-  begin  read_source_code_line  while  echo_line  repeat  2drop
-  ;
 markup>order also forth
 ' <pre><code> alias source{
 ' </code></pre> alias }source 
 previous markup<order
-: echo_source_code  ( -- )
+0 [if]  \ xxx old
+: (read_and_echo_source_code)  ( -- )
+  \ Read and echo the content of the opened source code file.
+  begin  read_source_code_line  while  echo_line  repeat  2drop
+  ;
+: read_and_echo_source_code  ( -- )
   \ Read and echo the content of the opened source code file, surrounded by HTML markup.
-  source{ (echo_source_code) }source
+  source{ (read_and_echo_source_code) }source
+  ;
+[then]
+
+: echo_source_code  ( ca len -- )
+  source{  echo  }source
+  ;
+: append_source_code_line  ( ca len -- )
+  source_code$ $+!  s\" \n" source_code$ $+!
+  ;
+: slurp_source_code  ( -- ca len )
+  \ Slurp the content of the opened source code file,
+  \ from its current file position.
+  0 source_code$ $!len
+  begin   read_source_code_line
+  while   append_source_code_line
+  repeat  2drop
+  source_code$ $@
+  ;
+: opened_source_code  ( -- )
+  \ Read and echo the content of the opened source code file.
+  slurp_source_code echo_source_code close_source_code 
   ;
 : source_code  ( ca1 len1 ca2 len2 -- )
   \ Read and echo the content of a source code file.
   \ ca1 len1 = file name
   \ ca2 len2 = file type
   2drop  \ xxx todo
-  open_source_code echo_source_code close_source_code 
+  open_source_code opened_source_code
   ;
 
 \ **************************************************************
@@ -264,34 +296,32 @@ variable forth_block_line  \ counter
 \ **************************************************************
 \ BASin source code
 
-false [if]  \ xxx old version
-: not_basin_header?  ( ca len -- wf )  \ xxx old version
+: not_basin_header?  ( ca len -- wf )
   -leading drop c@ chr-digit?
   ;
-[then]
-: basin_header?  ( ca len -- wf )
-  -leading drop c@ chr-digit? 0=
+0 [if]  \ xxx old
+2variable source_code_file_position
+: save_source_code_position  ( -- )
+  source_code_fid file-position throw source_code_file_position 2!
   ;
-: skip_basin_header  ( -- ca len )
-  \ Read the opened source file and skip lines of the BASin header.
-  \ Return the first line found after the header.
-  begin   read_source_code_line 
-  while   2dup basin_header?
-  while   2drop 
-  repeat  then
+: restore_source_code_position  ( -- )
+  source_code_file_position 2@ source_code_fid reposition-file throw
+  ;
+[then]
+: skip_basin_header  ( -- )
+  \ Read the opened source file and skip the lines of the BASin header.
+  0.  \ fake file position, for the first 2drop
+  begin
+    2drop  \ old file position
+    source_code_fid file-position throw 
+    read_source_code_line >r
+    not_basin_header? r> 0= or
+  until  source_code_fid reposition-file throw
   ;
 : basin_source_code  ( ca len -- )
   \ Read the content of a BASin file and echo it.
   \ xxx todo set the character set for this file type
   \ ca len = file name
-  open_source_code source{
-  [ false ] [if]  \ xxx old version
-  begin   read_source_code_line 
-  while   2dup not_basin_header?  if  echo_line  else  2drop  then
-  repeat  2drop
-  [else]
-  skip_basin_header echo_line (echo_source_code)
-  [then]
-  }source
+  open_source_code skip_basin_header opened_source_code
   ;
 
