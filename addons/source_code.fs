@@ -37,8 +37,10 @@
 \   instead of '(echo_source_code)'.
 \ 2013-11-07 Change: Forth blocks are printed apart; empty blocks are
 \   omited; no line number are printed.
-\ 2013-11-08 Change: generic source code is not echoed by lines
-\   anymore, as a first step towards syntax highlighting with Vim.
+\ 2013-11-08 Change: source code is not echoed by lines
+\   anymore; this is a first step towards syntax highlighting.
+\ 2013-11-08 Fix: The rubbish byte at the end of the last block of an
+\   Abersoft Forth blocks file is removed.
 
 \ **************************************************************
 \ Todo
@@ -50,16 +52,71 @@
 \ Requirements
 
 require string.fs  \ Gforth's dynamic strings
+require galope/module.fs
+require galope/minus-leading.fs  \ '-leading'
+require galope/sourcepath.fs  \ 'sourcepath'
+require ffl/chr.fs  \ 'chr-digit'
+
+module: source_code_fendo-programandala_addon_module
 
 \ **************************************************************
-\ Undefined source code
+\ Syntax highlighting with Vim
+
+\ xxx fixme remove spaces and use 's&' instead of 's+'.
+
+s" /tmp/fendo-programandala.addon.source_code.txt" 2dup 2constant input_file$
+s" .xhtml" s+ 2constant output_file$
+s" vim -f " 2constant base_highlight_command$
+sourcepath s" source_code.vim " s+ 2constant vim_program$
+
+: program+  ( ca len -- ca' len' )
+  \ Add the Vim program parameter to the Vim invocation.
+  s" -S " s+ vim_program$ s+
+  ;
+: syntax+  ( ca len -- ca' len' )
+  \ Add the desired syntax parameter to the Vim invocation.
+  \ This parameter must be the first one in the command line.
+  s\" -c \"set filetype=forth\" " s+
+  ;
+: file+  ( ca len -- ca' len' )
+  \ Add the input file parameter to the Vim invocation.
+  input_file$ s+
+  ;
+: highlighting_command$  ( -- ca len )
+  \ Return the complete highlighting command,
+  \ ready to be executed by the shell.
+  base_highlight_command$ syntax+ program+ file+
+  ;
+: >input_file  ( ca len -- )
+  input_file$ w/o create-file throw
+  dup >r write-file throw
+  r> close-file throw
+  ;
+: <output_file  ( -- ca len )
+  output_file$ slurp-file
+  ;
+: (highlighted)  ( ca1 len1 -- ca2 len2 )
+  \ Highlight the given source code.
+  >input_file
+  highlighting_command$ system
+  $? abort" The highlighting command failed"
+  <output_file
+  ;
+variable highlighting?  \ flag
+highlighting? on
+: highlighted  ( ca1 len1 -- ca1 len1 | ca2 len2 )
+  \ Highlight the given source code, if needed.
+  highlighting? @ if  (highlighted)  then
+  ;
+
+\ **************************************************************
+\ Generic source code
 
 s" /counted-string" environment? 0=
 [if]  255  [then]  dup constant /source_code_line
 2 chars + buffer: source_code_line
 
 variable source_code$
-
 0 value source_code_fid
 
 : open_source_code  ( ca len -- )
@@ -78,19 +135,8 @@ markup>order also forth
 ' <pre><code> alias source{
 ' </code></pre> alias }source 
 previous markup<order
-0 [if]  \ xxx old
-: (read_and_echo_source_code)  ( -- )
-  \ Read and echo the content of the opened source code file.
-  begin  read_source_code_line  while  echo_line  repeat  2drop
-  ;
-: read_and_echo_source_code  ( -- )
-  \ Read and echo the content of the opened source code file, surrounded by HTML markup.
-  source{ (read_and_echo_source_code) }source
-  ;
-[then]
-
 : echo_source_code  ( ca len -- )
-  source{  echo  }source
+  source{  highlighted echo  }source
   ;
 : append_source_code_line  ( ca len -- )
   source_code$ $+!  s\" \n" source_code$ $+!
@@ -98,182 +144,113 @@ previous markup<order
 : slurp_source_code  ( -- ca len )
   \ Slurp the content of the opened source code file,
   \ from its current file position.
+  \ ca len = source code read from the current file
   0 source_code$ $!len
   begin   read_source_code_line
   while   append_source_code_line
-  repeat  2drop
-  source_code$ $@
+  repeat  2drop  source_code$ $@
   ;
-: opened_source_code  ( -- )
+: (source_code)  ( -- )
   \ Read and echo the content of the opened source code file.
   slurp_source_code echo_source_code close_source_code 
   ;
+
+export
+
 : source_code  ( ca1 len1 ca2 len2 -- )
   \ Read and echo the content of a source code file.
   \ ca1 len1 = file name
   \ ca2 len2 = file type
   2drop  \ xxx todo
-  open_source_code opened_source_code
+  open_source_code (source_code)
   ;
+
+hide
 
 \ **************************************************************
 \ Forth source code in blocks
 
-16 value /forth_block  \ lines
-64 value /forth_block_line  \ characters
+16 value /forth_block  \ lines per block
+64 value /forth_block_line  \ chars per line
 variable forth_block  \ counter
-
-0 [if]
-
-\ This first version shows all blocks together, with block titles and
-\ line numbers, the way Forth blocks are usually printed.
-
 variable forth_block_line  \ counter
-: echo_forth_block  ( -- )
-  s" <em>Screen # " echo forth_block @ echo. s" </em>" echo_line echo_cr
-  1 forth_block +!
-  ;
-: forth_block_line++  ( -- )
-  \ Increment the counter of Forth block lines.
-  forth_block_line @  1+ dup /forth_block < abs *  forth_block_line !
-  ;
-: echo_forth_line_number  ( -- )
-  s" <em>" echo forth_block_line @ s>d <# bl hold bl hold # #s #> echo s" </em>" echo
-  ;
-: (echo_forth_block_line)  ( ca len -- )
-  echo_forth_line_number -trailing echo_line
-  forth_block_line @ [ /forth_block 1- ] literal = if  echo_cr  then
-  ;
-: echo_forth_block_line  ( ca len -- )
-  forth_block_line @ 0= if  echo_forth_block  then
-  (echo_forth_block_line)  forth_block_line++
-  ;
-: read_forth_block_line  ( -- ca len )
-  source_code_line dup /forth_block_line source_code_fid read-file throw
-  ;
-: (forth_blocks)  ( -- )
-  source{
-  0 forth_block !  0 forth_block_line ! 
-  begin   read_forth_block_line dup
-  while   echo_forth_block_line
-  repeat  2drop 
-  }source
-  ;
-
-[then]
-
-0 [if]
-
-\ This second version shows every block in a code zone; block titles
-\ are outside the blocks (in the language of the current page); no
-\ line numbers are added. This way Forth blocks will be easier to
-\ higlight in the future.
-
-\ 2013-11-07 
-
-s" Bloque"
-s" Bloko"
-s" Block"
-mlsconstant forth_block$
- 
-variable forth_block_line  \ counter
-: echo_forth_block  ( -- )
-  [<p>] forth_block$ echo forth_block @ _echo. [</p>] 
-  1 forth_block +!
-  ;
-: forth_block_line++  ( -- )
-  \ Increment the counter of Forth block lines.
-  forth_block_line @  1+ dup /forth_block < abs *  forth_block_line !
-  ;
-: forth_block_line_0?  ( -- wf )
-  forth_block_line @ 0= 
-  ;
-: echo_forth_block_line  ( ca len -- )
-  forth_block_line_0? if  echo_forth_block source{  then
-  -trailing echo_line  forth_block_line++
-  forth_block_line_0? if  }source  then
-  ;
-: read_forth_block_line  ( -- ca len )
-  source_code_line dup /forth_block_line source_code_fid read-file throw
-  ;
-: (forth_blocks)  ( -- )
-  0 forth_block !  0 forth_block_line ! 
-  begin   read_forth_block_line dup
-  while   echo_forth_block_line
-  repeat  2drop 
-  ;
-
-[then]
-
-true [if]
-
-\ This third version improves the second version:
-\ Empty blocks are omited. 
-
-\ 2013-11-07 
-
-: >forth_block_line  ( n1 -- n2 )
-  \ n1 = number of forth block line
-  \ n2 = offset of forth block line in the buffer
-  2 cells *
-  ;
-/forth_block >forth_block_line buffer: 'forth_block_line
-: >'forth_block_line  ( n -- a )
-  >forth_block_line 'forth_block_line +
-  ;
-: forth_block_line!  ( ca len n -- )
-  >'forth_block_line 2!
-  ;
-: forth_block_line@  ( n -- ca len )
-  >'forth_block_line 2@
-  ;
-s" Bloque"
-s" Bloko"
-s" Block"
-mlsconstant forth_block$
-
 variable forth_block_lenght 
-variable forth_block_line  \ counter
+variable abersoft_forth?  \ flag
+variable highlight_block_0?  \ flag
+s" Bloque" s" Bloko" s" Block" mlsconstant forth_block$
 : echo_forth_block_number  ( -- )
   [<p>] forth_block$ echo forth_block @ _echo. [</p>] 
   ;
-: echo_forth_block_lines  ( -- )
-  /forth_block 0 ?do
-    i forth_block_line@ echo_line
-  loop
+: reset_forth_block  ( -- )
+  0 forth_block_lenght !  0 source_code$ $!len
+  ;
+: next_forth_block  ( -- )
+  1 forth_block +!  reset_forth_block 
+  ;
+: update_block_highlighting  ( -- )
+  forth_block @ 0=
+  abersoft_forth? @
+  highlight_block_0? @ 0=  or and
+  if  highlighting? off  then
   ;
 : (echo_forth_block)  ( -- )
   echo_forth_block_number
-  source{ echo_forth_block_lines }source
+  highlighting? @  update_block_highlighting
+  source_code$ $@ echo_source_code 
+  highlighting? !
   ;
 : echo_forth_block  ( -- )
-  forth_block_lenght @ if  (echo_forth_block)  then
-  1 forth_block +!
-  0 forth_block_lenght !
+  forth_block_lenght @ if  (echo_forth_block)  then  next_forth_block
   ;
-: forth_block_line++  ( -- )
+: forth_block_line++  ( -- n )
   \ Increment the counter of Forth block lines.
-  forth_block_line @  1+ dup /forth_block < abs *  forth_block_line !
+  \ n = new line number
+  forth_block_line @  1+ dup /forth_block < abs *  dup forth_block_line !
   ;
-: save_forth_block_line  ( ca len -- )
-  -trailing  dup forth_block_lenght +!
-  >sb forth_block_line @ forth_block_line!
-  forth_block_line++
-  forth_block_line @ 0= if  echo_forth_block  then
+: only_one_final_char?  ( ca len -- wf )
+  -leading nip 1 =
+  ;
+: (tidy_line)  ( ca len -- )
+  \ Override the last byte of the string with a space, if needed.
+  \ It's not clear if that byte is always corrupted,
+  \ or, as supposed here, only when the rest of the line is blank.
+  \ ca len = Forth block line, last one of the current block
+  2dup only_one_final_char? if  + 1- bl swap c!  else  2drop  then
+  ;
+: tidy_line  ( ca len -- )
+  \ Remove the last byte of the last line of the last Forth block.
+  \ This is needed with Abersoft Forth's TAP files.
+  \ It seems a bug of Abersoft Forth, that corrupts that memory
+  \ position before saving the blocks to tape.
+  \ ca len = Forth block line
+  forth_block_line @ /forth_block 1- =  \ last of block?
+  if  (tidy_line)  else  2drop  then
   ;
 : read_forth_block_line  ( -- ca len )
   source_code_line dup /forth_block_line source_code_fid read-file throw
+\  2dup ." «" type ." »" cr  \ xxx informer
+  ;
+: save_forth_block_line  ( ca len -- )
+  abersoft_forth? if  2dup tidy_line  then
+  -trailing  dup forth_block_lenght +!
+  append_source_code_line
+  forth_block_line++ 0= if  echo_forth_block  then
+  ;
+: skip_tap_header  ( -- )
+  \ Code adapted from my tool "scr2txt" (2005-2012).
+  24 s>d source_code_fid reposition-file throw
   ;
 : (forth_blocks)  ( -- )
   0 forth_block !
   0 forth_block_line !
   0 forth_block_lenght !
+  0 source_code$ $!len
   begin   read_forth_block_line dup
   while   save_forth_block_line
   repeat  2drop 
   ;
 
-[then]
+export
 
 : forth_blocks  ( ca1 len1 ca2 len2 -- )
   \ Read the content of a Forth blocks file and echo it.
@@ -282,46 +259,43 @@ variable forth_block_line  \ counter
   2drop  \ xxx todo
   open_source_code (forth_blocks) close_source_code
   ;
-: skip_tap_header  ( -- )
-  \ Code adapted from my tool "scr2txt" (2005-2012).
-  24 s>d source_code_fid reposition-file throw
-  ;
 : abersoft_forth_blocks  ( ca len -- )
   \ Read the content of a ZX Spectrum's Abersoft Forth blocks TAP file and echo it.
   \ xxx todo set the character set for this file type
+  \ xxx todo fixme at the end of the 11th block there's a rubbish
+  \ byte.
   \ ca len = file name
+  abersoft_forth? on
   open_source_code skip_tap_header (forth_blocks) close_source_code
+  abersoft_forth? off
   ;
+
+hide
 
 \ **************************************************************
 \ BASin source code
 
 : not_basin_header?  ( ca len -- wf )
+  \ ca len = source code line
   -leading drop c@ chr-digit?
   ;
-0 [if]  \ xxx old
-2variable source_code_file_position
-: save_source_code_position  ( -- )
-  source_code_fid file-position throw source_code_file_position 2!
-  ;
-: restore_source_code_position  ( -- )
-  source_code_file_position 2@ source_code_fid reposition-file throw
-  ;
-[then]
 : skip_basin_header  ( -- )
   \ Read the opened source file and skip the lines of the BASin header.
   0.  \ fake file position, for the first 2drop
   begin
-    2drop  \ old file position
+    2drop  \ file position from the previous loop
     source_code_fid file-position throw 
-    read_source_code_line >r
-    not_basin_header? r> 0= or
+    read_source_code_line >r  not_basin_header?  r> 0= or
   until  source_code_fid reposition-file throw
   ;
+
+export
+ 
 : basin_source_code  ( ca len -- )
   \ Read the content of a BASin file and echo it.
   \ xxx todo set the character set for this file type
   \ ca len = file name
-  open_source_code skip_basin_header opened_source_code
+  open_source_code skip_basin_header (source_code)
   ;
 
+;module
