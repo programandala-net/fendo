@@ -52,6 +52,7 @@
 \ Requirements
 
 require string.fs  \ Gforth's dynamic strings
+require galope/dollar-variable.fs  \ '$variable'
 require galope/module.fs
 require galope/minus-leading.fs  \ '-leading'
 require galope/sourcepath.fs  \ 'sourcepath'
@@ -67,11 +68,22 @@ module: source_code_fendo-programandala_addon_module
 
 s" /tmp/fendo-programandala.addon.source_code.txt" 2dup 2constant input_file$
 s" .xhtml" s+ 2constant output_file$
+
+export  \ xxx tmp
+false [if]
 s" vim -f " 2constant base_highlight_command$
+[else]
+$variable (base_highlight_command$)
+s" vim -f " (base_highlight_command$) $!
+: base_highlight_command$  ( -- ca len )
+  (base_highlight_command$) $@
+  ;
+[then]
 sourcepath s" source_code.vim " s+ 2constant vim_program$
+hide
 
 export
-variable filetype$  \ same values than Vim's 'filetype' 
+$variable filetype$  \ same values than Vim's 'filetype' 
 hide
 
 : program+  ( ca len -- ca' len' )
@@ -81,7 +93,7 @@ hide
 : syntax+  ( ca len -- ca' len' )
   \ Add the desired syntax parameter to the Vim invocation.
   \ This parameter must be the first one in the command line.
-  s\" -c \"set filetype=basin\" " s+
+  s\" -c \"set filetype=" s+ filetype$ $@ s+ s\" \" " s+
   ;
 : file+  ( ca len -- ca' len' )
   \ Add the input file parameter to the Vim invocation.
@@ -103,7 +115,9 @@ hide
 : (highlighted)  ( ca1 len1 -- ca2 len2 )
   \ Highlight the given source code.
   >input_file
-  highlighting_command$ system
+  highlighting_command$ 
+\  2dup type cr  \ xxx informer
+  system
   $? abort" The highlighting command failed"
   <output_file
   ;
@@ -112,27 +126,37 @@ variable highlighting?  highlighting? on
   \ Highlight the given source code, if needed.
   highlighting? @ if  (highlighted)  then
   ;
-: filename>filetype  ( ca1 len1 -- ca2 len2 )
+: filename>filetype  { D: filename -- ca2 len2 }
   \ Convert a filename to a Vim filetype.
-	2dup s" .prg" string-suffix? if  s" clipper" exit  then
-  2dup s" .asm" string-suffix? if s" z80" exit  then
-  2dup s" .bac" string-suffix? if s" bacon" exit  then
-  2dup s" .bb" string-suffix? if s" beta_basic" exit  then
-  2dup s" .bbim" string-suffix? if s" bbim" exit  then
-  2dup s" .fs" string-suffix? if s" forth" exit  then
-  2dup s" .mb" string-suffix? if s" masterbasic" exit  then
-  2dup s" .mbim" string-suffix? if s" mbim" exit  then
-  2dup s" .opl" string-suffix? if s" oplplus" exit  then
-  2dup s" .opl.txt" string-suffix? if s" oplplus" exit  then
-  2dup s" .opp" string-suffix? if s" oplplus" exit  then
-  2dup s" .sbim" string-suffix? if s" sbim" exit  then
-  2dup s" .sdlbas" string-suffix? if s" sdlbasic" exit  then
-  2dup s" .xbas" string-suffix? if s" x11basic" exit  then
-  2dup s" .yab" string-suffix? if s" yabasic" exit  then
-  2dup s" _bas" string-suffix? if  s" superbasic" exit  then
-  2dup s" boot" str=  if  s" superbasic" exit  then
-  2drop
-  true abort" Unknown source code file type"
+  filename s" .4th" string-suffix? if s" forth" exit  then
+  filename s" .asm" string-suffix? if s" z80" exit  then
+  filename s" .bac" string-suffix? if s" bacon" exit  then
+  filename s" .bas" string-suffix? if s" basic" exit  then
+  filename s" .bb" string-suffix? if s" beta_basic" exit  then
+  filename s" .bbim" string-suffix? if s" bbim" exit  then
+  filename s" .fs" string-suffix? if s" forth" exit  then
+  filename s" .ini" string-suffix? if s" dosini" exit  then
+  filename s" .mb" string-suffix? if s" masterbasic" exit  then
+  filename s" .mbim" string-suffix? if s" mbim" exit  then
+  filename s" .opl" string-suffix? if s" oplplus" exit  then
+  filename s" .opl.txt" string-suffix? if s" oplplus" exit  then
+  filename s" .opp" string-suffix? if s" oplplus" exit  then
+  filename s" .php" string-suffix? if s" php" exit  then
+	filename s" .prg" string-suffix? if  s" clipper" exit  then
+  filename s" .sbim" string-suffix? if s" sbim" exit  then
+  filename s" .sdlbas" string-suffix? if s" sdlbasic" exit  then
+  filename s" .seq" string-suffix? if s" forth" exit  then
+  filename s" .sh" string-suffix? if s" sh" exit  then
+  filename s" .vim" string-suffix? if s" vim" exit  then
+  filename s" .xbas" string-suffix? if s" x11basic" exit  then
+  filename s" .yab" string-suffix? if s" yabasic" exit  then
+  filename s" .z80s" string-suffix? if s" z80" exit  then
+  filename s" _bas" string-suffix? if  s" superbasic" exit  then
+\  filename s" _scr" string-suffix? if  s" forth" exit  then  \ xxx  todo
+\  filename s" _cmd" string-suffix? if  s" text" exit  then  \ xxx todo
+  filename s" boot" str=  if  s" superbasic" exit  then
+  filename s" ratpoisonrc" str=  if  s" ratpoison" exit  then
+  s" text"
   ;
 
 \ **************************************************************
@@ -157,11 +181,7 @@ drop
 \ **************************************************************
 \ Generic source code
 
-s" /counted-string" environment? 0=
-[if]  255  [then]  dup constant /source_code_line
-2 chars + buffer: source_code_line
-
-variable source_code$
+$variable source_code$
 0 value source_code_fid
 
 : open_source_code  ( ca len -- )
@@ -174,14 +194,12 @@ variable source_code$
   source_code_fid close-file throw
   ;
 : read_source_code_line  ( -- ca len wf )
-  source_code_line dup /source_code_line source_code_fid read-line throw
+  \ Note: 'read_fid_line' is defined in
+  \ <fendo/fendo_wiki_markup_wiki.fs>.
+  source_code_fid read_fid_line
   ;
-markup>order also forth
-' <pre><code> alias source{
-' </code></pre> alias }source 
-previous markup<order
 : echo_source_code  ( ca len -- )
-  source{  highlighted echo  }source
+  block_source_code{  highlighted echo  }block_source_code
   ;
 : append_source_code_line  ( ca len -- )
   source_code$ $+!  s\" \n" source_code$ $+!
@@ -275,7 +293,9 @@ s" Bloque" s" Bloko" s" Block" mlsconstant forth_block$
   if  (tidy_line)  else  2drop  then
   ;
 : read_forth_block_line  ( -- ca len )
-  source_code_line dup /forth_block_line source_code_fid read-file throw
+  \ Note: 'source_line' is a buffer defined in
+  \ <fendo/fendo_markup_wiki.fs>.
+  source_line dup /forth_block_line source_code_fid read-file throw
 \  2dup ." «" type ." »" cr  \ xxx informer
   ;
 : save_forth_block_line  ( ca len -- )
@@ -304,7 +324,7 @@ export
 : forth_blocks_source_code  ( ca len -- )
   \ Read the content of a Forth blocks file and echo it.
   \ ca len = file name
-  open_source_code (forth_blocks) close_source_code
+  open_source_code (forth_blocks_source_code) close_source_code
   ;
 : abersoft_forth_blocks_source_code  ( ca len -- )
   \ Read the content of a ZX Spectrum's Abersoft Forth blocks TAP file and echo it.

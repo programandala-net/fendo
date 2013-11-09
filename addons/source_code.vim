@@ -14,6 +14,9 @@ let g:html_use_encoding = "UTF-8"
 
 silent! TOhtml
 
+" Temporary code to collect all CSS classes:
+"let s:style_filename="/tmp/source_code_style_".strftime("%Y%m%d%H%M%S").".css"
+"execute "silent! /<style /,/style>/write ".s:style_filename
 
 " Delete lines from the top to "<pre>":
 call search('<pre>','wc')
