@@ -31,7 +31,6 @@
 \ 2013-10-02 Page redirection tools.
 
 \ **************************************************************
-
 \ Target file
 
 : (open_target)  ( -- )
@@ -62,6 +61,7 @@
   target_fid @ if  (close_target)  then
   ;
 
+\ **************************************************************
 \ Redirection
 
 : (redirected) ( fid -- )
@@ -87,6 +87,22 @@
 : redirect ( "old_page" -- )
   \ Create a file that redirects to the current page.
   parse-name redirected
+  ;
+
+\ **************************************************************
+\ Read source code
+
+s" /counted-string" environment? 0=
+[if]  255  [then]  dup constant /source_line
+2 chars + buffer: source_line
+
+: read_fid_line  { fid -- ca len wf }
+  \ Get a line from the given file identifier.
+  source_line dup /source_line fid read-line throw
+  ;
+: read_source_line  ( -- ca len wf )
+  \ Get a line from the current source.
+  source-id read_fid_line
   ;
 
 .( fendo_files.fs compiled ) cr

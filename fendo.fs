@@ -258,9 +258,9 @@ include ./fendo_data.fs
 depth [if] abort [then]  \ xxx debugging
 include ./fendo_echo.fs
 depth [if] abort [then]  \ xxx debugging
-include ./fendo_markup.fs
-depth [if] abort [then]  \ xxx debugging
 include ./fendo_files.fs
+depth [if] abort [then]  \ xxx debugging
+include ./fendo_markup.fs
 depth [if] abort [then]  \ xxx debugging
 include ./fendo_parser.fs
 depth [if] abort [then]  \ xxx debugging

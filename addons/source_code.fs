@@ -1,30 +1,26 @@
-\ addons/source_code.fs 
+.( addons/source_code.fs) cr
 
-\ This file is part of
-\ Fendo-programandala.
+\ This file is part of Fendo.
 
 \ This file is the source code addon.
 
 \ Copyright (C) 2013 Marcos Cruz (programandala.net)
 
-\ Fendo-programandala is free software; you can redistribute
-\ it and/or modify it under the terms of the GNU General
-\ Public License as published by the Free Software
-\ Foundation; either version 2 of the License, or (at your
-\ option) any later version.
+\ Fendo is free software; you can redistribute it and/or modify it
+\ under the terms of the GNU General Public License as published by
+\ the Free Software Foundation; either version 2 of the License, or
+\ (at your option) any later version.
 
-\ Fendo-programandala is distributed in the hope that it will be useful,
-\ but WITHOUT ANY WARRANTY; without even the implied
-\ warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
-\ PURPOSE.  See the GNU General Public License for more
-\ details.
+\ Fendo is distributed in the hope that it will be useful, but WITHOUT
+\ ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+\ or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
+\ License for more details.
 
-\ You should have received a copy of the GNU General Public
-\ License along with this program; if not, see
-\ <http://gnu.org/licenses>.
+\ You should have received a copy of the GNU General Public License
+\ along with this program; if not, see <http://gnu.org/licenses>.
 
-\ Fendo-programandala is written in Forth
-\ with Gforth (<http://www.bernd-paysan.de/gforth.html>).
+\ Fendo is written in Forth with Gforth
+\ (<http://www.bernd-paysan.de/gforth.html>).
 
 \ **************************************************************
 \ Change history of this file
@@ -41,12 +37,18 @@
 \   anymore; this is a first step towards syntax highlighting.
 \ 2013-11-08 Fix: The rubbish byte at the end of the last block of an
 \   Abersoft Forth blocks file is removed.
+\ 2013-11-09 First working version with syntax highlighting.
+\   Addon moved from Fendo-programandala to Fendo, because part of the
+\   code is required to implement optional syntax highlighting in the
+\   '###' markup.
+\ 2013-11-09 The BASin-specific code is moved to its own file.
+\ 2013-11-09 The Forth-blocks-specific code is moved to its own file.
 
 \ **************************************************************
 \ Todo
 
 \ 2013-07-26 Character set conversions.
-\ 2013-11-07 Syntax highlighting, with Vim.
+\ 2013-11-09 Syntax highlighting cache!
 
 \ **************************************************************
 \ Requirements
@@ -57,9 +59,8 @@ require galope/module.fs
 require galope/minus-leading.fs  \ '-leading'
 require galope/sourcepath.fs  \ 'sourcepath'
 require galope/string-suffix-question.fs  \ 'string-suffix?'
-require ffl/chr.fs  \ 'chr-digit'
 
-module: source_code_fendo-programandala_addon_module
+module: source_code_fendo_addon_module
 
 \ **************************************************************
 \ Syntax highlighting with Vim
@@ -70,9 +71,9 @@ s" /tmp/fendo-programandala.addon.source_code.txt" 2dup 2constant input_file$
 s" .xhtml" s+ 2constant output_file$
 
 export  \ xxx tmp
-false [if]
+true [if]
 s" vim -f " 2constant base_highlight_command$
-[else]
+[else]  \ xxx tmp
 $variable (base_highlight_command$)
 s" vim -f " (base_highlight_command$) $!
 : base_highlight_command$  ( -- ca len )
@@ -84,6 +85,10 @@ hide
 
 export
 $variable filetype$  \ same values than Vim's 'filetype' 
+: programming_language  ( ca len -- )
+  \ Set the Vim's filetype for syntax highlighting.
+  filetype$ $!
+  ;
 hide
 
 : program+  ( ca len -- ca' len' )
@@ -105,15 +110,21 @@ hide
   base_highlight_command$ syntax+ program+ file+
   ;
 : >input_file  ( ca len -- )
+  \ Save the given source code to the file that Vim will load as input.
+  \ ca len = plain source code
   input_file$ w/o create-file throw
   dup >r write-file throw
   r> close-file throw
   ;
 : <output_file  ( -- ca len )
+  \ Get the content of the file that Vim created as output.
+  \ ca len = source code highlighted with <span> XHTML tags
   output_file$ slurp-file
   ;
 : (highlighted)  ( ca1 len1 -- ca2 len2 )
   \ Highlight the given source code.
+  \ ca1 len1 = plain source code
+  \ ca2 len2 = source code highlighted with <span> XHTML tags
   >input_file
   highlighting_command$ 
 \  2dup type cr  \ xxx informer
@@ -121,13 +132,16 @@ hide
   $? abort" The highlighting command failed"
   <output_file
   ;
-variable highlighting?  highlighting? on
+export
+variable highlight?  highlight? on
 : highlighted  ( ca1 len1 -- ca1 len1 | ca2 len2 )
   \ Highlight the given source code, if needed.
-  highlighting? @ if  (highlighted)  then
+  \ ca1 len1 = plain source code
+  \ ca2 len2 = source code highlighted with <span> XHTML tags
+  highlight? @ if  (highlighted)  then  s" " programming_language
   ;
-: filename>filetype  { D: filename -- ca2 len2 }
-  \ Convert a filename to a Vim filetype.
+: (filename>filetype)  { D: filename -- ca2 len2 }
+  \ Convert a filename to a Vim's filetype.
   filename s" .4th" string-suffix? if s" forth" exit  then
   filename s" .asm" string-suffix? if s" z80" exit  then
   filename s" .bac" string-suffix? if s" bacon" exit  then
@@ -158,6 +172,12 @@ variable highlighting?  highlighting? on
   filename s" ratpoisonrc" str=  if  s" ratpoison" exit  then
   s" text"
   ;
+: filename>filetype  ( ca1 len1 -- ca2 len2 )
+  \ Convert a filename to a Vim's filetype, if needed.
+  \ If 'filetype$' has been set, use it; this let the application
+  \ to override the default guessing based on the filename.
+  filetype$ $@ dup if  2nip  else  2drop (filename>filetype)  then
+  ;
 
 \ **************************************************************
 \ File encodings
@@ -181,6 +201,7 @@ drop
 \ **************************************************************
 \ Generic source code
 
+export
 $variable source_code$
 0 value source_code_fid
 
@@ -204,21 +225,24 @@ $variable source_code$
 : append_source_code_line  ( ca len -- )
   source_code$ $+!  s\" \n" source_code$ $+!
   ;
+: empty_source_code  ( -- )
+  0 source_code$ $!len
+  ;
+: source_code@  ( -- ca len )
+  source_code$ $@
+  ;
 : slurp_source_code  ( -- ca len )
   \ Slurp the content of the opened source code file,
   \ from its current file position.
   \ ca len = source code read from the current file
-  0 source_code$ $!len
   begin   read_source_code_line
   while   append_source_code_line
-  repeat  2drop  source_code$ $@
+  repeat  2drop source_code@
   ;
 : (opened_source_code)  ( -- )
   \ Read and echo the content of the opened source code file.
   slurp_source_code echo_source_code close_source_code 
   ;
-export
-
 : (source_code)  ( ca len -- )
   \ Read and echo the content of a source code file.
   \ ca len = file name
@@ -228,147 +252,9 @@ export
   \ Read and echo the content of a source code file.
   \ The Vim filetype is guessed from the filename.
   \ ca len = file name
-  2dup filename>filetype filetype$ $!  (source_code)
-  ;
-
-hide
-
-\ **************************************************************
-\ Forth source code in blocks
-
-16 value /forth_block  \ lines per block
-64 value /forth_block_line  \ chars per line
-variable forth_block  \ counter
-variable forth_block_line  \ counter
-variable forth_block_lenght 
-variable abersoft_forth?  \ flag
-variable highlight_block_0?  \ flag
-s" Bloque" s" Bloko" s" Block" mlsconstant forth_block$
-: echo_forth_block_number  ( -- )
-  [<p>] forth_block$ echo forth_block @ _echo. [</p>] 
-  ;
-: reset_forth_block  ( -- )
-  0 forth_block_lenght !  0 source_code$ $!len
-  ;
-: next_forth_block  ( -- )
-  1 forth_block +!  reset_forth_block 
-  ;
-: update_block_highlighting  ( -- )
-  forth_block @ 0=
-  abersoft_forth? @
-  highlight_block_0? @ 0=  or and
-  if  highlighting? off  then
-  ;
-: (echo_forth_block)  ( -- )
-  echo_forth_block_number
-  highlighting? @  update_block_highlighting
-  source_code$ $@ echo_source_code 
-  highlighting? !
-  ;
-: echo_forth_block  ( -- )
-  forth_block_lenght @ if  (echo_forth_block)  then  next_forth_block
-  ;
-: forth_block_line++  ( -- n )
-  \ Increment the counter of Forth block lines.
-  \ n = new line number
-  forth_block_line @  1+ dup /forth_block < abs *  dup forth_block_line !
-  ;
-: only_one_final_char?  ( ca len -- wf )
-  -leading nip 1 =
-  ;
-: (tidy_line)  ( ca len -- )
-  \ Override the last byte of the string with a space, if needed.
-  \ It's not clear if that byte is always corrupted,
-  \ or, as supposed here, only when the rest of the line is blank.
-  \ ca len = Forth block line, last one of the current block
-  2dup only_one_final_char? if  + 1- bl swap c!  else  2drop  then
-  ;
-: tidy_line  ( ca len -- )
-  \ Remove the last byte of the last line of the last Forth block.
-  \ This is needed with Abersoft Forth's TAP files.
-  \ It seems a bug of Abersoft Forth, that corrupts that memory
-  \ position before saving the blocks to tape.
-  \ ca len = Forth block line
-  forth_block_line @ /forth_block 1- =  \ last of block?
-  if  (tidy_line)  else  2drop  then
-  ;
-: read_forth_block_line  ( -- ca len )
-  \ Note: 'source_line' is a buffer defined in
-  \ <fendo/fendo_markup_wiki.fs>.
-  source_line dup /forth_block_line source_code_fid read-file throw
-\  2dup ." «" type ." »" cr  \ xxx informer
-  ;
-: save_forth_block_line  ( ca len -- )
-  abersoft_forth? if  2dup tidy_line  then
-  -trailing  dup forth_block_lenght +!
-  append_source_code_line
-  forth_block_line++ 0= if  echo_forth_block  then
-  ;
-: skip_tap_header  ( -- )
-  \ Code adapted from my tool "scr2txt" (2005-2012).
-  24 s>d source_code_fid reposition-file throw
-  ;
-: (forth_blocks_source_code)  ( -- )
-  s" forth" filetype$ $!
-  0 forth_block !
-  0 forth_block_line !
-  0 forth_block_lenght !
-  0 source_code$ $!len
-  begin   read_forth_block_line dup
-  while   save_forth_block_line
-  repeat  2drop 
-  ;
-
-export
-
-: forth_blocks_source_code  ( ca len -- )
-  \ Read the content of a Forth blocks file and echo it.
-  \ ca len = file name
-  open_source_code (forth_blocks_source_code) close_source_code
-  ;
-: abersoft_forth_blocks_source_code  ( ca len -- )
-  \ Read the content of a ZX Spectrum's Abersoft Forth blocks TAP file and echo it.
-  \ xxx todo set the character set for this file type
-  \ ca len = file name
-  abersoft_forth? on
-  open_source_code skip_tap_header (forth_blocks_source_code) close_source_code
-  abersoft_forth? off
-  ;
-: ql_forth_blocks_source_code  ( ca len -- )
-  \ Read the content of a QL Forth blocks file and echo it.
-  \ xxx todo set the character set for this file type
-  \ ca len = file name
-  forth_blocks_source_code
-  ;
-
-hide
-
-\ **************************************************************
-\ BASin source code
-
-: not_basin_header?  ( ca len -- wf )
-  \ ca len = source code line
-  -leading drop c@ chr-digit?
-  ;
-: skip_basin_header  ( -- )
-  \ Read the opened source file and skip the lines of the BASin header.
-  0.  \ fake file position, for the first 2drop
-  begin
-    2drop  \ file position from the previous loop
-    source_code_fid file-position throw 
-    read_source_code_line >r  not_basin_header?  r> 0= or
-  until  source_code_fid reposition-file throw
-  ;
-
-export
- 
-: basin_source_code  ( ca len -- )
-  \ Read the content of a BASin file and echo it.
-  \ xxx todo set the character set for this file type
-  \ ca len = file name
-  s" basin" filetype$ $!
-  open_source_code skip_basin_header (opened_source_code)
+  2dup filename>filetype programming_language  (source_code)
   ;
 
 ;module
 
+.( addons/source_code.fs compiled) cr
