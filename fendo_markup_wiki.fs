@@ -47,6 +47,8 @@
 \ 'bs&' is provided by <galope/sb.fs>, included in <fendo.fs>.
 
 require galope/dollar-variable.fs  \ '$variable'
+require galope/trim.fs  \ 'trim'
+require fendo/addons/source_code.fs  \ xxx needed by '###'
 
 \ **************************************************************
 \ Debug tools
@@ -155,13 +157,6 @@ variable opened_[^^]?   \ is there an open '^^'?
 variable opened_[_]?    \ is there an open '_'?
 variable opened_[__]?   \ is there an open '__'?
 
-: <pre><code>  ( -- )
-  [<pre>] [<code>]
-  ;
-: </code></pre>  ( -- )
-  [</code>] [</pre>]
-  ;
-
 \ **************************************************************
 \ Tools for lists
 
@@ -230,7 +225,7 @@ variable #cells  \ counter for the current table
 \ **************************************************************
 \ Tools for merged Forth code
 
-false [if]  \ xxx first version
+0 [if]  \ xxx first version
 
 : (forth_code_end?)  ( ca len -- wf )
   \ Is a name a valid end markup of the Forth code?
@@ -326,7 +321,7 @@ true [if]  \ xxx 2013-08-10 second version, more legible
 
 [then]
 
-false [if]  \ experimental version with dynamic string, not finished
+0 [if]  \ experimental version with dynamic string, not finished
 
 : forth_code_end?  ( ca len -- wf )
   \ Is a name a valid end markup of the Forth code?
@@ -400,46 +395,34 @@ $variable forth_code$
     then
   until
   ;
-0 [if]  \ xxx old
-: (###)  ( "source code ###" -- )
-  \ Parse a block source code region.
-  \ xxx todo preserve spaces (reading complete lines)
-  \ xxx todo translate < and &
-  begin   parse-name dup 
-    if    2dup s" ###" str= dup >r 0= ?_echo r>
-    else  2drop echo_cr refill 0= dup abort" Missing closing '###'"
-    then
-  until
+: ###-line  ( -- ca len )
+  \ Parse a new line from the current source code block.
+  read_source_line 0= abort" Missing closing '###'"
   ;
-[then]
-
-s" /counted-string" environment? 0=
-[if]  255  [then]  dup constant /source_line
-2 chars + buffer: source_line
-
-: read_fid_line  { fid -- ca len wf }
-  source_line dup /source_line fid read-line throw
+: "###"?  ( ca len -- wf )
+  \ Does the given string contains only "###"?
+  trim s" ###" str=
   ;
-: read_source_line  ( -- ca len wf )
-  \ Get a line from the current source.
-  source-id read_fid_line
+: ###-line?  ( -- ca len true | false )
+  \ Parse a new line from the current source code block.
+  ###-line 2dup "###"? dup if  nip nip  then  0=
   ;
-
-markup>order also forth
-' <pre><code> alias block_source_code{
-' </code></pre> alias }block_source_code
-previous markup<order
-
-: (###)  ( "source code ###" -- )
-  \ Parse a block source code region.
-  \ xxx todo translate < and &
-\ cr ." (###) code = "  \ xxx informer
+: plain_###-zone  ( "source code ###" -- )
+  \ Parse and echo a source code zone "as is".
+  \ xxx todo translate "<" and "&" ?
+  begin  ###-line? dup >r ?echo_line r> 0=  until
+  ;
+: highlighted_###-zone  ( "source code ###" -- )
+  \ Parse a source code zone, highlight and echo it.
+  empty_source_code 
   begin   
-    read_source_line 0= abort" Missing closing '###'"
-\   2dup cr type  \ xxx informer
-    2dup s" ###" str= dup >r 0= ?echo_line r>
-  until
-\ ." ### end!"  \ xxx informer
+    ###-line? dup >r 
+    if  append_source_code_line  then  r> 0=
+  until  source_code@ highlighted echo
+  ;
+: (###)  ( "source code ###" -- )
+  \ Parse and echo a source code zone.
+  highlight? @ if  highlighted_###-zone  else  plain_###-zone  then
   ;
 
 \ **************************************************************
@@ -553,7 +536,7 @@ variable image_finished?  \ flag, no more image markup to parse?
   2dup https://? >r
   ftp://?  r> or r> or
   ;
-false [if]  \ xxx old
+0 [if]  \ xxx old
 wordlist constant links_wid  \ for bookmarked links
 : link:?  ( ca len --  xt -1 | 0 )
   \ Is a string the name of a bookmarked link?
@@ -623,7 +606,7 @@ variable link_type
 : file_link?  ( -- wf )
   link_type @ file_link =
   ;
-false [if]  \ xxx old, 2013-10-22 moved to its own file <fendo_shortcuts.fs>
+0 [if]  \ xxx old, 2013-10-22 moved to its own file <fendo_shortcuts.fs>
 : unlink?  ( xt1 xt2 1|-1  |  xt1 0  --  xt2 xt2 true  |  0 )
   \ Execute xt2 if it's different from xt1.
   \ xt1 = old xt (former loop)
@@ -816,7 +799,7 @@ variable local_link_to_draft_page?
 \ **************************************************************
 \ Tools for bookmarked links
 
-false [if]  \ xxx old
+0 [if]  \ xxx old
 : link:  ( ca1 len1 ca2 len2 ca3 len3 "name" -- )
   \ xxx old
   \ Create a bookmarked link.
@@ -832,7 +815,7 @@ false [if]  \ xxx old
     ( dfa ) dup >r $@ r@ cell + $@ r> 2 cells + $@
   ;
 [then]
-false [if]  \ xxx old, 2013-10-22 moved to its own file <fendo_shortcuts.fs>
+0 [if]  \ xxx old, 2013-10-22 moved to its own file <fendo_shortcuts.fs>
 : link:  ( "name" -- )
   \ xxx todo test it
   get-current >r  fendo_links_wid set-current :  r> set-current
@@ -957,7 +940,7 @@ true [if]  \ xxx first version
 
 [then]
 
-false [if]  \ experimental version
+0 [if]  \ experimental version
 
 \ quite different approach
 \ xxx todo interpret numbers
@@ -1145,7 +1128,7 @@ false [if]  \ experimental version
   \ xxx todo preserve spaces (reading complete lines)
   begin
     read_source_line 0= abort" Missing closing '}}}'"
-    2dup s" }}}" str= dup >r 0= ?echo_line r>
+    2dup trim s" }}}" str= dup >r 0= ?echo_line r>
   until
   ;
 : }}}  ( -- )
@@ -1306,5 +1289,6 @@ only forth fendo>order definitions
 \   been removed, in order to use the original Gforth's 's+' in several
 \   cases.
 \ 2013-11-09: New: 'read_source_line'.
+\ 2013-11-09: New: The "###" markup highlights the code.
 
 [then]

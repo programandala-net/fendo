@@ -278,6 +278,7 @@ markup<order
 
 set-current
 
+\ **************************************************************
 \ Immediate version of some usual tags, in the Fendo wordlist, in
 \ order to save code when they are used in the user's application (no
 \ '[markup>order]' and '[markup<order]' are required).
@@ -320,6 +321,16 @@ markup>order
 : [<ul>]  ( -- )  postpone <ul> postpone \n  ;  immediate
 : [</ul>]  ( -- )  postpone </ul> postpone \n  ;  immediate
 markup<order
+
+\ **************************************************************
+\ Tag shortcuts used by the wiki markup and some addons
+
+: block_source_code{  ( -- )
+  [<pre>] [<code>]
+  ;
+: }block_source_code  ( -- )
+  [</code>] [</pre>]
+  ;
 
 .( fendo_markup_html_tags.fs compiled) cr
 
