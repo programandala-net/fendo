@@ -37,6 +37,7 @@
 \ 2013-07-21 New: 'echo.'. This somehow fixes the print corruption
 \   caused by using 's>d <# #s #> echo' in the HTML template.
 \ 2013-07-21 New: 'echo_line'.
+\ 2013-11-07 New: '_echo.'.
 
 \ **************************************************************
 \ Output
@@ -132,8 +133,14 @@ variable separate?  \ flag: separate the next tag or word from the current one?
 : ?echo_line  ( ca len f -- )
   if  echo_line  else  2drop  then
   ;
+: (echo.)  ( n -- )
+  s>d <# #s #> 
+  ;
 : echo.  ( n -- )
-  s>d <# #s #> echo
+  (echo.) echo
+  ;
+: _echo.  ( n -- )
+  (echo.) echo_space echo
   ;
 .( fendo_echo.fs compiled) cr
 
