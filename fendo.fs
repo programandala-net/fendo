@@ -49,6 +49,9 @@
 \ **************************************************************
 \ Todo
 
+\ 2013-11-09 make '###' to highlight the code, if 'filetype$' is set;
+\ rename 'filetype$' to 'programming_language$'.
+
 \ 2013-11-07 bug: local links to draft pages don't wor.
 \ this featured is not implemented.
 
@@ -135,6 +138,7 @@ require galope/buffer-colon.fs  \ 'buffer:'
 require galope/colon-alias.fs  \ ':alias'
 require galope/colon-create.fs  \ ':create'
 require galope/dollar-store-comma.fs  \ '$!,'
+require galope/dollar-variable.fs  \ '$variable'
 require galope/enum.fs  \ 'enum'
 require galope/minus-bounds.fs  \ '-bounds'
 require galope/minus-extension.fs  \ '-extension'
@@ -156,8 +160,8 @@ true [if]
   1024 100 * heap_sb
   warnings @  warnings off
   \ ' bs" alias s"  immediate
-  ' bs+ alias s+
-  ' bs& alias s&
+  \ ' bs+ alias s+
+  \ ' bs& alias s&
   warnings !
 
 [then]

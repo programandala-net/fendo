@@ -42,6 +42,13 @@
 \ 2013-06-19: Compare Creole's markups with txt2tags' markups.
 
 \ **************************************************************
+\ Requirements
+
+\ 'bs&' is provided by <galope/sb.fs>, included in <fendo.fs>.
+
+require galope/dollar-variable.fs  \ '$variable'
+
+\ **************************************************************
 \ Debug tools
 
 : xxxtype  ( ca len -- ca len )
@@ -334,7 +341,7 @@ false [if]  \ experimental version with dynamic string, not finished
 \  dup  if ." END!" then  \ xxx informer
 \  key drop  \ xxx informer
   ;
-variable forth_code$  \ dynamic string
+$variable forth_code$
 : forth_code$+  ( ca len -- )
   \ Append a string to the parsed Forth code.
   forth_code$ $@  s"  " s+ 2swap s+  forth_code$ $!
@@ -405,17 +412,30 @@ variable forth_code$  \ dynamic string
   until
   ;
 [then]
+
 s" /counted-string" environment? 0=
-[if]  255  [then]  dup constant /source-line
-2 chars + buffer: source-line
+[if]  255  [then]  dup constant /source_line
+2 chars + buffer: source_line
+
+: read_fid_line  { fid -- ca len wf }
+  source_line dup /source_line fid read-line throw
+  ;
+: read_source_line  ( -- ca len wf )
+  \ Get a line from the current source.
+  source-id read_fid_line
+  ;
+
+markup>order also forth
+' <pre><code> alias block_source_code{
+' </code></pre> alias }block_source_code
+previous markup<order
+
 : (###)  ( "source code ###" -- )
   \ Parse a block source code region.
-  \ xxx todo preserve spaces (reading complete lines)
   \ xxx todo translate < and &
 \ cr ." (###) code = "  \ xxx informer
   begin   
-    source-line dup /source-line source-id read-line throw 
-    0= abort" Missing closing '###'"
+    read_source_line 0= abort" Missing closing '###'"
 \   2dup cr type  \ xxx informer
     2dup s" ###" str= dup >r 0= ?echo_line r>
   until
@@ -541,7 +561,7 @@ wordlist constant links_wid  \ for bookmarked links
   ;
 [then]
 link_text_as_attribute? 0= [if]  \ xxx tmp
-variable link_text  \ dynamic string
+$variable link_text
 : link_text!  ( ca len -- )
   link_text $!
   ;
@@ -558,7 +578,7 @@ variable link_text  \ dynamic string
   link_text@ evaluate_content
   ;
   
-variable link_anchor  \ dynamic string
+$variable link_anchor
 : -anchor  ( ca len -- ca len | ca' len' )
   \ Extract the anchor from a href attribute and store it.
   \ ca len = href attribute
@@ -730,7 +750,7 @@ defer parse_link_text  ( "...<spaces>|<spaces>" | "...<spaces>]]<spaces>"  -- )
   ;
 : external_class  ( -- )
   \ Add "external" to the class attribute.
-  class=@ s" external" s& class=!
+  class=@ s" external" bs& class=!
   ;
 : convert_local_link_href  ( ca len -- ca' len' )
   dup if  current_target_extension s+  then
@@ -1020,7 +1040,7 @@ false [if]  \ experimental version
   ;
 : ###  ( -- )
   \ Open and close a block <code> region.
-  <pre><code> (###) </code></pre>
+  block_source_code{ (###) }block_source_code
   ;
 
 \ Headings
@@ -1124,8 +1144,7 @@ false [if]  \ experimental version
   \ xxx todo combine with '(###)'?
   \ xxx todo preserve spaces (reading complete lines)
   begin
-    source-line dup /source-line source-id read-line throw 
-    0= abort" Missing closing '}}}'"
+    read_source_line 0= abort" Missing closing '}}}'"
     2dup s" }}}" str= dup >r 0= ?echo_line r>
   until
   ;
@@ -1282,5 +1301,10 @@ only forth fendo>order definitions
 \   'source-line' and '/source-line'.
 \ 2013-11-07: New: "https" links are recognized.
 \ 2013-11-07: New: links to draft local pages are recognized.
+\ 2013-11-09: Change: alias 's&' changed to the original 'bs&',
+\   provided by <galope/sb.fs>, because also alias 's+' for 'bs+' has
+\   been removed, in order to use the original Gforth's 's+' in several
+\   cases.
+\ 2013-11-09: New: 'read_source_line'.
 
 [then]
