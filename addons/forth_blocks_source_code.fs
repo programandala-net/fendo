@@ -54,7 +54,7 @@ s" Bloque" s" Bloko" s" Block" mlsconstant forth_block$
   [<p>] forth_block$ echo forth_block @ _echo. [</p>] 
   ;
 : reset_forth_block  ( -- )
-  0 forth_block_lenght !  empty_source_code
+  0 forth_block_lenght !  new_source_code
   ;
 : next_forth_block  ( -- )
   1 forth_block +!  reset_forth_block 
@@ -119,7 +119,7 @@ s" Bloque" s" Bloko" s" Block" mlsconstant forth_block$
   0 forth_block !
   0 forth_block_line !
   0 forth_block_lenght !
-  empty_source_code
+  new_source_code
   begin   read_forth_block_line dup
   while   save_forth_block_line
   repeat  2drop 
