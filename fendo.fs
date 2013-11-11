@@ -49,11 +49,9 @@
 \ **************************************************************
 \ Todo
 
-\ 2013-11-09 make '###' to highlight the code, if 'filetype$' is set;
-\ rename 'filetype$' to 'programming_language$'.
+\ 2013-11-11 link tools in <fendo_tools.fs>.
 
-\ 2013-11-07 bug: local links to draft pages don't wor.
-\ this featured is not implemented.
+\ 2013-11-09 rename 'filetype$' to 'programming_language$'.
 
 \ 2013-11-05 bug: when a link text is evaluated with
 \ 'evaluate_content', and it has markup, the attributes set for the
@@ -82,8 +80,8 @@
 
 \ 2013-06-28 Make "plain_" data fields optional; they can be
 \ filled as default data, if empty.
-\
-\ 2013-06-08 line comments in data header.
+
+\ 2013-06-08 line comments in data header?
 
 \ 2013-10-30 Fix: 'forth-wordlist' is set to current before
 \   requiring the library files. The problem was <ffl/config.fs>
@@ -157,11 +155,11 @@ true [if]
 
   require galope/sb.fs  \ string buffer
   1024 100 * heap_sb
-  warnings @  warnings off
+  \ warnings @  warnings off
   \ ' bs" alias s"  immediate
   \ ' bs+ alias s+
   \ ' bs& alias s&
-  warnings !
+  \ warnings !
 
 [then]
 
@@ -244,10 +242,15 @@ wordlist constant fendo_links_wid  \ user links
 
 fendo>order definitions
 
-s" A-02-20131026" 2constant fendo_version
+\ **************************************************************
+\ Config
+
+s" A-02-20131111" 2constant fendo_version
 
 \ **************************************************************
 \ Modules
+
+false value multilingual?  \ to be changed by <addons/multilingual.fs>
 
 depth [if] abort [then]  \ xxx debugging
 include ./fendo_config.fs

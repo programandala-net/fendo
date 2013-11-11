@@ -583,10 +583,7 @@ variable link_type
 : set_link_type  ( ca len -- )
   \ Get and store the type id of an href attribute.
   \ xxx todo no href means local, if there is/was an anchor label
-\  .s 2dup type ." --> "  \ xxx informer
-  >link_type_id
-\  dup . ." link type" cr key drop  \ xxx informer
-  link_type !
+  >link_type_id link_type !
   ;
 : external_link?  ( -- wf )
   link_type @ external_link =
@@ -656,6 +653,7 @@ defer parse_link_text  ( "...<spaces>|<spaces>" | "...<spaces>]]<spaces>"  -- )
     then  
   until   ( ca len ) unraw_attributes
   ;
+0 [if]  \ xxx old tmp
 : (href_checked)  ( ca len -- ca len )
   \ Check the given empty href attribute.
   \ If there's no anchor, the href is not valid. 
@@ -665,11 +663,16 @@ defer parse_link_text  ( "...<spaces>|<spaces>" | "...<spaces>]]<spaces>"  -- )
   \ Check the given href attribute, if it's empty.
   dup 0= if  (href_checked)  then
   ;
+[then]
+: (get_link_href)  ( ca len -- )
+  unshortcut 
+\  href_checked  \ xxx old
+  2dup set_link_type
+  local_link? if  -anchor  then  href=!
+  ;
 : get_link_href  ( "href<spaces>" -- )
   \ Parse and store the link href attribute.
-  parse-word unshortcut -anchor 
-\  href_checked  \ xxx tmp
-  2dup set_link_type href=!
+  parse-word (get_link_href)
 \  ." ---> " href=@ type cr  \ xxx informer
 \  external_link? if  ." EXTERNAL LINK: " href=@ type cr  then  \ xxx informer
   [ false ] [if]  \ simple version
@@ -726,9 +729,13 @@ defer parse_link_text  ( "...<spaces>|<spaces>" | "...<spaces>]]<spaces>"  -- )
   \ Add "external" to the class attribute.
   class=@ s" external" bs& class=!
   ;
-: convert_local_link_href  ( ca len -- ca' len' )
-  dup if  current_target_extension s+  then
+: link_anchor+  ( ca len -- )
+  \ Restore the link anchor of the local href attribute, if any.
   link_anchor $@ +anchor
+  ;
+: convert_local_link_href  ( ca len -- ca' len' )
+  \ Convert a raw local href to a finished href.
+  dup if  current_target_extension s+  then  link_anchor+
   ;
 : convert_file_link_href  ( ca len -- ca' len' )
   s" file://" -prefix  files_subdir $@ 2swap s+  
@@ -736,11 +743,22 @@ defer parse_link_text  ( "...<spaces>|<spaces>" | "...<spaces>]]<spaces>"  -- )
 : convert_link_href  ( ca len -- ca' len' )
   \ ca len = href attribute, without anchor
   link_type @ case
-    local_link  of  convert_local_link_href  endof
-    file_link   of  convert_file_link_href   endof
+    local_link      of  convert_local_link_href     endof
+    file_link       of  convert_file_link_href      endof
   endcase 
   ;
 variable local_link_to_draft_page?
+: (tune_local_hreflang)  ( a -- )
+  \ Set the hreflang attribute of a local link, if needed.
+  \ a = page id of the link destination
+  s" lang 2dup current_lang" evaluate str=
+  if  2drop  else  hreflang=?!  then
+  ;
+: tune_local_hreflang  ( a -- )
+  \ Set the hreflang attribute of a local link, if needed.
+  \ a = page id of the link destination
+  multilingual? if  (tune_local_hreflang)  else  drop  then
+  ;
 : tune_local_link  ( -- )
   \ xxx todo fetch alternative language title and description
 \  ." tune_local_link" cr  \ xxx informer
@@ -754,7 +772,7 @@ variable local_link_to_draft_page?
 \  ." title in tune_local_link (2) = " 2dup type cr  \ xxx informer
   link_text?!  \ xxx bug: this call corrupts 'link_text'
 \  link_text@ ." link_text in tune_local_link (2) = " type cr  \ xxx informer
-  r@ language hreflang=?!
+  r@ tune_local_hreflang
   r> access_key accesskey=?!
 \  ." end of tune_local_link" cr  \ xxx informer
   ;
@@ -1063,12 +1081,7 @@ true [if]  \ xxx first version
 \ Links
 
 : [[  ( "linkmarkup]]" -- )
-\  ." #nothings at the start of [[ = " #nothings @ . cr  \ xxx informer
-  parse_link tune_link
-\  ." #nothings after ([[) = " #nothings @ . cr  \ xxx informer
-\  ." 5)" href=@ type cr  \ xxx informer
-\  ." #nothings at the end of [[ = " #nothings @ . cr  \ xxx informer
-  echo_link
+  parse_link tune_link echo_link
   ;
 : ]]  ( -- )
   true abort" ']]' without '[['"
@@ -1256,5 +1269,11 @@ only forth fendo>order definitions
 \   cases.
 \ 2013-11-09: New: 'read_source_line'.
 \ 2013-11-09: New: The "###" markup highlights the code.
+\ 2013-11-11: New: '(get_link_href)' factored out from 'get_link_href'
+\   in order to use it in <fendo_tools.fs>.
+\ 2013-11-11: New: 'tune_local_hreflang' sets the hreflang of local
+\   links when needed.
+\ 2013-11-11: Fix: anchors of external links were removed from the
+\   URL.
 
 [then]
