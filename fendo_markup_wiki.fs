@@ -414,7 +414,7 @@ $variable forth_code$
   ;
 : highlighted_###-zone  ( "source code ###" -- )
   \ Parse a source code zone, highlight and echo it.
-  empty_source_code 
+  new_source_code 
   begin   
     ###-line? dup >r 
     if  append_source_code_line  then  r> 0=
@@ -441,15 +441,6 @@ str-create tmp-str
   tmp-str str-get
   >sb  \ xxx tmp
   evaluate
-  ;
-: link  ( a ca len -- )
-  \ Create a link to a local page.
-  \ a = page id
-  \ ca len = text link, to be evaluated as content
-  rot dup plain_description title=!
-  dup target_file href=!
-  access_key accesskey=!
-  [<a>] evaluate_content [</a>]
   ;
 
 \ **************************************************************
@@ -796,31 +787,6 @@ variable local_link_to_draft_page?
   echo_link? if  (echo_link)  else  echo_link_text  then  reset_link
   ;
 
-\ **************************************************************
-\ Tools for bookmarked links
-
-0 [if]  \ xxx old
-: link:  ( ca1 len1 ca2 len2 ca3 len3 "name" -- )
-  \ xxx old
-  \ Create a bookmarked link.
-  \ ca1 len1 = raw attributes
-  \ ca2 len2 = link text
-  \ ca3 len4 = URL or local page or bookmarked link
-  \ "name" = link name 
-  parse-name? abort" Missing link: name"
-  get-current >r  links_wid set-current
-  :create  $!, $!, $!,
-  r> set-current
-  does>  ( -- ca1 len1 ca2 len2 ca3 len3 ) 
-    ( dfa ) dup >r $@ r@ cell + $@ r> 2 cells + $@
-  ;
-[then]
-0 [if]  \ xxx old, 2013-10-22 moved to its own file <fendo_shortcuts.fs>
-: link:  ( "name" -- )
-  \ xxx todo test it
-  get-current >r  fendo_links_wid set-current :  r> set-current
-  ; 
-[then]
 \ **************************************************************
 \ Tools for languages
 

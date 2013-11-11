@@ -36,6 +36,11 @@
 \   ... same with description. Better: filter words!
 
 \ **************************************************************
+\ Requirements
+
+require galope/slash-csv.fs  \ '/csv'
+
+\ **************************************************************
 \ Page data engine
 
 variable current_data  \ address of the latest created data
@@ -129,32 +134,6 @@ datum: filename_extension  \ alternative target filename extension (with dot)
 
 datum: design_subdir  \ target relative path to the design, with final slash
 datum: template  \ HTML template filename in the design subdir
-
-\ **************************************************************
-\ Datum management
-
-: /csv  ( ca len -- ca#1 len#1 ... ca#u len#u u )
-  \ Divide a comma separated values in its values.
-  \ ca len = string with comma separated values
-  \ ca#1 len#1 ... ca#u len#u = one or more strings
-  \ u = number of strings returned
-  depth >r
-  begin  s" ," /sides 0=  until  2drop
-  depth r> 2 - - 2/
-  ;
-false [if]  \ xxx todo
-: /csv  ( ca len -- ca#1 len#1 ... ca#u len#u u )
-  \ Divide a comma separated values in its values,
-  \ remove their trailing and leading spaces
-  \ and remove the empty values.
-  \ ca len = string with comma separated values
-  \ ca#1 len#1 ... ca#u len#u = one or more strings
-  \ u = number of strings returned
-  (/csv) depth 1- >r 0 ?do
-    trim dup 0= if  2drop  then
-  loop  r> depth - 2/
-  ;
-[then]
 
 \ **************************************************************
 \ File names
@@ -468,5 +447,6 @@ do_content? on
 \   important because the actual filename could be different from
 \   the filename taken from the markup, because of the
 \   "unshortcuttting" system.
+\ 2013-11-11 Change: '/csv' moved to the Galope library.
 
 [then]

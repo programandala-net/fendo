@@ -137,7 +137,6 @@ require galope/bracket-false.fs  \ '[false]'
 require galope/buffer-colon.fs  \ 'buffer:'
 require galope/colon-alias.fs  \ ':alias'
 require galope/colon-create.fs  \ ':create'
-require galope/dollar-store-comma.fs  \ '$!,'
 require galope/dollar-variable.fs  \ '$variable'
 require galope/enum.fs  \ 'enum'
 require galope/minus-bounds.fs  \ '-bounds'
@@ -261,6 +260,8 @@ depth [if] abort [then]  \ xxx debugging
 include ./fendo_files.fs
 depth [if] abort [then]  \ xxx debugging
 include ./fendo_markup.fs
+depth [if] abort [then]  \ xxx debugging
+include ./fendo_tools.fs
 depth [if] abort [then]  \ xxx debugging
 include ./fendo_parser.fs
 depth [if] abort [then]  \ xxx debugging
