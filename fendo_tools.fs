@@ -32,28 +32,24 @@
 \ Links
 
 : (link)  ( ca len -- )
-  \ Create a link. All attributes are already set.
-  \ ca len = text link, to be evaluated as content
-  [<a>] evaluate_content [</a>]
+  \ Create a link.
+  \ Its attributes and link text have to be set previously.
+  \ ca len = page id, URL or shortcut
+  (get_link_href) tune_link echo_link
   ;
-: local_link  ( a ca len -- )
-  \ Create a link to a local page.
-  \ a = page id
-  \ ca len = text link, to be evaluated as content
-  \ xxx todo hreflang
-  rot dup plain_description title=!
-  dup target_file href=!
-  access_key accesskey=!
-  (link)
+: link  ( ca1 len1 ca2 len2 -- )
+  \ Create a link of any type.
+  \ Its attributes have to be set previously.
+  \ ca1 len1 = page id, URL or shortcut
+  \ ca2 len2 = link text
+  link_text! (link) 
   ;
-: link  ( a ca len -- )
-  \ Create a link to a local page.
-  \ a = page id
-  \ ca len = text link, to be evaluated as content
-  \ xxx todo hreflang
-  rot dup plain_description title=!
-  dup target_file href=!
-  access_key accesskey=!
-  (link)
+: title_link  ( ca len -- )
+  \ Create a link to a local page, using the page title as text link
+  \ (unless the link text has been explicitily set).
+  \ Its attributes have to be set previously.
+  \ If 'link_text' is not set, the page title will be used.
+  \ ca len = page id or shortcut to it
+  \ xxx todo make it work with anchors!?
+  2dup data<id$>id title link_text?! (link)
   ;
-

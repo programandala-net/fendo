@@ -123,7 +123,7 @@ datum: properties  \ list of properties, separated by commas
 datum: edit_summary  \ description of the latest changes
 
 datum: related  \ list of page ids, xxx separated by commas?
-datum: language_versions  \ list of page ids, xxx separated by commas?
+datum: language_versions  \ list of page ids, xxx separated by commas?  \ xxx deprecated
 
 datum: filename_extension  \ alternative target filename extension (with dot)
 
