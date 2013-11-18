@@ -316,6 +316,7 @@ markup>order
 : [<pre>]  ( -- )  postpone <pre>  ;  immediate
 : [</pre>]  ( -- )  postpone </pre> postpone \n  ;  immediate
 : [<span>]  ( -- )  postpone <span>  ;  immediate
+: [</span>]  ( -- )  postpone </span>  ;  immediate
 : [<table>]  ( -- )  postpone <table> postpone \n  ;  immediate
 : [</td>]  ( -- )  postpone </td> postpone \n  ;  immediate
 : [</th>]  ( -- )  postpone </th> postpone \n  ;  immediate

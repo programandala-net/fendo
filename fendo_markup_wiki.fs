@@ -48,7 +48,7 @@
 
 require galope/dollar-variable.fs  \ '$variable'
 require galope/trim.fs  \ 'trim'
-require fendo/addons/source_code.fs  \ xxx needed by '###'
+\ require fendo/addons/source_code.fs  \ xxx needed by '###'
 
 \ **************************************************************
 \ Debug tools
@@ -69,6 +69,8 @@ require galope/n-r-from.fs  \ 'nr>'
 require galope/minus-prefix.fs  \ '-prefix'
 
 require ffl/str.fs  \ FFL's dynamic strings
+
+require fendo/addons/source_code_common.fs  \ xxx tmp
 
 set-current
 
@@ -410,7 +412,11 @@ $variable forth_code$
 : plain_###-zone  ( "source code ###" -- )
   \ Parse and echo a source code zone "as is".
   \ xxx todo translate "<" and "&" ?
-  begin  ###-line? dup >r ?echo_line r> 0=  until
+  begin  ###-line?
+  .s  \ xxx informer
+  dup >r ?echo_line
+  .s cr  \ xxx informer
+  r> 0=  until
   ;
 : highlighted_###-zone  ( "source code ###" -- )
   \ Parse a source code zone, highlight and echo it.
@@ -420,9 +426,12 @@ $variable forth_code$
     if  append_source_code_line  then  r> 0=
   until  source_code@ highlighted echo
   ;
+: highlight_###-zone?  ( -- wf )
+  highlight? programming_language@ nip 0<> and
+  ;
 : (###)  ( "source code ###" -- )
   \ Parse and echo a source code zone.
-  highlight? if  highlighted_###-zone  else  plain_###-zone  then
+  highlight_###-zone? if  highlighted_###-zone  else  plain_###-zone  then
   ;
 
 \ **************************************************************
@@ -1296,5 +1305,10 @@ only forth fendo>order definitions
 \ 2013-11-18: New: 'url', 'link_text_suffix'.
 \ 2013-11-18: Change: '-file://' factored from
 \   'convert_file_link_href'.
+\ 2013-11-18: Fix: 'highlight_###-zone?' instead of simply 'highlight?',
+\   in '(###)'.
+\ 2013-11-18  Now all words related to syntax highlighting
+\   are in <addons/source_code_common.fs>, not in
+\   <addons/source_code.fs>.
 
 [then]
