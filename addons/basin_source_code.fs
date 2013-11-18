@@ -26,6 +26,8 @@
 \ Change history of this file
 
 \ 2013-11-09 Code extracted from <addons/source_code.fs>.
+\ 2013-11-18 Change: 'programming_language' renamed to
+\   'programming_language!', after the changes in the main code.
 
 \ **************************************************************
 \ Todo
@@ -63,7 +65,7 @@ export
   \ Read the content of a BASin file and echo it.
   \ xxx todo set the character set for this file type
   \ ca len = file name
-  s" basin" programming_language
+  s" basin" programming_language!
   open_source_code skip_basin_header (opened_source_code)
   ;
 
