@@ -664,11 +664,12 @@ defer parse_link_text  ( "...<spaces>|<spaces>" | "...<spaces>]]<spaces>"  -- )
   dup 0= if  (href_checked)  then
   ;
 [then]
+$variable last_href$  \ xxx new, experimental, to be used by the application
 : (get_link_href)  ( ca len -- )
   unshortcut 
 \  href_checked  \ xxx old
   2dup set_link_type
-  local_link? if  -anchor  then  href=!
+  local_link? if  -anchor  then  2dup last_href$ $! href=!
   ;
 : get_link_href  ( "href<spaces>" -- )
   \ Parse and store the link href attribute.
@@ -743,8 +744,11 @@ defer parse_link_text  ( "...<spaces>|<spaces>" | "...<spaces>]]<spaces>"  -- )
   s" http://" domain $@ s+ 2swap
   data<id$>id target_file s+
   ;
+: -file://  ( ca len -- ca' len' )
+  s" file://" -prefix
+  ;
 : convert_file_link_href  ( ca len -- ca' len' )
-  s" file://" -prefix  files_subdir $@ 2swap s+  
+  -file://  files_subdir $@ 2swap s+  
   ;
 : convert_link_href  ( ca len -- ca' len' )
   \ ca len = href attribute, without anchor
@@ -793,9 +797,14 @@ variable local_link_to_draft_page?
   \ Echo just the link text.
   echo_space evaluate_link_text
   ;
+\ Two hooks for the application,
+\ e.g. to add the size of a linked file:
+defer link_text_suffix
+defer link_suffix
+' noop  dup is link_text_suffix  is link_suffix
 : (echo_link)  ( -- )
   \ Echo the final link.
-  [<a>] evaluate_link_text [</a>]
+  [<a>] evaluate_link_text link_text_suffix [</a>] link_suffix
   ;
 : echo_link?  ( -- wf )
   \ Can the current link be echoed?
@@ -1284,6 +1293,8 @@ only forth fendo>order definitions
 \ 2013-11-18: Fix: 'convert_local_link_href' worked only for the
 \   current page, and didn't used 'target_file', but only added
 \   the target extension.
-\ 2013-11-18: New: 'url'.
+\ 2013-11-18: New: 'url', 'link_text_suffix'.
+\ 2013-11-18: Change: '-file://' factored from
+\   'convert_file_link_href'.
 
 [then]

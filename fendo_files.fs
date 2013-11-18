@@ -29,6 +29,8 @@
 \ 2013-10-01 File created for the page redirection tools; 'open_target' and
 \ 'close_target' are moved here from "fendo_parser.fs".
 \ 2013-10-02 Page redirection tools.
+\ 2013-11-18 New: 'file>local', factored from 'open_source_code',
+\   (defined in <addons/source_code.fs>).
 
 \ **************************************************************
 \ Target file
@@ -59,6 +61,15 @@
   \ Close the target HTML page file, if needed.
 \  ." close_target" cr \ xxx informer
   target_fid @ if  (close_target)  then
+  ;
+
+\ **************************************************************
+\ Files
+
+: file>local ( ca1 len1 -- ca2 len2 )
+  \ ca1 len1 = file name
+  \ ca2 len2 = file name with local path
+  2>r target_dir $@ files_subdir $@ s+ 2r> s+
   ;
 
 \ **************************************************************
