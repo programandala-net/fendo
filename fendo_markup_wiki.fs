@@ -422,7 +422,7 @@ $variable forth_code$
   ;
 : (###)  ( "source code ###" -- )
   \ Parse and echo a source code zone.
-  highlight? @ if  highlighted_###-zone  else  plain_###-zone  then
+  highlight? if  highlighted_###-zone  else  plain_###-zone  then
   ;
 
 \ **************************************************************
@@ -733,9 +733,15 @@ defer parse_link_text  ( "...<spaces>|<spaces>" | "...<spaces>]]<spaces>"  -- )
   \ Restore the link anchor of the local href attribute, if any.
   link_anchor $@ +anchor
   ;
-: convert_local_link_href  ( ca len -- ca' len' )
+: convert_local_link_href  ( ca1 len1 -- ca2 len2 )
   \ Convert a raw local href to a finished href.
-  dup if  current_target_extension s+  then  link_anchor+
+  dup if  data<id$>id target_file  then  link_anchor+
+  ;
+: url  ( ca1 len1 -- ca2 len2 )
+  \ ca1 len1 = page id
+  \ ca2 len2 = URL
+  s" http://" domain $@ s+ 2swap
+  data<id$>id target_file s+
   ;
 : convert_file_link_href  ( ca len -- ca' len' )
   s" file://" -prefix  files_subdir $@ 2swap s+  
@@ -1275,5 +1281,9 @@ only forth fendo>order definitions
 \   links when needed.
 \ 2013-11-11: Fix: anchors of external links were removed from the
 \   URL.
+\ 2013-11-18: Fix: 'convert_local_link_href' worked only for the
+\   current page, and didn't used 'target_file', but only added
+\   the target extension.
+\ 2013-11-18: New: 'url'.
 
 [then]
