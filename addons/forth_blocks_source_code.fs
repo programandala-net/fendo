@@ -26,6 +26,8 @@
 \ Change history of this file
 
 \ 2013-11-09 Code extracted from <addons/source_code.fs>.
+\ 2013-11-18 Change: 'programming_language' renamed to
+\   'programming_language!', after the changes in the main code.
 
 \ **************************************************************
 \ Todo
@@ -115,7 +117,7 @@ s" Bloque" s" Bloko" s" Block" mlsconstant forth_block$
   24 s>d source_code_fid reposition-file throw
   ;
 : (forth_blocks_source_code)  ( -- )
-  s" forth" programming_language
+  s" forth" programming_language!
   0 forth_block !
   0 forth_block_line !
   0 forth_block_lenght !

@@ -43,6 +43,14 @@
 \   '###' markup.
 \ 2013-11-09 The BASin-specific code is moved to its own file.
 \ 2013-11-09 The Forth-blocks-specific code is moved to its own file.
+\ 2013-11-18 'open_source_code' factored out to 'file>local' (defined
+\   in <fendo_files.fs>.
+\ 2013-11-18 Change: 'programming_language' renamed to
+\   'programming_language!'.
+\ 2013-11-18 New: 'programming_language@'.
+\ 2013-11-18 Change: All words related to syntax highlighting
+\   are moved to <addons/source_code_common.fs>, because they are needed
+\   also by the "###" markup.
 
 \ **************************************************************
 \ Todo
@@ -57,87 +65,12 @@ require string.fs  \ Gforth's dynamic strings
 require galope/dollar-variable.fs  \ '$variable'
 require galope/module.fs  \ 'module:', ';module', 'hide', 'export'
 require galope/minus-leading.fs  \ '-leading'
-require galope/sourcepath.fs  \ 'sourcepath'
 require galope/string-suffix-question.fs  \ 'string-suffix?'
+
+require fendo/addons/source_code_common.fs  \ xxx tmp
 
 module: source_code_fendo_addon_module
 
-\ **************************************************************
-\ Syntax highlighting with Vim
-
-\ xxx fixme remove spaces and use 's&' instead of 's+'.
-
-s" ./cache/addons/source_code/" 2constant cache_dir$  \ xxx todo unused
-s" /tmp/fendo_addon.source_code.txt" 2dup 2constant input_file$
-s" .xhtml" s+ 2constant output_file$
-
-export  \ xxx tmp
-true [if]
-s" ex -f " 2constant base_highlight_command$
-[else]  \ xxx tmp
-$variable (base_highlight_command$)
-s" vim -f " (base_highlight_command$) $!
-: base_highlight_command$  ( -- ca len )
-  (base_highlight_command$) $@
-  ;
-[then]
-sourcepath s" source_code.vim " s+ 2constant vim_program$
-hide
-
-export
-$variable programming_language$  \ same values than Vim's 'filetype' 
-: programming_language  ( ca len -- )
-  \ Set the Vim's filetype for syntax highlighting.
-  programming_language$ $!
-  ;
-hide
-
-: program+  ( ca len -- ca' len' )
-  \ Add the Vim program parameter to the Vim invocation command.
-  s" -S " s+ vim_program$ s+
-  ;
-: syntax+  ( ca len -- ca' len' )
-  \ Add the desired syntax parameter to the Vim invocation command.
-  \ This parameter must be the first one in the command line.
-  s\" -c \"set filetype=" s+ programming_language$ $@ s+ s\" \" " s+
-  ;
-: file+  ( ca len -- ca' len' )
-  \ Add the input file parameter to the Vim invocation command.
-  input_file$ s+
-  ;
-: highlighting_command$  ( -- ca len )
-  \ Return the complete highlighting command,
-  \ ready to be executed by the shell.
-  base_highlight_command$ syntax+ program+ file+
-  ;
-: >input_file  ( ca len -- )
-  \ Save the given source code to the file that Vim will load as input.
-  \ ca len = plain source code
-  input_file$ w/o create-file throw
-  dup >r write-file throw  r> close-file throw
-  ;
-: <output_file  ( -- ca len )
-  \ Get the content of the file that Vim created as output.
-  \ ca len = source code highlighted with <span> XHTML tags
-  output_file$ slurp-file
-  ;
-: (highlighted)  ( ca1 len1 -- ca2 len2 )
-  \ Highlight the given source code.
-  \ ca1 len1 = plain source code
-  \ ca2 len2 = source code highlighted with <span> XHTML tags
-  >input_file
-  highlighting_command$ system
-  $? abort" The highlighting command failed"
-  <output_file
-  ;
-export
-true value highlight?  \ flag to switch the highlighting on and off
-: highlighted  ( ca1 len1 -- ca1 len1 | ca2 len2 )
-  \ Highlight the given source code, if needed.
-  \ ca1 len1 = plain source code
-  \ ca2 len2 = source code highlighted with <span> XHTML tags
-  highlight? if  (highlighted)  then  s" " programming_language
-  ;
 : (filename>filetype)  { D: filename -- ca2 len2 }
   \ Convert a filename to a Vim's filetype.
   filename s" .4th" string-suffix? if s" forth" exit  then
@@ -200,7 +133,6 @@ drop
 \ Generic source code
 
 export
-$variable source_code$
 0 value source_code_fid
 
 : open_source_code  ( ca len -- )
@@ -219,15 +151,6 @@ $variable source_code$
   ;
 : echo_source_code  ( ca len -- )
   block_source_code{  highlighted echo  }block_source_code
-  ;
-: append_source_code_line  ( ca len -- )
-  source_code$ $+!  s\" \n" source_code$ $+!
-  ;
-: new_source_code  ( -- )
-  0 source_code$ $!len
-  ;
-: source_code@  ( -- ca len )
-  source_code$ $@
   ;
 : slurp_source_code  ( -- ca len )
   \ Slurp the content of the opened source code file,
@@ -251,7 +174,7 @@ $variable source_code$
   \ Read and echo the content of a source code file.
   \ The Vim filetype is guessed from the filename.
   \ ca len = file name
-  2dup filename>filetype programming_language  (source_code)
+  2dup filename>filetype programming_language!  (source_code)
   ;
 
 ;module
