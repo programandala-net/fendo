@@ -34,6 +34,7 @@
 \ 2013-10-26 New: immediate version of '<p>'.
 \ 2013-10-27 New: '<link/>' and its immediate version '[<link/>]'.
 \ 2013-10-30 New: More immediate versions of tags.
+\ 2013-11-18 New: '[<br/>]', '[<hr/>]'.
 
 \ **************************************************************
 \ Requirements
@@ -101,7 +102,7 @@ get-current markup>current
 : </blockquote>  ( -- )  echo_cr s" blockquote" html}  ;
 : <body>  ( -- )  s" body" {html  ;
 : </body>  ( -- )  echo_cr s" body" html}  ;
-: <br>  ( -- )  s" br" {html}  ;
+: <br/>  ( -- )  s" br" {html}  ;
 : <button>  ( -- )  s" button" {html  ;
 : </button>  ( -- )  s" button" html}  ;
 : <canvas>  ( -- )  s" canvas" {html  ;
@@ -160,14 +161,14 @@ get-current markup>current
 : </header>  ( -- )  s" header" html}  ;
 : <hgroup>  ( -- )  echo_cr s" hgroup" {html  ;
 : </hgroup>  ( -- )  echo_cr s" hgroup" html}  ;
-: <hr>  ( -- )  s" hr" {html}  ;
+: <hr/>  ( -- )  s" hr" {html}  ;
 : <html>  ( -- )  s" html" {html  ;
 : </html>  ( -- )  echo_cr s" html" html}  ;
 : <i>  ( -- )  s" i" {html  ;
 : </i>  ( -- )  s" i" html}  ;
 : <iframe>  ( -- )  s" iframe" {html  ;
 : </iframe>  ( -- )  s" iframe" html}  ;
-: <img>  ( -- )  s" img" {html}  ;
+: <img/>  ( -- )  s" img" {html}  ;
 : <input>  ( -- )  s" input" {html  ;
 : </input>  ( -- )  s" input" html}  ;
 : <ins>  ( -- )  s" ins" {html  ;
@@ -271,9 +272,9 @@ false [if]  \ xxx old
 \ XHTML tags
 
 markup>order
-' <br> alias <br/>
-' <hr> alias <hr/>
-' <img> alias <img/>
+' <br/> alias <br>
+' <hr/> alias <hr>
+' <img/> alias <img>
 markup<order
 
 set-current
@@ -286,6 +287,7 @@ set-current
 markup>order
 : [<a>]  ( -- )  postpone <a>  ;  immediate
 : [</a>]  ( -- )  postpone </a>  ;  immediate
+: [<br/>]  ( -- )  postpone <br/> postpone \n  ;  immediate
 : [<caption>]  ( -- )  postpone <caption> postpone \n  ;  immediate
 : [<code>]  ( -- )  postpone <code>  ;  immediate
 : [</code>]  ( -- )  postpone </code>  ;  immediate
@@ -302,6 +304,7 @@ markup>order
 : [</h5>]  ( -- )  postpone </h5> postpone \n  ;  immediate
 : [<h6>]  ( -- )  postpone <h6>  ;  immediate
 : [</h6>]  ( -- )  postpone </h6> postpone \n  ;  immediate
+: [<hr/>]  ( -- )  postpone <hr/> postpone \n  ;  immediate
 : [<img>]  ( -- )  postpone <img>  ;  immediate
 : [<li>]  ( -- )  postpone <li>  ;  immediate
 : [</li>]  ( -- )  postpone </li> postpone \n  ;  immediate
