@@ -67,6 +67,7 @@ module: source_code_fendo_addon_module
 
 \ xxx fixme remove spaces and use 's&' instead of 's+'.
 
+s" ./cache/addons/source_code/" 2constant cache_dir$  \ xxx todo unused
 s" /tmp/fendo_addon.source_code.txt" 2dup 2constant input_file$
 s" .xhtml" s+ 2constant output_file$
 
@@ -130,13 +131,12 @@ hide
   <output_file
   ;
 export
-variable highlight?  \ flag to switch the highlighting on and off
-highlight? on
+true value highlight?  \ flag to switch the highlighting on and off
 : highlighted  ( ca1 len1 -- ca1 len1 | ca2 len2 )
   \ Highlight the given source code, if needed.
   \ ca1 len1 = plain source code
   \ ca2 len2 = source code highlighted with <span> XHTML tags
-  highlight? @ if  (highlighted)  then  s" " programming_language
+  highlight? if  (highlighted)  then  s" " programming_language
   ;
 : (filename>filetype)  { D: filename -- ca2 len2 }
   \ Convert a filename to a Vim's filetype.
@@ -205,7 +205,7 @@ $variable source_code$
 
 : open_source_code  ( ca len -- )
   \ ca len = file name
-  2>r target_dir $@ files_subdir $@ s+ 2r> s+
+  file>local
 \  2dup type cr  \ xxx informer
   r/o open-file throw  to source_code_fid
   ;
