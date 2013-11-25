@@ -211,6 +211,26 @@ datum: template  \ HTML template filename in the design subdir
   \ Create the main page id and init its data space.
   "page-id" :create  here current_data !  /datum @ allot
   ;
+: page_id$  ( a -- ca len )
+  \ Convert a page id to its string form.
+  \ a = page id
+  \ ca len = page id
+  source_file -forth_extension
+  ;
+: current_page_id$  ( -- ca len )
+  \ Return the string page id of the current page.
+  \ ca len = page id
+  current_page page_id$
+  ;
+: descendant?  ( ca1 len1 ca2 len2 -- wf )
+  \ Is ca2 len2 a descendant of ca1 len1?
+  \ ca1 len1 = page id
+  \ ca2 len2 = page id
+  s" ." s+ 2swap s" ." s+  \ 
+  { D: descendant D: ancestor }
+\  descendant ancestor str= ?dup if  0= exit  then
+  descendant ancestor string-prefix?
+  ;
 
 \ **************************************************************
 \ Page data header
@@ -448,5 +468,6 @@ do_content? on
 \   the filename taken from the markup, because of the
 \   "unshortcuttting" system.
 \ 2013-11-11 Change: '/csv' moved to the Galope library.
+\ 2013-11-24 New: 'page_id$', 'descendant?', 'current_page_id$'.
 
 [then]
