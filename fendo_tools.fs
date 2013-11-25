@@ -29,6 +29,13 @@
 \ 2013-11-11 Code extracted from <fendo_markup_wiki.fs>: 'link'.
 
 \ **************************************************************
+\ Todo
+
+\ A word to make a file with the list of source file pages,
+\ needed to code some addons (e.g. the list of rencent changes,
+\ lists by tags, etc).
+
+\ **************************************************************
 \ Links
 
 : (link)  ( ca len -- )

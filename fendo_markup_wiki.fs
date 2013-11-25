@@ -31,6 +31,8 @@
 \ **************************************************************
 \ Todo
 
+\ 2013-11-19: "---" markup.
+\ 2013-11-19: factor out '###' to an optional addon.
 \ 2013-11-07: make closing heading optional.
 \ 2013-10-30: Optional file size in file links.
 \ 2013-07-20: Idea for nested lists: prefix words to increase
@@ -407,23 +409,19 @@ $variable forth_code$
   ;
 : ###-line?  ( -- ca len true | false )
   \ Parse a new line from the current source code block.
-  ###-line 2dup "###"? dup if  nip nip  then  0=
+  ###-line 2dup "###"? 0=
   ;
 : plain_###-zone  ( "source code ###" -- )
   \ Parse and echo a source code zone "as is".
   \ xxx todo translate "<" and "&" ?
-  begin  ###-line?
-  .s  \ xxx informer
-  dup >r ?echo_line
-  .s cr  \ xxx informer
-  r> 0=  until
+  begin  ###-line? dup >r ?echo_line r> 0=  until
   ;
 : highlighted_###-zone  ( "source code ###" -- )
   \ Parse a source code zone, highlight and echo it.
   new_source_code 
   begin   
     ###-line? dup >r 
-    if  append_source_code_line  then  r> 0=
+    if  append_source_code_line  else  2drop  then  r> 0=
   until  source_code@ highlighted echo
   ;
 : highlight_###-zone?  ( -- wf )
@@ -1310,5 +1308,8 @@ only forth fendo>order definitions
 \ 2013-11-18  Now all words related to syntax highlighting
 \   are in <addons/source_code_common.fs>, not in
 \   <addons/source_code.fs>.
+\ 2013-11-19 Change: '###-line?' returns a fake text with the false
+\   flag; this fixes 'plain_###-zone' and requires a change in
+\   'highlighted_###-zone'.
 
 [then]
