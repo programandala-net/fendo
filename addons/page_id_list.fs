@@ -28,6 +28,8 @@
 
 \ 2013-11-25 Code extracted from
 \ <addons/list_of_content_by_prefix.fs>.
+\ 2013-11-26 Change: several words renamed, after a new uniform
+\   notation: "pid$" and "pid#" for both types of page ids.
 
 \ **************************************************************
 
@@ -55,11 +57,11 @@ export
   pages_list_fid close-file throw
   ;
 : page_id_list@  ( -- ca len )
-  \ Return the next page filename from the pages list,
+  \ Return the next page id from the pages list,
   \ or an empty string if the list is empty.
   pages_list_element dup /counted-string
   pages_list_fid 
-  read-line throw and  source>id$
+  read-line throw and  source>pid$
   ;
 
 ;module
