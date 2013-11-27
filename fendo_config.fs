@@ -47,7 +47,7 @@ require string.fs  \ Gforth's dynamic strings
 variable domain
 s" yourdomain.com" domain $!
 
-\ Filename extensions
+\ Filename extensions (with dot)
 
 variable forth_extension  \ filename extension of Forth source pages
 s" .fs" forth_extension $!

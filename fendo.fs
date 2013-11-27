@@ -143,6 +143,7 @@ require galope/minus-leading.fs  \ '-leading'
 require galope/minus-path.fs  \ '-path'
 require galope/minus-suffix.fs  \ '-suffix'
 require galope/parse-name-question.fs  \ 'parse-name?'
+require galope/parenthesis-asterisk.fs  \ '(*'
 require galope/sconstant.fs  \ 'sconstant'
 require galope/slash-sides.fs  \ '/sides'
 require galope/trim.fs  \ 'trim'
@@ -202,9 +203,7 @@ warnings !
 table constant fendo_markup_html_entities_wid  \ HTML entities
 wordlist constant fendo_markup_wid  \ markup, except HTML entities
 wordlist constant fendo_wid  \ program, except markup and HTML entities
-false [if]  \ xxx old, 2013-10-22 moved to its own file <fendo_shortcuts.fs>
-wordlist constant fendo_links_wid  \ user links
-[then]
+wordlist constant fendo_pid_wid  \ page ids
 
 : markup>current  ( -- )
   fendo_markup_wid set-current
@@ -256,6 +255,7 @@ depth [if] abort [then]  \ xxx debugging
 include ./fendo_config.fs
 depth [if] abort [then]  \ xxx debugging
 defer unshortcut  \ defined in <fendo_shortcuts.fs>
+defer just_unshortcut  \ defined in <fendo_shortcuts.fs>
 include ./fendo_data.fs
 depth [if] abort [then]  \ xxx debugging
 include ./fendo_echo.fs

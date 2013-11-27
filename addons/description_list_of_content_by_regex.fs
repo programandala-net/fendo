@@ -1,4 +1,4 @@
-.( addons/description_list_of_content_by_prefix.fs) cr
+.( addons/description_list_of_content_by_regex.fs) cr
 
 \ This file is part of Fendo.
 
@@ -25,29 +25,35 @@
 \ **************************************************************
 \ Change history of this file
 
-\ 2013-11-25 Start.
-\ xxx todo finish
+\ 2013-11-26 Start. First working version.
+
+\ **************************************************************
+\ Requirements
+
+\ Fendo addons
+require ./page_id_list.fs
+require ./page_id_list_regex_filter.fs
+require ./definition_list_element.fs
 
 \ **************************************************************
 
-require ./page_id_list.fs  \ Fendo addon
-
-: (description_list_of_content_by_prefix)  ( ca len -- )
+: (description_list_of_content_by_regex)  ( ca len -- )
+  \ Create an element of a description list of content
+  \ if the given page id matchs the current page id list filter.
+  2dup type cr  \ xxx informer
+  2dup page_id_list_filter rgx-cmatch?
+  if  definition_list_element  else  2drop  then
+  ;
+: description_list_of_content_by_regex  ( ca len -- )
   \ Create a description list of content
-  \ with pages whose filename start with the given prefix.
-  \ xxx todo
-  2>r open_page_id_list
+  \ with pages whose page id matchs the given regex. 
+  [<dl>]
+  >page_id_list_filter open_page_id_list
   begin   page_id_list@ dup
-  while
-    2dup 2r@ string-prefix?
-    if  [<li>] title_link [</li>]  else  2drop  then
-  repeat  2drop close_page_id_list 2rdrop
-  ;
-: description_list_of_content_by_prefix  ( ca len -- )
-  \ Create a description list of content
-  \ with pages whose filename start with the given prefix.
-  [<dl>] (description_list_of_content_by_prefix) [</dl>]
+  while   (description_list_of_content_by_regex)
+  repeat  2drop close_page_id_list
+  [</dl>]
   ;
 
-.( addons/description_list_of_content_by_prefix.fs compiled) cr
+.( addons/description_list_of_content_by_regex.fs compiled) cr
 

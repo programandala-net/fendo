@@ -1,8 +1,8 @@
-.( addons/unnumbered_list_of_content_by_prefix.fs) cr
+.( addons/page_id_list_regex_filter.fs) cr
 
 \ This file is part of Fendo.
 
-\ This file is the addon that creates unnumbered content lists. 
+\ This file creates the regex tools required to filter a page id list.
 
 \ Copyright (C) 2013 Marcos Cruz (programandala.net)
 
@@ -25,16 +25,18 @@
 \ **************************************************************
 \ Change history of this file
 
-\ 2013-11-25 Code extracted from the application Fendo-programandala.
+\ 2013-11-26 Start.
 
 \ **************************************************************
 
-require ./list_of_content_by_prefix.fs
+require ffl/rgx.fs  \ regular expressions
 
-: unnumbered_list_of_content_by_prefix  ( ca len -- )
-  \ Create an unnumbered list of content
-  \ with pages whose page id starts with the given prefix.
-  [<ul>] list_of_content_by_prefix [</ul>]
+rgx-create page_id_list_filter
+: regex_error  ( ca len n -- )
+  ." Bad regular expression at position " . ." :" cr type abort
+  ;
+: >page_id_list_filter  ( ca len -- )
+  2dup page_id_list_filter rgx-compile if  2drop  else  regex_error  then
   ;
 
-.( addons/unnumbered_list_of_content_by_prefix.fs compiled) cr
+.( addons/page_id_list_regex_filter.fs compiled) cr

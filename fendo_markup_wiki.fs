@@ -711,7 +711,8 @@ $variable last_href$  \ xxx new, experimental, to be used by the application
 \  ." ---> " href=@ type cr  \ xxx informer
   ;
 : missing_local_link_text  ( -- ca len )
-  href=@ -extension 2dup required_data<id$
+\  ." missing_local_link_text" cr  \ xxx informer
+  href=@ -extension 2dup required_data<pid$
   >sb  \ xxx tmp
   evaluate title
   echo> @ >r echo>string
@@ -743,13 +744,13 @@ $variable last_href$  \ xxx new, experimental, to be used by the application
   ;
 : convert_local_link_href  ( ca1 len1 -- ca2 len2 )
   \ Convert a raw local href to a finished href.
-  dup if  data<id$>id target_file  then  link_anchor+
+  dup if  pid$>data>pid# target_file  then  link_anchor+
   ;
 : url  ( ca1 len1 -- ca2 len2 )
   \ ca1 len1 = page id
   \ ca2 len2 = URL
   s" http://" domain $@ s+ 2swap
-  data<id$>id target_file s+
+  pid$>data>pid# target_file s+
   ;
 : -file://  ( ca len -- ca' len' )
   s" file://" -prefix
@@ -779,7 +780,7 @@ variable local_link_to_draft_page?
 : tune_local_link  ( -- )
   \ xxx todo fetch alternative language title and description
 \  ." tune_local_link" cr  \ xxx informer
-  href=@ (data<)id$>id  >r
+  href=@ pid$>(data>)pid#  >r
 \  link_text@ ." link_text in tune_local_link (0) = " type cr  \ xxx informer
 \  r@ title ." title in tune_local_link (1) = " type cr  \ xxx informer
   r@ draft? local_link_to_draft_page? !

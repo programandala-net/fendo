@@ -1,8 +1,8 @@
-.( addons/unnumbered_list_of_content_by_prefix.fs) cr
+.( addons/definition_list_element.fs) cr
 
 \ This file is part of Fendo.
 
-\ This file is the addon that creates unnumbered content lists. 
+\ This file defines a word required by several addons.
 
 \ Copyright (C) 2013 Marcos Cruz (programandala.net)
 
@@ -25,16 +25,24 @@
 \ **************************************************************
 \ Change history of this file
 
-\ 2013-11-25 Code extracted from the application Fendo-programandala.
+\ 2013-11-26 Start.
 
 \ **************************************************************
 
-require ./list_of_content_by_prefix.fs
-
-: unnumbered_list_of_content_by_prefix  ( ca len -- )
-  \ Create an unnumbered list of content
-  \ with pages whose page id starts with the given prefix.
-  [<ul>] list_of_content_by_prefix [</ul>]
+: definition_list_element  ( ca len -- )
+  \ Create an element of a definition list for the given page id.
+  \ ca len = page id
+  ." definition_list_element " 2dup type cr  \ xxx informer
+  2dup [<dt>] title_link [</dt>]
+\  ." href= (0) " href=@ type cr  \ xxx informer
+  [<dd>]
+\  ." href= (1) " href=@ type cr  \ xxx informer
+  pid$>data>pid#
+\  ." href= (2) " href=@ type cr  \ xxx informer
+  description
+\  ." href= (3) " href=@ type cr  \ xxx informer
+\  ." content to evaluate = " 2dup type cr key drop  \ xxx informer
+  evaluate_content [</dd>]
   ;
 
-.( addons/unnumbered_list_of_content_by_prefix.fs compiled) cr
+.( addons/definition_list_element.fs compiled) cr

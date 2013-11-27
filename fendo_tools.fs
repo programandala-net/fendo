@@ -27,6 +27,8 @@
 \ Change history of this file
 
 \ 2013-11-11 Code extracted from <fendo_markup_wiki.fs>: 'link'.
+\ 2013-11-26 Change: several words renamed, after a new uniform
+\   notation: "pid$" and "pid#" for both types of page ids.
 
 \ **************************************************************
 \ Todo
@@ -58,5 +60,6 @@
   \ If 'link_text' is not set, the page title will be used.
   \ ca len = page id or shortcut to it
   \ xxx todo make it work with anchors!?
-  2dup data<id$>id title link_text?! (link)
+\  ." title_link " 2dup type cr  \ xxx informer
+  2dup pid$>data>pid# title link_text?! (link)
   ;

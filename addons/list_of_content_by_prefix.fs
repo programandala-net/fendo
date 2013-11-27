@@ -1,8 +1,8 @@
-.( addons/unnumbered_list_of_content_by_prefix.fs) cr
+.( addons/list_of_content_by_prefix.fs) cr
 
 \ This file is part of Fendo.
 
-\ This file is the addon that creates unnumbered content lists. 
+\ This file is the code common to several content lists addons.
 
 \ Copyright (C) 2013 Marcos Cruz (programandala.net)
 
@@ -29,12 +29,18 @@
 
 \ **************************************************************
 
-require ./list_of_content_by_prefix.fs
+require ./page_id_list.fs  \ Fendo addon
 
-: unnumbered_list_of_content_by_prefix  ( ca len -- )
-  \ Create an unnumbered list of content
+: list_of_content_by_prefix  ( ca len -- )
+  \ Create a list of content
   \ with pages whose page id starts with the given prefix.
-  [<ul>] list_of_content_by_prefix [</ul>]
+  \ xxx todo filter draft pages
+  2>r open_page_id_list
+  begin   page_id_list@ dup
+  while
+    2dup 2r@ string-prefix?
+    if  [<li>] title_link [</li>]  else  2drop  then
+  repeat  2drop close_page_id_list 2rdrop
   ;
 
-.( addons/unnumbered_list_of_content_by_prefix.fs compiled) cr
+.( addons/list_of_content_by_prefix.fs compiled) cr

@@ -199,28 +199,40 @@ datum: template  \ HTML template filename in the design subdir
 \ The first time a page is interpreted, its data is parsed and
 \ created (even if the content doesn't has to be parsered, e.g.
 \ when the data has been required by other page).  Then a
-\ page id is created: its name is source filename without
-\ extension. The execution of the page id returns the address of
+\ page id is created: it's the source filename without path
+\ or extension. The execution of the page id returns the address of
 \ the page data, in order to access the individual data fields.
 
-: "page-id"  ( -- ca len )
+: current_file_pid$  ( -- ca len )
   \ Return the name of the current page id.
   /sourcefilename -extension
   ;
-: :page_id  ( -- )
+: :pid  ( -- )
   \ Create the main page id and init its data space.
-  "page-id" :create  here current_data !  /datum @ allot
+  get-current  fendo_pid_wid set-current
+  current_file_pid$ :create  here current_data !  /datum @ allot
+  set-current
   ;
-: page_id$  ( a -- ca len )
-  \ Convert a page id to its string form.
+: pid#>pid$  ( a -- ca len )
+  \ Convert a numerical page id to its string form.
   \ a = page id
   \ ca len = page id
   source_file -forth_extension
   ;
-: current_page_id$  ( -- ca len )
+: pid$>pid#  ( ca len -- a | false )
+  \ Convert a string page id to its numerical form,
+  \ or return false if the page id is unknown.
+  \ ca len = page id
+  \ a = page id
+\  2dup type ."  pid$>pid#"  \ xxx informer
+  fendo_pid_wid search-wordlist
+\  .s cr  \ xxx informer
+  if  execute  else  false  then
+  ;
+: current_page_pid$  ( -- ca len )
   \ Return the string page id of the current page.
   \ ca len = page id
-  current_page page_id$
+  current_page pid#>pid$
   ;
 : descendant?  ( ca1 len1 ca2 len2 -- wf )
   \ Is ca2 len2 a descendant of ca1 len1?
@@ -263,8 +275,7 @@ defer set_default_data  ( -- )
 : get_data{  ( "<text><space>}data" -- )
   \ Get the page data.
 \  ." get_data{" cr  \ xxx informer
-  :page_id
-  current_data @ 
+  :pid current_data @ 
 \  ." current_data copied to current_page =  " dup . cr  \ xxx informer
   to current_page
   in_data_header? on
@@ -274,7 +285,7 @@ defer set_default_data  ( -- )
   \ xxx todo how to access the page ids in the markup?...
   \ xxx ...include them in the markup wordlist? create a wordlist?
 \  cr cr ." =========== data{" cr  \ xxx informer
-  "page-id" fendo_wid search-wordlist
+  current_file_pid$ fendo_wid search-wordlist
   if  skip_data{  else  get_data{  then
   ;
 
@@ -296,42 +307,48 @@ do_content? on
 : (required_data)  ( ca len -- )
   \ Require a page file in order to get its data.
   \ ca len = filename
+\  ." (required_data) " 2dup type cr  \ xxx informer
   do_content? off
   2dup  ['] required catch  ?dup
+\  ." after catch " .s cr  \ xxx informer
   if    nip nip required_data_error
   else  2drop  then
+\  ." end of (required_data) " .s cr  \ xxx informer
   ;
 : required_data  ( ca len -- )
   \ Require a page file in order to get its data.
   \ ca len = filename
-\  cr ." required_data " 2dup type  \ xxx informer
+\  ." required_data " 2dup type cr  \ xxx informer
   do_content? @ >r  current_page >r
   (required_data)
   r> to current_page  r> do_content? !
+\  ." end of required_data " 2dup type cr  \ xxx informer
   ;
-: required_data<id  ( a -- )
+: required_data<pid  ( a -- )
   \ Require a page file in order to get its data.
   \ a = page id (address of its data)
   source_file required_data
   ;
-: (required_data<id$)  ( ca len -- )
+: (required_data<pid$)  ( ca len -- )
   \ Require a page file in order to get its data.
   \ ca len = page id
-\  2dup cr type ."  to require in (required_data<id$)"  \ xxx informer
+\  2dup type ."  (required_data<pid$)" cr  \ xxx informer
   +forth_extension required_data
   ;
-: required_data<id$  ( ca len -- )
+: required_data<pid$  ( ca len -- )
   \ Require a page file in order to get its data.
   \ ca len = page id
-\  cr ." required_data<id$ " 2dup type cr  \ xxx informer
+\  cr ." required_data<pid$ " 2dup type cr  \ xxx informer
   unshortcut
-\  cr ." required_data<id$ " 2dup type cr  \ xxx informer
-  (required_data<id$)
+\  cr ." required_data<pid$ " 2dup type cr  \ xxx informer
+  (required_data<pid$)
+\  cr ." end of required_data<pid$ " .s cr  \ xxx informer
   ;
 : required_data<target  ( ca len -- )
   \ Require a page file in order to get its data.
   \ ca len = target file
-  -extension required_data<id$
+\  ." required_data<target " 2dup type cr  \ xxx informer
+  -extension required_data<pid$
   ;
 : require_data  ( "name" -- )
   \ Require a page file in order to get its data.
@@ -339,31 +356,47 @@ do_content? on
   parse-name? abort" File name expected in 'require_data'"
   required_data
   ;
-: data<id$>id  ( ca len -- a )
+: pid$>data>pid#  ( ca len -- a )
   \ Require a page file in order to get its data
   \ and convert its string page id to number page id.
   \ ca len = page id
   \ a = page id
+\  ." pid$>data>pid# " 2dup type cr  \ xxx informer
 \  2drop s" es"  \ xxx tmp, works, no shortcut
 \  2drop s" es.programa.sideras"  \ xxx tmp, works, one shortcut level
 \  2drop s" samforth"  \ xxx tmp, works, one shortcut level
 \  2drop s" local2"  \ xxx tmp, works, two shortcuts levels
 \  2drop s" local3"  \ xxx tmp, works, three shortcuts levels
 \  2drop s" en.program.samforth"  \ xxx tmp, works, no shortcut
-\  2dup cr type ."  to unshortcut in data<id$>id"  \ xxx informer
+\  2dup cr type ."  to unshortcut in data<pid$>pid"  \ xxx informer
 \  key drop  \ xxx informer
-  unshortcut  \ xxx tmp
-  2dup (required_data<id$)
-  evaluate  \ xxx first version
+\  ." href= (before unshortcut) " s" href=@" evaluate type cr  \ xxx informer
+  just_unshortcut  \ xxx tmp
+\  ." pid$>data>pid# after just_unshortcut: " 2dup type cr  \ xxx informer
+\  ." href= (after unshortcut) " s" href=@" evaluate type cr  \ xxx informer
+  2dup (required_data<pid$) pid$>pid#
 \  find-name name>int execute  \ xxx second version; no difference, same corruption of the input stream
-\  cr ." end of data<id$>id"  \ xxx informer
+\  cr ." end of data<pid$>pid"  \ xxx informer
   ;
-: (data<)id$>id  ( ca len -- a )
+: pid$>(data>)pid#  ( ca len -- a )
   \ Return a number page id from a string page id;
   \ if it's different from the current page, require its data.
   \ This word is needed to manage links to the current page
   \ (href attributes that contain just an anchor).
-  dup if  data<id$>id  else  2drop current_page  then
+\  cr ." pid$>(data>)pid# " 2dup type cr  \ xxx informer
+  dup if  pid$>data>pid#  else  2drop current_page  then
+  ;
+: source>pid$  ( ca1 len1 -- ca2 len2 )
+  \ Convert a source page to a page id.
+  \ ca1 len1 = Forth source page filename with path
+  \ ca2 len2 = page id
+  -path -forth_extension
+  ;
+: source>pid#  ( ca len -- a )
+  \ Convert a source page to a page id.
+  \ ca len = Forth source page filename with path
+  \ a = page id
+  source>pid$ pid$>data>pid#
   ;
 
 \ **************************************************************
@@ -402,7 +435,7 @@ do_content? on
 
 .( fendo_data.fs compiled) cr
 
-0 [if]
+(*
 
 \ **************************************************************
 \ Change history of this file
@@ -469,5 +502,10 @@ do_content? on
 \   "unshortcuttting" system.
 \ 2013-11-11 Change: '/csv' moved to the Galope library.
 \ 2013-11-24 New: 'page_id$', 'descendant?', 'current_page_id$'.
+\ 2013-11-25 New: 'source>id$', 'source>id'.
+\ 2013-11-26 Change: several words renamed, after a new uniform notation:
+\   "pid$" and "pid#" for both types of page ids.
+\ 2013-11-26 New: 'pid$>pid#'; page ids are created in a specific
+\   wordlist.
 
-[then]
+*)

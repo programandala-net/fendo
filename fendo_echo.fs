@@ -26,18 +26,12 @@
 \ **************************************************************
 \ Change history of this file
 
-\ 2013-06-04 Start.
-\ 2013-06-08 New: First code for output redirection.
-\ 2013-06-29 Change: 'target_fid' moved here from <fendo_files.fs>.
-\ 2013-07-03 Change: 'dry?' renamed to 'echo>screen?'.
-\ 2013-07-03 New: tools to redirect the output to a dynamic
-\   string.
-\ 2013-07-12 New: '?_echo' moved here from <fendo_markup_wiki.fs>.
-\ 2013-07-14 New: '?echo_line'.
-\ 2013-07-21 New: 'echo.'. This somehow fixes the print corruption
-\   caused by using 's>d <# #s #> echo' in the HTML template.
-\ 2013-07-21 New: 'echo_line'.
-\ 2013-11-07 New: '_echo.'.
+\ See at the end of the file.
+
+\ **************************************************************
+\ Requirements
+
+require galope/number-to-string.fs  \ 'n>str'
 
 \ **************************************************************
 \ Output
@@ -133,14 +127,29 @@ variable separate?  \ flag: separate the next tag or word from the current one?
 : ?echo_line  ( ca len f -- )
   if  echo_line  else  2drop  then
   ;
-: (echo.)  ( n -- )
-  s>d <# #s #> 
-  ;
 : echo.  ( n -- )
-  (echo.) echo
+  n>str echo
   ;
 : _echo.  ( n -- )
-  (echo.) echo_space echo
+  n>str echo_space echo
   ;
+
 .( fendo_echo.fs compiled) cr
+
+\ **************************************************************
+\ Change history of this file
+
+\ 2013-06-04 Start.
+\ 2013-06-08 New: First code for output redirection.
+\ 2013-06-29 Change: 'target_fid' moved here from <fendo_files.fs>.
+\ 2013-07-03 Change: 'dry?' renamed to 'echo>screen?'.
+\ 2013-07-03 New: tools to redirect the output to a dynamic
+\   string.
+\ 2013-07-12 New: '?_echo' moved here from <fendo_markup_wiki.fs>.
+\ 2013-07-14 New: '?echo_line'.
+\ 2013-07-21 New: 'echo.'. This somehow fixes the print corruption
+\   caused by using 's>d <# #s #> echo' in the HTML template.
+\ 2013-07-21 New: 'echo_line'.
+\ 2013-11-07 New: '_echo.'.
+\ 2013-11-26 Change: 'n>str' instead of '(echo.)'.
 
