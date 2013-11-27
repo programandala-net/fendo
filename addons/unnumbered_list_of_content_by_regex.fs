@@ -1,4 +1,4 @@
-.( addons/unnumbered_list_of_content_by_prefix.fs) cr
+.( addons/unnumbered_list_of_content_by_regex.fs) cr
 
 \ This file is part of Fendo.
 
@@ -25,16 +25,16 @@
 \ **************************************************************
 \ Change history of this file
 
-\ 2013-11-25 Code extracted from the application Fendo-programandala.
+\ 2013-11-26 Start.
 
 \ **************************************************************
 
-require ./list_of_content_by_prefix.fs
+require ./list_of_content_by_regex.fs
 
-: unnumbered_list_of_content_by_prefix  ( ca len -- )
+: unnumbered_list_of_content_by_regex  ( ca len -- )
   \ Create an unnumbered list of content
-  \ with pages whose page id starts with the given prefix.
-  [<ul>] list_of_content_by_prefix [</ul>]
+  \ with pages whose page id matches the given prefix.
+  [<ul>] list_of_content_by_regex [</ul>]
   ;
 
-.( addons/unnumbered_list_of_content_by_prefix.fs compiled) cr
+.( addons/unnumbered_list_of_content_by_regex.fs compiled) cr

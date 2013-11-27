@@ -33,7 +33,7 @@ require ./list_of_content_by_prefix.fs
 
 : numbered_list_of_content_by_prefix  ( ca len -- )
   \ Create an numbered list of content
-  \ with pages whose filename start with the given prefix.
+  \ with pages whose page id starts with the given prefix.
   [<ol>] list_of_content_by_prefix [</ol>]
   ;
 

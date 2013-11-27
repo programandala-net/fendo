@@ -295,8 +295,7 @@ create 'attributes_xt  \ table for the execution tokens of the attribute variabl
   'attributes_xt #attributes cells bounds ?do
     [gforth_strings_for_attributes?]
     [if]    s" " i perform $!
-    [else]  i perform @ str-init
-    [then]
+    [else]  i perform @ str-init  [then]
   cell +loop
   ;
 : attributes_xt_zone  ( -- ca len )

@@ -24,6 +24,12 @@
 \ <http://gnu.org/licenses>.
 
 \ **************************************************************
+\ Todo
+
+\ 2013-11-26 fixme 'unshortcut' sets 'href=', what sometimes is
+\ inconvenient.
+
+\ **************************************************************
 \ Change history of this file
 
 \ 2013-10-22 Created with code extracted from <fendo_markup_wiki.fs>
@@ -116,5 +122,11 @@ shortcut: gforth_ext
   repeat  href=@
 \  cr  \ xxx informer
   ;  is unshortcut  \ defered in <fendo.fs>
-
+:noname  ( ca len -- ca len | ca' len' )
+  \ Unshortcut an href attribute recursively,
+  \ without modifing any attribute.
+  \ ca len = href attribute 
+  \ ca' len' = actual href attribute
+  >attributes< unshortcut >attributes<
+  ;  is just_unshortcut  \ defered in <fendo.fs>
 .( fendo_shortcuts.fs compiled ) cr

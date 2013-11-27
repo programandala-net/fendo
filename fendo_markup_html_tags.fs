@@ -35,6 +35,7 @@
 \ 2013-10-27 New: '<link/>' and its immediate version '[<link/>]'.
 \ 2013-10-30 New: More immediate versions of tags.
 \ 2013-11-18 New: '[<br/>]', '[<hr/>]'.
+\ 2013-11-26 New: Immediate version of definition lists tags.
 
 \ **************************************************************
 \ Requirements
@@ -60,8 +61,11 @@ require galope/plus-slash-string.fs
   \ Print an opening HTML tag (e.g. <p>, <a>),
   \ with all previously defined attributes.
   \ ca len = HTML tag
+\  ." start of {html -- " 2dup type cr  \ xxx informer
+\  ." href= " href=@ type cr  \ xxx informer
   s" <" _echo echo echo_attributes s" >" echo  separate? off
   -attributes
+\  ." end of {html -- href= " href=@ type cr  \ xxx informer
   ;
 : html}  ( ca len -- )
   \ Print a closing HTML tag (e.g. </p>, </a>).
@@ -291,7 +295,13 @@ markup>order
 : [<caption>]  ( -- )  postpone <caption> postpone \n  ;  immediate
 : [<code>]  ( -- )  postpone <code>  ;  immediate
 : [</code>]  ( -- )  postpone </code>  ;  immediate
+: [<dd>]  ( -- )  postpone <dd>  ;  immediate
+: [</dd>]  ( -- )  postpone </dd> postpone \n  ;  immediate
 : [<div>]  ( -- )  postpone <div>  ;  immediate
+: [<dl>]  ( -- )  postpone <dl> postpone \n  ;  immediate
+: [</dl>]  ( -- )  postpone </dl> postpone \n  ;  immediate
+: [<dt>]  ( -- )  postpone <dt>  ;  immediate
+: [</dt>]  ( -- )  postpone </dt> postpone \n  ;  immediate
 : [<h1>]  ( -- )  postpone <h1>  ;  immediate
 : [</h1>]  ( -- )  postpone </h1> postpone \n  ;  immediate
 : [<h2>]  ( -- )  postpone <h2>  ;  immediate
