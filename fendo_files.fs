@@ -31,6 +31,8 @@
 \ 2013-10-02 Page redirection tools.
 \ 2013-11-18 New: 'file>local', factored from 'open_source_code',
 \   (defined in <addons/source_code.fs>).
+\ 2013-11-28 Fix: 'redirected' didn't add the target extension,
+\   only the path; fixed with the new word 'pid$>target'.
 
 \ **************************************************************
 \ Target file
@@ -89,14 +91,23 @@
 	s" exit(0);" r@ write-line throw
 	s" ?>" r> write-line throw
 	;
+: redirected>target  ( ca1 len1 -- ca2 len2 )
+  \ Convert an old page id (whose filename does not exist any more)
+  \ to its correspondant target filename.
+  \ The default target extension is assumed.
+  \ ca1 len1 = page id (old page filename without path and extension)
+  \ ca2 len2 = target filename with path
+  html_extension $@ s+ +target_dir
+  ;
 : redirected ( ca len -- )
   \ Create a file that redirects to the current page.
-  \ ca len = old page, without domain
+  \ ca len = page id (old page filename without path and extension)
   \ 2013-10-02 Start, based on code from ForthCMS.
-  +target_dir w/o create-file throw  dup (redirected)  close-file throw
+  redirected>target w/o create-file throw  dup (redirected)  close-file throw
   ;
-: redirect ( "old_page" -- )
+: redirect ( ca len -- )
   \ Create a file that redirects to the current page.
+  \ ca len = page id (old page filename without path and extension)
   parse-name redirected
   ;
 

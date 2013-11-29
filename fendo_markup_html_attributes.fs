@@ -129,6 +129,7 @@ set-current
 variable attributes_set  \ 0 or 1
 : >attributes<  ( -- )
   \ Exchange the attributes set (0->1, 1->0)
+  \ xxx todo also 'link_text' ?
   attributes_set @ 0= abs  attributes_set !
   ;
 
