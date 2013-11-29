@@ -182,13 +182,13 @@ datum: template  \ HTML template filename in the design subdir
 : +target_dir  ( ca1 len1 -- ca2 len2 )
   \ Add the target path to a file name.
   \ ca1 len1 = file name
-  \ ca2 len2 = file name, with its target local path.
+  \ ca2 len2 = file name, with its target local path
   target_dir $@ 2swap s+
   ;
 : target_path/file  ( a -- ca len )
   \ Return a target HTML page filename, with its local path.
   \ a = page id
-  \ ca len = target HTML page file name, with its local path.
+  \ ca len = target HTML page file name, with its local path
   target_file +target_dir 
 \  2dup type cr  \ xxx informer
   ;
@@ -207,11 +207,24 @@ datum: template  \ HTML template filename in the design subdir
   \ Return the name of the current page id.
   /sourcefilename -extension
   ;
-: :pid  ( -- )
+: known_pid$?  ( ca len -- xt true | false )
+  fendo_pid_wid search-wordlist
+  ;
+: (:pid)  ( ca len -- )
   \ Create the main page id and init its data space.
   get-current  fendo_pid_wid set-current
-  current_file_pid$ :create  here current_data !  /datum @ allot
+  current_file_pid$
+\  2dup type cr key drop  \ xxx informer
+  :create
+\  ." warning?" cr key drop  \ xxx informer
+  here current_data !  /datum @ allot
   set-current
+  ;
+: :pid  ( -- )
+  \ Create the main page id and init its data space,
+  \ if needed.
+  current_file_pid$ known_pid$?
+  if  drop  else  (:pid)  then
   ;
 : pid#>pid$  ( a -- ca len )
   \ Convert a numerical page id to its string form.
@@ -225,7 +238,7 @@ datum: template  \ HTML template filename in the design subdir
   \ ca len = page id
   \ a = page id
 \  2dup type ."  pid$>pid#"  \ xxx informer
-  fendo_pid_wid search-wordlist
+  known_pid$?
 \  .s cr  \ xxx informer
   if  execute  else  false  then
   ;
@@ -346,7 +359,7 @@ do_content? on
   ;
 : required_data<target  ( ca len -- )
   \ Require a page file in order to get its data.
-  \ ca len = target file
+  \ ca len = target file, without path
 \  ." required_data<target " 2dup type cr  \ xxx informer
   -extension required_data<pid$
   ;
@@ -355,6 +368,13 @@ do_content? on
   \ "name" = filename
   parse-name? abort" File name expected in 'require_data'"
   required_data
+  ;
+: (pid$>data>pid#)  ( ca len -- a )
+  \ Require a page file in order to get its data
+  \ and convert its string page id to number page id.
+  \ ca len = page id of an existant page file
+  \ a = page id
+  2dup (required_data<pid$) pid$>pid#
   ;
 : pid$>data>pid#  ( ca len -- a )
   \ Require a page file in order to get its data
@@ -374,7 +394,7 @@ do_content? on
   just_unshortcut  \ xxx tmp
 \  ." pid$>data>pid# after just_unshortcut: " 2dup type cr  \ xxx informer
 \  ." href= (after unshortcut) " s" href=@" evaluate type cr  \ xxx informer
-  2dup (required_data<pid$) pid$>pid#
+  (pid$>data>pid#)
 \  find-name name>int execute  \ xxx second version; no difference, same corruption of the input stream
 \  cr ." end of data<pid$>pid"  \ xxx informer
   ;
@@ -399,6 +419,12 @@ do_content? on
   source>pid$ pid$>data>pid#
   ;
 
+: pid$>target  ( ca1 len1 -- ca2 len2 )
+  \ Convert a page id to a target filename.
+  2dup pid$>data>pid# target_extension s+
+  +target_dir
+  ;
+ 
 \ **************************************************************
 \ Calculated data
 
@@ -507,5 +533,12 @@ do_content? on
 \   "pid$" and "pid#" for both types of page ids.
 \ 2013-11-26 New: 'pid$>pid#'; page ids are created in a specific
 \   wordlist.
+\ 2013-11-27 New: '(pid$>data>pid#)' factored out from
+\   'pid$>data>pid#', as required by 'pid$_list@' (defined in
+\   <addons/pid_list.fs>), where 'unshortcut' is inconvenient.
+\ 2013-11-28 New: 'known_pid$?', factored from 'pid$>pid#' to be
+\   reused in ':pid'.
+\ 2013-11-28 New: 'pid$>target', to fix 'redirected' (in
+\   <fendo_files.fs>)
 
 *)

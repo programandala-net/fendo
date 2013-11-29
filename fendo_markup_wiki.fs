@@ -49,6 +49,7 @@
 \ 'bs&' is provided by <galope/sb.fs>, included in <fendo.fs>.
 
 require galope/dollar-variable.fs  \ '$variable'
+include galope/paren-star.fs  \ '(*'
 require galope/trim.fs  \ 'trim'
 \ require fendo/addons/source_code.fs  \ xxx needed by '###'
 
@@ -900,6 +901,8 @@ only forth markup>order definitions fendo>order
 
 \ Comments
 
+false [if]  \ xxx old
+
 : {*  ( "text*}" -- )
   \ Start a comment.
   \ Parse the input stream until a "*}" markup is found.
@@ -912,6 +915,15 @@ only forth markup>order definitions fendo>order
 : *}  ( -- )
   true abort" '*}' without '{*'"
   ;  immediate
+
+[else]
+
+warnings @  warnings off
+' (* alias (*
+' *) alias *)
+warnings !
+
+[then]
 
 \ Merged Forth code
 
@@ -1312,5 +1324,7 @@ only forth fendo>order definitions
 \ 2013-11-19 Change: '###-line?' returns a fake text with the false
 \   flag; this fixes 'plain_###-zone' and requires a change in
 \   'highlighted_###-zone'.
+\ 2013-11-27 Change: '{* ... *}' changed to '(* ... *)', just
+\   implemented in the Galope library.
 
 [then]
