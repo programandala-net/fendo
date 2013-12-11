@@ -26,6 +26,8 @@
 \ Change history of this file
 
 \ 2013-11-18 Code extracted from <fendo_source_code.fs>.
+\ 2013-12-11 New: '-b' parameter added to 'syntax+', then renamed to
+\   'parameters+'.
 
 \ **************************************************************
 \ Todo
@@ -96,10 +98,13 @@ hide
   \ Add the Vim program parameter to the Vim invocation command.
   s" -S " s+ vim_program$ s+
   ;
-: syntax+  ( ca len -- ca' len' )
-  \ Add the desired syntax parameter to the Vim invocation command.
-  \ This parameter must be the first one in the command line.
-  s\" -c \"set filetype=" s+ programming_language$ $@ s+ s\" \" " s+
+: parameters+  ( ca len -- ca' len' )
+  \ Add the required parameters to the Vim invocation command.
+  \ These parameters must be before the Vim program
+  \ and the source file in the command.
+  \ The binary option (-b) is required to make the
+  \ charset translations to work fine.
+  s\" -b -c \"set filetype=" s+ programming_language$ $@ s+ s\" \" " s+
   ;
 : file+  ( ca len -- ca' len' )
   \ Add the input file parameter to the Vim invocation command.
@@ -108,7 +113,7 @@ hide
 : highlighting_command$  ( -- ca len )
   \ Return the complete highlighting command,
   \ ready to be executed by the shell.
-  base_highlight_command$ syntax+ program+ file+
+  base_highlight_command$ parameters+ program+ file+
   ;
 : >input_file  ( ca len -- )
   \ Save the given source code to the file that Vim will load as input.
