@@ -49,6 +49,14 @@
 \ **************************************************************
 \ Todo
 
+\ 2013-12-11 finish the charset translations of the source_code
+\ addons: two translation tables are required for every conversion,
+\ one to be done before the highlighting (actual chars) and other
+\ after it (strings converted to HTML), as required by
+\ basin_source_code.
+
+\ 2013-12-05 do not echo a space before the first html tag on the line.
+
 \ 2013-11-11 link tools in <fendo_tools.fs>.
 
 \ 2013-11-09 rename 'filetype$' to 'programming_language$'.

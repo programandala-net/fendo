@@ -39,6 +39,7 @@
 \ Requirements
 
 require galope/slash-csv.fs  \ '/csv'
+require galope/char_count.fs  \ 'char_count'
 
 \ **************************************************************
 \ Page data engine
@@ -123,7 +124,7 @@ datum: properties  \ list of properties, separated by commas
 datum: edit_summary  \ description of the latest changes
 
 datum: related  \ list of page ids, xxx separated by commas?
-datum: language_versions  \ list of page ids, xxx separated by commas?  \ xxx deprecated
+\ datum: language_versions  \ list of page ids, separated by commas  \ xxx old deprecated
 
 datum: filename_extension  \ alternative target filename extension (with dot)
 
@@ -203,7 +204,7 @@ datum: template  \ HTML template filename in the design subdir
 \ or extension. The execution of the page id returns the address of
 \ the page data, in order to access the individual data fields.
 
-: current_file_pid$  ( -- ca len )
+: current_pid$  ( -- ca len )
   \ Return the name of the current page id.
   /sourcefilename -extension
   ;
@@ -213,7 +214,7 @@ datum: template  \ HTML template filename in the design subdir
 : (:pid)  ( ca len -- )
   \ Create the main page id and init its data space.
   get-current  fendo_pid_wid set-current
-  current_file_pid$
+  current_pid$
 \  2dup type cr key drop  \ xxx informer
   :create
 \  ." warning?" cr key drop  \ xxx informer
@@ -223,7 +224,7 @@ datum: template  \ HTML template filename in the design subdir
 : :pid  ( -- )
   \ Create the main page id and init its data space,
   \ if needed.
-  current_file_pid$ known_pid$?
+  current_pid$ known_pid$?
   if  drop  else  (:pid)  then
   ;
 : pid#>pid$  ( a -- ca len )
@@ -255,6 +256,16 @@ datum: template  \ HTML template filename in the design subdir
   { D: descendant D: ancestor }
 \  descendant ancestor str= ?dup if  0= exit  then
   descendant ancestor string-prefix?
+  ;
+: pid$>level  ( ca len -- n )
+  \ Return the hierarchy level of the given page id.
+  \ Top pages' level is 0.
+  char . char_count
+  ;
+: pid#>level  ( a -- n )
+  \ Return the hierarchy level of the given page id.
+  \ Top pages' level is 0.
+  pid#>pid$ pid$>level
   ;
 
 \ **************************************************************
@@ -298,7 +309,7 @@ defer set_default_data  ( -- )
   \ xxx todo how to access the page ids in the markup?...
   \ xxx ...include them in the markup wordlist? create a wordlist?
 \  cr cr ." =========== data{" cr  \ xxx informer
-  current_file_pid$ fendo_wid search-wordlist
+  current_pid$ fendo_wid search-wordlist
   if  skip_data{  else  get_data{  then
   ;
 
@@ -540,5 +551,7 @@ do_content? on
 \   reused in ':pid'.
 \ 2013-11-28 New: 'pid$>target', to fix 'redirected' (in
 \   <fendo_files.fs>)
+\ 2013-12-05 Change: 'current_file_pid$' renamed to 'current_pid$'.
+\ 2013-12-06 New: 'pid$>level' and 'pid#>level'.
 
 *)

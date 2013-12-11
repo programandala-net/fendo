@@ -92,12 +92,13 @@ variable target_fid  \ file id of the HTML target page
   else  ['] type (echo)
   then
   ;
+variable separate?  \ flag: separate the next tag or word from the current one?
 : echo_cr  ( -- )
   \ Print a carriage return to the HTML file.
   echo>string?
   if    s\" \n"  (echo>string)
   else  ['] cr (echo)
-  then
+  then  separate? off
   ;
 ' echo_cr alias \n
 
@@ -109,7 +110,6 @@ variable target_fid  \ file id of the HTML target page
   \ Print a double quote to the HTML file.
   s\" \"" echo 
   ;
-variable separate?  \ flag: separate the next tag or word from the current one?
 : _separate  ( -- )
   \ Separate the current tag or word from the previous one, if needed.
   separate? @ if  echo_space  then  separate? on
@@ -152,4 +152,6 @@ variable separate?  \ flag: separate the next tag or word from the current one?
 \ 2013-07-21 New: 'echo_line'.
 \ 2013-11-07 New: '_echo.'.
 \ 2013-11-26 Change: 'n>str' instead of '(echo.)'.
+\ 2013-12-06 Fix: 'echo_cr' now does 'separate? off' in order to
+\   remove unnecessary blank spaces.
 

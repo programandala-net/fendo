@@ -88,6 +88,7 @@
 \ 2013-09-29: New: '}content?' flag is used to check if
 \   '}content' was executed; this way some markup
 \   errors can be detected.
+\ 2013-12-06 New: 'opened_markups_off' in '(content{)'.
 
 \ **************************************************************
 \ Todo
@@ -387,6 +388,7 @@ variable }content?  \ flag: was '}content' executed?
 : (content{)  ( -- )
   \ Create the top template part of the target page
   \ and parse the page content.
+  opened_markups_off
   open_target template{
   }content? off  parse_content
   }content? @ 0= abort" Missing '}content' at the end of the page"

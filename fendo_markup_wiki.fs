@@ -156,11 +156,61 @@ variable opened_[**]?   \ is there an open '**'?
 variable opened_[,,]?   \ is there an open ',,'?
 variable opened_[--]?   \ is there an open '--'?
 variable opened_[//]?   \ is there an open '//'?
-variable opened_[=]?    \ is there an open heading?
+variable opened_[=]?    \ is there an open h1 heading?
+false [if]
+\ First version, one flag shared by all headings.
+\ This causes the opening and the closing tags become reversed
+\ in some unknown conditions, when several pages are parsed.
+\ Maybe the reason is some flag remains set because a hidden
+\ markup error in certain page.
+\ The new word 'opened_markups_off' solves the problem.
+' opened_[=]?
+dup alias opened_[==]?    \ is there an open h2 heading?
+dup alias opened_[===]?    \ is there an open h3 heading?
+dup alias opened_[====]?    \ is there an open h4 heading?
+dup alias opened_[=====]?    \ is there an open h5 heading?
+alias opened_[======]?    \ is there an open h6 heading?
+[else]
+\ Second version, one flag for every heading; in theory
+\ one common flag would be enough, because headings are
+\ not nested.
+\ Beside, somehow this seems to fix the problem of the first version.
+\ The new word 'opened_markups_off' solves the problem, anyway.
+variable opened_[==]?    \ is there an open h2 heading?
+variable opened_[===]?    \ is there an open h3 heading?
+variable opened_[====]?    \ is there an open h4 heading?
+variable opened_[=====]?    \ is there an open h5 heading?
+variable opened_[======]?    \ is there an open h6 heading?
+[then]
 variable opened_[=|=]?  \ is there an open table caption?
 variable opened_[^^]?   \ is there an open '^^'?
 variable opened_[_]?    \ is there an open '_'?
 variable opened_[__]?   \ is there an open '__'?
+
+: opened_markups_off  ( -- )
+  \ Unset all markup flags.
+  \ This is used in '(content{)' (defined in <fendo_parser.fs>),
+  \ in order to make sure all flags are unset before rendering a new
+  \ page.
+  opened_["""]? off
+  opened_[""]? off
+  opened_[###]? off
+  opened_[##]? off
+  opened_[**]? off
+  opened_[,,]? off
+  opened_[--]? off
+  opened_[//]? off
+  opened_[=]? off
+  opened_[==]? off
+  opened_[===]? off
+  opened_[====]? off
+  opened_[=====]? off
+  opened_[======]? off
+  opened_[=|=]? off
+  opened_[^^]? off
+  opened_[_]? off
+  opened_[__]? off
+  ;
 
 \ **************************************************************
 \ Tools for lists
@@ -770,7 +820,7 @@ variable local_link_to_draft_page?
 : (tune_local_hreflang)  ( a -- )
   \ Set the hreflang attribute of a local link, if needed.
   \ a = page id of the link destination
-  s" lang 2dup current_lang" evaluate str=
+  s" pid#>lang$ 2dup current_lang$" evaluate str=
   if  2drop  else  hreflang=?!  then
   ;
 : tune_local_hreflang  ( a -- )
@@ -845,10 +895,6 @@ language_markups: es
 
 [then]
 
-: (xml:)lang=  ( -- a )
-  \ Return the proper language attribute.
-  xhtml? @ if  xml:lang=  else  lang=  then
-  ;
 : :create_markup  ( ca len -- )
   \ Create a 'create' word with the given name in the markup
   \ wordlist.
@@ -861,7 +907,7 @@ language_markups: es
   \ ca len = ISO code of a language
   2dup s" ((" s+ :create_markup s,
   does>  ( -- ) ( dfa )
-    count (xml:)lang= attribute! [<span>]
+    count (xml:)lang=! [<span>]
   ;
 : ((:  ( "name" -- )
   \ Create a language inline markup.
@@ -873,7 +919,7 @@ language_markups: es
   \ ca len = ISO code of a language
   2dup s" (((" s+ :create_markup s,
   does>  ( -- ) ( dfa )
-    count (xml:)lang= attribute! [<div>]
+    count (xml:)lang=! [<div>]
   ;
 : (((:  ( "name" -- )
   \ Create a language block markup.
@@ -1054,24 +1100,24 @@ true [if]  \ xxx first version
 : ==  ( -- )
   \ Open or close a <h2> heading.
 \  cr ." opened_[=]? = " opened_[=]? ? key drop  \ xxx informer
-  ['] <h2> ['] </h2> opened_[=]? markups
+  ['] <h2> ['] </h2> opened_[==]? markups
 \  depth abort" stack not empty"  \ xxx informer
   ;
 : ===  ( -- )
   \ Open or close a <h3> heading.
-  ['] <h3> ['] </h3> opened_[=]? markups
+  ['] <h3> ['] </h3> opened_[===]? markups
   ;
 : ====  ( -- )
   \ Open or close a <h4> heading.
-  ['] <h4> ['] </h4> opened_[=]? markups
+  ['] <h4> ['] </h4> opened_[====]? markups
   ;
 : =====  ( -- )
   \ Open or close a <h5> heading.
-  ['] <h5> ['] </h5> opened_[=]? markups
+  ['] <h5> ['] </h5> opened_[=====]? markups
   ;
 : ======  ( -- )
   \ Open or close a <h6> heading.
-  ['] <h6> ['] </h6> opened_[=]? markups
+  ['] <h6> ['] </h6> opened_[======]? markups
   ;
 
 \ Lists
@@ -1326,5 +1372,9 @@ only forth fendo>order definitions
 \   'highlighted_###-zone'.
 \ 2013-11-27 Change: '{* ... *}' changed to '(* ... *)', just
 \   implemented in the Galope library.
+\ 2013-12-05 Change: '(xml:)lang=' moved to
+\   <fendo_markup_html_attributes.fs>; '(xml:)lang= attribute!' factored
+\   to '(xml:)lang=!' and  moved to <fendo_markup_html_attributes.fs> too.
+\ 2013-12-06 New: 'opened_markups_off'.
 
 [then]
