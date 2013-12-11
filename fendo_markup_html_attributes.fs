@@ -46,6 +46,10 @@
 \   requiring the library files. The problem was <ffl/config.fs>
 \   created 'ffl.version' in the 'fendo' vocabulary, but searched for it
 \   in 'forth-wordlist'.
+\ 2013-12-05 Change: '(xml:)lang=' moved here from
+\   <fendo_markup_wiki.fs>.
+\ 2013-12-05 New: '(xml:)lang=!', factored from
+\   <fendo_markup_wiki.fs>; '(xml:)lang=@'.
 
 \ **************************************************************
 \ Todo
@@ -280,6 +284,25 @@ attribute: value=
 attribute: width=
 attribute: xml:base=
 attribute: xml:lang=
+
+\ **************************************************************
+\ Virtual attributes
+
+: (xml:)lang=  ( -- a )
+  \ Return the proper language attribute
+  \ for the current syntax.
+  xhtml? @ if  xml:lang=  else  lang=  then
+  ;
+: (xml:)lang=!  ( ca len -- )
+  \ Set the proper language attribute
+  \ for the current syntax.
+  (xml:)lang= attribute!
+  ;
+: (xml:)lang=@  ( ca len -- )
+  \ Fetch the proper language attribute
+  \ for the current syntax.
+  (xml:)lang= attribute@
+  ;
 
 \ **************************************************************
 \ Table
