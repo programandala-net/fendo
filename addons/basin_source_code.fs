@@ -38,6 +38,7 @@
 \ Requirements
 
 require fendo/addons/source_code.fs
+require fendo/addons/basin_charset.fs
 require ffl/chr.fs  \ 'chr-digit'
 
 \ **************************************************************
@@ -66,6 +67,7 @@ export
   \ xxx todo set the character set for this file type
   \ ca len = file name
   s" basin" programming_language!
+  ['] basin_charset is source_code_posttranslation_table
   open_source_code skip_basin_header (opened_source_code)
   ;
 

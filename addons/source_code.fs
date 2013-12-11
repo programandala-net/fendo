@@ -55,6 +55,11 @@
 \ **************************************************************
 \ Todo
 
+\ 2013-12-11 finish the charset translations of the source_code
+\ addons: two translation tables are required for every conversion,
+\ one to be done before the highlighting (actual chars) and other
+\ after it (strings converted to HTML), as required by
+\ basin_source_code.
 \ 2013-07-26 Character set conversions.
 \ 2013-11-09 Syntax highlighting cache!
 
@@ -66,6 +71,7 @@ require galope/dollar-variable.fs  \ '$variable'
 require galope/module.fs  \ 'module:', ';module', 'hide', 'export'
 require galope/minus-leading.fs  \ '-leading'
 require galope/string-suffix-question.fs  \ 'string-suffix?'
+require galope/translated.fs  \ 'translated'
 
 require fendo/addons/source_code_common.fs  \ xxx tmp
 
@@ -149,9 +155,6 @@ export
   \ <fendo/fendo_wiki_markup_wiki.fs>.
   source_code_fid read_fid_line
   ;
-: echo_source_code  ( ca len -- )
-  block_source_code{  highlighted echo  }block_source_code
-  ;
 : slurp_source_code  ( -- ca len )
   \ Slurp the content of the opened source code file,
   \ from its current file position.
@@ -161,9 +164,40 @@ export
   while   append_source_code_line
   repeat  2drop source_code@
   ;
+: noop_translation_table  ( -- 0 0 )
+  \ Fake translation table that does nothing.
+  0 dup 
+  ;
+defer source_code_pretranslation_table  ( -- a n )
+defer source_code_posttranslation_table  ( -- a n )
+: no_source_code_translation  ( -- )
+  ['] noop_translation_table dup
+  is source_code_pretranslation_table
+  is source_code_posttranslation_table
+  ;
+no_source_code_translation  \ default
+: pretranslated  ( ca len -- ca' len' )
+  \ Translate the source code before the highlighting.
+  \ This is used to translate chars to UTF-8;
+  \ otherwise the code of those chars would be converted
+  \ to text by the highlighting.
+  source_code_pretranslation_table translated
+  ;
+: posttranslated  ( ca len -- ca' len' )
+  \ Translate the source code after the highlighting.
+  \ This is used to translate strings to HTML entities or tags;
+  \ otherwise the highlighting would ruin them.
+  source_code_posttranslation_table translated
+  ;
+: echo_source_code  ( ca len -- )
+  block_source_code{
+  pretranslated highlighted posttranslated echo
+  }block_source_code
+  ;
 : (opened_source_code)  ( -- )
   \ Read and echo the content of the opened source code file.
-  slurp_source_code echo_source_code close_source_code 
+\  slurp_source_code translate_source_code echo_source_code close_source_code  \ xxx tmp
+  slurp_source_code echo_source_code close_source_code
   ;
 : (source_code)  ( ca len -- )
   \ Read and echo the content of a source code file.
@@ -175,6 +209,7 @@ export
   \ The Vim filetype is guessed from the filename.
   \ ca len = file name
   2dup filename>filetype programming_language!  (source_code)
+  no_source_code_translation  \ default
   ;
 
 ;module

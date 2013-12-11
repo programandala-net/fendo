@@ -35,6 +35,13 @@
 
 \ 2013-10-14 Moved from the application Fendo-programandala.
 \ 2013-10-15 Improvement: 'mlsconstant' checks if 'langs' is set.
+\ 2013-11-11 Improvement: 'lang' uses both the "language" metadatum
+\   and the language prefix of the filename.
+\ 2013-11-30 Change: 'mlsconstant' and 'langs' are deprecated; now
+\   the application must define its own words
+\   to store the number of languages and the multilingual strings. \
+\   xxx tmp
+\ 2013-12-01 Change: several renamings.
 
 \ **************************************************************
 \ Usage
@@ -63,47 +70,86 @@
 \ Requirements
 
 require galope/dollar-store-comma.fs  \ '$!,'
+require galope/c-slash-string.fs  \ 'c/string'
+require galope/paren-star.fs  \ '(*'
 
 \ **************************************************************
 
-0 value langs  \ number of language sections of the website
+true to multilingual?
 
-: lang  ( a -- ca len )
+0 value langs  \ number of language sections of the website  \ xxx old
+
+: lang_prefix  ( ca1 len1 -- ca2 len2 )
+  \ Get the ISO language code from the first part of a source page file.
+  \ ca1 len1 = page id
+  \ ca2 len2 = ISO language code
+  [char] . c/string
+  ;
+: pid#>lang$  { page_id -- ca len }
   \ Return the ISO language code of the given page.
-  \ a = page id
-  \ xxx todo use the left of the string until the first dot
-  source_file drop 2
+  \ The "language" metadatum has higher priority than the filename's
+  \ prefix.
+  page_id language dup ?exit  2drop
+  page_id source_file lang_prefix
   ;
-: current_lang  ( -- ca len )
+: current_lang$  ( -- ca len )
   \ Return the ISO language code of the current page.
-  current_page lang
+  \ xxx todo remove tmp result?
+  current_page ?dup if  pid#>lang$  else  s" en"  then
   ;
-: lang#  ( a -- n )
+: pid#>lang#  ( a -- n )
   \ Return the language number of the given page.
   \ This number is used as an offset, e.g. for multilingual
   \ texts.
   \ a = page id
-  lang s" _language" s+ evaluate
+  pid#>lang$ s" _language" s+ evaluate
   ;
 : current_lang#  ( -- n )
   \ Return the language number of the current page.
-  current_page lang#
+  current_page pid#>lang#
   ;
 : +lang  ( a -- a' )
   \ Add the current language number as cells.
   current_lang# cells +
   ;
-: mlsconstant ( ca-n len-n ... ca1 len1 "name" -- )
-  \ Create a multilingual string constant for three strings.
+: l10n$,  ( ca-n len-n ... ca1 len1 -- )
+  \ Compile the language strings.
+  \ ca1 len1 = text in the first language
+  \ ca-n len-n = text in the last language
+  langs 0 ?do  $!,  loop 
+  ;
+: (l10n$)  ( -- )
+  \ Define what language string do.
+  does>   ( -- ca len )  ( pfa ) +lang $@
+  ;
+: l10n$  ( ca-n len-n ... ca1 len1 "name" -- )
+  \ Create a localization string constant.
   \ It will return the string in the language of the current page.
   \ ca1 len1 = text in the first language
   \ ca-n len-n = text in the last language
   \ name = name of the constant
-  \ (Strings must be pushed on the stack
-  \ in reverse alphabetical order of its ISO language code).
-  langs 0= abort" 'langs' is not set; 'mlsconstant' can not work."
-  create  langs 0 ?do  $!,  loop 
-  does>   ( -- ca len )  ( pfa ) +lang $@
+  (*
+  Note:  \ xxx tmp
+  Strings must be pushed on the stack in reverse alphabetical order
+  of its ISO language code.
+  *)
+  langs 0= abort" 'langs' is not set; 'l10n$' can not work."
+  create  l10n$,  (l10n$)
+  ;
+' l10n$ alias mlsconstant  \ old name
+: noname_l10n$  ( ca-n len-n ... ca1 len1 -- xt )
+  \ Unnamed version of 'l10n$'.
+  \ Create a localization string constant.
+  \ It will return the string in the language of the current page.
+  \ ca1 len1 = text in the first language
+  \ ca-n len-n = text in the last language
+  (*
+  Note:  \ xxx tmp
+  Strings must be pushed on the stack in reverse alphabetical order
+  of its ISO language code.
+  *)
+  langs 0= abort" 'langs' is not set; 'noname_l10n$' can not work."
+  noname create  l10n$,  latestxt  (l10n$)
   ;
 
 .( addons/multilingual.fs compiled) cr

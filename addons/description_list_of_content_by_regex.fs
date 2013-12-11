@@ -26,32 +26,36 @@
 \ Change history of this file
 
 \ 2013-11-26 Start. First working version.
+\ 2013-11-27 Change: several words renamed, after a new uniform
+\   notation: "pid$" and "pid#" for both types of page ids.
 
 \ **************************************************************
 \ Requirements
 
 \ Fendo addons
-require ./page_id_list.fs
-require ./page_id_list_regex_filter.fs
+require ./pid_list.fs
+require ./pid_list_regex_filter.fs
 require ./definition_list_element.fs
+
+require galope/rgx-wcmatch-question.fs  \ 'rgx-wcmatch?'
 
 \ **************************************************************
 
 : (description_list_of_content_by_regex)  ( ca len -- )
   \ Create an element of a description list of content
   \ if the given page id matchs the current page id list filter.
-  2dup type cr  \ xxx informer
-  2dup page_id_list_filter rgx-cmatch?
+\  2dup type cr  \ xxx informer
+  2dup pid_list_filter rgx-wcmatch?
   if  definition_list_element  else  2drop  then
   ;
 : description_list_of_content_by_regex  ( ca len -- )
   \ Create a description list of content
   \ with pages whose page id matchs the given regex. 
   [<dl>]
-  >page_id_list_filter open_page_id_list
-  begin   page_id_list@ dup
+  >pid_list_filter open_pid_list
+  begin   pid$_list@ dup
   while   (description_list_of_content_by_regex)
-  repeat  2drop close_page_id_list
+  repeat  2drop close_pid_list
   [</dl>]
   ;
 
