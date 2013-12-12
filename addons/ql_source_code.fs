@@ -25,17 +25,25 @@
 \ **************************************************************
 \ Change history of this file
 
-\ 2013-12-10 Start.
+\ 2013-12-10 Written with <galope/translated.fs>.
+\ 2013-12-11 New: 'ql_source_code_translated'.
+\ 2013-12-11 Change: an xt is used, not a translation table; this
+\   makes it possible to use different translation tools.
 
 \ **************************************************************
 
+require galope/translated.fs
 require fendo/addons/source_code.fs
 require fendo/addons/ql_charset.fs
 
+: ql_source_code_translated  ( ca len -- ca' len' )
+  \ Convert the content of a QL file to UTF-8.
+  ql_charset translated
+  ;
 : ql_source_code  ( ca len -- )
   \ Read and echo the content of a Sinclair QL source code file.
   \ The Vim filetype is guessed from the filename.
   \ ca len = file name
-  ['] ql_charset is source_code_pretranslation_table
+  ['] ql_source_code_translated is source_code_pretranslated
   source_code
   ;
