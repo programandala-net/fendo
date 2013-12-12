@@ -32,13 +32,14 @@
 
 require fendo/addons/source_code.fs
 require fendo/addons/cp850_charset.fs
+require ftrac/ftrac.fs
 
 \ **************************************************************
 \ Source code in CP850 character encoding
 
 : cp850_source_code_translated  ( ca len -- ca' len' )
   \ Convert the content of a CP850 file to UTF-8.
-  cp850_charset_to_utf8 translated
+  cp850_charset_to_utf8 ftrac
   ;
 : cp850_source_code  ( ca len -- )
   \ Read the content of a CP850 file and echo it.
