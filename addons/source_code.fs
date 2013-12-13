@@ -51,16 +51,21 @@
 \ 2013-11-18 Change: All words related to syntax highlighting
 \   are moved to <addons/source_code_common.fs>, because they are needed
 \   also by the "###" markup.
+\ 2013-12-10 Character set translation implemented with
+\ <galope/translated.fs>: the default noop translation table
+\   must be changed by the specific addons.
+\ 2013-12-11 Character set translation improved: two
+\   translations can be done: one before the highlighting and other after
+\   it; this prevents the highlighting from ruining some
+\   translations. Besides, an xt is used instead of a translation
+\   table created with <galope/translated.fs>;
+\   this way any tool can be used for the task.
 
 \ **************************************************************
 \ Todo
 
-\ 2013-12-11 finish the charset translations of the source_code
-\ addons: two translation tables are required for every conversion,
-\ one to be done before the highlighting (actual chars) and other
-\ after it (strings converted to HTML), as required by
-\ basin_source_code.
-\ 2013-07-26 Character set conversions.
+\ 2013-12-11 make '(filename>filetype)' configurable by the
+\ application.
 \ 2013-11-09 Syntax highlighting cache!
 
 \ **************************************************************
@@ -79,6 +84,7 @@ module: source_code_fendo_addon_module
 
 : (filename>filetype)  { D: filename -- ca2 len2 }
   \ Convert a filename to a Vim's filetype.
+  \ xxx todo make this configurable by the application
   filename s" .4th" string-suffix? if s" forth" exit  then
   filename s" .asm" string-suffix? if s" z80" exit  then
   filename s" .bac" string-suffix? if s" bacon" exit  then
@@ -168,31 +174,31 @@ export
   \ Fake translation table that does nothing.
   0 dup 
   ;
-defer source_code_pretranslation_table  ( -- a n )
-defer source_code_posttranslation_table  ( -- a n )
-: no_source_code_translation  ( -- )
-  ['] noop_translation_table dup
-  is source_code_pretranslation_table
-  is source_code_posttranslation_table
-  ;
-no_source_code_translation  \ default
-: pretranslated  ( ca len -- ca' len' )
+defer source_code_pretranslated  ( ca len -- ca' len' )
   \ Translate the source code before the highlighting.
-  \ This is used to translate chars to UTF-8;
+  \ This must be vectored by a specific addon.
+  \ This is used to translate 8-bit chars to UTF-8 chars;
   \ otherwise the code of those chars would be converted
   \ to text by the highlighting.
-  source_code_pretranslation_table translated
-  ;
-: posttranslated  ( ca len -- ca' len' )
+defer source_code_posttranslated  ( ca len -- ca' len' )
   \ Translate the source code after the highlighting.
+  \ This must be vectored by a specific addon.
   \ This is used to translate strings to HTML entities or tags;
   \ otherwise the highlighting would ruin them.
-  source_code_posttranslation_table translated
+: no_source_code_translation  ( -- )
+  \ Deactivates the source code translations.
+  ['] noop dup
+  is source_code_pretranslated
+  is source_code_posttranslated
+  ;
+no_source_code_translation
+: >source_code<  ( ca len -- ca' len' )
+  \ Translate and highlight a source code.
+  source_code_pretranslated highlighted source_code_posttranslated 
   ;
 : echo_source_code  ( ca len -- )
-  block_source_code{
-  pretranslated highlighted posttranslated echo
-  }block_source_code
+  \ Echo a source code.
+  block_source_code{ >source_code< echo }block_source_code
   ;
 : (opened_source_code)  ( -- )
   \ Read and echo the content of the opened source code file.
@@ -206,11 +212,14 @@ no_source_code_translation  \ default
   ;
 : source_code  ( ca len -- )
   \ Read and echo the content of a source code file.
-  \ The Vim filetype is guessed from the filename.
+  \ The Vim filetype is guessed from the filename, unless
+  \ already set in the 'programming_language$' dinamyc string.
   \ ca len = file name
   2dup filename>filetype programming_language!  (source_code)
-  no_source_code_translation  \ default
+  no_source_code_translation  \ set the default
   ;
+
+' source_code alias zx_spectrum_source_code  \ xxx tmp
 
 ;module
 
