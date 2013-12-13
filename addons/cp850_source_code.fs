@@ -25,21 +25,23 @@
 \ **************************************************************
 \ Change history of this file
 
-\ 2013-12-11 Written.
+\ 2013-12-11 Written with <galope/translated.fs>.
+\ 2013-12-11 Rewritten with <ftrac/ftrac.fs>.
+\ 2013-12-12 Rewritten with <galope/uncodepaged.fs>.
 
 \ **************************************************************
 \ Requirements
 
 require fendo/addons/source_code.fs
 require fendo/addons/cp850_charset.fs
-require ftrac/ftrac.fs
+require galope/uncodepaged.fs
 
 \ **************************************************************
 \ Source code in CP850 character encoding
 
 : cp850_source_code_translated  ( ca len -- ca' len' )
   \ Convert the content of a CP850 file to UTF-8.
-  cp850_charset_to_utf8 ftrac
+  cp850_charset_to_utf8 uncodepaged
   ;
 : cp850_source_code  ( ca len -- )
   \ Read the content of a CP850 file and echo it.

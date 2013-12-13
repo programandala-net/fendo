@@ -41,6 +41,8 @@
 \ **************************************************************
 \ Todo
 
+\ 2013-12-12 let abersoft forth syntax? a vim syntax file will be
+\ required.
 \ 2013-07-26 Character set conversions.
 
 \ **************************************************************
@@ -125,6 +127,7 @@ hide
   ;
 export
 : (forth_blocks_source_code)  ( -- )
+  \ xxx todo let abersoft forth to be set
   s" forth" programming_language!
   0 forth_block !
   0 forth_block_line !
