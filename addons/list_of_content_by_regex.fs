@@ -48,9 +48,9 @@ module: list_of_content_by_regex_fendo_addon_module
   \ if the given page id matches the current list filter.
   \ xxx todo filter draft pages
   \ ca len = page id
-  2dup type  \ xxx informer
+\  2dup type  \ xxx informer
   2dup pid_list_filter rgx-wcmatch?
-  dup . cr \ xxx informer
+\  dup . cr \ xxx informer
   if  [<li>] title_link [</li>]  else  2drop  then
   ;
 
