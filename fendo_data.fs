@@ -5,7 +5,7 @@
 
 \ This file defines the page data tools.
 
-\ Copyright (C) 2013 Marcos Cruz (programandala.net)
+\ Copyright (C) 2013,2014 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute
 \ it and/or modify it under the terms of the GNU General
@@ -31,8 +31,8 @@
 \ **************************************************************
 \ Todo
 
-\ 2013-06-08 Can 'current_page' be used instead of ''data'?
-\ 2013-06-07 Calculated data: rendered_title plain_title
+\ 2013-06-08: Can 'current_page' be used instead of ''data'?
+\ 2013-06-07: Calculated data: rendered_title plain_title
 \   ... same with description. Better: filter words!
 
 \ **************************************************************
@@ -40,6 +40,7 @@
 
 require galope/slash-csv.fs  \ '/csv'
 require galope/char_count.fs  \ 'char_count'
+require ffl/str.fs
 
 \ **************************************************************
 \ Page data engine
@@ -107,7 +108,8 @@ datum: plain_description  \ the same without markups
 
 \ Dates in ISO format:
 datum: created  \ creation date
-datum: modifed  \ modification date
+datum: modified  \ modification date
+' modified alias modifed
 
 datum: access_key  \ access key (one char)
 
@@ -470,6 +472,18 @@ do_content? on
   source_file (hierarchy) 1-
   ;
 
+\ **************************************************************
+\ String manipulation
+
+str-create tmp-str
+: replaced ( ca1 len1 ca2 len2 ca3 len3 -- ca1' len1' )
+  \ Replaces all ocurrences of ca2 len2 with ca3 len3 in ca1 len1.
+  \ ca1 len1 = string to modify
+  \ ca2 len2 = substring to translate from
+  \ ca3 len3 = substring to translate to
+  2swap 2rot tmp-str str-set tmp-str str-replace  tmp-str str-get
+  ;
+
 .( fendo_data.fs compiled) cr
 
 (*
@@ -477,81 +491,85 @@ do_content? on
 \ **************************************************************
 \ Change history of this file
 
-\ 2013-04-28 Start.
-\ 2013-05-01 Fixed and finished the data system.
-\ 2013-05-17 Fix: There were two words with the name '>datum';
+\ 2013-04-28: Start.
+\ 2013-05-01: Fixed and finished the data system.
+\ 2013-05-17: Fix: There were two words with the name '>datum';
 \   it caused no problem in practice, but was confusing.
-\ 2013-05-17 Improvement: 'data{' gets the data only the first time.
-\ 2013-05-17 New: 'require_data' is moved here from its own file,
+\ 2013-05-17: Improvement: 'data{' gets the data only the first time.
+\ 2013-05-17: New: 'require_data' is moved here from its own file,
 \   and simplified. 
-\ 2013-05-18 Change: data fields return their offset, not their
+\ 2013-05-18: Change: data fields return their offset, not their
 \   content (neccessary to write 'datum!'; '>datum' removed
 \   (now '+' can be used instead). 'datum!' is necessary in
 \   order to set default values to certain fields.
-\ 2013-05-18 New: 'parse_datum' is rewriten and factored out to
+\ 2013-05-18: New: 'parse_datum' is rewriten and factored out to
 \   'datum!'.
-\ 2013-06-07 Fix: The check in 'data{' was obsolete; it has been
+\ 2013-06-07: Fix: The check in 'data{' was obsolete; it has been
 \   rewritten.
-\ 2013-06-08 Fix: The leading spaces of parsed data were not
+\ 2013-06-08: Fix: The leading spaces of parsed data were not
 \   removed.
-\ 2013-06-08 Fix: now 'datum@' returns an empty string if the
+\ 2013-06-08: Fix: now 'datum@' returns an empty string if the
 \   datum was not set.
-\ 2013-06-08 Fix: '@' missing in 'default_data'; beside, renamed
+\ 2013-06-08: Fix: '@' missing in 'default_data'; beside, renamed
 \   to "set_default_data'.
-\ 2013-06-08 Change: 'datum@' and 'datum!' are removed;
+\ 2013-06-08: Change: 'datum@' and 'datum!' are removed;
 \   '$@' and '$!' are used instead (from Gforth's <string.fs>)).
-\ 2013-06-08 Fix: name clash (old 'source_filename' >
+\ 2013-06-08: Fix: name clash (old 'source_filename' >
 \   '+source_path'; new 'source_filename' > '/sourcefilename').
-\ 2013-06-23 Change: design and template fields are renamed
+\ 2013-06-23: Change: design and template fields are renamed
 \   after the changes in the config module.
-\ 2013-06-28 Change: hierarchy metadata fields are renamed with
+\ 2013-06-28: Change: hierarchy metadata fields are renamed with
 \   the "_page" prefix, to avoid the clash with 'next' and make
 \   the code clearer; 'up' is renamed to 'upper_page'.
-\ 2013-06-28 Change: metadata fields return their values, not
+\ 2013-06-28: Change: metadata fields return their values, not
 \   their addresses; a parallel word is created to return the
 \   address, only needed to set the default data;
 \   this change makes the code nicer.
-\ 2013-06-29 Change: '/sourcefilename' moved here from
+\ 2013-06-29: Change: '/sourcefilename' moved here from
 \   <fendo_files.fs>.
-\ 2013-06-29 Change: 'source>target_extension' moved here
+\ 2013-06-29: Change: 'source>target_extension' moved here
 \   from <fendo_files.fs>.
-\ 2013-06-29 New: 'target_extension'; now target filename extension
+\ 2013-06-29: New: 'target_extension'; now target filename extension
 \   depends on the corresponding optional metadatum too.
-\ 2013-07-28 New: 'required_data', '-forth_extension',
+\ 2013-07-28: New: 'required_data', '-forth_extension',
 \   '+forth_extension'.
-\ 2013-09-06 Fix: '(required_data)' didn't save 'current_page'.
-\ 2013-09-06 New: 'property?', 'draft?'.
-\ 2013-09-29 Fix: 'current_page' was not properly preserved
+\ 2013-09-06: Fix: '(required_data)' didn't save 'current_page'.
+\ 2013-09-06: New: 'property?', 'draft?'.
+\ 2013-09-29: Fix: 'current_page' was not properly preserved
 \   when 'require_data' was used. This caused many pages were
 \   not created. This bug was difficult to find out.
-\ 2013-10-22 Change: the new word 'trim', defined in the Galope
+\ 2013-10-22: Change: the new word 'trim', defined in the Galope
 \   library, is used instead of '-trailing -leading'.
-\ 2013-10-22 Fix: 'parse_datum' now uses 'trim' instead of
+\ 2013-10-22: Fix: 'parse_datum' now uses 'trim' instead of
 \   '-leading'.
-\ 2013-10-22 New: 'data<id$>id'.
-\ 2013-10-23 Improvement: 'unshortcut' is used in
+\ 2013-10-22: New: 'data<id$>id'.
+\ 2013-10-23: Improvement: 'unshortcut' is used in
 \   'required_data<id$' and 'data<id$>id'.
-\ 2013-11-06 New: '(data<)id$>id'.
-\ 2013-11-07 New: '(required_data)' traps the errors and show an
+\ 2013-11-06: New: '(data<)id$>id'.
+\ 2013-11-07: New: '(required_data)' traps the errors and show an
 \   additional error message that includes the filename. This is
 \   important because the actual filename could be different from
 \   the filename taken from the markup, because of the
 \   "unshortcuttting" system.
-\ 2013-11-11 Change: '/csv' moved to the Galope library.
-\ 2013-11-24 New: 'page_id$', 'descendant?', 'current_page_id$'.
-\ 2013-11-25 New: 'source>id$', 'source>id'.
-\ 2013-11-26 Change: several words renamed, after a new uniform notation:
+\ 2013-11-11: Change: '/csv' moved to the Galope library.
+\ 2013-11-24: New: 'page_id$', 'descendant?', 'current_page_id$'.
+\ 2013-11-25: New: 'source>id$', 'source>id'.
+\ 2013-11-26: Change: several words renamed, after a new uniform notation:
 \   "pid$" and "pid#" for both types of page ids.
-\ 2013-11-26 New: 'pid$>pid#'; page ids are created in a specific
+\ 2013-11-26: New: 'pid$>pid#'; page ids are created in a specific
 \   wordlist.
-\ 2013-11-27 New: '(pid$>data>pid#)' factored out from
+\ 2013-11-27: New: '(pid$>data>pid#)' factored out from
 \   'pid$>data>pid#', as required by 'pid$_list@' (defined in
 \   <addons/pid_list.fs>), where 'unshortcut' is inconvenient.
-\ 2013-11-28 New: 'known_pid$?', factored from 'pid$>pid#' to be
+\ 2013-11-28: New: 'known_pid$?', factored from 'pid$>pid#' to be
 \   reused in ':pid'.
-\ 2013-11-28 New: 'pid$>target', to fix 'redirected' (in
+\ 2013-11-28: New: 'pid$>target', to fix 'redirected' (in
 \   <fendo_files.fs>)
-\ 2013-12-05 Change: 'current_file_pid$' renamed to 'current_pid$'.
-\ 2013-12-06 New: 'pid$>level' and 'pid#>level'.
+\ 2013-12-05: Change: 'current_file_pid$' renamed to 'current_pid$'.
+\ 2013-12-06: New: 'pid$>level' and 'pid#>level'.
+\ 2014-01-05: Typo: 'modifed' corrected to 'modified'; alias created
+\   for the remaining mentions in the old pages.
+\ 2014-01-06: New: 'replaced', used by the wiki markup module and the
+\   common source code addon.
 
 *)

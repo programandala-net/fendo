@@ -88,9 +88,7 @@ variable target_fid  \ file id of the HTML target page
   \ Print a text string to the HTML file.
 \  2dup cr type  key drop  \ xxx informer
   echo>string?
-  if    (echo>string)
-  else  ['] type (echo)
-  then
+  if  (echo>string)  else  ['] type (echo)  then
   ;
 variable separate?  \ flag: separate the next tag or word from the current one?
 : echo_cr  ( -- )
