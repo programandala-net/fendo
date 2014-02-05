@@ -26,55 +26,55 @@
 \ **************************************************************
 \ Change history of this file
 
-\ 2013-04-28 Start.
-\ 2013-05-18 New: parser; 'skip_content{'.
-\ 2013-06-01 New: parser rewritten from scratch. Management of
+\ 2013-04-28: Start.
+\ 2013-05-18: New: parser; 'skip_content{'.
+\ 2013-06-01: New: parser rewritten from scratch. Management of
 \   empty names and empty lines.
-\ 2013-06-02 New: counters for both types of elements (markups and
+\ 2013-06-02: New: counters for both types of elements (markups and
 \   printable words); required in order to separate words.
-\ 2013-06-04 Fix: lists were not properly closed by an empty space.
-\ 2013-06-05 Fix: 'markup' now uses a name token; this was
+\ 2013-06-04: Fix: lists were not properly closed by an empty space.
+\ 2013-06-05: Fix: 'markup' now uses a name token; this was
 \   required in order to define '~', a markup that parses the
 \   next name is the source.
 \ 2013-06-05: New: '#parsed', required for implementing the
 \   table markup.
-\ 2013-06-05 Change: clearer code for closing the pending
+\ 2013-06-05: Change: clearer code for closing the pending
 \   markups.
-\ 2013-06-06 Change: renamed from "fendo_content.fs" to
+\ 2013-06-06: Change: renamed from "fendo_content.fs" to
 \   "fendo_parser.fs".
-\ 2013-06-06 New: template implemented.
-\ 2013-06-08 Improved: Template management.
-\ 2013-06-08 New: first code for output redirection.
-\ 2013-06-08 New: first implementation of target directories.
-\ 2013-06-11 Fix: the target file is opened and closed depending
+\ 2013-06-06: New: template implemented.
+\ 2013-06-08: Improved: Template management.
+\ 2013-06-08: New: first code for output redirection.
+\ 2013-06-08: New: first implementation of target directories.
+\ 2013-06-11: Fix: the target file is opened and closed depending
 \   on the 'dry?' config variable.
-\ 2013-06-11 Fix: typo in comment of 'template_halves'.
-\ 2013-06-16 Change: The parser has been rewritten; now
+\ 2013-06-11: Fix: typo in comment of 'template_halves'.
+\ 2013-06-16: Change: The parser has been rewritten; now
 \   'search-wordlist' is used instead of 'parse-name' and
 \   'find-name'; this was needed to avoid matches in the Root wordlist.
-\ 2013-06-16 Fix: Now '}content' toggles the parsing off and sets
+\ 2013-06-16: Fix: Now '}content' toggles the parsing off and sets
 \   the normal wordlist order.
-\ 2013-06-23 Change: design and template variables are renamed
+\ 2013-06-23: Change: design and template variables are renamed
 \   after the changes in the config module.
-\ 2013-06-28 Change: '$@' is no longer required by metadata
+\ 2013-06-28: Change: '$@' is no longer required by metadata
 \   fields, after Fendo A-01.
-\ 2013-07-03 Change: 'dry?' renamed to 'echo>screen?', after the
+\ 2013-07-03: Change: 'dry?' renamed to 'echo>screen?', after the
 \   changes in the echo module.
-\ 2013-07-03 Change: words that check the current echo have been
+\ 2013-07-03: Change: words that check the current echo have been
 \ renamed, after the  changes in the echo module.
-\ 2013-07-28 New: 'parse_link_text' moved here from
+\ 2013-07-28: New: 'parse_link_text' moved here from
 \   <fendo_markup_wiki.fs>.
-\ 2013-07-28 Fix: old '[previous]' changed to '[markup<order]';
+\ 2013-07-28: Fix: old '[previous]' changed to '[markup<order]';
 \   this was the reason the so many wordlists remained in the
 \   search order.
-\ 2013-08-10 Fix: wrong exit flags in 'parsed_link_text' caused
+\ 2013-08-10: Fix: wrong exit flags in 'parsed_link_text' caused
 \   only the first word was parsed.
-\ 2013-08-10 Fix: the alternative attributes set was needed in
+\ 2013-08-10: Fix: the alternative attributes set was needed in
 \   'parsed_link_text', to preserve the current attributes
 \   already used for the <a> tag.
-\ 2013-08-10 Change: 'parse_string' renamed to
+\ 2013-08-10: Change: 'parse_string' renamed to
 \   'evaluate_content'.
-\ 2013-08-14 Fix: '#nothings off' was needed at the end of
+\ 2013-08-14: Fix: '#nothings off' was needed at the end of
 \   '(evaluate_content)'. Otherwise '#nothings' activated
 \   'close_pending' before expected, e.g. this happened
 \   when a link was at the end of a line.
@@ -88,7 +88,7 @@
 \ 2013-09-29: New: '}content?' flag is used to check if
 \   '}content' was executed; this way some markup
 \   errors can be detected.
-\ 2013-12-06 New: 'opened_markups_off' in '(content{)'.
+\ 2013-12-06: New: 'opened_markups_off' in '(content{)'.
 
 \ **************************************************************
 \ Todo
@@ -98,6 +98,16 @@
 \
 \ 2013-06-04: Flag the first markup of the current line, in
 \   order to use '--' both for nested lists and for delete.
+
+\ **************************************************************
+\ Requirements
+
+get-current  forth-wordlist set-current
+
+require galope/n-to-r.fs  \ 'n>r'
+require galope/n-r-from.fs  \ 'nr>'
+
+set-current
 
 \ **************************************************************
 \ Pending markups
@@ -149,6 +159,7 @@ variable more?  \ flag: keep on parsing more words?; changed by '}content'
 
 :noname  ( ca len -- )
   \ Manage a parsed string of content: print it and update the counters.
+\  ." content! " order cr  \ xxx informer
   #markups off  _echo  1 #nonmarkups +!
   ;  is content
 : (markup)  ( xt -- )
@@ -161,14 +172,42 @@ variable more?  \ flag: keep on parsing more words?; changed by '}content'
   \ if required.
   \ ca len = name of the markup
   \ xt = execution token of the markup
+\  ." markup! " order cr  \ xxx informer
   execute_markup? @
-  if    nip nip (markup)
-  else  drop content
-  then
+  if  nip nip (markup)  else  drop content  then
+  ;
+: found?  ( ca len -- xt | 0 )
+  \ Is the given string found in the current wordlists?
+  find-name dup if  name>int  then
+  ;
+: markup?  ( ca len -- xt | 0 )
+  \ Is the given string any kind of markup
+  \ (wiki markup, HTML entity or user macro)?
+\  cr ." markup? " .s key drop  \ xxx informer
+  get-order n>r
+\  cr ." markup? 0 " .s key drop  \ xxx informer
+  set_markup_order found?
+\  cr ." markup? 1 " .s key drop  \ xxx informer
+  nr> set-order
+\  cr ." markup? 2 " .s key drop  \ xxx informer
   ;
 : something  ( ca len -- )
   \ Manage something found on the page content.
   \ ca len = parsed item (markup or printable content) 
+\  2dup ." something= " type space order cr  \ xxx informer
+\  depth 2 > abort" something wrong!"  \ xxx informer
+  #nothings off
+\  ." #nothings = " #nothings @ . cr  \ xxx informer
+  2dup markup? ?dup if  markup  else  content  then  1 #parsed +!
+  ;
+
+0 [if]
+\ xxx old, abandoned on 2014-02-05, in order to implement the user macros
+: something  ( ca len -- )
+  \ Manage something found on the page content.
+  \ ca len = parsed item (markup or printable content) 
+\  2dup cr type space  \ xxx informer
+\  depth 2 > abort" something wrong!"  \ xxx informer
   #nothings off
 \  ." #nothings = " #nothings @ . cr  \ xxx informer
   2dup fendo_markup_wid search-wordlist
@@ -179,10 +218,10 @@ variable more?  \ flag: keep on parsing more words?; changed by '}content'
   then
   1 #parsed +!
   ;
-
+[then]
 0 [if]
 
-\ 2013-08-10 experimental new version, with direct execution of
+\ 2013-08-10: experimental new version, with direct execution of
 \ Forth code; unfinished
 
 : something_in_code_zone  ( ca len -- )
@@ -214,8 +253,7 @@ variable more?  \ flag: keep on parsing more words?; changed by '}content'
 \  ." #nothings = " #nothings @ . cr  \ xxx informer
   forth_code_depth @
   if    something_in_code_zone
-  else  something_in_ordinary_zone
-  then
+  else  something_in_ordinary_zone  then
   ;
 [then]
 
@@ -223,6 +261,7 @@ variable more?  \ flag: keep on parsing more words?; changed by '}content'
   \ Manage a "nothing", a parsed empty name. 
   \ The first empty name means the current line is finished;
   \ the second consecutive empty name means the current line is empty.
+\  cr ." nothing"  \ xxx informer
   preserve_eol? @ if  echo_cr  then  \ xxx tmp
   #nothings @  \ an empty line was parsed?
   if    close_pending
@@ -234,6 +273,7 @@ variable more?  \ flag: keep on parsing more words?; changed by '}content'
   \ Parse the current input source.
   \ The process is finished by the '}content' markup or the end
   \ of the source.
+\  order key drop  \ xxx informer
   separate? off  more? on
   begin
     parse-name ?dup
@@ -360,7 +400,7 @@ variable template_content
 \  .s  \ xxx informer
   ;
 [else]  \ xxx second method; the template file is read twice
-\ xxx 2013-10-27 this alternative is tried in order to see
+\ xxx 2013-10-27: this alternative is tried in order to see
 \ its effect on the strange corruption of the input stream.
 : get_template  ( -- ca len )
   \ Return the template content.
@@ -383,6 +423,8 @@ variable template_content
 : .sourcefilename  ( -- )
   \ Print the name of the currently parsed file.
   sourcefilename type cr
+\ ."  XXX stack check: " .s  \ xxx informer
+  depth abort" Stack not empty"  \ xxx informer
   ;
 variable }content?  \ flag: was '}content' executed?
 : (content{)  ( -- )

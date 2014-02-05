@@ -43,7 +43,7 @@ wordlist constant fendo_shortcuts_wid  \ for user's shortcuts
 : shortcut:  ( "name" -- )
   \ Create an user's shortcut.
   [ true ] [if]  \ xxx normal version
-  get-current >r  fendo_shortcuts_wid set-current :  r> set-current
+  get-current >r  fendo_shortcuts_wid set-current :  r> set-current  \ xxx works
   [else]  \ xxx debugging version
   get-current >r
   fendo_shortcuts_wid set-current
@@ -51,7 +51,7 @@ wordlist constant fendo_shortcuts_wid  \ for user's shortcuts
   2dup 2>r nextname
   :
   2r> 
-  \ space 2dup type  \ xxx informer
+\  space 2dup type  \ xxx informer
   postpone sliteral postpone cr
   s" resolving shortcut " postpone sliteral
   postpone type
@@ -113,9 +113,10 @@ shortcut: gforth_ext
   \ Unshortcut an href attribute recursively.
   \ ca len = href attribute 
   \ ca' len' = actual href attribute
+\  cr ." order = " order cr ." entering unshortcut " 2dup type  \ xxx informer
   2dup href=!
   0 rot rot  \ fake xt
-\  2dup cr ." about to unshortcut " type  \ xxx informer
+\  2dup cr ." order = " order cr ." about to unshortcut " type  \ xxx informer
   begin   ( xt ca len ) shortcut?  ( xt' xt' true  |  false )
   while   execute href=@
 \  2dup ." --> " type  \ xxx informer

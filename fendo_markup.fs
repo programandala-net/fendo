@@ -30,6 +30,7 @@
 \   <fendo_html_tags.fs>.
 \ 2013-06-08 Change: 'forth_block?' renamed to 'forth_code?'.
 \ 2013-06-28 Change: 'forth_code?' changed to 'forth_code_depth', a counter.
+\ 2014-02-03 New: ':echo_name+'.
 
 \ **************************************************************
 \ Generic tool words for markup and parsing
@@ -46,6 +47,13 @@
   \ ca len = word name 
   2dup :create  s,
   does>  ( -- ) ( dfa )  count echo  separate? on
+  ;
+: :echo_name+   ( ca len -- )
+  \ Create a word that prints its own name
+  \ and forces the following text will not be separated.
+  \ ca len = word name 
+  2dup :create  s,
+  does>  ( -- ) ( dfa )  count _echo  separate? off
   ;
 variable header_cell?  \ flag, is it a header cell the latest opened cell in the table?
 variable table_started?  \ flag, is a table open?
@@ -66,6 +74,7 @@ variable xhtml?  \ flag, XHTML syntax?
 include ./fendo_markup_html.fs
 include ./fendo_shortcuts.fs
 include ./fendo_markup_wiki.fs
+include ./fendo_markup_macros.fs
 
 .( fendo_markup.fs compiled) cr
 
