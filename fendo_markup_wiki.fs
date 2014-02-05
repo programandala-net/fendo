@@ -5,7 +5,7 @@
 
 \ This file defines the wiki markup. 
 
-\ Copyright (C) 2013 Marcos Cruz (programandala.net)
+\ Copyright (C) 2013,2014 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute
 \ it and/or modify it under the terms of the GNU General
@@ -31,7 +31,10 @@
 \ **************************************************************
 \ Todo
 
-\ 2013-11-19: "---" markup.
+\ 2014-02-04: write the AsciiDoc's <<< markup for CSS page break.
+\ 2014-02-04: write the AsciiDoc's ++...++ markup for monospaced
+\ inline text.
+\ 2014-02-04: write the Creole's {{{...}}} markup, based on ###...###.
 \ 2013-11-19: factor out '###' to an optional addon.
 \ 2013-11-07: make closing heading optional.
 \ 2013-10-30: Optional file size in file links.
@@ -328,7 +331,7 @@ variable #cells  \ counter for the current table
 
 [then]
 
-true [if]  \ xxx 2013-08-10 second version, more legible
+true [if]  \ xxx 2013-08-10: second version, more legible
 
 : "<["=  ( -- wf )
   s" <[" str= 
@@ -415,27 +418,37 @@ $variable forth_code$
 \ **************************************************************
 \ Tools for punctuation
 
-\
 \ Punctuation markup is needed in order to print it properly
 \ after another markup. Example:
-\
-\   This // emphasis // does the right spacing.  But this //
-\   emphasis // , well, needs to be followed by a markup comma.
-\
-\ The ',' markup must print a comma without a leading space.  If
-\ ',' were not a markup but an ordinary printable content, a
-\ leading space would be printed. 
 
-: :punctuation   ( ca len -- )
-  \ Create a punctuation word.
-  \ ca len = punctuation --and name of its punctuation word
+\   This // emphasis // does the right spacing.
+\   But this // emphasis // , well
+\   needs to be followed by a markup comma.
+
+\ The ',' markup must print a comma without a leading space.
+\ If',' were not a markup but an ordinary printable content,
+\ a leading space would be printed. 
+
+\ The same happens with opening parens and other opening punctuaction
+\ characters, e.g.:
+
+\   In this ( « ** example ** »).
+
+\ the characters "(" and "«" must be defined as opening punctuation
+\ (one single word '(«' would work too), and '»).' should be a closing
+\ punctuation word ('»', ')' and '.' apart would work too).
+
+: }punctuation:   ( "name" -- )
+  \ Create a closing punctuation word.
+  \ "name" = punctuation --and name of its punctuation word
+  parse-name? abort" Missing name in '}punctuation:'"
   :echo_name_
   ;
-: punctuation:   ( "name" -- )
-  \ Create a punctuation word.
+: punctuation{:   ( "name" -- )
+  \ Create an opening punctuation word.
   \ "name" = punctuation --and name of its punctuation word
-  parse-name? abort" Missing name in 'punctuation:'"
-  :punctuation
+  parse-name? abort" Missing name in 'punctuation{:'"
+  :echo_name+
   ;
 
 \ **************************************************************
@@ -443,9 +456,10 @@ $variable forth_code$
 
 : (##)  ( "source code ##" -- )
   \ Parse an inline source code region.
-  \ xxx fixme preserve spaces; translate < and &
+  \ xxx fixme preserve spaces
   begin   parse-name dup 
-    if    2dup s" ##" str= dup >r 0= ?_echo r>
+    if    2dup s" ##" str=
+          dup >r 0= if  escaped_source_code _echo  else  2drop  then  r>
     else  2drop refill 0= dup abort" Missing closing '##'"
     then
   until
@@ -453,6 +467,7 @@ $variable forth_code$
 : ###-line  ( -- ca len )
   \ Parse a new line from the current source code block.
   read_source_line 0= abort" Missing closing '###'"
+  escaped_source_code  
   ;
 : "###"?  ( ca len -- wf )
   \ Does the given string contains only "###"?
@@ -483,6 +498,25 @@ $variable forth_code$
   highlight_###-zone? if  highlighted_###-zone  else  plain_###-zone  then
   ;
 
+: {{{-line  ( -- ca len )
+  \ Parse a new line from the current verbatim block.
+  read_source_line 0= abort" Missing closing '}}}'"
+  escaped_source_code  
+  ;
+: "}}}"?  ( ca len -- wf )
+  \ Does the given string contains only "{{{"?
+  trim s" }}}" str=
+  ;
+: {{{-line?  ( -- ca len true | false )
+  \ Parse a new line from the current verbatim block.
+  {{{-line 2dup "}}}"? 0=
+  ;
+: ({{{)  ( "verbatim content }}}" -- )
+  \ Parse and echo a verbatim zone.
+  \ xxx todo translate "<" and "&" ?
+  begin  {{{-line? dup >r ?echo_line r> 0=  until
+  ;
+
 \ **************************************************************
 \ Tools for images and links
 
@@ -490,7 +524,6 @@ $variable forth_code$
   \ ca len = latest name parsed in the alt attribute section
   >r  s" |" str=  r> or 
   ;
-str-create tmp-str
 : unraw_attributes  ( ca len -- )
   \ Extract and store the individual attributes from
   \ a string of raw verbatim attributes.
@@ -652,7 +685,7 @@ variable link_type
 : file_link?  ( -- wf )
   link_type @ file_link =
   ;
-0 [if]  \ xxx old, 2013-10-22 moved to its own file <fendo_shortcuts.fs>
+0 [if]  \ xxx old, 2013-10-22: moved to its own file <fendo_shortcuts.fs>
 : unlink?  ( xt1 xt2 1|-1  |  xt1 0  --  xt2 xt2 true  |  0 )
   \ Execute xt2 if it's different from xt1.
   \ xt1 = old xt (former loop)
@@ -724,7 +757,9 @@ defer parse_link_text  ( "...<spaces>|<spaces>" | "...<spaces>]]<spaces>"  -- )
 [then]
 $variable last_href$  \ xxx new, experimental, to be used by the application
 : (get_link_href)  ( ca len -- )
+\  ." (get_link_href) 0 " 2dup type cr  \ xxx informer
   unshortcut 
+\  ." (get_link_href) 1 " 2dup type cr  \ xxx informer
 \  href_checked  \ xxx old
   2dup set_link_type
   local_link? if  -anchor  then  2dup last_href$ $! href=!
@@ -749,6 +784,7 @@ $variable last_href$  \ xxx new, experimental, to be used by the application
   ;
 : parse_link  ( "linkmarkup ]]" -- )
   \ Parse and store the link attributes.
+\  ." entering parse_link -- order = " order cr \ xxx informer
   get_link_href
 \  ." ---> " href=@ type cr  \ xxx informer
   link_finished? @ 0= if
@@ -1069,6 +1105,13 @@ true [if]  \ xxx first version
   ['] <sub> ['] </sub> opened_[,,]? markups
   ;
 
+\ Chars
+
+: ---  ( -- )
+  \ Create on em dash
+  s" &mdash;" _echo 
+  ;
+
 \ Quotes
 
 : ""  ( -- )
@@ -1181,6 +1224,8 @@ true [if]  \ xxx first version
 
 \ Verbatim or pass-through blocks
 
+0 [if]
+\ xxx old first version
 : {{{  ( "text<space>}}}<space>" -- )
   \ Open a verbatim or pass-through block.
   \ Its content will be copied "as-is" to the target file.
@@ -1190,6 +1235,11 @@ true [if]  \ xxx first version
     read_source_line 0= abort" Missing closing '}}}'"
     2dup trim s" }}}" str= dup >r 0= ?echo_line r>
   until
+  ;
+[then]
+: {{{ ( -- )
+  \ Open, parse and close a verbatim block.
+  [<pre>] ({{{) [</pre>]
   ;
 : }}}  ( -- )
   \ Close a verbatim or pass-through block.
@@ -1206,35 +1256,47 @@ true [if]  \ xxx first version
 \ Punctuation
 \ xxx todo complete as required
 
-punctuation: !
-punctuation: "
-punctuation: ",
-punctuation: ".
-punctuation: ":
-punctuation: ";
-punctuation: '
-punctuation: )
-punctuation: ),
-punctuation: ).
-punctuation: ):
-punctuation: );
-punctuation: ,
-punctuation: .
-punctuation: ...
-punctuation: ...),
-punctuation: ...).
-punctuation: ...);
-punctuation: ...»
-punctuation: ...».
-punctuation: ...»;
-punctuation: :
-punctuation: ;
-punctuation: ?
-punctuation: ]
-punctuation: }
-punctuation: »
-punctuation: »,
-punctuation: ».
+}punctuation: !
+\ }punctuation: "  \ xxx fixme, can not be closing and opening unless
+\ the system is redisegned to track the used punctuations.
+}punctuation: ",
+}punctuation: ".
+}punctuation: ":
+}punctuation: ";
+\ }punctuation: '  \ xxx fixme same case than "
+}punctuation: )
+}punctuation: ),
+}punctuation: ).
+}punctuation: ):
+}punctuation: );
+}punctuation: ,
+}punctuation: .
+}punctuation: ...
+}punctuation: ...),
+}punctuation: ...).
+}punctuation: ...);
+}punctuation: ...»
+}punctuation: ...».
+}punctuation: ...»;
+}punctuation: :
+}punctuation: ;
+}punctuation: ?
+}punctuation: ]
+}punctuation: }
+}punctuation: »
+}punctuation: »),
+}punctuation: »).
+}punctuation: »,
+}punctuation: ».
+punctuation{: (  \ )
+punctuation{: {  \ }
+punctuation{: [  \ ]
+punctuation{: «
+punctuation{: ¿
+punctuation{: ¡
+punctuation{: («
+punctuation{: (¿
+punctuation{: (¡
 
 only forth fendo>order definitions
 
@@ -1245,22 +1307,22 @@ only forth fendo>order definitions
 \ **************************************************************
 \ Change history of this file
 
-\ 2013-05-18 Start. First HTML tags.
-\ 2013-06-01 Paragraphs, lists, headings, delete.
-\ 2013-06-02 New: also 'previous_space?'.
+\ 2013-05-18: Start. First HTML tags.
+\ 2013-06-01: Paragraphs, lists, headings, delete.
+\ 2013-06-02: New: also 'previous_space?'.
 \   New: Counters for both types of elements (markups and
 \   printable words); required in order to separate words.
-\ 2013-06-04 New: punctuation words, HTML entity words. More
+\ 2013-06-04: New: punctuation words, HTML entity words. More
 \   markups.
-\ 2013-06-05 Change: '|' renamed to '_'; '|' will be needed for the
+\ 2013-06-05: Change: '|' renamed to '_'; '|' will be needed for the
 \   table markup.
-\ 2013-06-05 New: Finished the code for entities; the common code for
+\ 2013-06-05: New: Finished the code for entities; the common code for
 \   entities and punctuation has been factored.
-\ 2013-06-06 Change: HTML entities moved to <fendo_markup_html.fs>.
-\ 2013-06-06 New: First version of table markup, based on Creole
+\ 2013-06-06: Change: HTML entities moved to <fendo_markup_html.fs>.
+\ 2013-06-06: New: First version of table markup, based on Creole
 \   and text2tags: data cells and header cells. Also caption.
-\ 2013-06-06 New: several new markups.
-\ 2013-06-06 Change: renamed from "fendo_markup.fs" to
+\ 2013-06-06: New: several new markups.
+\ 2013-06-06: Change: renamed from "fendo_markup.fs" to
 \   "fendo_markup_wiki.fs"; it is included from the new file <fendo_markup.fs>.
 \ 2013-06-06: New: Words for merging Forth code in the pages: '<:' and ':>'.
 \ 2013-06-10: Change: the new '[markup<order]' substitutes '[previous]'.
@@ -1330,7 +1392,7 @@ only forth fendo>order definitions
 \ 2013-10-30: Change: '([[)' removed; the final code of '[[' has
 \   been factored out as 'echo_link', '(echo_link)' and
 \   'echo_link_text'.
-\ 2013-10-30 Change: More immediate versions of tags used.
+\ 2013-10-30: Change: More immediate versions of tags used.
 \ 2013-11-05: Fix: 'tune_local_link' evaluated the title and
 \   consumed it.
 \ 2013-11-05: Fix: local links with only the page id (no text, no raw
@@ -1364,17 +1426,26 @@ only forth fendo>order definitions
 \   'convert_file_link_href'.
 \ 2013-11-18: Fix: 'highlight_###-zone?' instead of simply 'highlight?',
 \   in '(###)'.
-\ 2013-11-18  Now all words related to syntax highlighting
+\ 2013-11-18:  Now all words related to syntax highlighting
 \   are in <addons/source_code_common.fs>, not in
 \   <addons/source_code.fs>.
-\ 2013-11-19 Change: '###-line?' returns a fake text with the false
+\ 2013-11-19: Change: '###-line?' returns a fake text with the false
 \   flag; this fixes 'plain_###-zone' and requires a change in
 \   'highlighted_###-zone'.
-\ 2013-11-27 Change: '{* ... *}' changed to '(* ... *)', just
+\ 2013-11-27: Change: '{* ... *}' changed to '(* ... *)', just
 \   implemented in the Galope library.
-\ 2013-12-05 Change: '(xml:)lang=' moved to
+\ 2013-12-05: Change: '(xml:)lang=' moved to
 \   <fendo_markup_html_attributes.fs>; '(xml:)lang= attribute!' factored
 \   to '(xml:)lang=!' and  moved to <fendo_markup_html_attributes.fs> too.
-\ 2013-12-06 New: 'opened_markups_off'.
+\ 2013-12-06: New: 'opened_markups_off'.
+\ 2014-01-06: Fix: '###-line' and '(##)' now escape the "<" char with the new word
+\   'escaped_source_code' (defined in
+\   <fendo/addons/source_code_common.fs>).
+\ 2014-01-06: New: "---" markup for em dash.
+\ 2014-02-03: Fix: '(##)' left the final parsed "##" markup on the stack!
+\ 2014-02-03: Change: 'punctuation:' renamed to '}punctuation:';
+\ ':punctuation' removed.
+\ 2014-02-03: New: 'punctuation{:' for opening punctuation characters. 
+\ 2014-02-03: New: '{{{' rewritten, based on '###'.
 
 [then]
