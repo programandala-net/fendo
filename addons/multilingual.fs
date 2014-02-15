@@ -3,8 +3,10 @@
 \ This file is part of Fendo.
 
 \ This file creates some low-level tools to manage multilingual
-\ websites. The language of a page is indicated using the ISO language
-\ code as first part of the page's file name, e.g.:
+\ websites. The language of a page is indicated using the 2-letter or
+\ 3-letter ISO language code as first part of the page's file name,
+\ e.g.:
+
 \   en.section.subsection.html
 \   es.sección.subsección.html 
 \   eo.fako.subfako.html
@@ -33,15 +35,17 @@
 \ **************************************************************
 \ Change history of this file
 
-\ 2013-10-14 Moved from the application Fendo-programandala.
-\ 2013-10-15 Improvement: 'mlsconstant' checks if 'langs' is set.
-\ 2013-11-11 Improvement: 'lang' uses both the "language" metadatum
+\ 2013-10-14: Moved from the application Fendo-programandala.
+\ 2013-10-15: Improvement: 'mlsconstant' checks if 'langs' is set.
+\ 2013-11-11: Improvement: 'lang' uses both the "language" metadatum
 \   and the language prefix of the filename.
-\ 2013-11-30 Change: 'mlsconstant' and 'langs' are deprecated; now
+\ 2013-11-30: Change: 'mlsconstant' and 'langs' are deprecated; now
 \   the application must define its own words
 \   to store the number of languages and the multilingual strings. \
 \   xxx tmp
-\ 2013-12-01 Change: several renamings.
+\ 2013-12-01: Change: several renamings.
+\ 2014-02-04: Change: 'current_lang#' returns 0 even if no pid is set;
+\ this is useful for testing the localization strings.
 
 \ **************************************************************
 \ Usage
@@ -105,8 +109,10 @@ true to multilingual?
   pid#>lang$ s" _language" s+ evaluate
   ;
 : current_lang#  ( -- n )
-  \ Return the language number of the current page.
-  current_page pid#>lang#
+  \ Return the language number of the current page
+  \ (or zero, the first language, if there's no current page yet).
+  \ current_page pid#>lang#  \ xxx old, first version
+  current_page dup if  pid#>lang#  then  \ xxx tmp? for testing
   ;
 : +lang  ( a -- a' )
   \ Add the current language number as cells.
@@ -119,7 +125,7 @@ true to multilingual?
   langs 0 ?do  $!,  loop 
   ;
 : (l10n$)  ( -- )
-  \ Define what language string do.
+  \ Define what localization strings do.
   does>   ( -- ca len )  ( pfa ) +lang $@
   ;
 : l10n$  ( ca-n len-n ... ca1 len1 "name" -- )

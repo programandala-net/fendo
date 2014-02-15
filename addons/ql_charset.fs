@@ -25,8 +25,8 @@
 \ **************************************************************
 \ Change history of this file
 
-\ 2013-12-10 Written with <galope/translated.fs>.
-\ 2013-12-12 Rewritten with <galope/uncodepaged.fs>.
+\ 2013-12-10: Written with <galope/translated.fs>.
+\ 2013-12-12: Rewritten with <galope/uncodepaged.fs>.
 
 \ **************************************************************
 
@@ -180,3 +180,4 @@ uncodepage: ql_charset_to_utf8
   0xBF s" ↓"  \ arrow down
   ;uncodepage
 
+.( addons/ql_charset.fs compiled) cr

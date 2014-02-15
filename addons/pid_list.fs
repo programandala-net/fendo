@@ -2,8 +2,7 @@
 
 \ This file is part of Fendo.
 
-\ This file is the provides a list of page ids, required by other
-\ addons.
+\ This file provides a list of page ids, required by other addons.
 
 \ Copyright (C) 2013 Marcos Cruz (programandala.net)
 

@@ -1,8 +1,8 @@
-.( addons/ql_source_code.fs) cr
+.( addons/latin1_source_code.fs) cr
 
 \ This file is part of Fendo.
 
-\ This file is the Sinclair QL source code addon.
+\ This file is the latin1 source code addon.
 
 \ Copyright (C) 2013 Marcos Cruz (programandala.net)
 
@@ -25,11 +25,7 @@
 \ **************************************************************
 \ Change history of this file
 
-\ 2013-12-10 Written with <galope/translated.fs>.
-\ 2013-12-11 New: 'ql_source_code_translated'.
-\ 2013-12-11 Change: an xt is used, not a translation table; this
-\   makes it possible to use different translation tools.
-\ 2013-12-12 Rewritten with <galope/uncodepaged.fs>.
+\ 2013-12-13: Written.
 \ 2014-02-15: Fix: path of the Fendo addons is converted to relative.
 
 \ **************************************************************
@@ -37,23 +33,26 @@
 
 \ Fendo addons
 require ./source_code.fs
-require ./ql_charset.fs
+require ./latin1_charset.fs
 
 \ From Galope
 require galope/uncodepaged.fs
 
 \ **************************************************************
+\ Source code in latin1 character encoding
 
-: ql_source_code_translated  ( ca len -- ca' len' )
-  \ Convert the content of a QL file to UTF-8.
-  ql_charset_to_utf8 uncodepaged
+: latin1_source_code_translated  ( ca len -- ca' len' )
+  \ Convert the content of a latin1 file to UTF-8.
+  latin1_charset_to_utf8 uncodepaged
   ;
-: ql_source_code  ( ca len -- )
-  \ Read and echo the content of a Sinclair QL source code file.
-  \ The Vim filetype is guessed from the filename.
+: latin1_source_code  ( ca len -- )
+  \ Read the content of a latin1 file and echo it.
   \ ca len = file name
-  ['] ql_source_code_translated is source_code_pretranslated
+  ['] latin1_source_code_translated is source_code_pretranslated
   source_code
   ;
 
-.( addons/ql_source_code.fs compiled) cr
+.( addons/latin1_source_code.fs compiled) cr
+
+
+

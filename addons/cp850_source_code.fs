@@ -25,15 +25,19 @@
 \ **************************************************************
 \ Change history of this file
 
-\ 2013-12-11 Written with <galope/translated.fs>.
-\ 2013-12-11 Rewritten with <ftrac/ftrac.fs>.
-\ 2013-12-12 Rewritten with <galope/uncodepaged.fs>.
+\ 2013-12-11: Written with <galope/translated.fs>.
+\ 2013-12-11: Rewritten with <ftrac/ftrac.fs>.
+\ 2013-12-12: Rewritten with <galope/uncodepaged.fs>.
+\ 2014-02-15: Fix: path of the Fendo addons is converted to relative.
 
 \ **************************************************************
 \ Requirements
 
-require fendo/addons/source_code.fs
-require fendo/addons/cp850_charset.fs
+\ Fendo addons
+require ./source_code.fs
+require ./cp850_charset.fs
+
+\ From Galope
 require galope/uncodepaged.fs
 
 \ **************************************************************

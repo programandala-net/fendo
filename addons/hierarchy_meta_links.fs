@@ -1,4 +1,4 @@
-\ addons/hierarchy_meta_links.fs 
+.( addons/hierarchy_meta_links.fs) cr
 
 \ This file is part of Fendo.
 
@@ -62,3 +62,5 @@
   current_page last_page dup if
     s" last" hierarchy_meta_link  else  2drop  then
   ;
+
+.( addons/hierarchy_meta_links.fs compiled) cr

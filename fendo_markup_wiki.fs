@@ -473,21 +473,28 @@ $variable forth_code$
   \ Does the given string contains only "###"?
   trim s" ###" str=
   ;
-: ###-line?  ( -- ca len true | false )
+: ###-line?  ( -- ca len wf )
   \ Parse a new line from the current source code block.
-  ###-line 2dup "###"? 0=
+  \ ca len = source code line
+  \ wf = is it "###"?
+  ###-line 2dup "###"?
+\  cr ." exit stack in '###-line?' " .s key drop  \ xxx informer
   ;
 : plain_###-zone  ( "source code ###" -- )
   \ Parse and echo a source code zone "as is".
-  \ xxx todo translate "<" and "&" ?
-  begin  ###-line? dup >r ?echo_line r> 0=  until
+  \ begin  ###-line? dup >r ?echo_line r> 0=  until  \ xxx old
+  begin
+    ###-line? dup >r
+    if  2drop  else  escaped_source_code echo_line  then  r>
+  until
+\  cr ." exit stack in 'plain_###-zone' " .s key drop  \ xxx informer
   ;
 : highlighted_###-zone  ( "source code ###" -- )
   \ Parse a source code zone, highlight and echo it.
   new_source_code 
   begin   
-    ###-line? dup >r 
-    if  append_source_code_line  else  2drop  then  r> 0=
+    ###-line? dup >r
+    if  2drop  else  append_source_code_line  then  r>
   until  source_code@ highlighted echo
   ;
 : highlight_###-zone?  ( -- wf )
@@ -1302,150 +1309,235 @@ only forth fendo>order definitions
 
 .( fendo_markup_wiki.fs compiled ) cr
 
-0 [if]
-
 \ **************************************************************
 \ Change history of this file
 
 \ 2013-05-18: Start. First HTML tags.
+
 \ 2013-06-01: Paragraphs, lists, headings, delete.
-\ 2013-06-02: New: also 'previous_space?'.
-\   New: Counters for both types of elements (markups and
-\   printable words); required in order to separate words.
-\ 2013-06-04: New: punctuation words, HTML entity words. More
-\   markups.
+
+\ 2013-06-02: New: also 'previous_space?'.  New: Counters for both
+\ types of elements (markups and printable words); required in order
+\ to separate words.
+
+\ 2013-06-04: New: punctuation words, HTML entity words. More markups.
+
 \ 2013-06-05: Change: '|' renamed to '_'; '|' will be needed for the
-\   table markup.
+\ table markup.
+
 \ 2013-06-05: New: Finished the code for entities; the common code for
-\   entities and punctuation has been factored.
+\ entities and punctuation has been factored.
+
 \ 2013-06-06: Change: HTML entities moved to <fendo_markup_html.fs>.
-\ 2013-06-06: New: First version of table markup, based on Creole
-\   and text2tags: data cells and header cells. Also caption.
+
+\ 2013-06-06: New: First version of table markup, based on Creole and
+\ text2tags: data cells and header cells. Also caption.
+
 \ 2013-06-06: New: several new markups.
+
 \ 2013-06-06: Change: renamed from "fendo_markup.fs" to
-\   "fendo_markup_wiki.fs"; it is included from the new file <fendo_markup.fs>.
-\ 2013-06-06: New: Words for merging Forth code in the pages: '<:' and ':>'.
-\ 2013-06-10: Change: the new '[markup<order]' substitutes '[previous]'.
+\ "fendo_markup_wiki.fs"; it is included from the new file
+\ <fendo_markup.fs>.
+
+\ 2013-06-06: New: Words for merging Forth code in the pages: '<:' and
+\ ':>'.
+
+\ 2013-06-10: Change: the new '[markup<order]' substitutes
+\ '[previous]'.
+
 \ 2013-06-18: New: some combined punctuation, e.g. "),".
+
 \ 2013-06-28: Change: Forth code wiki markups can be nested.
-\ 2013-06-28: New: Markups for comments, "{*" and "*}";
-\   can not be nested.
-\ 2013-06-29: New: First changes to fix and improve the source
-\   code markups (the source region needs a special parsing).
+
+\ 2013-06-28: New: Markups for comments, "{*" and "*}"; can not be
+\ nested.
+
+\ 2013-06-29: New: First changes to fix and improve the source code
+\ markups (the source region needs a special parsing).
+
 \ 2013-06-29: New: The image markups are rendered.
-\ 2013-07-02: Change: Spaces found on filenames or URL don't abort
-\   any more, but print a 'xxx fixme' warning in an HTML comment instead.
-\   These undesired spaces are caused by a wrong rendering of "__" by
-\   Simplil2Fendo, difficult to fix. Thus manual fix will be
-\   required in the final .fs files.
+
+\ 2013-07-02: Change: Spaces found on filenames or URL don't abort any
+\ more, but print a 'xxx fixme' warning in an HTML comment instead.
+\ These undesired spaces are caused by a wrong rendering of "__" by
+\ Simplil2Fendo, difficult to fix. Thus manual fix will be required in
+\ the final .fs files.
+
 \ 2013-07-04: New: language markup.
+
 \ 2013-07-04: Fix: separation after punctuation markup.
-\ 2013-07-04: Fix: now list markups work only at the start of
-\   the line.
-\ 2013-07-05: New: Creole's '*' and '#' are alias of '-' and
-\   '+', for easier migration (so far converting the lists markups
-\   in the original sources with Simplilo2Fendo seems difficult).
+
+\ 2013-07-04: Fix: now list markups work only at the start of the
+\ line.
+
+\ 2013-07-05: New: Creole's '*' and '#' are alias of '-' and '+', for
+\ easier migration (so far converting the lists markups in the
+\ original sources with Simplilo2Fendo seems difficult).
+
 \ 2013-07-12: Finished 'link:'; changed 'link:?'.
+
 \ 2013-07-12: Change: '?_echo' moved to <fendo_echo.fs>.
+
 \ 2013-07-12: Change: '(###)' rewritten to parse whole lines.
+
 \ 2013-07-14: New: '(###)' finished.
+
 \ 2013-07-20: New: support for link anchors.
+
 \ 2013-07-20: Fix: target extensions is added only to local links.
-\ 2013-07-26: New: '\n' as an alias for 'echo_cr'; this lets to
-\   make the final HTML cleaner, especially in the template.
+
+\ 2013-07-26: New: '\n' as an alias for 'echo_cr'; this lets to make
+\ the final HTML cleaner, especially in the template.
+
 \ 2013-07-26: '»,' and '.»' punctuations.
+
 \ 2013-07-28: simpler and more legible 'parse_forth_code'.
-\ 2013-08-10: Fix: 'evaluate_forth_code' factored from '<:', and
-\   fixed with 'get-order' and 'set-order'.
-\ 2013-08-10: Fix: the Forth code parsed by '<:' got
-\   corrupted at the end of the template. It seemed a Gforth
-\   issue. The Galope's circular string buffer has been used as
-\   as layer for 's"' and 's+' and the problem dissapeared.
-\ 2013-08-10: Change: 'parse_forth_code' rewritten, more
-\   legible.
-\ 2013-08-10: Bug: sometimes the content of 'href='
-\ gets corrupted at the end of '([[)'. Gforth issue again?
-\ Todo: Try FFL's dynamic strings for HTML attributes.
-\ 2013-08-12: Fix: '(xml:)lang=' was modifed with '$!', even in
-\   when FFL-strings were chosen in the configuration.
+
+\ 2013-08-10: Fix: 'evaluate_forth_code' factored from '<:', and fixed
+\ with 'get-order' and 'set-order'.
+
+\ 2013-08-10: Fix: the Forth code parsed by '<:' got corrupted at the
+\ end of the template. It seemed a Gforth issue. The Galope's circular
+\ string buffer has been used as as layer for 's"' and 's+' and the
+\ problem dissapeared.
+
+\ 2013-08-10: Change: 'parse_forth_code' rewritten, more legible.
+
+\ 2013-08-10: Bug: sometimes the content of 'href=' gets corrupted at
+\ the end of '([[)'. Gforth issue again?  Todo: Try FFL's dynamic
+\ strings for HTML attributes.
+
+\ 2013-08-12: Fix: '(xml:)lang=' was modifed with '$!', even in when
+\ FFL-strings were chosen in the configuration.
+
 \ 2013-08-13: New: ':create_markup'.
+
 \ 2013-08-13: New: 'language_markups:'.
-\ 2013-08-14: New: 'ftp://?', 'external_link?', 'unlink';
-\   new version of 'link:'.
+
+\ 2013-08-14: New: 'ftp://?', 'external_link?', 'unlink'; new version
+\ of 'link:'.
+
 \ 2013-08-14: Fix: 'abort"' in '*}' lacked a true flag.
+
 \ 2013-08-14: New: 'link_text!', 'link_text@'.
+
 \ 2013-08-14: New: 'unraw_attributes'.
+
 \ 2013-08-15: Fix: now '[[' empties 'link_text' at the end.
+
 \ 2013-08-15: New: 'external_class' to mark the external links.
+
 \ 2013-09-05: Fix: 'tune_link'.
+
 \ 2013-09-29: 'unlink' is factored with 'unlinked?'.
-\ 2013-09-29: '>link_type_id' now checks if the link is empty;
-\   and is factored with '(>link_type_id)'.
+
+\ 2013-09-29: '>link_type_id' now checks if the link is empty; and is
+\ factored with '(>link_type_id)'.
+
 \ 2013-10-01: Change: '<:' and ':>' renamed to '<[' and ']>'.
-\ 2013-10-22: Change: all code about user's bookmark links and
-\   their "unlinking" is moved to its own file and the words
-\   are renamed: "(un)shortcut" is used instead of "(un)link".
+
+\ 2013-10-22: Change: all code about user's bookmark links and their
+\ "unlinking" is moved to its own file and the words are renamed:
+\ "(un)shortcut" is used instead of "(un)link".
+
 \ 2013-10-22: New: 'link' creates links to local pages, at the
-\   application level.
-\ 2013-10-25: Change: '>sb' added before 'evaluate', just to get
-\   some clue about the string corruptions.
-\ 2013-10-30: Change: '([[)' removed; the final code of '[[' has
-\   been factored out as 'echo_link', '(echo_link)' and
-\   'echo_link_text'.
+\ application level.
+
+\ 2013-10-25: Change: '>sb' added before 'evaluate', just to get some
+\ clue about the string corruptions.
+
+\ 2013-10-30: Change: '([[)' removed; the final code of '[[' has been
+\ factored out as 'echo_link', '(echo_link)' and 'echo_link_text'.
+
 \ 2013-10-30: Change: More immediate versions of tags used.
-\ 2013-11-05: Fix: 'tune_local_link' evaluated the title and
-\   consumed it.
+
+\ 2013-11-05: Fix: 'tune_local_link' evaluated the title and consumed
+\ it.
+
 \ 2013-11-05: Fix: local links with only the page id (no text, no raw
-\   attrs), lacked the "html" extension.
+\ attrs), lacked the "html" extension.
+
 \ 2013-11-06: New: 'href_checked'.
+
 \ 2013-11-06: Improvement: 'get_link_href', '+anchor'.
-\ 2013-11-07: Fix: local links with anchors work fine in
-\   all cases.
+
+\ 2013-11-07: Fix: local links with anchors work fine in all cases.
+
 \ 2013-11-07: New: '{{{' and '}}}', after Creole markup.
+
 \ 2013-11-07: Change: '###-line' and '/###-line' renamed to
-\   'source-line' and '/source-line'.
+\ 'source-line' and '/source-line'.
+
 \ 2013-11-07: New: "https" links are recognized.
+
 \ 2013-11-07: New: links to draft local pages are recognized.
+
 \ 2013-11-09: Change: alias 's&' changed to the original 'bs&',
-\   provided by <galope/sb.fs>, because also alias 's+' for 'bs+' has
-\   been removed, in order to use the original Gforth's 's+' in several
-\   cases.
+\ provided by <galope/sb.fs>, because also alias 's+' for 'bs+' has
+\ been removed, in order to use the original Gforth's 's+' in several
+\ cases.
+
 \ 2013-11-09: New: 'read_source_line'.
+
 \ 2013-11-09: New: The "###" markup highlights the code.
+
 \ 2013-11-11: New: '(get_link_href)' factored out from 'get_link_href'
-\   in order to use it in <fendo_tools.fs>.
+\ in order to use it in <fendo_tools.fs>.
+
 \ 2013-11-11: New: 'tune_local_hreflang' sets the hreflang of local
-\   links when needed.
+\ links when needed.
+
 \ 2013-11-11: Fix: anchors of external links were removed from the
-\   URL.
+\ URL.
+
 \ 2013-11-18: Fix: 'convert_local_link_href' worked only for the
-\   current page, and didn't used 'target_file', but only added
-\   the target extension.
+\ current page, and didn't used 'target_file', but only added the
+\ target extension.
+
 \ 2013-11-18: New: 'url', 'link_text_suffix'.
+
 \ 2013-11-18: Change: '-file://' factored from
-\   'convert_file_link_href'.
-\ 2013-11-18: Fix: 'highlight_###-zone?' instead of simply 'highlight?',
-\   in '(###)'.
-\ 2013-11-18:  Now all words related to syntax highlighting
-\   are in <addons/source_code_common.fs>, not in
-\   <addons/source_code.fs>.
+\ 'convert_file_link_href'.
+
+\ 2013-11-18: Fix: 'highlight_###-zone?' instead of simply
+\ 'highlight?', in '(###)'.
+
+\ 2013-11-18:  Now all words related to syntax highlighting are in
+\ <addons/source_code_common.fs>, not in <addons/source_code.fs>.
+
 \ 2013-11-19: Change: '###-line?' returns a fake text with the false
-\   flag; this fixes 'plain_###-zone' and requires a change in
-\   'highlighted_###-zone'.
+\ flag; this fixes 'plain_###-zone' and requires a change in
+\ 'highlighted_###-zone'.
+
 \ 2013-11-27: Change: '{* ... *}' changed to '(* ... *)', just
-\   implemented in the Galope library.
+\ implemented in the Galope library.
+
 \ 2013-12-05: Change: '(xml:)lang=' moved to
-\   <fendo_markup_html_attributes.fs>; '(xml:)lang= attribute!' factored
-\   to '(xml:)lang=!' and  moved to <fendo_markup_html_attributes.fs> too.
+\ <fendo_markup_html_attributes.fs>; '(xml:)lang= attribute!' factored
+\ to '(xml:)lang=!' and  moved to <fendo_markup_html_attributes.fs>
+\ too.
+
 \ 2013-12-06: New: 'opened_markups_off'.
-\ 2014-01-06: Fix: '###-line' and '(##)' now escape the "<" char with the new word
-\   'escaped_source_code' (defined in
-\   <fendo/addons/source_code_common.fs>).
+
+\ 2014-01-06: Fix: '###-line' and '(##)' now escape the "<" char with
+\ the new word 'escaped_source_code' (defined in
+\ <fendo/addons/source_code_common.fs>).
+
 \ 2014-01-06: New: "---" markup for em dash.
-\ 2014-02-03: Fix: '(##)' left the final parsed "##" markup on the stack!
+
+\ 2014-02-03: Fix: '(##)' left the final parsed "##" markup on the
+\ stack!
+
 \ 2014-02-03: Change: 'punctuation:' renamed to '}punctuation:';
 \ ':punctuation' removed.
+
 \ 2014-02-03: New: 'punctuation{:' for opening punctuation characters. 
+
 \ 2014-02-03: New: '{{{' rewritten, based on '###'.
 
-[then]
+\ 2014-02-14: Fix: '###-line?' returned the string also when the
+\ output flag was false, and it remained on the stack. It has be
+\ rewritten.  Now it always returns   the string. 'plain_###-zone' and
+\ 'highlighted_###-zone' have been modified accordingly, and now all
+\ is simpler.
+

@@ -5,7 +5,7 @@
 
 \ This file defines the HTML tags.
 
-\ Copyright (C) 2013 Marcos Cruz (programandala.net)
+\ Copyright (C) 2013,2014 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute
 \ it and/or modify it under the terms of the GNU General
@@ -26,22 +26,25 @@
 \ **************************************************************
 \ Change history of this file
 
-\ 2013-06-10 Start. Factored from <fendo_markup_html.fs>.
-\ 2013-06-15 Void tags are closed depending on HTML or XHTML
+\ 2013-06-10: Start. Factored from <fendo_markup_html.fs>.
+\ 2013-06-15: Void tags are closed depending on HTML or XHTML
 \   syntaxes. Tag alias in both syntaxes.
-\ 2013-10-23 New: immediate version of some tags,
+\ 2013-10-23: New: immediate version of some tags,
 \   for the user's application.
-\ 2013-10-26 New: immediate version of '<p>'.
-\ 2013-10-27 New: '<link/>' and its immediate version '[<link/>]'.
-\ 2013-10-30 New: More immediate versions of tags.
-\ 2013-11-18 New: '[<br/>]', '[<hr/>]'.
-\ 2013-11-26 New: Immediate version of definition lists tags.
-\ 2013-11-30 New: Immediate version of <abbr> tags.
-\ 2013-12-06 Change: '(html{)' and '(}html)' factored from '{html}'
+\ 2013-10-26: New: immediate version of '<p>'.
+\ 2013-10-27: New: '<link/>' and its immediate version '[<link/>]'.
+\ 2013-10-30: New: More immediate versions of tags.
+\ 2013-11-18: New: '[<br/>]', '[<hr/>]'.
+\ 2013-11-26: New: Immediate version of definition lists tags.
+\ 2013-11-30: New: Immediate version of <abbr> tags.
+\ 2013-12-06: Change: '(html{)' and '(}html)' factored from '{html}'
 \   and '{html'.
-\ 2013-12-06 Change: carriage returns in tags have been corrected, and
+\ 2013-12-06: Change: carriage returns in tags have been corrected, and
 \   removed from the immediate versions; this makes the final HTML
 \   clearer.
+\ 2014-02-15: New: '[<strong>]', '[</strong>]', '[</div>]'.
+\ 2014-02-15: New: '(html{})' for empty tags (it does the same than
+\   '(html{)' but without the separation).
 
 \ **************************************************************
 \ Requirements
@@ -56,8 +59,13 @@ require galope/plus-slash-string.fs
   \ ">" in HTML syntax or "/>" in XHTML syntax.
   s" />" xhtml? @ 0= if  +/string  then
   ;
+: (html{})  ( ca len -- )
+  \ Start an empty HTML tag.
+  \ ca len = HTML tag
+  s" <" echo echo echo_attributes 
+  ;
 : (html{)  ( ca len -- )
-  \ Start an empty or opening HTML tag.
+  \ Start an opening HTML tag.
   \ ca len = HTML tag
   s" <" _echo echo echo_attributes 
   ;
@@ -69,7 +77,7 @@ require galope/plus-slash-string.fs
   \ Print an empty HTML tag (e.g. <br/>, <hr/>),
   \ with all previously defined attributes.
   \ ca len = HTML tag
-  (html{) "/>" echo (}html)
+  (html{}) "/>" echo (}html)
   ;
 : {html  ( ca len -- )
   \ Print an opening HTML tag (e.g. <p>, <a>),
@@ -309,6 +317,7 @@ markup>order
 : [<dd>]  ( -- )  postpone <dd>  ;  immediate
 : [</dd>]  ( -- )  postpone </dd>  ;  immediate
 : [<div>]  ( -- )  postpone <div>  ;  immediate
+: [</div>]  ( -- )  postpone </div>  ;  immediate
 : [<dl>]  ( -- )  postpone <dl>  ;  immediate
 : [</dl>]  ( -- )  postpone </dl>  ;  immediate
 : [<dt>]  ( -- )  postpone <dt>  ;  immediate
@@ -338,6 +347,8 @@ markup>order
 : [</pre>]  ( -- )  postpone </pre>  ;  immediate
 : [<span>]  ( -- )  postpone <span>  ;  immediate
 : [</span>]  ( -- )  postpone </span>  ;  immediate
+: [<strong>]  ( -- )  postpone <strong>  ;  immediate
+: [</strong>]  ( -- )  postpone </strong>  ;  immediate
 : [<table>]  ( -- )  postpone <table>  ;  immediate
 : [</td>]  ( -- )  postpone </td>  ;  immediate
 : [</th>]  ( -- )  postpone </th>  ;  immediate

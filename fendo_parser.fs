@@ -26,69 +26,7 @@
 \ **************************************************************
 \ Change history of this file
 
-\ 2013-04-28: Start.
-\ 2013-05-18: New: parser; 'skip_content{'.
-\ 2013-06-01: New: parser rewritten from scratch. Management of
-\   empty names and empty lines.
-\ 2013-06-02: New: counters for both types of elements (markups and
-\   printable words); required in order to separate words.
-\ 2013-06-04: Fix: lists were not properly closed by an empty space.
-\ 2013-06-05: Fix: 'markup' now uses a name token; this was
-\   required in order to define '~', a markup that parses the
-\   next name is the source.
-\ 2013-06-05: New: '#parsed', required for implementing the
-\   table markup.
-\ 2013-06-05: Change: clearer code for closing the pending
-\   markups.
-\ 2013-06-06: Change: renamed from "fendo_content.fs" to
-\   "fendo_parser.fs".
-\ 2013-06-06: New: template implemented.
-\ 2013-06-08: Improved: Template management.
-\ 2013-06-08: New: first code for output redirection.
-\ 2013-06-08: New: first implementation of target directories.
-\ 2013-06-11: Fix: the target file is opened and closed depending
-\   on the 'dry?' config variable.
-\ 2013-06-11: Fix: typo in comment of 'template_halves'.
-\ 2013-06-16: Change: The parser has been rewritten; now
-\   'search-wordlist' is used instead of 'parse-name' and
-\   'find-name'; this was needed to avoid matches in the Root wordlist.
-\ 2013-06-16: Fix: Now '}content' toggles the parsing off and sets
-\   the normal wordlist order.
-\ 2013-06-23: Change: design and template variables are renamed
-\   after the changes in the config module.
-\ 2013-06-28: Change: '$@' is no longer required by metadata
-\   fields, after Fendo A-01.
-\ 2013-07-03: Change: 'dry?' renamed to 'echo>screen?', after the
-\   changes in the echo module.
-\ 2013-07-03: Change: words that check the current echo have been
-\ renamed, after the  changes in the echo module.
-\ 2013-07-28: New: 'parse_link_text' moved here from
-\   <fendo_markup_wiki.fs>.
-\ 2013-07-28: Fix: old '[previous]' changed to '[markup<order]';
-\   this was the reason the so many wordlists remained in the
-\   search order.
-\ 2013-08-10: Fix: wrong exit flags in 'parsed_link_text' caused
-\   only the first word was parsed.
-\ 2013-08-10: Fix: the alternative attributes set was needed in
-\   'parsed_link_text', to preserve the current attributes
-\   already used for the <a> tag.
-\ 2013-08-10: Change: 'parse_string' renamed to
-\   'evaluate_content'.
-\ 2013-08-14: Fix: '#nothings off' was needed at the end of
-\   '(evaluate_content)'. Otherwise '#nothings' activated
-\   'close_pending' before expected, e.g. this happened
-\   when a link was at the end of a line.
-\ 2013-09-06: New: 'do_page?'.
-\ 2013-09-06: Fix: 'content{' doesn't call 'skip_content'
-\   anymore but '\eof'; the reason is 'skip_content' parsed
-\   until "}content" was found, what was wrong when this word
-\   was mentioned in the content itself! That happened in one page
-\   and was hard to solve. It's simpler to ignore the whole
-\   file. 'skip_content' has been removed.
-\ 2013-09-29: New: '}content?' flag is used to check if
-\   '}content' was executed; this way some markup
-\   errors can be detected.
-\ 2013-12-06: New: 'opened_markups_off' in '(content{)'.
+\ See at the end of the file.
 
 \ **************************************************************
 \ Todo
@@ -106,6 +44,7 @@ get-current  forth-wordlist set-current
 
 require galope/n-to-r.fs  \ 'n>r'
 require galope/n-r-from.fs  \ 'nr>'
+require galope/tilde-tilde.fs  \ '~~'
 
 set-current
 
@@ -424,16 +363,19 @@ variable template_content
   \ Print the name of the currently parsed file.
   sourcefilename type cr
 \ ."  XXX stack check: " .s  \ xxx informer
-  depth abort" Stack not empty"  \ xxx informer
+  depth abort" Stack not empty"
+\  depth if  cr ." Stack not empty" cr .s quit  then  \ xxx informer
   ;
 variable }content?  \ flag: was '}content' executed?
 : (content{)  ( -- )
   \ Create the top template part of the target page
   \ and parse the page content.
+\  ~~  \ xxx informer
   opened_markups_off
   open_target template{
   }content? off  parse_content
   }content? @ 0= abort" Missing '}content' at the end of the page"
+\  ~~  \ xxx informer
   ;
 : do_page?  ( -- wf )
 \  current_page draft? if  ." DRAFT!" cr  then  \ xxx informer
@@ -451,8 +393,16 @@ variable }content?  \ flag: was '}content' executed?
   \ The end of the content is marked with the '}content' markup.
   \ Only one 'content{ ... }content' block is allowed in the page.
 \  ." content{" cr  \ xxx informer
+\  ~~  \ xxx informer
   do_page?
-  if  .sourcefilename (content{)  else  skip_page  then
+\  ~~  \ xxx informer
+  if  .sourcefilename
+\    ~~  \ xxx informer
+    (content{)
+  else
+    skip_page
+\    ~~  \ xxx informer
+  then
   ;
 : finish_the_target  ( -- )
   close_pending }template close_target
@@ -469,5 +419,97 @@ get-current markup>current
 \ cr .s cr ." end of }content"  \ xxx informer
   ;
 set-current
+
+\ **************************************************************
+\ Change history of this file
+
+\ 2013-04-28: Start.
+
+\ 2013-05-18: New: parser; 'skip_content{'.
+
+\ 2013-06-01: New: parser rewritten from scratch. Management of empty
+\ names and empty lines.
+
+\ 2013-06-02: New: counters for both types of elements (markups and
+\ printable words); required in order to separate words.
+
+\ 2013-06-04: Fix: lists were not properly closed by an empty space.
+
+\ 2013-06-05: Fix: 'markup' now uses a name token; this was required
+\ in order to define '~', a markup that parses the next name is the
+\ source.
+
+\ 2013-06-05: New: '#parsed', required for implementing the table
+\ markup.
+
+\ 2013-06-05: Change: clearer code for closing the pending markups.
+
+\ 2013-06-06: Change: renamed from "fendo_content.fs" to
+\ "fendo_parser.fs".
+
+\ 2013-06-06: New: template implemented.
+
+\ 2013-06-08: Improved: Template management.
+
+\ 2013-06-08: New: first code for output redirection.
+
+\ 2013-06-08: New: first implementation of target directories.
+
+\ 2013-06-11: Fix: the target file is opened and closed depending on
+\ the 'dry?' config variable.
+
+\ 2013-06-11: Fix: typo in comment of 'template_halves'.
+
+\ 2013-06-16: Change: The parser has been rewritten; now
+\ 'search-wordlist' is used instead of 'parse-name' and 'find-name';
+\ this was needed to avoid matches in the Root wordlist.
+
+\ 2013-06-16: Fix: Now '}content' toggles the parsing off and sets the
+\ normal wordlist order.
+
+\ 2013-06-23: Change: design and template variables are renamed after
+\ the changes in the config module.
+
+\ 2013-06-28: Change: '$@' is no longer required by metadata fields,
+\ after Fendo A-01.
+
+\ 2013-07-03: Change: 'dry?' renamed to 'echo>screen?', after the
+\ changes in the echo module.
+
+\ 2013-07-03: Change: words that check the current echo have been
+\ renamed, after the  changes in the echo module.
+
+\ 2013-07-28: New: 'parse_link_text' moved here from
+\ <fendo_markup_wiki.fs>.
+
+\ 2013-07-28: Fix: old '[previous]' changed to '[markup<order]'; this
+\ was the reason the so many wordlists remained in the search order.
+
+\ 2013-08-10: Fix: wrong exit flags in 'parsed_link_text' caused only
+\ the first word was parsed.
+
+\ 2013-08-10: Fix: the alternative attributes set was needed in
+\ 'parsed_link_text', to preserve the current attributes already used
+\ for the <a> tag.
+
+\ 2013-08-10: Change: 'parse_string' renamed to 'evaluate_content'.
+
+\ 2013-08-14: Fix: '#nothings off' was needed at the end of
+\ '(evaluate_content)'. Otherwise '#nothings' activated
+\ 'close_pending' before expected, e.g. this happened when a link was
+\ at the end of a line.
+
+\ 2013-09-06: New: 'do_page?'.
+
+\ 2013-09-06: Fix: 'content{' doesn't call 'skip_content' anymore but
+\ '\eof'; the reason is 'skip_content' parsed until "}content" was
+\ found, what was wrong when this word was mentioned in the content
+\ itself! That happened in one page and was hard to solve. It's
+\ simpler to ignore the whole file. 'skip_content' has been removed.
+
+\ 2013-09-29: New: '}content?' flag is used to check if '}content' was
+\ executed; this way some markup errors can be detected.
+
+\ 2013-12-06: New: 'opened_markups_off' in '(content{)'.
 
 .( fendo_parser.fs compiled ) cr

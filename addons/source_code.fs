@@ -25,60 +25,67 @@
 \ **************************************************************
 \ Change history of this file
 
-\ 2013-07-21 Start, with noop definitions from
+\ 2013-07-21: Start, with noop definitions from
 \   <fendo-programandala.fs>; only the basic 'source_code' works.
-\ 2013-07-26 New: BASin and Forth blocks.
-\ 2013-07-26 Fix: now source files are closed at the end.
-\ 2013-07-28 Fix: 'basin_source_code' called 'echo_source_code'
+\ 2013-07-26: New: BASin and Forth blocks.
+\ 2013-07-26: Fix: now source files are closed at the end.
+\ 2013-07-28: Fix: 'basin_source_code' called 'echo_source_code'
 \   instead of '(echo_source_code)'.
-\ 2013-11-07 Change: Forth blocks are printed apart; empty blocks are
+\ 2013-11-07: Change: Forth blocks are printed apart; empty blocks are
 \   omited; no line number are printed.
-\ 2013-11-08 Change: source code is not echoed by lines
+\ 2013-11-08: Change: source code is not echoed by lines
 \   anymore; this is a first step towards syntax highlighting.
-\ 2013-11-08 Fix: The rubbish byte at the end of the last block of an
+\ 2013-11-08: Fix: The rubbish byte at the end of the last block of an
 \   Abersoft Forth blocks file is removed.
-\ 2013-11-09 First working version with syntax highlighting.
+\ 2013-11-09: First working version with syntax highlighting.
 \   Addon moved from Fendo-programandala to Fendo, because part of the
 \   code is required to implement optional syntax highlighting in the
 \   '###' markup.
-\ 2013-11-09 The BASin-specific code is moved to its own file.
-\ 2013-11-09 The Forth-blocks-specific code is moved to its own file.
-\ 2013-11-18 'open_source_code' factored out to 'file>local' (defined
+\ 2013-11-09: The BASin-specific code is moved to its own file.
+\ 2013-11-09: The Forth-blocks-specific code is moved to its own file.
+\ 2013-11-18: 'open_source_code' factored out to 'file>local' (defined
 \   in <fendo_files.fs>.
-\ 2013-11-18 Change: 'programming_language' renamed to
+\ 2013-11-18: Change: 'programming_language' renamed to
 \   'programming_language!'.
-\ 2013-11-18 New: 'programming_language@'.
-\ 2013-11-18 Change: All words related to syntax highlighting
+\ 2013-11-18: New: 'programming_language@'.
+\ 2013-11-18: Change: All words related to syntax highlighting
 \   are moved to <addons/source_code_common.fs>, because they are needed
 \   also by the "###" markup.
-\ 2013-12-10 Character set translation implemented with
+\ 2013-12-10: Character set translation implemented with
 \ <galope/translated.fs>: the default noop translation table
 \   must be changed by the specific addons.
-\ 2013-12-11 Character set translation improved: two
+\ 2013-12-11: Character set translation improved: two
 \   translations can be done: one before the highlighting and other after
 \   it; this prevents the highlighting from ruining some
 \   translations. Besides, an xt is used instead of a translation
 \   table created with <galope/translated.fs>;
 \   this way any tool can be used for the task.
+\ 2014-02-06: New: 'source_code_finished' now does all reseting final task.
+\   This fixes some obscure issues too.
 
 \ **************************************************************
 \ Todo
 
-\ 2013-12-11 make '(filename>filetype)' configurable by the
+\ 2013-12-11: make '(filename>filetype)' configurable by the
 \ application.
-\ 2013-11-09 Syntax highlighting cache!
+\ 2013-11-09: Syntax highlighting cache!
+\ 2014-02-15: Fix: path of the Fendo addons is converted to relative.
 
 \ **************************************************************
 \ Requirements
 
+\ From Gforth
 require string.fs  \ Gforth's dynamic strings
+
+\ From Galope
 require galope/dollar-variable.fs  \ '$variable'
 require galope/module.fs  \ 'module:', ';module', 'hide', 'export'
 require galope/minus-leading.fs  \ '-leading'
 require galope/string-suffix-question.fs  \ 'string-suffix?'
 require galope/translated.fs  \ 'translated'
 
-require fendo/addons/source_code_common.fs  \ xxx tmp
+\ Fendo addons
+require ./source_code_common.fs  \ xxx tmp
 
 module: source_code_fendo_addon_module
 
@@ -146,16 +153,6 @@ drop
 
 export
 0 value source_code_fid
-
-: open_source_code  ( ca len -- )
-  \ ca len = file name
-  file>local
-\  2dup type cr  \ xxx informer
-  r/o open-file throw  to source_code_fid
-  ;
-: close_source_code  ( -- )
-  source_code_fid close-file throw
-  ;
 : read_source_code_line  ( -- ca len wf )
   \ Note: 'read_fid_line' is defined in
   \ <fendo/fendo_wiki_markup_wiki.fs>.
@@ -192,6 +189,17 @@ defer source_code_posttranslated  ( ca len -- ca' len' )
   is source_code_posttranslated
   ;
 no_source_code_translation
+: source_code_finished  ( -- )
+  \ Reset default values about the source code.
+  s" " programming_language!  no_source_code_translation
+  ;
+: open_source_code  ( ca len -- )
+  \ ca len = file name
+  file>local r/o open-file throw  to source_code_fid
+  ;
+: close_source_code  ( -- )
+  source_code_fid close-file throw  source_code_finished
+  ;
 : >source_code<  ( ca len -- ca' len' )
   \ Translate and highlight a source code.
   source_code_pretranslated highlighted source_code_posttranslated 
@@ -216,7 +224,6 @@ no_source_code_translation
   \ already set in the 'programming_language$' dinamyc string.
   \ ca len = file name
   2dup filename>filetype programming_language!  (source_code)
-  no_source_code_translation  \ set the default
   ;
 
 ' source_code alias zx_spectrum_source_code  \ xxx tmp

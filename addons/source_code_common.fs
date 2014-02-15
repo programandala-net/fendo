@@ -4,7 +4,7 @@
 
 \ This file is the code common to several source code addons.
 
-\ Copyright (C) 2013 Marcos Cruz (programandala.net)
+\ Copyright (C) 2013,2014 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute it and/or modify it
 \ under the terms of the GNU General Public License as published by
@@ -25,9 +25,20 @@
 \ **************************************************************
 \ Change history of this file
 
-\ 2013-11-18 Code extracted from <fendo_source_code.fs>.
-\ 2013-12-11 New: '-b' parameter added to 'syntax+', then renamed to
+\ 2013-11-18: Code extracted from <fendo_source_code.fs>.
+\ 2013-12-11: New: '-b' parameter added to 'syntax+', then renamed to
 \   'parameters+'.
+\ 2014-01-06: New: 'escaped_source_code'.
+\ 2014-01-06: Fix: 'append_source_code_line' now escapes de the code
+\   with 'escaped_source_code'.
+\ 2014-02-06: Fix: 'highlighted' reseted 'programming_language$' befor
+\   exiting, what turned off the highlighting of Forth blocks.
+\ 2014-02-07: Fix: now 'append_source_code_line' calls
+\   'escaped_source_code' only if 'highlight?' is false,
+\   because Vim will do the task while highlighting;
+\   if "<" were already converted to "&lt;", Vim converted it to
+\   "&amp;lt;" and the code was ruined.
+\ 2014-02-07: New: 'escaped_source_code' translates "&" too.
 
 \ **************************************************************
 \ Todo
@@ -60,7 +71,14 @@ $variable programming_language$  \ same values than Vim's 'filetype'
   ;
 
 $variable source_code$
+: escaped_source_code  ( ca len -- ca' len' )
+  \ Escape special chars in source code.
+  \ Used by the wiki markup module and the source code addon.
+  s" &" s" &amp;" replaced
+  s" <" s" &lt;" replaced
+  ;
 : append_source_code_line  ( ca len -- )
+  highlight? 0= if  escaped_source_code  then
   source_code$ $+!  s\" \n" source_code$ $+!
   ;
 : new_source_code  ( -- )
@@ -104,6 +122,7 @@ hide
   \ and the source file in the command.
   \ The binary option (-b) is required to make the
   \ charset translations to work fine.
+\  ." programming_language$ in parameters+ is " programming_language$ $@ type cr  \ xxx informer
   s\" -b -c \"set filetype=" s+ programming_language$ $@ s+ s\" \" " s+
   ;
 : file+  ( ca len -- ca' len' )
@@ -114,6 +133,7 @@ hide
   \ Return the complete highlighting command,
   \ ready to be executed by the shell.
   base_highlight_command$ parameters+ program+ file+
+\  ." highlighting_command$ = " 2dup type cr  \ xxx informer
   ;
 : >input_file  ( ca len -- )
   \ Save the given source code to the file that Vim will load as input.
@@ -140,7 +160,9 @@ export
   \ Highlight the given source code, if needed.
   \ ca1 len1 = plain source code
   \ ca2 len2 = source code highlighted with <span> XHTML tags
-  highlight? if  (highlighted)  then  s" " programming_language!
+\  ." programming_language$ in highlighted is " programming_language$ $@ type cr  \ xxx informer
+\  ." plain source code in highlighted" cr 2dup type key drop  \ xxx informer
+  highlight? if  (highlighted)  then
   ;
 
 ;module

@@ -442,10 +442,10 @@ do_content? on
 \ Calculated data
 
 : property?  ( ca len a -- wf )
-             { D: property page_id }
   \ ca len = property to check
   \ a = page id (address of its data)
-  \ wf = is the property in the properties field?
+  \ wf = is the property in the properties field of the page?
+  { D: property page_id }
   page_id properties  false { result }
   /csv 0 ?do
     trim property str= result or to result
