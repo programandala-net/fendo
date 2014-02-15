@@ -25,13 +25,15 @@
 \ **************************************************************
 \ Change history of this file
 
-\ 2013-12-10 Code extracted from <addons/forth_blocks_source_code.fs>.
+\ 2013-12-10: Code extracted from <addons/forth_blocks_source_code.fs>.
+\ 2014-02-15: Fix: path of the Fendo addons is converted to relative.
 
 \ **************************************************************
 \ Requirements
 
-require fendo/addons/forth_blocks_source_code.fs
-require fendo/addons/ql_charset.fs
+\ Fendo addons
+require ./forth_blocks_source_code.fs
+require ./ql_charset.fs
 
 \ **************************************************************
 

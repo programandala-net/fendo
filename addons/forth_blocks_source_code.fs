@@ -25,31 +25,37 @@
 \ **************************************************************
 \ Change history of this file
 
-\ 2013-11-09 Code extracted from <addons/source_code.fs>.
-\ 2013-11-18 Change: 'programming_language' renamed to
+\ 2013-11-09: Code extracted from <addons/source_code.fs>.
+\ 2013-11-18: Change: 'programming_language' renamed to
 \   'programming_language!', after the changes in the main code.
-\ 2013-11-19 Fix: '(echo_forth_block)' and
+\ 2013-11-19: Fix: '(echo_forth_block)' and
 \   'update_block_0_highlighting'  still used 'higlight?' as a
 \   variable, but it was converted to a value.
-\ 2013-11-30 Fix: now 'forth_block$' is defered; the application must
+\ 2013-11-30: Fix: now 'forth_block$' is defered; the application must
 \   set it, depending on the languages used in the website.
-\ 2013-12-10 Change: 'ql_forth_blocks_source_code' moved to its own file
+\ 2013-12-10: Change: 'ql_forth_blocks_source_code' moved to its own file
 \   <addons/ql_forth_blocks_source_code.fs>.
-\ 2013-12-10 Change: All Abersoft Forth code is moved to its own file
+\ 2013-12-10: Change: All Abersoft Forth code is moved to its own file
 \   <addons/abersoft_forth_blocks_source_code.fs>.
+\ 2014-02-05: Fix: 'update_forth_block_0_highlighting' set 'highlight?'
+\ when it was unset!
 
 \ **************************************************************
 \ Todo
 
-\ 2013-12-12 let abersoft forth syntax? a vim syntax file will be
+\ 2013-12-12: let abersoft forth syntax? a vim syntax file will be
 \ required.
-\ 2013-07-26 Character set conversions.
+\ 2013-07-26: Character set conversions.
+\ 2014-02-15: Fix: path of the Fendo addons is converted to relative.
 
 \ **************************************************************
 \ Requirements
 
+\ Fendo addons
+require ./source_code.fs
+
+\ From Galope
 require galope/module.fs  \ 'module:', ';module', 'hide', 'export'
-require fendo/addons/source_code.fs
 
 \ **************************************************************
 \ Forth source code in blocks format
@@ -63,19 +69,18 @@ export
 16 value /forth_block  \ lines per block
 variable forth_block_line  \ counter
 variable highlight_forth_block_0?  \ flag
-hide
 defer forth_block$  \ "Block" in the current language
+hide
 s" Block" 2constant (default_forth_block$)
 ' (default_forth_block$) is forth_block$
 (*
-\ 'forth_block$' must be set by the application.
-\ Example with 'strings:' and ';strings',
-\ from the Galope library:
-strings: (forth_block$)
+\ 'forth_block$' can be vectored by the application
+\ to a multilingual string, e.g.:
   s" Block"   \ English
   s" Bloko"   \ Esperanto
   s" Bloque"  \ Spanish
-;strings  ' (forth_block$) is forth_block$
+  l18n$ l18n_forth_block$
+  ' l18n_forth_block$ is forth_block$
 *)
 : echo_forth_block_number  ( -- )
   [<p>] forth_block$ echo forth_block @ _echo. [</p>] 
@@ -89,7 +94,7 @@ strings: (forth_block$)
 : update_forth_block_0_highlighting  ( -- )
   \ Turn off highlighting for Forth block 0, if needed.
   forth_block @ 0=
-  if  highlight_forth_block_0? @ to highlight?  then
+  if  highlight_forth_block_0? @ highlight? and to highlight?  then
   ;
 : (echo_forth_block)  ( -- )
   echo_forth_block_number

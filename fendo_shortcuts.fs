@@ -42,21 +42,22 @@ wordlist constant fendo_shortcuts_wid  \ for user's shortcuts
 
 : shortcut:  ( "name" -- )
   \ Create an user's shortcut.
-  [ true ] [if]  \ xxx normal version
-  get-current >r  fendo_shortcuts_wid set-current :  r> set-current  \ xxx works
-  [else]  \ xxx debugging version
-  get-current >r
-  fendo_shortcuts_wid set-current
-  parse-name
-  2dup 2>r nextname
-  :
-  2r> 
-\  space 2dup type  \ xxx informer
-  postpone sliteral postpone cr
-  s" resolving shortcut " postpone sliteral
-  postpone type
-  postpone type
-  r> set-current
+  [ true ] [if]
+    \ xxx normal version
+    get-current >r  fendo_shortcuts_wid set-current :  r> set-current  \ xxx works
+  [else]
+    \ xxx debugging version
+    get-current >r
+    fendo_shortcuts_wid set-current
+    parse-name
+    2dup 2>r nextname :
+    2r> 
+    space 2dup type  \ xxx informer
+    postpone sliteral postpone cr
+    s" resolving shortcut " postpone sliteral
+    postpone type
+    postpone type
+    r> set-current
   [then]
   ; 
 

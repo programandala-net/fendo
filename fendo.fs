@@ -5,7 +5,7 @@
 
 \ This file is the main one; it loads all the modules.
 
-\ Copyright (C) 2012,2013 Marcos Cruz (programandala.net)
+\ Copyright (C) 2012,2013,2014 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute
 \ it and/or modify it under the terms of the GNU General
@@ -39,9 +39,10 @@
 \ 2013-06: New: Generic tool words; wordlists.
 \ 2013-07-09: Change: 'parse-name?' moved to Galope.
 \ 2014-02-05: New: 'fendo_markup_macros_wid'.
-\ 2014-02-05: New: 'markup_wids', 'markup_order', 'set_markup_order'.
+\ 2014-02-05: New: 'markup_wids', 'markup_order', 'set_markup_order';
+\   they are written to make the parser kernel simpler and easier to expand.
 \ 2014-02-05: Change: 'markup>order' and 'markup<order' rewritten with
-\ 'markup_order'.
+\   the new word 'markup_order'.
 
 \ **************************************************************
 \ Version history 

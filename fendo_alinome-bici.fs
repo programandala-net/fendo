@@ -1,4 +1,4 @@
-\ fendo_alinome-bici.fs
+.( fendo_alinome-bici.fs) cr
 
 \ This file is part of
 \ Fendo ("Forth Engine for Net DOcuments") version A-02.
@@ -39,3 +39,4 @@
 require alinome-bici/alinome-bici.fs  \ old engine
 
 
+.( fendo_alinome-bici.fs compiled) cr

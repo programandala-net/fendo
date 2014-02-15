@@ -28,6 +28,10 @@
 \ 2013-11-09 Code extracted from <addons/source_code.fs>.
 \ 2013-11-18 Change: 'programming_language' renamed to
 \   'programming_language!', after the changes in the main code.
+\ 2013-12-11 New: 'basin_source_code_translated'.
+\ 2013-12-11 Change: an xt is used, not a translation table; this
+\   makes it possible to use different translation tools.
+\ 2014-02-15: Fix: path of the Fendo addons is converted to relative.
 
 \ **************************************************************
 \ Todo
@@ -37,8 +41,14 @@
 \ **************************************************************
 \ Requirements
 
-require fendo/addons/source_code.fs
-require fendo/addons/basin_charset.fs
+\ From Galope
+require galope/module.fs  \ 'module:', ';module', 'hide', 'export'
+
+\ Fendo addons
+require ./source_code.fs
+require ./basin_charset.fs
+
+\ From Forth Foundation Library
 require ffl/chr.fs  \ 'chr-digit'
 
 \ **************************************************************
@@ -62,13 +72,17 @@ module: basin_source_code_fendo_addon_module
 
 export
  
+: basin_source_code_translated  ( ca len -- ca' len' )
+  \ Convert the content of a BASin file to UTF-8.
+  basin_charset translated
+  ;
 : basin_source_code  ( ca len -- )
   \ Read the content of a BASin file and echo it.
-  \ xxx todo set the character set for this file type
   \ ca len = file name
   s" basin" programming_language!
-  ['] basin_charset is source_code_posttranslation_table
+  ['] basin_source_code_translated is source_code_posttranslated
   open_source_code skip_basin_header (opened_source_code)
+  no_source_code_translation  \ default
   ;
 
 ;module

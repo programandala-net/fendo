@@ -1,49 +1,64 @@
-\ addons/abbr.fs 
+.( addons/abbr.fs) cr
 
-\ This file is part of
-\ Fendo-programandala
+\ This file is part of Fendo.
 
 \ This file is the abbr addon.
 
 \ Copyright (C) 2013 Marcos Cruz (programandala.net)
 
-\ Fendo-programandala is free software; you can redistribute
+\ Fendo is free software; you can redistribute
 \ it and/or modify it under the terms of the GNU General
 \ Public License as published by the Free Software
 \ Foundation; either version 2 of the License, or (at your
 \ option) any later version.
 
-\ Fendo-programandala is distributed in the hope that it will be useful,
-\ but WITHOUT ANY WARRANTY; without even the implied
-\ warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
-\ PURPOSE.  See the GNU General Public License for more
-\ details.
+\ Fendo is distributed in the hope that it will be useful, but WITHOUT
+\ ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+\ or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
+\ License for more details.
 
-\ You should have received a copy of the GNU General Public
-\ License along with this program; if not, see
-\ <http://gnu.org/licenses>.
+\ You should have received a copy of the GNU General Public License
+\ along with this program; if not, see <http://gnu.org/licenses>.
 
-\ Fendo-programandala is written in Forth
-\ with Gforth (<http://www.bernd-paysan.de/gforth.html>).
+\ Fendo is written in Forth with Gforth
+\ (<http://www.bernd-paysan.de/gforth.html>).
 
 \ **************************************************************
 \ Change history of this file
 
-\ 2013-06-19 Start.
-\ 2013-06-29 All addons are defined, but they're temporary fakes.
-\ 2013-07-03 Fix: '(abbr)' refills the input stream until
+\ 2013-06-19: Start.
+\ 2013-06-29: All addons are defined, but they're temporary fakes.
+\ 2013-07-03: Fix: '(abbr)' refills the input stream until
 \   something is found. This makes it possible to separate the
 \   addon words and the actual abbreviation in different lines.
-\ 2013-07-20 New: '.abbr', 
-\ 2013-07-28 Fix: old '[previous]' changed to '[markup<order]';
+\ 2013-07-20: New: '.abbr', 
+\ 2013-07-28: Fix: old '[previous]' changed to '[markup<order]';
 \   this was the reason the so many wordlists remained in the
 \   search order.
-\ 2013-11-30 Many changes.
-\ 2013-12-05 Many changes. First working version.
+\ 2013-11-30: Many changes.
+\ 2013-12-05: Many changes. First working version.
+\ 2013-12-13: New: 'abbr_alias'.
+\ 2014-02-05: Change: some comments edited.
+\ 2014-02-05: Change: 'echo_abbr_tag' factored out to
+\ '(echo_abbr_tag)', in order to reuse the code in macros that create
+\ abbrs.
+\ 2014-02-05: Fix: stack notation of 'abbr:'.
+\ 2014-02-05: Improvement: 'warnings' checked in 'undefined_abbr'.
+\ 2014-02-05: Change: 'echo_abbr' renamed to 'echo_undefined_abbr';
+\ 'echo_abbr_tag' renamed to 'execute_abbr'; '(echo_abbr_tag)' renamed to
+\ 'echo_abbr'.
+\ 2014-02-05: Change: unnecessary '>r' and 'r>' removed from
+\ 'abbr_alias'.
+
+\ **************************************************************
+\ Todo
+
+\ 2014-02-15: name clash: 'execute_abbr'.
+\ 2013-12-13: use a module to separate the interface words
 
 \ **************************************************************
 
-table constant fendo_abbr_wid  \ for user's abbrs
+table constant fendo_abbr_wid  \ for user abbrs
 
 variable joined_abbr?  \ print the abbr joined to the word before?
 
@@ -56,7 +71,7 @@ begin-structure abbr%  \ xxx todo tmp draft
   field: abbr-translation-xt
 end-structure
 : abbr: ( xt1 xt2 "name" -- )  \ xxx draft
-  \ Create an user's abbr.
+  \ Create an user abbr.
   \ xt1 = return a string with the actual abbr
   \ xt2 = return a string with the meaning of the actual abbr
   get-current >r  fendo_abbr_wid set-current
@@ -67,7 +82,7 @@ end-structure
     ( pfa ) dup perform rot perform
   ;
 : sabbr: ( ca1 len1 ca2 len2 ca3 len3 "name" -- )
-  \ Create an user's simple abbr.
+  \ Create an user simple abbr.
   \ ca1 len1 = actual abbr
   \ ca2 len2 = meaning of the abbr
   \ ca3 len3 = ISO code of the language
@@ -83,7 +98,7 @@ end-structure
     r> 2@ 
   ;
 : mlabbr: ( ca1 len1 xt ca3 len3 "name" -- )
-  \ Create an user's multilingual abbr.
+  \ Create an user multilingual abbr.
   \ ca1 len1 = actual abbr
   \ xt = return a string with the meaning of the abbr
   \ ca3 len3 = ISO code of the language
@@ -101,16 +116,21 @@ end-structure
 [then]
 
 : abbr: ( "name" -- )
-  \ Create an user's abbr.
+  \ Create an user abbr.
   get-current >r  fendo_abbr_wid set-current :
   r> set-current
   \ The abbr word must return the following strings:
-  ( -- ca1 len1 ca2 len2 ca3 len3 )
-    \ ca1 len1 = actual abbr
+  ( -- ca1 len1 ca2 len2 ca3 len3 ca4 len4 )
+    \ ca1 len1 = actual abbr to show
     \ ca2 len2 = meaning of the abbr
     \ ca3 len3 = translation of the meaning in the current language
     \   (or an empty string)
     \ ca4 len4 = ISO code of the language of the abbr
+  ;
+: abbr_alias ( "name" -- )
+  \ Create an alias of the latest created user abbr.
+  get-current  fendo_abbr_wid set-current  latestxt alias
+  set-current
   ;
 
 : parse_abbr  ( "name" -- ca len )
@@ -127,13 +147,12 @@ end-structure
 : do_parse_abbr  ( "name" -- xt true | false )
   parse_abbr abbr? 0= abort" Undefined abbr"
   ;
-: echo_abbr  ( ca len -- )
+: echo_undefined_abbr  ( ca len -- )
   joined_abbr? @ if  echo  else  _echo  then
   ;
 : undefined_abbr  ( ca len -- )
-  2dup echo_abbr
-  ." WARNING: undefined abbr " type cr
-\  key drop  \ xxx informer
+  2dup echo_undefined_abbr
+  warnings @ if  ." WARNING: undefined abbr " type cr  then
   ;
 : translation_in_parens  ( ca len -- ca' len' )
   s"  (" 2swap s+ s" )" s+
@@ -144,20 +163,29 @@ end-structure
   \ ca2 len2 = abbr meaning translation, or empty string
   dup if  translation_in_parens s+  else  2drop  then
   ;
-: echo_abbr_tag  ( xt -- )
-  execute (xml:)lang=!  meaning+translation title=!
+: echo_abbr  ( ca1 len1 ca2 len2 ca3 len3 ca4 len4 -- )
+  \ ca1 len1 = actual abbr to show
+  \ ca2 len2 = meaning of the abbr
+  \ ca3 len3 = translation of the meaning in the current language
+  \   (or an empty string)
+  \ ca4 len4 = ISO code of the language of the abbr
+  (xml:)lang=!  meaning+translation title=!
   joined_abbr? @ 0= separate? !
   [<abbr>] echo [</abbr>]
+  ;
+: execute_abbr  ( xt -- )
+  \ xxx fixme name clash
+  execute echo_abbr
   ;
 : .abbr  ( ca len -- )
   \ xxx not used
   2dup abbr?
-  if  echo_abbr_tag 2drop  else  undefined_abbr  then
+  if  execute_abbr 2drop  else  undefined_abbr  then
   ;
 : abbr  ( "name" -- )
   \ Parse and echo an abbr.
   parse_abbr 2dup abbr?
-  if  echo_abbr_tag 2drop  else  undefined_abbr  then
+  if  execute_abbr 2drop  else  undefined_abbr  then
   ;
 : +abbr  ( "name" -- )
   \ Parse and echo an abbr
@@ -176,6 +204,7 @@ end-structure
   +abbr  separate? off
   ;
 : execute_abbr  ( "name" -- ca1 len1 ca2 len2 ca3 len3 ca4 len4 )
+  \ xxx fixme name clash
   \ "name" = abbr id
   \ ca1 len1 = actual abbr
   \ ca2 len2 = meaning of the abbr
@@ -196,3 +225,4 @@ end-structure
   drop \ xxx tmp
   ;
 
+.( addons/abbr.fs compiled) cr

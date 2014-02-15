@@ -5,7 +5,7 @@
 
 \ This file defines the words that print to the target HTML file.
 
-\ Copyright (C) 2013 Marcos Cruz (programandala.net)
+\ Copyright (C) 2013,2014 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute
 \ it and/or modify it under the terms of the GNU General
@@ -108,6 +108,10 @@ variable separate?  \ flag: separate the next tag or word from the current one?
   \ Print a double quote to the HTML file.
   s\" \"" echo 
   ;
+: echo_period  ( -- )
+  \ Print a period to the HTML file.
+  s" ." echo 
+  ;
 : _separate  ( -- )
   \ Separate the current tag or word from the previous one, if needed.
   separate? @ if  echo_space  then  separate? on
@@ -137,19 +141,20 @@ variable separate?  \ flag: separate the next tag or word from the current one?
 \ **************************************************************
 \ Change history of this file
 
-\ 2013-06-04 Start.
-\ 2013-06-08 New: First code for output redirection.
-\ 2013-06-29 Change: 'target_fid' moved here from <fendo_files.fs>.
-\ 2013-07-03 Change: 'dry?' renamed to 'echo>screen?'.
-\ 2013-07-03 New: tools to redirect the output to a dynamic
+\ 2013-06-04: Start.
+\ 2013-06-08: New: First code for output redirection.
+\ 2013-06-29: Change: 'target_fid' moved here from <fendo_files.fs>.
+\ 2013-07-03: Change: 'dry?' renamed to 'echo>screen?'.
+\ 2013-07-03: New: tools to redirect the output to a dynamic
 \   string.
-\ 2013-07-12 New: '?_echo' moved here from <fendo_markup_wiki.fs>.
-\ 2013-07-14 New: '?echo_line'.
-\ 2013-07-21 New: 'echo.'. This somehow fixes the print corruption
+\ 2013-07-12: New: '?_echo' moved here from <fendo_markup_wiki.fs>.
+\ 2013-07-14: New: '?echo_line'.
+\ 2013-07-21: New: 'echo.'. This somehow fixes the print corruption
 \   caused by using 's>d <# #s #> echo' in the HTML template.
-\ 2013-07-21 New: 'echo_line'.
-\ 2013-11-07 New: '_echo.'.
-\ 2013-11-26 Change: 'n>str' instead of '(echo.)'.
-\ 2013-12-06 Fix: 'echo_cr' now does 'separate? off' in order to
+\ 2013-07-21: New: 'echo_line'.
+\ 2013-11-07: New: '_echo.'.
+\ 2013-11-26: Change: 'n>str' instead of '(echo.)'.
+\ 2013-12-06: Fix: 'echo_cr' now does 'separate? off' in order to
 \   remove unnecessary blank spaces.
+\ 2014-02-15: New: 'echo_period'.
 
