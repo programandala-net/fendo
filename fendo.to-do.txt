@@ -1,0 +1,15 @@
+= Fendo to-do list
+
+2014-02-15:
+
+Suddenly, highlighting is done even with the flag
+off!
+
+Also for Fendo-programandala:
+
+Make sure all addons are loaded with "./" path.
+
+Make sure all files use .( at the start and at the
+end. Use the complete paths for addons,
+fendo/addons/file or fendo-programandala/addons/file. 
+

@@ -1,7 +1,6 @@
 .( fendo.fs ) cr
 
-\ This file is part of
-\ Fendo ("Forth Engine for Net DOcuments") version A-02.
+\ This file is part of Fendo.
 
 \ This file is the main one; it loads all the modules.
 
@@ -31,6 +30,14 @@
 \   <http://www.complang.tuwien.ac.at/forth/gforth/>
 
 \ **************************************************************
+\ Version history of Fendo
+
+\ 2012-06-30: Start of version A-00.
+\ 2013-06-28: Start of version A-01.
+\ 2013-10-22: Start of version A-02.
+\ 2014-02-15: Start of version A-03. All files are renamed.
+
+\ **************************************************************
 \ Change history of this file
 
 \ 2012-06-30: Start.
@@ -43,13 +50,6 @@
 \   they are written to make the parser kernel simpler and easier to expand.
 \ 2014-02-05: Change: 'markup>order' and 'markup<order' rewritten with
 \   the new word 'markup_order'.
-
-\ **************************************************************
-\ Version history 
-
-\ 2012-06-30: Start of version A-00.
-\ 2013-06-28: Start of version A-01.
-\ 2013-10-22: Start of version A-02.
 
 \ **************************************************************
 \ Todo
@@ -100,7 +100,7 @@
 \   requiring the library files. The problem was <ffl/config.fs>
 \   created 'ffl.version' in the 'fendo' vocabulary, but searched for it
 \   in 'forth-wordlist'.
- 
+
 \ **************************************************************
 \ Stack notation
 
@@ -109,9 +109,9 @@
 Some stack notations used in this program are different from the
 common usage (shown in brackets):
 
-a         [addr]  address 
-ca        [c-addr]  character-aligned address 
-ca len    [c-addr u]  character string 
+a         [addr]  address
+ca        [c-addr]  character-aligned address
+ca len    [c-addr u]  character string
 f         [flag]  flag (0=false; other=true)
 wf        [flag]  well-formed flag (0=false; -1=true)
 
@@ -120,9 +120,7 @@ wf        [flag]  well-formed flag (0=false; -1=true)
 \ **************************************************************
 \ Debug
 
-\ cr .( LOADING fendo.fs ) key drop  \ xxx informer
-
-false value [bug_thread] immediate
+false value [bug_thread] immediate  \ xxx tmp
 
 \ **************************************************************
 \ Requirements
@@ -159,10 +157,12 @@ require galope/parse-name-question.fs  \ 'parse-name?'
 require galope/paren-star.fs  \ '(*'
 require galope/sconstant.fs  \ 'sconstant'
 require galope/slash-sides.fs  \ '/sides'
+require galope/tilde-tilde.fs  \ improved '~~' for debugging
 require galope/trim.fs  \ 'trim'
 
 true [if]
 
+  \ xxx fixme
   \ 2013-08-10: Without this string buffer, the input stream gets
   \ corrupted at the end of the template.  I didn't find the bug
   \ yet. It seems a problem with Gforth's 's+'.
@@ -189,6 +189,8 @@ dup     constant [gforth-strings?]  immediate
 
 true [if]
 
+\ xxx fixme this will not be necessary with Gforth 0.8.
+
 \ Safer alternatives for words of Gforth's string.fs
 warnings @  warnings off
 : $@len  ( a -- len )
@@ -199,7 +201,7 @@ warnings @  warnings off
 : $@  ( a -- ca len )
   \ Return the content of a dynamic string variable,
   \ even if it's not initialized.
-  @ dup if  dup cell+ swap @  else  pad swap  then 
+  @ dup if  dup cell+ swap @  else  pad swap  then
   ;
 warnings !
 
@@ -231,8 +233,8 @@ wordlist constant fendo_pid_wid  \ page ids
   \ wid'1 = highest priority wordlist
   \ wid'n = lowest priority wordlist
   fendo_markup_macros_wid
-  fendo_markup_html_entities_wid 
-  fendo_markup_wid 
+  fendo_markup_html_entities_wid
+  fendo_markup_wid
   ;
 : markup_order  ( -- wid'1 ... wid'n n )
   \ Return the wordlist order required to
@@ -250,7 +252,7 @@ wordlist constant fendo_pid_wid  \ page ids
 : [markup>order]  ( -- )
   markup>order
   ;  immediate
-: markup<order  ( -- )  
+: markup<order  ( -- )
   markup_order 0 do  drop previous  loop
   ;
 : [markup<order]  ( -- )
@@ -258,10 +260,10 @@ wordlist constant fendo_pid_wid  \ page ids
   ;  immediate
 : fendo>current  ( -- )
   fendo_wid set-current
-  ; 
+  ;
 : fendo>order  ( -- )
   fendo_wid >order
-  ; 
+  ;
 : [fendo>order]  ( -- )
   fendo>order
   ;  immediate
@@ -285,21 +287,21 @@ s" A-02-20131111" 2constant fendo_version
 false value multilingual?  \ to be changed by <addons/multilingual.fs>
 
 depth [if] abort [then]  \ xxx debugging
-include ./fendo_config.fs
+include ./fendo.config.fs
 depth [if] abort [then]  \ xxx debugging
-defer unshortcut  \ defined in <fendo_shortcuts.fs>
-defer just_unshortcut  \ defined in <fendo_shortcuts.fs>
-include ./fendo_data.fs
+defer unshortcut  \ defined in <fendo.shortcuts.fs>
+defer just_unshortcut  \ defined in <fendo.shortcuts.fs>
+include ./fendo.data.fs
 depth [if] abort [then]  \ xxx debugging
-include ./fendo_echo.fs
+include ./fendo.echo.fs
 depth [if] abort [then]  \ xxx debugging
-include ./fendo_files.fs
+include ./fendo.files.fs
 depth [if] abort [then]  \ xxx debugging
-include ./fendo_markup.fs
+include ./fendo.markup.fs
 depth [if] abort [then]  \ xxx debugging
-include ./fendo_tools.fs
+include ./fendo.tools.fs
 depth [if] abort [then]  \ xxx debugging
-include ./fendo_parser.fs
+include ./fendo.parser.fs
 depth [if] abort [then]  \ xxx debugging
 
 .( fendo.fs compiled) cr
