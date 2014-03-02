@@ -41,7 +41,7 @@ require galope/slash-counted-string.fs  \ '/counted-string'
 
 module: pid_list_fendo_addon_module
 
-s" /tmp/pid_list_fendo_addon.txt" 2constant pid_list_file$
+s" /tmp/fendo.addon.pid_list.txt" 2constant pid_list_file$
 : ls_command$  ( -- ca len )
   s" ls -1 " source_dir $@ s+ s" *" s+ forth_extension $@ s+
   ;
