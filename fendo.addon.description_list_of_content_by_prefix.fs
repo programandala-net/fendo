@@ -30,7 +30,7 @@
 
 \ **************************************************************
 
-require ./fendo.addon.page_id_list.fs  \ Fendo addon
+require ./fendo.addon.pid_list.fs  \ Fendo addon
 
 : (description_list_of_content_by_prefix)  ( ca len -- )
   \ Create a description list of content
