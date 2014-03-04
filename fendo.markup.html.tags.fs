@@ -98,9 +98,7 @@ require galope/plus-slash-string.fs
 
 get-current markup>current
 
-: <a>  ( -- )
-\  ." 6)" href=@ type space id=@ type cr  \ xxx informer
-  s" a" {html  ;
+: <a>  ( -- )  s" a" {html  ;
 : </a>  ( -- )  s" a" html}  ;
 : <abbr>  ( -- )  s" abbr" {html  ;
 : </abbr>  ( -- )  s" abbr" html}  ;

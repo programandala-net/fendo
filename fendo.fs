@@ -249,8 +249,7 @@ wordlist constant fendo_pid_wid  \ page ids
   fendo_markup_wid
   ;
 : markup_order  ( -- wid'1 ... wid'n n )
-  \ Return the wordlist order required to
-  \ parse markup.
+  \ Return the wordlist order required to parse markup.
   \ wid'1 = highest priority wordlist
   \ wid'n = lowest priority wordlist
   depth >r markup_wids depth r> -

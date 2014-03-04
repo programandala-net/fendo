@@ -32,13 +32,19 @@
 \ 2014-03-03: Change: 'title_link' renamed to 'link<pid$'.
 
 \ **************************************************************
+\ xxx todo
+
+\ 2014-03-04: Move this code to <fendo.links.fs>, and also the
+\ link-related code from <fendo.markup.wiki.fs>.
+
+\ **************************************************************
 \ Links
 
 : (link)  ( ca len -- )
   \ Create a link.
   \ Its attributes and link text have to be set previously.
   \ ca len = page id, URL or shortcut
-  (get_link_href) tune_link echo_link
+  (get_link_href) echo_link
   ;
 : link  ( ca1 len1 ca2 len2 -- )
   \ Create a link of any type.
