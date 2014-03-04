@@ -53,6 +53,7 @@
 \ From Galope:
 require galope/dollar-variable.fs  \ '$variable'
 include galope/paren-star.fs  \ '(*'
+include galope/replaced.fs  \ 'replaced'
 require galope/trim.fs  \ 'trim'
 \ require fendo.addon.source_code.fs  \ xxx needed by '###'
 
@@ -77,6 +78,8 @@ get-current  forth-wordlist set-current
 require galope/n-to-r.fs  \ 'n>r'
 require galope/n-r-from.fs  \ 'nr>'
 require galope/minus-prefix.fs  \ '-prefix'
+require galope/jpeg.fs  \ JPEG tools
+require galope/png.fs  \ PNG tools
 
 \ From Forth Foundation Library
 require ffl/str.fs  \ FFL's dynamic strings
@@ -488,7 +491,6 @@ $variable forth_code$
   ;
 : plain_###-zone  ( "source code ###" -- )
   \ Parse and echo a source code zone "as is".
-  \ begin  ###-line? dup >r ?echo_line r> 0=  until  \ xxx old
   begin
     ###-line? dup >r
     if  2drop  else  escaped_source_code echo_line  then  r>
@@ -540,9 +542,7 @@ $variable forth_code$
 : unraw_attributes  ( ca len -- )
   \ Extract and store the individual attributes from
   \ a string of raw verbatim attributes.
-  tmp-str str-set
-  s\" =\" " s\" =\"" tmp-str str-replace
-  tmp-str str-get
+  s\" =\" " s\" =\"" replaced
   >sb  \ xxx tmp
   evaluate
   ;
@@ -550,9 +550,39 @@ $variable forth_code$
 \ **************************************************************
 \ Tools for images
 
-: get_image_src_attribute  ( "filename<spc>" -- )
+: get_image_src_attribute  ( "name" -- )
   \ Parse and store the image src attribute.
   files_subdir $@ parse-word s+ src=!
+  ;
+defer img-open
+defer img-size
+defer img-close
+: set_jpeg_image  ( -- )
+  ['] jpeg-open is img-open
+  ['] jpeg-size is img-size
+  ['] jpeg-close is img-close
+  ;
+: set_png_image  ( -- )
+  ['] png-open is img-open
+  ['] png-size is img-size
+  ['] png-close is img-close
+  ;
+: jpeg-filename?  ( ca len -- wf )
+  2dup s" .jpg" string-suffix? >r
+  s" .jpeg" string-suffix? r> or
+  ;
+: png-filename?  ( ca len -- wf )
+  s" .png" string-suffix?
+  ;
+: set_image_type  ( ca len -- )
+  2dup jpeg-filename? if  2drop set_jpeg_image exit  then
+  png-filename? if  set_png_image  exit  then 
+  true abort" Unknown image file type."
+  ;
+: set_image_size_attributes  ( -- )
+  target_dir $@ src=@ s+
+  2dup set_image_type img-open img-size 
+  n>str height=! n>str width=! img-close
   ;
 variable image_finished?  \ flag, no more image markup to parse?
 : end_of_image?  ( ca len -- wf )
@@ -588,7 +618,8 @@ variable image_finished?  \ flag, no more image markup to parse?
 : parse_image  ( "imagemarkup}}" -- )
   \ Parse and store the image attributes.
   get_image_src_attribute
-  [ false ] [if]  \ simple version
+  set_image_size_attributes
+  [ true ] [if]  \ simple version
     parse-name end_of_image_section? 0=
     abort" Space not allowed in image filename"
   [else]  \ no abort
@@ -609,35 +640,26 @@ variable image_finished?  \ flag, no more image markup to parse?
 \ Tools for links
 
 : file://?  ( ca len -- wf )
-  \ Does a string starts with "file://"?
+  \ Does a string start with "file://"?
   s" file://" string-prefix?
   ;
 ' file://? alias file_href?
 : http://?  ( ca len -- wf )
-  \ Does a string starts with "http://"?
+  \ Does a string start with "http://"?
   s" http://" string-prefix?
   ;
 : https://?  ( ca len -- wf )
-  \ Does a string starts with "https://"?
+  \ Does a string start with "https://"?
   s" https://" string-prefix?
   ;
 : ftp://?  ( ca len -- wf )
-  \ Does a string starts with "ftp://"?
+  \ Does a string start with "ftp://"?
   s" ftp://" string-prefix?
   ;
 : external_href?  ( ca len -- wf )
   \ Is a href attribute external?
-  2dup http://? >r
-  2dup https://? >r
-  ftp://?  r> or r> or
+  2dup http://? >r  2dup https://? >r  ftp://? r> or r> or
   ;
-0 [if]  \ xxx old
-wordlist constant links_wid  \ for bookmarked links
-: link:?  ( ca len --  xt -1 | 0 )
-  \ Is a string the name of a bookmarked link?
-  links_wid search-wordlist
-  ;
-[then]
 link_text_as_attribute? 0= [if]  \ xxx tmp
 $variable link_text
 : link_text!  ( ca len -- )
@@ -679,11 +701,6 @@ variable link_type
   file_href? if  file_link exit  then
   local_link
   ;
-\ xxx old
-\ : >link_type_id  ( ca len -- n | 0 )
-\  \ Convert an href attribute to its type id, if not empty.
-\  dup if  (>link_type_id)  else  nip  then
-\  ;
 : set_link_type  ( ca len -- )
   \ Get and store the type id of an href attribute.
   \ xxx todo no href means local, if there is/was an anchor label
@@ -698,40 +715,6 @@ variable link_type
 : file_link?  ( -- wf )
   link_type @ file_link =
   ;
-0 [if]  \ xxx old, 2013-10-22: moved to its own file <fendo_shortcuts.fs>
-: unlink?  ( xt1 xt2 1|-1  |  xt1 0  --  xt2 xt2 true  |  0 )
-  \ Execute xt2 if it's different from xt1.
-  \ xt1 = old xt (former loop)
-  \ xt2 = new xt
-  if    2dup <> if  nip dup true  else  2drop false  then
-  else  drop false
-  then
-  ;
-: (unlinked?)  ( xt ca len -- wf )
-  \ Is an href attribute a link different from xt?
-  \ ca len = href attribute (not empty)
-  fendo_links_wid search-wordlist unlink?
-  ;
-: unlinked?  ( xt ca len -- wf )
-  \ Is an href attribute a link different from xt?
-  \ ca len = href attribute (or an empty string)
-  dup  if  (unlinked?)  else  nip nip  then
-  ;
-: unlink  ( ca len -- ca len | ca' len' )
-  \ xxx choose better name?: unalias, unfake...
-  \ Unlink an href attribute recursively.
-  \ ca len = href attribute
-  \ ca' len' = actual href attribute
-  2dup href=!
-  0 rot rot  \ fake xt
-\  2dup ." unlink " type  \ xxx informer
-  begin   ( xt ca len ) unlinked?
-  while   execute href=@
-\  2dup ." --> " type  \ xxx informer
-  repeat  href=@
-\  cr  \ xxx informer
-  ;
-[then]
 variable link_finished?  \ flag, no more link markup to parse?
 : end_of_link?  ( ca len -- wf )
   \ ca len = latest name parsed
@@ -757,23 +740,11 @@ defer parse_link_text  ( "...<spaces>|<spaces>" | "...<spaces>]]<spaces>"  -- )
     then
   until   ( ca len ) unraw_attributes
   ;
-0 [if]  \ xxx old tmp
-: (href_checked)  ( ca len -- ca len )
-  \ Check the given empty href attribute.
-  \ If there's no anchor, the href is not valid.
-  link_anchor $@len 0= abort" Empty href link"
-  ;
-: href_checked  ( ca len -- ca len )
-  \ Check the given href attribute, if it's empty.
-  dup 0= if  (href_checked)  then
-  ;
-[then]
 $variable last_href$  \ xxx new, experimental, to be used by the application
 : (get_link_href)  ( ca len -- )
 \  ." (get_link_href) 0 " 2dup type cr  \ xxx informer
   unshortcut
 \  ." (get_link_href) 1 " 2dup type cr  \ xxx informer
-\  href_checked  \ xxx old
   2dup set_link_type
   local_link? if  -anchor  then  2dup last_href$ $! href=!
   ;
@@ -846,9 +817,8 @@ $variable last_href$  \ xxx new, experimental, to be used by the application
   \ Convert a raw local href to a finished href.
   dup if  pid$>data>pid# target_file  then  link_anchor+
   ;
-: url  ( ca1 len1 -- ca2 len2 )
-  \ ca1 len1 = page id
-  \ ca2 len2 = URL
+: pid$>url  ( ca1 len1 -- ca2 len2 )
+  \ xxx not used?
   s" http://" domain $@ s+ 2swap
   pid$>data>pid# target_file s+
   ;
@@ -924,8 +894,10 @@ defer link_suffix
   s" " link_text!  local_link_to_draft_page? off
   ;
 : echo_link  ( -- )
-  \ Echo the final link, if possible.
-  echo_link? if  (echo_link)  else  echo_link_text  then  reset_link
+  \ Echo a link, if possible.
+  \ All link attributes have been set.
+  tune_link  echo_link?
+  if  (echo_link)  else  echo_link_text  then  reset_link
   ;
 
 \ **************************************************************
@@ -1211,7 +1183,7 @@ true [if]  \ xxx first version
 \ Links
 
 : [[  ( "linkmarkup]]" -- )
-  parse_link tune_link echo_link
+  parse_link echo_link
   ;
 : ]]  ( -- )
   true abort" ']]' without '[['"
@@ -1544,6 +1516,19 @@ only forth fendo>order definitions
 \ the language and the function. So now this character will be up to
 \ the writer.  Simplilo2Fendo has been updated to: now it simply
 \ converts the '---' markup into the corresponding UTF-8 char.
+
+\ 2014-02-24: New: 'set_image_size_attributes'. Support por JPEG
+\ images.
+
+\ 2014-02-25: Change: 'url' renamed to 'pid$>url'.
+
+\ 2014-02-28: Change: 'replaced' is adapted to its new version in
+\ Galope.
+
+\ 2014-02-28: New: support for PNG images.
+
+\ 2014-03-04: Change: now 'tune_link' is invoqued in 'echo_link'; both
+\ words were always invoqued together.
 
 .( fendo.markup.wiki.fs compiled ) cr
 
