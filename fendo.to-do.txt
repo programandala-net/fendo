@@ -1,15 +1,48 @@
 = Fendo to-do list
 
+2014-03-03:
+
+Words to make lists
+of rencent changes,
+lists by tags, etc, based on traverse_pids.
+
+2014-03-03:
+
+Finish the lists of contents addons to prevent draft pages from being
+included.
+
+
+2014-03-03:
+
+Inform the Gforth list about this:
+
+: traversed_pid  ( ca len -- )
+  \ ca len = pid
+  (traversed_pid) 0= if  \eof  then
+  ;
+: traverse_pids  ( xt -- )
+  is (traversed_pid)  create_pids_file  
+  \ pid_file$ included  \ xxx fixme this causes problems:
+  \   *** glibc detected *** gforth: free(): invalid pointer: 0xb69fb7f0 ***
+  \   Aborted.
+  pids_file$ slurp-file evaluate  \ xxx this works
+  ;
+
+2014-03-02:
+
+Rename all 'module:' names after the file names (with
+dots). Example:
+
+from:
+	module: traverse_pids_fendo_addon_module
+to:
+	module: fendo.addon.traverse_pids
+
 2014-02-15:
 
 Suddenly, highlighting is done even with the flag
-off!
+off!  (2014-02-23: I think it was solved.)
 
-Also for Fendo-programandala:
+2014-02-28:
 
-Make sure all addons are loaded with "./" path.
-
-Make sure all files use .( at the start and at the
-end. Use the complete paths for addons,
-fendo/addons/file or fendo-programandala/addons/file. 
-
+Check what happens if "]]" is missing in a link.

@@ -1,10 +1,10 @@
-.( fendo.addon.list_of_content_by_prefix.fs) cr
+.( fendo.addon.lioc.fs) cr
 
 \ This file is part of Fendo.
 
-\ This file is the code common to several content lists addons.
+\ This file provides a word that is needed by other addons.
 
-\ Copyright (C) 2013 Marcos Cruz (programandala.net)
+\ Copyright (C) 2014 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute it and/or modify it
 \ under the terms of the GNU General Public License as published by
@@ -25,24 +25,23 @@
 \ **************************************************************
 \ Change history of this file
 
-\ 2013-11-25: Code extracted from the application Fendo-programandala.
-\ 2013-11-27: Change: several words renamed, after a new uniform notation:
-\   "pid$" and "pid#" for both types of page ids.
+\ 2014-03-02: Factored out from <fendo.addon.lioc_by_regex.fs> and
+\ <fendo.addon.lioc_by_prefix.fs>.
+\ 2014-03-03: Change: 'title_link' now is 'link<pid$', after the
+\ changes in <fendo.tools.fs>.
 
 \ **************************************************************
 
-require ./fendo.addon.pid_list.fs  \ Fendo addon
-
-: list_of_content_by_prefix  ( ca len -- )
-  \ Create a list of content
-  \ with pages whose page id starts with the given prefix.
-  \ xxx todo filter draft pages
-  2>r open_pid_list
-  begin   pid$_list@ dup
-  while
-    2dup 2r@ string-prefix?
-    if  [<li>] title_link [</li>]  else  2drop  then
-  repeat  2drop close_pid_list 2rdrop
+: lioc  ( ca len -- )
+  \ Create an element of a list of content.
+  \ ca len = pid
+  [<li>] link<pid$ [</li>]
+  ;
+: ?lioc  ( ca len f -- )
+  \ Create an element of a list of content, if needed.
+  \ ca len = pid
+  if  lioc  else  2drop  then 
   ;
 
-.( fendo.addon.list_of_content_by_prefix.fs compiled) cr
+.( fendo.addon.lioc.fs compiled) cr
+

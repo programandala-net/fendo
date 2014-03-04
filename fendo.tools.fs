@@ -28,13 +28,8 @@
 \ 2013-11-11: Code extracted from <fendo_markup_wiki.fs>: 'link'.
 \ 2013-11-26: Change: several words renamed, after a new uniform
 \   notation: "pid$" and "pid#" for both types of page ids.
-
-\ **************************************************************
-\ Todo
-
-\ A word to make a file with the list of source file pages,
-\ needed to code some addons (e.g. the list of rencent changes,
-\ lists by tags, etc).
+\ 2014-03-03: New: 'link<pid#'.
+\ 2014-03-03: Change: 'title_link' renamed to 'link<pid$'.
 
 \ **************************************************************
 \ Links
@@ -52,15 +47,20 @@
   \ ca2 len2 = link text
   link_text! (link)
   ;
-: title_link  ( ca len -- )
-  \ Create a link to a local page, using the page title as text link
-  \ (unless the link text has been explicitily set).
+: link<pid$  ( ca len -- )
+  \ Create a link to a local page.
   \ Its attributes have to be set previously.
   \ If 'link_text' is not set, the page title will be used.
   \ ca len = page id or shortcut to it
   \ xxx todo make it work with anchors!?
 \  ." title_link " 2dup type cr  \ xxx informer
   2dup pid$>data>pid# title link_text?! (link)
+  ;
+: link<pid#  ( pid -- )
+  \ Create a link to a local page.
+  \ Its attributes have to be set previously.
+  \ If 'link_text' is not set, the page title will be used.
+  dup title link_text?! pid#>pid$ (link)
   ;
 
 .( fendo.tools.fs ) cr

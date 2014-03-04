@@ -42,8 +42,9 @@ wordlist constant fendo_shortcuts_wid  \ for user's shortcuts
 : shortcut:  ( "name" -- )
   \ Create an user's shortcut.
   [ true ] [if]
-    \ xxx normal version
-    get-current >r  fendo_shortcuts_wid set-current :  r> set-current  \ xxx works
+    \ xxx normal version; works fine
+    get-current >r  fendo_shortcuts_wid set-current :
+    r> set-current
   [else]
     \ xxx debugging version
     get-current >r
