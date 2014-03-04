@@ -1,10 +1,10 @@
-.( fendo.addon.description_list_of_content_by_regex.fs) cr
+.( fendo.addon.dloc_by_regex.fs) cr
 
 \ This file is part of Fendo.
 
 \ This file is the code common to several content lists addons.
 
-\ Copyright (C) 2013 Marcos Cruz (programandala.net)
+\ Copyright (C) 2013,2014 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute it and/or modify it
 \ under the terms of the GNU General Public License as published by
@@ -25,39 +25,46 @@
 \ **************************************************************
 \ Change history of this file
 
-\ 2013-11-26 Start. First working version.
-\ 2013-11-27 Change: several words renamed, after a new uniform
+\ 2013-11-26: Start. First working version.
+\ 2013-11-27: Change: several words renamed, after a new uniform
 \   notation: "pid$" and "pid#" for both types of page ids.
+\ 2014-03-02: Rewritten with 'traverse_pids'.
+\ 2014-03-03: Draft pages are not included.
 
 \ **************************************************************
 \ Requirements
 
 \ From Fendo
-require ./fendo.addon.pid_list.fs
-require ./fendo.addon.pid_list_regex_filter.fs
-require ./fendo.addon.definition_list_element.fs
+require ./fendo.addon.traverse_pids.fs
+require ./fendo.addon.regex.fs
+require ./fendo.addon.dtddoc.fs
 
+\ From Galope
+require galope/module.fs  \ 'module:', ';module', 'hide', 'export'
 require galope/rgx-wcmatch-question.fs  \ 'rgx-wcmatch?'
 
 \ **************************************************************
 
-: (description_list_of_content_by_regex)  ( ca len -- )
+module: fendo.addon.dloc_by_regex
+
+: (dloc_by_regex)  ( ca len -- f )
   \ Create an element of a description list of content
-  \ if the given page id matchs the current page id list filter.
-\  2dup type cr  \ xxx informer
-  2dup pid_list_filter rgx-wcmatch?
-  if  definition_list_element  else  2drop  then
-  ;
-: description_list_of_content_by_regex  ( ca len -- )
-  \ Create a description list of content
-  \ with pages whose page id matchs the given regex.
-  [<dl>]
-  >pid_list_filter open_pid_list
-  begin   pid$_list@ dup
-  while   (description_list_of_content_by_regex)
-  repeat  2drop close_pid_list
-  [</dl>]
+  \ if the given pid matchs the current regex. 
+  \ ca len = pid
+  \ f = continue with the next element?
+  2dup pid$>data>pid# draft? 0= >r
+  2dup regex rgx-wcmatch? r> and ?dtddoc true
   ;
 
-.( fendo.addon.description_list_of_content_by_regex.fs compiled) cr
+export
+
+: dloc_by_regex  ( ca len -- )
+  \ Create a description list of content
+  \ with pages whose pid matchs the given regex.
+  >regex  [<dl>] ['] (dloc_by_regex) traverse_pids [</dl>]
+  ;
+
+;module
+
+.( fendo.addon.dloc_by_regex.fs compiled) cr
 

@@ -1,10 +1,10 @@
-.( fendo.addon.numbered_list_of_content_by_regex.fs) cr
+.( fendo.addon.oloc_by_prefix.fs) cr
 
 \ This file is part of Fendo.
 
 \ This file is the addon that creates numbered content lists.
 
-\ Copyright (C) 2013 Marcos Cruz (programandala.net)
+\ Copyright (C) 2013,2014 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute it and/or modify it
 \ under the terms of the GNU General Public License as published by
@@ -25,16 +25,17 @@
 \ **************************************************************
 \ Change history of this file
 
-\ 2013-11-26 Start.
+\ 2013-11-25: Code extracted from the application Fendo-programandala.
+\ 2014-03-02: Renamed and modified after the other related addons.
 
 \ **************************************************************
 
-require ./fendo.addon.list_of_content_by_regex.fs
+require ./fendo.addon.lioc_by_prefix.fs
 
-: numbered_list_of_content_by_regex  ( ca len -- )
+: oloc_by_prefix  ( ca len -- )
   \ Create an numbered list of content
-  \ with pages whose page id matches the given prefix.
-  [<ol>] list_of_content_by_regex [</ol>]
+  \ with pages whose page id starts with the given prefix.
+  [<ol>] lioc_by_prefix [</ol>]
   ;
 
-.( fendo.addon.numbered_list_of_content_by_regex.fs compiled) cr
+.( fendo.addon.oloc_by_prefix.fs compiled) cr

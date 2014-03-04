@@ -1,10 +1,10 @@
-.( fendo.addon.description_list_of_content_by_prefix.fs) cr
+.( fendo.addon.dloc_by_prefix.fs) cr
 
 \ This file is part of Fendo.
 
 \ This file is the code common to several content lists addons.
 
-\ Copyright (C) 2013 Marcos Cruz (programandala.net)
+\ Copyright (C) 2013,2014 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute it and/or modify it
 \ under the terms of the GNU General Public License as published by
@@ -25,28 +25,38 @@
 \ **************************************************************
 \ Change history of this file
 
-\ 2013-11-25 Start.
-\ xxx todo finish
+\ 2013-11-25: Start. Unfinished.
+\ 2014-03-02: Rewritten with 'traverse_pids'.
+\ 2014-03-03: Draft pages are not included.
+
+\ **************************************************************
+\ Requirements
+
+\ From Fendo
+require ./fendo.addon.traverse_pids.fs
 
 \ **************************************************************
 
-require ./fendo.addon.pid_list.fs  \ Fendo addon
+module: fendo.addon.dloc_by_prefix
 
-: (description_list_of_content_by_prefix)  ( ca len -- )
+variable dloc_prefix
+: (dloc_by_prefix)  ( ca len -- f )
   \ Create a description list of content
-  \ with pages whose filename start with the given prefix.
-  \ xxx todo
-  2>r open_page_id_list
-  begin   page_id_list@ dup
-  while
-    2dup 2r@ string-prefix?
-    if  [<li>] title_link [</li>]  else  2drop  then
-  repeat  2drop close_page_id_list 2rdrop
-  ;
-: description_list_of_content_by_prefix  ( ca len -- )
-  \ Create a description list of content
-  \ with pages whose filename start with the given prefix.
-  [<dl>] (description_list_of_content_by_prefix) [</dl>]
+  \ if the given pid starts with the current prefix.
+  \ ca len = pid
+  \ f = continue with the next element?
+  2dup pid$>data>pid# draft? 0= >r
+  2dup dloc_prefix $@ string-prefix? r> and ?dtddoc true
   ;
 
-.( fendo.addon.description_list_of_content_by_prefix.fs compiled) cr
+export
+
+: dloc_by_prefix  ( ca len -- )
+  \ Create a description list of content
+  \ with pages whose pid start with the given prefix.
+  dloc_prefix $!  [<dl>] ['] (dloc_by_prefix) traverse_pids [</dl>]
+  ;
+
+;module
+
+.( fendo.addon.dloc_by_prefix.fs compiled) cr

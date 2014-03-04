@@ -39,6 +39,10 @@
 \   in 'forth-wordlist'. This somehow arised after renaming all Fendo
 \   files for version A-03. The same problem happened in <fendo.fs>
 \   on 2013-10-30.
+\ 2014-03-03: Fix: 'abort"' added to 'pid$>data>pid#', in order to
+\   detect temporary shortcuts of missing pages that return an empty
+\   string (these temporary shortcuts make links possible, but made
+\   the program crash when trying to load the page metadata).
 
 \ **************************************************************
 \ Requirements
@@ -57,9 +61,20 @@ set-current
 \ **************************************************************
 \ Page data engine
 
+variable data_fields  \ counter
+64 constant max_data_fields
+max_data_fields cells buffer: fields_body_table
+
+: erase_data  ( -- )
+  \ xxx todo
+  fields_body_table max_data_fields bounds ?do
+    -1 i !
+  cell +loop
+  ;
+
 variable current_data  \ address of the latest created data
 : parse_datum  ( u "text<nl>" -- )
-  \ Parse a datum, remove its leading spaces and store it.
+  \ Parse a datum and store it.
   \ u = datum offset
   >r  0 parse  \ parse the rest of the current input line
   trim
@@ -77,9 +92,9 @@ variable /datum  \ offset of the current datum; at the end, length of the data
   \ ca len = datum name
   nextname create
     cell /datum dup @ , +!  \ store the offset and increment it
-  does>  ( a1 | "text<nl>" -- a2 | )
+  does>  ( a1 | "text<nl>" -- ca len | )
     \ a1 = page data address
-    \ a2 = datum address
+    \ ca len = datum 
     \ dfa = data field address of the datum word
     \ u = datum offset
     ( a1 dfa | dfa "text<nl>" )
@@ -150,14 +165,15 @@ datum: filename_extension  \ alternative target filename extension (with dot)
 datum: design_subdir  \ target relative path to the design, with final slash
 datum: template  \ HTML template filename in the design subdir
 
+\ .( /datum = ) /datum ? cr key drop  \ xxx informer
+
 \ **************************************************************
 \ File names
 
 0 value current_page  \ page id of the current page
 
-: target_extension  ( a -- ca len )
+: target_extension  ( pid -- ca len )
   \ Return the target filename extension.
-  \ a = page id
   filename_extension dup 0=
   if  2drop html_extension $@   then
   ;
@@ -194,6 +210,9 @@ datum: template  \ HTML template filename in the design subdir
   \ ca len = target HTML page file name
   current_page target_file
   ;
+: domain&current_target_file  ( -- ca len )
+  domain $@ s" /" s+ current_target_file s+
+  ;
 : +target_dir  ( ca1 len1 -- ca2 len2 )
   \ Add the target path to a file name.
   \ ca1 len1 = file name
@@ -222,24 +241,23 @@ datum: template  \ HTML template filename in the design subdir
   \ Return the name of the current page id.
   /sourcefilename -extension
   ;
-: known_pid$?  ( ca len -- xt true | false )
+: known_pid$?  ( ca len -- 0 | xt +-1 )
   fendo_pid_wid search-wordlist
   ;
+: new_page_data_space  ( -- )
+  \ Create and init data space for a new page.
+  here  dup current_data !  /datum @ dup allot  erase
+  ;
 : (:pid)  ( ca len -- )
-  \ Create the main page id and init its data space.
-  get-current  fendo_pid_wid set-current
-  current_pid$
-\  2dup type cr key drop  \ xxx informer
-  :create
-\  ." warning?" cr key drop  \ xxx informer
-  here current_data !  /datum @ allot
-  set-current
+  \ Create a new page id and its data space.
+  get-current >r  fendo_pid_wid set-current
+  :create new_page_data_space
+  r> set-current
   ;
 : :pid  ( -- )
-  \ Create the main page id and init its data space,
-  \ if needed.
-  current_pid$ known_pid$?
-  if  drop  else  (:pid)  then
+  \ Create the current page id and its data space, if needed.
+  current_pid$ 2dup known_pid$?
+  if  drop 2drop  else  (:pid)  then
   ;
 : pid#>pid$  ( a -- ca len )
   \ Convert a numerical page id to its string form.
@@ -283,6 +301,23 @@ datum: template  \ HTML template filename in the design subdir
   ;
 
 \ **************************************************************
+\ Debugging tools
+
+: .data  { pid -- }
+  ." data of pid# " pid . cr
+  ."   source_file = " pid 'source_file $@ type cr
+  ."   title = " pid 'title $@ type cr
+\  ."   project_status = " pid project_status type cr
+\  ."   project_start = " pid project_start type cr
+\  ."   project_end = " pid project_end type cr
+\  ."   project_completion = " pid project_completion type cr
+  ."   related = " pid 'related $@ type cr
+  ;
+: .current_data  ( -- )
+  current_page .data 
+  ;
+
+\ **************************************************************
 \ Page data header
 
 defer set_default_data  ( -- )
@@ -295,10 +330,18 @@ defer set_default_data  ( -- )
   current_data @ 'source_file $!
   ;
 ' (set_default_data) is set_default_data
+: (}data)  ( -- )
+\  ." }data executed; data before defaults:" cr  \ xxx informer
+\  .current_data  \ xxx informer
+  set_default_data  in_data_header? off
+\  ." data after defaults:" cr  \ xxx informer
+\  .current_data  \ xxx informer
+\  ." }}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}" cr  \ xxx informer
+\  key drop  \ xxx informer
+  ;
 : }data  ( -- )
   \ Mark the end of the page data header and complete it.
-  in_data_header? @ if  set_default_data  then
-  in_data_header? off
+  in_data_header? @ if  (}data)  then
   ;
 : skip_data{  ( xt "<text><space>}data" -- )
   \ Skip the page data.
@@ -312,19 +355,23 @@ defer set_default_data  ( -- )
   ;
 : get_data{  ( "<text><space>}data" -- )
   \ Get the page data.
+\  ." {{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{" cr  \ xxx informer
 \  ." get_data{" cr  \ xxx informer
   :pid current_data @
 \  ." current_data copied to current_page =  " dup . cr  \ xxx informer
   to current_page
+\  .current_data  \ xxx informer
   in_data_header? on
+  ;
+: data_already_got?  ( -- 0 | xt +-1 )
+  current_pid$ known_pid$?
   ;
 : data{  ( "<text><spaces>}data" -- )
   \ Mark the start of the page data.
   \ xxx todo how to access the page ids in the markup?...
   \ xxx ...include them in the markup wordlist? create a wordlist?
 \  cr cr ." =========== data{" cr  \ xxx informer
-  current_pid$ fendo_wid search-wordlist
-  if  skip_data{  else  get_data{  then
+  data_already_got? if  skip_data{  else  get_data{  then
   ;
 
 variable do_content?  \ flag: do the page content? (otherwise, skip it)
@@ -347,6 +394,7 @@ do_content? on
   \ ca len = filename
 \  ." (required_data) " 2dup type cr  \ xxx informer
   do_content? off
+\  .included key drop  \ xxx informer
   2dup  ['] required catch  ?dup
 \  ." after catch " .s cr  \ xxx informer
   if    nip nip required_data_error
@@ -356,21 +404,36 @@ do_content? on
 : required_data  ( ca len -- )
   \ Require a page file in order to get its data.
   \ ca len = filename
+\  ." <<<<<<<< "  \ xxx informer
 \  ." required_data " 2dup type cr  \ xxx informer
+\  ." related = " current_page related type cr  \ xxx informer
   do_content? @ >r  current_page >r
   (required_data)
   r> to current_page  r> do_content? !
-\  ." end of required_data " 2dup type cr  \ xxx informer
+\  ." end of required_data " type cr  \ xxx informer
+\  ." related = " current_page related type cr  \ xxx informer
+\  ." >>>>>>>>" cr  \ xxx informer
+\  key drop  \ xxx informer
   ;
-: required_data<pid  ( a -- )
+: required_data<pid#  ( a -- )
   \ Require a page file in order to get its data.
   \ a = page id (address of its data)
   source_file required_data
   ;
+: pid$>source  ( ca1 len1 -- ca2 len2 )
+  \ Convert a page id to a source filename.
+  \ xxx not used
+  +forth_extension +source_dir
+  (* 2014-03-03: This word was tried in '(required_dat<pid$)', but
+  adding the path to the filename makes the pages to be included into
+  the list of included files (shown by '.included') with an absolute
+  path. The solution is: the application has to add 'source_dir' to
+  'fpath'.  *)
+  ;
 : (required_data<pid$)  ( ca len -- )
   \ Require a page file in order to get its data.
   \ ca len = page id
-\  2dup type ."  (required_data<pid$)" cr  \ xxx informer
+\  ." (required_data<pid$) " 2dup type cr  \ xxx informer
   +forth_extension required_data
   ;
 : required_data<pid$  ( ca len -- )
@@ -419,6 +482,7 @@ do_content? on
   just_unshortcut  \ xxx tmp
 \  ." pid$>data>pid# after just_unshortcut: " 2dup type cr  \ xxx informer
 \  ." href= (after unshortcut) " s" href=@" evaluate type cr  \ xxx informer
+  dup 0= abort" Empty page-id"  \ xxx tmp
   (pid$>data>pid#)
 \  find-name name>int execute  \ xxx second version; no difference, same corruption of the input stream
 \  cr ." end of data<pid$>pid"  \ xxx informer
@@ -469,39 +533,28 @@ do_content? on
   s" draft" rot property?
   ;
 
-: (hierarchy)  ( ca len -- u )
+: pid$>hierarchy ( ca len -- u )
   \ Return the hierarchy level of a page (0 is the top level).
   \ ca len = page id (source page filename without extension)
-  \ (The method used works also with UTF-8 strings).
   0 rot rot  \ counter
-  bounds ?do
-    i c@ [char] . = abs +
-  loop
+  bounds ?do  i c@ [char] . = abs +  loop
+  ;
+: filename>hierarchy ( ca len -- u )
+  \ Return the hierarchy level of a page (0 is the top level).
+  \ ca len = filename (without path; with extension)
+  pid$>hierarchy 1- 
   ;
 : hierarchy  ( a -- u )
   \ Return the hierarchy level of a page (0 is the top level).
   \ a = page id (address of its data)
-  source_file (hierarchy) 1-
+  pid#>pid$ pid$>hierarchy
   ;
-
-\ **************************************************************
-\ String manipulation
-
-str-create tmp-str
-: replaced ( ca1 len1 ca2 len2 ca3 len3 -- ca1' len1' )
-  \ Replaces all ocurrences of ca2 len2 with ca3 len3 in ca1 len1.
-  \ ca1 len1 = string to modify
-  \ ca2 len2 = substring to translate from
-  \ ca3 len3 = substring to translate to
-  2swap 2rot tmp-str str-set tmp-str str-replace  tmp-str str-get
-  ;
-
-.( fendo.data.fs compiled) cr
-
-(*
+' hierarchy alias pid#>hierarchy  \ alternative name
 
 \ **************************************************************
 \ Change history of this file
+
+(*
 
 \ 2013-04-28: Start.
 \ 2013-05-01: Fixed and finished the data system.
@@ -583,5 +636,27 @@ str-create tmp-str
 \   for the remaining mentions in the old pages.
 \ 2014-01-06: New: 'replaced', used by the wiki markup module and the
 \   common source code addon.
+\ 2014-02-23: Fix: '(:pid)' now erases the data space.
+\ 2014-02-23: Change: '(:pid)' is factored to 'new_page_data_space'.
+\ 2014-02-25: Change: 'required_data<pid' renamed to
+\   'required_data<pid#'.
+\ 2014-02-25: Still debugging: some data is copied to a different page.
+\ 2014-02-28: 'replaced' is moved to the Galope library.
+
+\ 2014-02-28: Fix: stack notations and parameters in 'pid:' and
+\ '(pid:)'.
+
+\ 2014-02-28: Fix: 'data_already_got?' checked 'fendo_wid', not
+\ 'fendo_pid_wid'! That was the reason of the data corruption between
+\ pages. Besides, 'data_already_got?' can be factored with
+\ 'known_pid$?'.
+
+\ 2014-03-02: New: 'domain&current_target_file', factored from
+\ '(redirected)' (defined in <fendo.files.fs>).
+
+\ 2014-03-03: New: 'filename>hierarchy'.  Change: '(hierarchy)'
+\ renamed to 'pid$>hierarchy'; 'hierarchy' updated.
 
 *)
+
+.( fendo.data.fs compiled) cr

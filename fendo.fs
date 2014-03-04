@@ -160,7 +160,7 @@ require galope/slash-sides.fs  \ '/sides'
 require galope/tilde-tilde.fs  \ improved '~~' for debugging
 require galope/trim.fs  \ 'trim'
 
-true [if]
+false [if]
 
   \ xxx fixme
   \ 2013-08-10: Without this string buffer, the input stream gets
@@ -174,6 +174,18 @@ true [if]
   \ ' bs+ alias s+
   \ ' bs& alias s&
   \ warnings !
+
+[else]
+
+  \ xxx tmp
+
+  \ 2014-02-22: It seems the problem has vanished.
+  \ The circular string buffer is not necessary anymore.
+  \ Two words of it are used in <fendo.markup.wiki.fs>,
+  \ that are deactivated here:
+
+  ' noop alias >sb
+  ' s+ alias bs&
 
 [then]
 
@@ -279,7 +291,7 @@ fendo>order definitions
 \ **************************************************************
 \ Config
 
-s" A-02-20131111" 2constant fendo_version
+s" A-03-201402" 2constant fendo_version
 
 \ **************************************************************
 \ Modules

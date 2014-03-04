@@ -1,10 +1,10 @@
-.( fendo.addon.list_of_content_by_regex.fs) cr
+.( fendo.addon.lioc_by_prefix.fs) cr
 
 \ This file is part of Fendo.
 
 \ This file is the code common to several content lists addons.
 
-\ Copyright (C) 2013 Marcos Cruz (programandala.net)
+\ Copyright (C) 2013,2014 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute it and/or modify it
 \ under the terms of the GNU General Public License as published by
@@ -25,48 +25,49 @@
 \ **************************************************************
 \ Change history of this file
 
-\ 2013-11-25 Code extracted from the application Fendo-programandala.
-\ 2013-11-27 Change: several words renamed, after a new uniform notation:
+\ 2013-11-25: Code extracted from the application Fendo-programandala.
+\ 2013-11-27: Change: several words renamed, after a new uniform notation:
 \   "pid$" and "pid#" for both types of page ids.
+\ 2014-03-02: Rewritten with 'traverse_pids'. Renamed.
+\ 2014-03-03: Draft pages are not included.
 
 \ **************************************************************
 \ Requirements
 
+\ From Gforth
+require string.fs  \ dynamic strings
+
 \ From Fendo
-require ./fendo.addon.pid_list.fs
-require ./fendo.addon.pid_list_regex_filter.fs
+require ./fendo.addon.traverse_pids.fs
+require ./fendo.addon.lioc.fs
 
 \ From Galope
 require galope/module.fs  \ 'module:', ';module', 'hide', 'export'
-require galope/rgx-wcmatch-question.fs  \ 'rgx-wcmatch?'
 
 \ **************************************************************
 
-module: list_of_content_by_regex_fendo_addon_module
+module: fendo.addon.lioc_by_prefix
 
-: (list_of_content_by_regex)  ( ca len -- )
-  \ Create an element of a list of content,
-  \ if the given page id matches the current list filter.
-  \ xxx todo filter draft pages
-  \ ca len = page id
-\  2dup type  \ xxx informer
-  2dup pid_list_filter rgx-wcmatch?
-\  dup . cr \ xxx informer
-  if  [<li>] title_link [</li>]  else  2drop  then
+variable lioc_prefix
+: (lioc_by_prefix)  ( ca len -- f )
+  \ Create an element of a list of content
+  \ if the given pid starts with the current prefix.
+  \ ca len = pid
+  \ f = continue with the next element?
+  2dup pid$>data>pid# draft? 0= >r
+  2dup lioc_prefix $@ string-prefix? r> and ?lioc true
   ;
 
 export
 
-: list_of_content_by_regex  ( ca len -- )
+: lioc_by_prefix  ( ca len -- )
   \ Create a list of content
-  \ with pages whose page id matches the given regex.
-\  2dup type cr  \ xxx informer
-  >pid_list_filter open_pid_list
-  begin   pid$_list@ dup
-  while   (list_of_content_by_regex)
-  repeat  2drop close_pid_list
+  \ with pages whose pid starts with the given prefix.
+  \ ca len = prefix
+  \ xxx todo filter draft pages
+  lioc_prefix $!  ['] (lioc_by_prefix) traverse_pids
   ;
 
 ;module
 
-.( fendo.addon.list_of_content_by_regex.fs compiled) cr
+.( fendo.addon.lioc_by_prefix.fs compiled) cr
