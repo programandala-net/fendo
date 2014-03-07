@@ -177,7 +177,7 @@ depth [if]
 \ tag, without label or surrounding quotes:
 \ attribute: raw=  \ xxx old
 
-false dup constant link_text_as_attribute? [if]  \ xxx tmp
+link_text_as_attribute? [if]  \ xxx tmp
   attribute: link_text
 [then]
 \ xxx fixme -- the first attribute is not managed by the attributes loops

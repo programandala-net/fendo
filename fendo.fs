@@ -292,6 +292,8 @@ fendo>order definitions
 
 s" A-03-201402" 2constant fendo_version
 
+false constant link_text_as_attribute?  \ xxx tmp -- experimental
+
 \ **************************************************************
 \ Modules
 
@@ -308,9 +310,9 @@ include ./fendo.echo.fs
 depth [if] abort [then]  \ xxx debugging
 include ./fendo.files.fs
 depth [if] abort [then]  \ xxx debugging
-include ./fendo.markup.fs
+include ./fendo.links.fs
 depth [if] abort [then]  \ xxx debugging
-include ./fendo.tools.fs
+include ./fendo.markup.fs
 depth [if] abort [then]  \ xxx debugging
 include ./fendo.parser.fs
 depth [if] abort [then]  \ xxx debugging
