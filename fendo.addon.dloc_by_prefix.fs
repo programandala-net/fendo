@@ -28,6 +28,7 @@
 \ 2013-11-25: Start. Unfinished.
 \ 2014-03-02: Rewritten with 'traverse_pids'.
 \ 2014-03-03: Draft pages are not included.
+\ 2014-03-06: Typo. Missing requirement.
 
 \ **************************************************************
 \ Requirements
@@ -35,26 +36,29 @@
 \ From Fendo
 require ./fendo.addon.traverse_pids.fs
 
+\ From Galope
+require galope/module.fs
+
 \ **************************************************************
 
 module: fendo.addon.dloc_by_prefix
 
-variable dloc_prefix
+variable prefix
 : (dloc_by_prefix)  ( ca len -- f )
   \ Create a description list of content
   \ if the given pid starts with the current prefix.
   \ ca len = pid
   \ f = continue with the next element?
   2dup pid$>data>pid# draft? 0= >r
-  2dup dloc_prefix $@ string-prefix? r> and ?dtddoc true
+  2dup prefix $@ string-prefix? r> and ?dtddoc true
   ;
 
 export
 
 : dloc_by_prefix  ( ca len -- )
   \ Create a description list of content
-  \ with pages whose pid start with the given prefix.
-  dloc_prefix $!  [<dl>] ['] (dloc_by_prefix) traverse_pids [</dl>]
+  \ with pages whose pid starts with the given prefix.
+  prefix $!  [<dl>] ['] (dloc_by_prefix) traverse_pids [</dl>]
   ;
 
 ;module

@@ -44,6 +44,7 @@
 \ order to use '--' both forth nested lists and delete, or '**'
 \ for list and for bold.
 \ 2013-06-19: Compare Creole's markups with txt2tags' markups.
+\ 2014-03-04: Change: parser vectors moved to <fendo.markup.common.fs>.
 
 \ **************************************************************
 \ Requirements 1
@@ -52,10 +53,13 @@
 
 \ From Galope:
 require galope/dollar-variable.fs  \ '$variable'
-include galope/paren-star.fs  \ '(*'
-include galope/replaced.fs  \ 'replaced'
+require galope/paren-star.fs  \ '(*'
+require galope/replaced.fs  \ 'replaced'
 require galope/trim.fs  \ 'trim'
-\ require fendo.addon.source_code.fs  \ xxx needed by '###'
+
+\ From Fendo:
+\ require fendo.addon.source_code.fs  \ xxx not used - needed by '###'
+require fendo.links.fs  \ xxx fixme already loaded by the main file
 
 \ **************************************************************
 \ Debug tools
@@ -77,7 +81,7 @@ get-current  forth-wordlist set-current
 \ From Galope
 require galope/n-to-r.fs  \ 'n>r'
 require galope/n-r-from.fs  \ 'nr>'
-require galope/minus-prefix.fs  \ '-prefix'
+\ require galope/minus-prefix.fs  \ '-prefix'  \ xxx old
 require galope/jpeg.fs  \ JPEG tools
 require galope/png.fs  \ PNG tools
 
@@ -134,17 +138,6 @@ variable #parsed      \ items already parsed in the current line (before the cur
     save-input  parse-name empty? >r  restore-input throw  r>
   [then]
   ;
-
-defer content  ( ca len -- )
-  \ Manage a string of content: print it and update the counters.
-  \ Defined in <fendo_parser.fs>.
-defer evaluate_content  ( ca len -- )
-  \ Evaluate a string as page content.
-  \ Defined in <fendo_parser.fs>.
-
-\ defer close_pending  ( -- ) \ xxx tmp
-  \ Close the pending markups.
-  \ Defined in <fendo_parser.fs>.
 
 : markups  ( xt1 xt2 a -- )
   \ Open or close a HTML tag.
@@ -639,6 +632,7 @@ variable image_finished?  \ flag, no more image markup to parse?
 \ **************************************************************
 \ Tools for links
 
+false [if]  \ xxx tmp
 : file://?  ( ca len -- wf )
   \ Does a string start with "file://"?
   s" file://" string-prefix?
@@ -677,7 +671,9 @@ $variable link_text
 : evaluate_link_text  ( -- )
   link_text@ evaluate_content
   ;
+[then]
 
+false [if]  \ xxx tmp
 $variable link_anchor
 : -anchor  ( ca len -- ca len | ca' len' )
   \ Extract the anchor from a href attribute and store it.
@@ -715,6 +711,8 @@ variable link_type
 : file_link?  ( -- wf )
   link_type @ file_link =
   ;
+[then]
+
 variable link_finished?  \ flag, no more link markup to parse?
 : end_of_link?  ( ca len -- wf )
   \ ca len = latest name parsed
@@ -741,13 +739,13 @@ defer parse_link_text  ( "...<spaces>|<spaces>" | "...<spaces>]]<spaces>"  -- )
   until   ( ca len ) unraw_attributes
   ;
 $variable last_href$  \ xxx new, experimental, to be used by the application
-: (get_link_href)  ( ca len -- )
+:noname  ( ca len -- )
 \  ." (get_link_href) 0 " 2dup type cr  \ xxx informer
   unshortcut
 \  ." (get_link_href) 1 " 2dup type cr  \ xxx informer
   2dup set_link_type
   local_link? if  -anchor  then  2dup last_href$ $! href=!
-  ;
+  ;  is (get_link_href)  \ defered in <fendo.links.fs>
 : get_link_href  ( "href<spaces>" -- )
   \ Parse and store the link href attribute.
   parse-word (get_link_href)
@@ -781,6 +779,7 @@ $variable last_href$  \ xxx new, experimental, to be used by the application
   then
 \  ." ---> " href=@ type cr  \ xxx informer
   ;
+false [if]  \ xxx tmp
 : missing_local_link_text  ( -- ca len )
 \  ." missing_local_link_text" cr  \ xxx informer
   href=@ -extension 2dup required_data<pid$
@@ -899,6 +898,7 @@ defer link_suffix
   tune_link  echo_link?
   if  (echo_link)  else  echo_link_text  then  reset_link
   ;
+[then]
 
 \ **************************************************************
 \ Tools for languages

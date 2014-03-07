@@ -25,10 +25,11 @@
 \ **************************************************************
 \ Change history of this file
 
-\ 2013-06-07 Start.
-\ 2013-06-23 Change: 'style_subdir' and 'designs_dir' removed;
+\ 2013-06-07: Start.
+\ 2013-06-23: Change: 'style_subdir' and 'designs_dir' removed;
 \   one single subdir for files and images; design and template
 \   variables are renamed. This way all is a bit simpler.
+\ 2014-03-04: 'xhtml?' moved here from <fendo.markup.common.fs>.
 
 \ **************************************************************
 \ Requirements
@@ -76,10 +77,9 @@ s" index.html" website_template $!
 variable content_markup  \ markup that represents the page content in the template
 s" {CONTENT}" content_markup $!
 
-false [if] \ xxx bug thread
-: $! place ;
-: $@ count ;
-: $@len c@ ;
-[then]
+\ Target HTML
+
+variable xhtml?  \ flag, XHTML syntax?
+
 
 .( fendo.config.fs compiled) cr

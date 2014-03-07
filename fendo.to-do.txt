@@ -1,5 +1,19 @@
 = Fendo to-do list
 
+2014-03-04:
+
+fix <fendo.addon.tag_cloud.fs>: the cloud is not printed.
+
+2014-03-04:
+
+fendo.addon.source_code_common.fs
+-->
+fendo.addon.source_code.common.fs
+
+2014-03-04:
+
+Make sure all Galope and FFL modules are included to the Forth wordlist.
+
 2014-03-03:
 
 Words to make lists
