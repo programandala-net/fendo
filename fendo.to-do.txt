@@ -1,14 +1,27 @@
 = Fendo to-do list
 
-2014-03-04:
+2014-03-12:
 
-fix <fendo.addon.tag_cloud.fs>: the cloud is not printed.
+Fix:
 
-2014-03-04:
+Add tag list to the project descriptions.  This fails with projects of a
+different language than the current language, because tag links are built
+using the current language: a link to the English tag "X" built in a Spanish
+page will try to link to the missing page "es.etiqueta.X" instead of
+"en.tag.X".
 
-fendo.addon.source_code_common.fs
--->
-fendo.addon.source_code.common.fs
+2014-03-12:
+
+finish <fendo.addon.tag_cloud_by_regex.fs>
+
+2014-03-12:
+
+Implement the automatic use of the alternative-language metadata (title.en,
+description.eo, etc) How? A special metadatum? Defer every metadatum?
+
+2014-03-08:
+
+meta markups ~- and ~+ to change the separation of the next item.
 
 2014-03-04:
 
@@ -16,15 +29,7 @@ Make sure all Galope and FFL modules are included to the Forth wordlist.
 
 2014-03-03:
 
-Words to make lists
-of rencent changes,
-lists by tags, etc, based on traverse_pids.
-
-2014-03-03:
-
-Finish the lists of contents addons to prevent draft pages from being
-included.
-
+Lists of rencent changes?
 
 2014-03-03:
 
@@ -41,16 +46,6 @@ Inform the Gforth list about this:
   \   Aborted.
   pids_file$ slurp-file evaluate  \ xxx this works
   ;
-
-2014-03-02:
-
-Rename all 'module:' names after the file names (with
-dots). Example:
-
-from:
-	module: traverse_pids_fendo_addon_module
-to:
-	module: fendo.addon.traverse_pids
 
 2014-02-15:
 

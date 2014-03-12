@@ -30,6 +30,8 @@
 \   "pid$" and "pid#" for both types of page ids.
 \ 2014-03-02: Rewritten with 'traverse_pids'. Renamed.
 \ 2014-03-03: Draft pages are not included.
+\ 2014-03-12: Improvement: faster, with '?exit' and rearranged
+\ conditions.
 
 \ **************************************************************
 \ Requirements
@@ -48,14 +50,18 @@ require galope/module.fs  \ 'module:', ';module', 'hide', 'export'
 
 module: fendo.addon.lioc_by_prefix
 
-variable lioc_prefix
-: (lioc_by_prefix)  ( ca len -- f )
+variable prefix
+: ((lioc_by_prefix))  { D: pid -- }
   \ Create an element of a list of content
   \ if the given pid starts with the current prefix.
+  pid prefix $@ string-prefix? 0= ?exit
+  pid pid$>data>pid# draft? ?exit
+  pid lioc 
+  ;
+: (lioc_by_prefix)  ( ca len -- f )
   \ ca len = pid
   \ f = continue with the next element?
-  2dup pid$>data>pid# draft? 0= >r
-  2dup lioc_prefix $@ string-prefix? r> and ?lioc true
+  ((lioc_by_prefix)) true
   ;
 
 export
@@ -65,7 +71,7 @@ export
   \ with pages whose pid starts with the given prefix.
   \ ca len = prefix
   \ xxx todo filter draft pages
-  lioc_prefix $!  ['] (lioc_by_prefix) traverse_pids
+  prefix $!  ['] (lioc_by_prefix) traverse_pids
   ;
 
 ;module

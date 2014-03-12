@@ -1,8 +1,9 @@
-.( fendo.addon.dloc_by_prefix.fs) cr
+.( fendo.addon.pages_by_regex.fs) cr
 
 \ This file is part of Fendo.
 
-\ This file is the code common to several content lists addons.
+\ This file provides a word that counts all pages whose pid matches a
+\ regex.
 
 \ Copyright (C) 2013,2014 Marcos Cruz (programandala.net)
 
@@ -25,49 +26,45 @@
 \ **************************************************************
 \ Change history of this file
 
-\ 2013-11-25: Start. Unfinished.
-\ 2014-03-02: Rewritten with 'traverse_pids'.
-\ 2014-03-03: Draft pages are not included.
-\ 2014-03-06: Typo. Missing requirement.
-\ 2014-03-10: Improvement: faster, with '?exit' and rearranged
-\ conditions.
+\ 2014-03-09: Written, after <fendo.addon.pages_by_prefix.fs>.
 
 \ **************************************************************
 \ Requirements
 
 \ From Fendo
 require ./fendo.addon.traverse_pids.fs
-require ./fendo.addon.dtddoc.fs
+require ./fendo.addon.regex.fs
 
 \ From Galope
-require galope/module.fs
+require galope/module.fs  \ 'module:', ';module', 'hide', 'export'
+require galope/rgx-wcmatch-question.fs  \ 'rgx-wcmatch?'
 
 \ **************************************************************
 
-module: fendo.addon.dloc_by_prefix
+module: fendo.addon.pages_by_regex
 
-variable prefix
-: ((dloc_by_prefix))  { D: pid -- }
-  \ Create a description list of content
-  \ if the given pid starts with the current prefix.
-  pid prefix $@ string-prefix? 0= ?exit
-  pid pid$>data>pid# draft? ?exit
-  pid dtddoc 
+variable pages
+: ((pages_by_regex))  { D: pid -- }
+  \ Increase the number of pages whose pid matches the current regex.
+  pid regex rgx-wcmatch? 0= ?exit
+  pid pid$>data>pid# draft? ?exit  1 pages +!
   ;
-: (dloc_by_prefix)  ( ca len -- f )
+: (pages_by_regex)  ( ca len -- f )
+  \ Increase the number of pages whose pid matches the current regex.
   \ ca len = pid
   \ f = continue with the next element?
-  ((dloc_by_prefix)) true
+  ((pages_by_regex)) true
   ;
 
 export
 
-: dloc_by_prefix  ( ca len -- )
-  \ Create a description list of content
-  \ with pages whose pid starts with the given prefix.
-  prefix $!  [<dl>] ['] (dloc_by_prefix) traverse_pids [</dl>]
+: pages_by_regex  ( ca len -- n )
+  \ Number of pages whose pid starts with the given prefix.
+  >regex pages off   ['] (pages_by_regex) traverse_pids  pages @
   ;
 
 ;module
 
-.( fendo.addon.dloc_by_prefix.fs compiled) cr
+.( fendo.addon.pages_by_regex.fs compiled) cr
+
+

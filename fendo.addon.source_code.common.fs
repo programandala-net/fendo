@@ -1,4 +1,4 @@
-.( fendo.addon.source_code_common.fs) cr
+.( fendo.addon.source_code.common.fs) cr
 
 \ This file is part of Fendo.
 
@@ -26,19 +26,34 @@
 \ Change history of this file
 
 \ 2013-11-18: Code extracted from <fendo_source_code.fs>.
+
 \ 2013-12-11: New: '-b' parameter added to 'syntax+', then renamed to
-\   'parameters+'.
+\ 'parameters+'.
+
 \ 2014-01-06: New: 'escaped_source_code'.
+
 \ 2014-01-06: Fix: 'append_source_code_line' now escapes de the code
-\   with 'escaped_source_code'.
+\ with 'escaped_source_code'.
+
 \ 2014-02-06: Fix: 'highlighted' reseted 'programming_language$' befor
-\   exiting, what turned off the highlighting of Forth blocks.
+\ exiting, what turned off the highlighting of Forth blocks.
+
 \ 2014-02-07: Fix: now 'append_source_code_line' calls
-\   'escaped_source_code' only if 'highlight?' is false,
-\   because Vim will do the task while highlighting;
-\   if "<" were already converted to "&lt;", Vim converted it to
-\   "&amp;lt;" and the code was ruined.
+\ 'escaped_source_code' only if 'highlight?' is false, because Vim
+\ will do the task while highlighting; if "<" were already converted
+\ to "&lt;", Vim converted it to "&amp;lt;" and the code was ruined.
+
 \ 2014-02-07: New: 'escaped_source_code' translates "&" too.
+
+\ 2014-02-28: Change: 'replaced' is adapted to its new version in
+\ Galope
+
+\ 2014-03-02: Trivial fix.
+
+\ 2014-03-09: Fix: 'escaped_source_code' converted ampersands, what
+\ ruined the rest of HTML entities in source code blocks.
+
+\ 2014-03-12: Change: filename and module renamed.
 
 \ **************************************************************
 \ Todo
@@ -49,10 +64,11 @@
 \ From Galope
 require galope/sourcepath.fs  \ 'sourcepath'
 require galope/module.fs  \ 'module:', ';module', 'hide', 'export'
+require galope/replaced.fs  \ 'replaced'
 
 \ **************************************************************
 
-module: source_code_common_fendo_addon_module
+module: fendo.addon.source_code.common
 
 export
 
@@ -75,8 +91,8 @@ $variable source_code$
 : escaped_source_code  ( ca len -- ca' len' )
   \ Escape special chars in source code.
   \ Used by the wiki markup module and the source code addon.
-  s" &" s" &amp;" replaced
-  s" <" s" &lt;" replaced
+  \ s" &amp;" s" &" replaced  \ xxx fixme this ruins the others
+  s" &lt;" s" <" replaced
   ;
 : append_source_code_line  ( ca len -- )
   highlight? 0= if  escaped_source_code  then
@@ -168,4 +184,4 @@ export
 
 ;module
 
-.( fendo.addon.source_code_common.fs compiled) cr
+.( fendo.addon.source_code.common.fs compiled) cr

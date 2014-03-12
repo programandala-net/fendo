@@ -27,6 +27,7 @@
 
 \ 2013-12-10: Code extracted from <addons/forth_blocks_source_code.fs>.
 \ 2014-02-15: Fix: path of the Fendo addons is converted to relative.
+\ 2014-03-12: Change: module renamed after the filename.
 
 \ **************************************************************
 \ Requirements
@@ -39,7 +40,7 @@ require ./fendo.addon.forth_blocks_source_code.fs
 
 \ **************************************************************
 
-module: abersoft_forth_blocks_source_code_fendo_addon_module
+module: fendo.addon.abersoft_forth_blocks_source_code
 
 : skip_tap_header  ( -- )
   \ Code adapted from my tool "scr2txt" (2005-2012).

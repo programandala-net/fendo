@@ -240,8 +240,7 @@ wordlist constant fendo_pid_wid  \ page ids
   fendo_markup_html_entities_wid set-current
   ;
 : markup_wids  ( -- wid'1 ... wid'n )
-  \ Return the identifiers of the wordlists
-  \ that contain markup to be recognized.
+  \ Return the wordlists that contain markup to be recognized.
   \ wid'1 = highest priority wordlist
   \ wid'n = lowest priority wordlist
   fendo_markup_macros_wid
@@ -249,13 +248,13 @@ wordlist constant fendo_pid_wid  \ page ids
   fendo_markup_wid
   ;
 : markup_order  ( -- wid'1 ... wid'n n )
-  \ Return the wordlist order required to parse markup.
+  \ Return the wordlist order required for the markup parsing.
   \ wid'1 = highest priority wordlist
   \ wid'n = lowest priority wordlist
   depth >r markup_wids depth r> -
   ;
 : markup>order  ( -- )
-  markup_order 0 do  >order  loop
+  markup_order 0 ?do  >order  loop
   ;
 : set_markup_order  ( -- )
   markup_order set-order
@@ -264,7 +263,7 @@ wordlist constant fendo_pid_wid  \ page ids
   markup>order
   ;  immediate
 : markup<order  ( -- )
-  markup_order 0 do  drop previous  loop
+  markup_order 0 ?do  drop previous  loop
   ;
 : [markup<order]  ( -- )
   markup<order
@@ -275,8 +274,14 @@ wordlist constant fendo_pid_wid  \ page ids
 : fendo>order  ( -- )
   fendo_wid >order
   ;
+: fendo<order  ( -- )
+  previous
+  ;
 : [fendo>order]  ( -- )
   fendo>order
+  ;  immediate
+: [fendo<order]  ( -- )
+  fendo<order
   ;  immediate
 : forth>order  ( -- )
   forth-wordlist >order
@@ -284,13 +289,16 @@ wordlist constant fendo_pid_wid  \ page ids
 : [forth>order]  ( -- )
   forth>order
   ;  immediate
+: set_fendo_order  ( -- )
+  only forth>order fendo>order
+  ;
 
 fendo>order definitions
 
 \ **************************************************************
 \ Config
 
-s" A-03-201402" 2constant fendo_version
+s" A-03-201403" 2constant fendo_version
 
 false constant link_text_as_attribute?  \ xxx tmp -- experimental
 

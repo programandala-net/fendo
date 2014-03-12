@@ -30,7 +30,10 @@
 \ 2014-03-04: New: 'evaluate_tags' and wid order words; words for
 \   listed links.
 \ 2014-03-04: Change: 'execute_tags' renamed to 'execute_all_tags'.
-\ 2014-03-07: 'tag_link' factored from '(does_tag_link)'.
+\ 2014-03-07: Change: 'tag_link' factored from '(does_tag_link)'.
+\ 2014-03-11: Fix: now 'tag_link' sets the needed wordlist order;
+\   this is needed because the order was changed before evaluating
+\   the tags.
 
 \ **************************************************************
 \ Stack notation
@@ -52,8 +55,14 @@ wordlist constant fendo_tags_wid
 : tags>order  ( -- )
   fendo_tags_wid >order
   ;
+: tags<order  ( -- )
+  previous
+  ;
 : [tags>order]  ( -- )
   tags>order
+  ;  immediate
+: [tags<order]  ( -- )
+  tags<order
   ;  immediate
 : tags_order  ( -- wid 1 )
   \ Return the wordlist order required to parse markup.
@@ -96,9 +105,13 @@ defer tag>pid$  ( tag -- ca len )
 \ **************************************************************
 \ Possible behaviours of the tags
 
+: (tag_link)  ( tag -- )
+  \ Create a link to the given tag.
+  dup tag>pid$ rot tag>text link 
+  ;
 : tag_link  ( tag -- )
   \ Create a link to the given tag.
-  dup tag>pid$ rot tag>text link
+  >r get-order set_fendo_order  r> (tag_link)  set-order
   ;
 
 : (tag_does_reset)  ( tag -- )
@@ -122,13 +135,10 @@ defer tag>pid$  ( tag -- ca len )
 : (tag_does_list_link)  ( tag -- )
   [<li>] tag_link [</li>]
   ;
-variable tag_searched_for
-variable tag_presence  \ flag
+variable tag_searched_for$
+variable tag_presence  \ counter
 : (tag_does_presence)  ( tag -- )
-  \ xxx todo
-  \ tag_presence
-  tag>name tag_searched_for $@ str=
-  tag_presence !
+  tag>name tag_searched_for$ $@ str=  abs tag_presence +!
   ;
 
 defer (tag_does)  \ current behaviour of the tags
@@ -141,6 +151,10 @@ export
 : tags_do_nothing  ( -- )
   \ Set the tags to do nothing.
   ['] drop is (tag_does)
+  ;
+: tags_do_body  ( -- )
+  \ Set the tags to return their body addresses.
+  ['] noop is (tag_does)
   ;
 : tags_do_reset  ( -- )
   \ Set the tags to reset their counts.
@@ -171,9 +185,10 @@ export
   ['] (tag_does_list_link) is (tag_does)
   ;
 : tags_do_presence  ( ca len -- )
-  \ xxx todo
+  \ Set the tags to check if their name is the given name.
   \ ca len = tag name
-  tag_searched_for $! ['] (tag_does_presence) is (tag_does)
+  tag_searched_for$ $!   tag_presence off
+  ['] (tag_does_presence) is (tag_does)
   ;
 
 \ **************************************************************
@@ -199,7 +214,7 @@ export
 s" /tmp/fendo.tags.fs" 2constant tags_filename$
 : tag_words  ( -- )
   \ List all tags.
-  tags>order words previous
+  tags>order words tags<order
   ;
 : create_tags_file  ( -- )
   \ Create a temporary file with the list of all tags.
@@ -208,9 +223,7 @@ s" /tmp/fendo.tags.fs" 2constant tags_filename$
   r> close-file throw
   ;
 : evaluate_tags  ( ca len -- )
-  get-order n>r set_tags_order
-\  order  key drop  \ xxx informer
-  evaluate nr> set-order
+  get-order n>r set_tags_order  evaluate  nr> set-order
   ;
 : check_tags  ( ca len -- )
   ['] (tag_does) defer@ >r  tags_do_nothing evaluate_tags  r> is (tag_does)
@@ -229,5 +242,14 @@ s" /tmp/fendo.tags.fs" 2constant tags_filename$
   \ Execute all tags with the given behaviour.
   is (tag_does)  execute_all_tags
   ;
+
+\ **************************************************************
+\ Other
+
+: #tags  ( -- n )
+  \ Number of tags
+  \ xxx todo
+  ;
+
 
 .( fendo.addon.tags.fs compiled) cr

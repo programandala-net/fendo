@@ -39,6 +39,7 @@
 \   <addons/abersoft_forth_blocks_source_code.fs>.
 \ 2014-02-05: Fix: 'update_forth_block_0_highlighting' set 'highlight?'
 \ when it was unset!
+\ 2014-03-12: Change: module renamed after the filename.
 
 \ **************************************************************
 \ Todo
@@ -60,7 +61,7 @@ require galope/module.fs  \ 'module:', ';module', 'hide', 'export'
 \ **************************************************************
 \ Forth source code in blocks format
 
-module: forth_blocks_source_code_fendo_addon_module
+module: fendo.addon.forth_blocks_source_code
 
 64 value /forth_block_line  \ chars per line
 variable forth_block  \ counter
