@@ -1,4 +1,4 @@
-.( fendo.addon.dloc_by_prefix.fs) cr
+.( fendo.addon.tag_counts_by_prefix.fs) cr
 
 \ This file is part of Fendo.
 
@@ -25,49 +25,49 @@
 \ **************************************************************
 \ Change history of this file
 
-\ 2013-11-25: Start. Unfinished.
-\ 2014-03-02: Rewritten with 'traverse_pids'.
-\ 2014-03-03: Draft pages are not included.
-\ 2014-03-06: Typo. Missing requirement.
-\ 2014-03-10: Improvement: faster, with '?exit' and rearranged
-\ conditions.
+\ 2014-03-07: Start.
 
 \ **************************************************************
 \ Requirements
 
 \ From Fendo
 require ./fendo.addon.traverse_pids.fs
-require ./fendo.addon.dtddoc.fs
 
 \ From Galope
 require galope/module.fs
 
 \ **************************************************************
 
-module: fendo.addon.dloc_by_prefix
+module: fendo.addon.tag_counts_by_prefix
 
 variable prefix
-: ((dloc_by_prefix))  { D: pid -- }
-  \ Create a description list of content
-  \ if the given pid starts with the current prefix.
+
+: (((tag_counts_by_prefix)))  { D: pid -- }
+  \ Increase the number of pages whose pid starts with the given prefix.
   pid prefix $@ string-prefix? 0= ?exit
-  pid pid$>data>pid# draft? ?exit
-  pid dtddoc 
+  pid pid$>data>pid# dup draft? 
+  if  drop  else  tags evaluate_tags  then
   ;
-: (dloc_by_prefix)  ( ca len -- f )
+: ((tag_counts_by_prefix))  ( ca len -- f )
+  \ Increase the number of pages whose pid starts with the given prefix.
   \ ca len = pid
   \ f = continue with the next element?
-  ((dloc_by_prefix)) true
+  (((tag_counts_by_prefix))) true
+  ;
+
+: (tag_counts_by_prefix)  ( -- +n_1 ... +n_n n )
+  tags_do_total  ['] ((tag_counts_by_prefix)) traverse_pids 
   ;
 
 export
 
-: dloc_by_prefix  ( ca len -- )
-  \ Create a description list of content
-  \ with pages whose pid starts with the given prefix.
-  prefix $!  [<dl>] ['] (dloc_by_prefix) traverse_pids [</dl>]
+: tag_counts_by_prefix  ( ca len -- +n_1 ... +n_n n )
+  \ Return the total counts of all tags
+  \ present in pages whose pids start with the given prefix.
+  \ xxx todo reset tags; increase them by prefix
+  prefix $!  depth >r  (tag_counts_by_prefix)  depth r> -
   ;
 
 ;module
 
-.( fendo.addon.dloc_by_prefix.fs compiled) cr
+.( fendo.addon.tag_counts_by_prefix.fs compiled) cr

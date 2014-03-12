@@ -36,6 +36,7 @@
 \ 2014-03-02: Everything renamed. Rewritten. Simplified. The pid list
 \   is Forth source, not a simple list anymore.
 \ 2014-03-03: Fix: removed a redundant definition.
+\ 2014-03-11: Fix: '--key=2,2' added to 'sort$'.
 
 \ **************************************************************
 
@@ -49,12 +50,11 @@ s" /tmp/fendo.traverse_pids.fs" 2constant pids_file$
   s" ls -1 " source_dir $@ s+ s" *" s+ forth_extension $@ s+
   ;
 : sed$  ( -- ca len )
-  \ s" | sed -e 's#.\+/\(.\+\)\"  \ "
   s" | sed -e 's#.\+/\(.\+\)" forth_extension $@ s+ s" $" s+
   s\" #s\" \\1\" traversed_pid#'" s+
   ;
 : sort$  ( -- ca len )
-  s" | sort"
+  s" | sort --key 2,2"  \ sort only by the string content
   ;
 : command$  ( -- ca len )
   ls$ sed$ s+ sort$ s+

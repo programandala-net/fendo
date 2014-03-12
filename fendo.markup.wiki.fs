@@ -89,7 +89,7 @@ require galope/png.fs  \ PNG tools
 require ffl/str.fs  \ FFL's dynamic strings
 
 \ From Fendo
-require fendo.addon.source_code_common.fs  \ xxx tmp
+require fendo.addon.source_code.common.fs  \ xxx tmp
 
 set-current
 
@@ -118,9 +118,11 @@ set-current
 
 \ Counters
 \ xxx used only by the parser; but will be required here too
+\ xxx todo somehow move to the parser
 variable #markups     \ consecutive markups parsed
 variable #nonmarkups  \ consecutive nonmarkups parsed
 variable #parsed      \ items already parsed in the current line (before the current item)
+variable parsed$      \ latest parsed name
 
 : first_on_the_line?  ( -- wf )
   \ Is the last parsed name the first one on the current line?
@@ -145,6 +147,7 @@ variable #parsed      \ items already parsed in the current line (before the cur
   \ xt1 = execution token of the opening HTML tag
   \ xt2 = execution token of the closing HTML tag
   \ a = markup flag variable: is the markup already open?
+  \ xxx todo simplify with 'inverted'
   dup >r @
   if    nip false
         \ execute_markup? on  preserve_eol? off  \ xxx tmp
@@ -263,8 +266,7 @@ variable #cells  \ counter for the current table
   #cells @ if  close_pending_cell else  >tr<  then
   exhausted?
   if    drop #cells off
-  else  execute  1 #cells +!
-  then
+  else  execute  1 #cells +!  then
   ;
 : actual_cell?  ( -- wf )
   \ The parsed cell markup ("|" or "|=") is the first markup parsed
@@ -372,8 +374,7 @@ true [if]  \ xxx 2013-08-10: second version, more legible
           dup >r if  2drop  else
 \          2dup ." {{ " type ." }}"  \ xxx informer
           s+ bl+  then  r>
-    else  2drop bl+  refill 0=
-    then
+    else  2drop bl+  refill 0=  then
   until
 \  ." ]>" cr  \ xxx informer
 \  cr ." <[ " 2dup type ." ]>" cr  \ xxx informer
@@ -410,8 +411,7 @@ $variable forth_code$
     if
 \          2dup ." { " type ." }"  \ xxx informer
           2dup forth_code_end? dup >r if  2drop  else  forth_code$+  then r>
-    else  2drop s"  " forth_code$+  refill 0=
-    then
+    else  2drop s"  " forth_code$+  refill 0=  then
   until   forth_code$ $@
 \  cr ." <[ " 2dup type ."  ]>" cr  \ xxx informer
   ;
@@ -454,6 +454,53 @@ $variable forth_code$
   ;
 
 \ **************************************************************
+\ Tools for headings markup
+
+markup>order 
+
+: close_heading  ( xt a -- )
+  dup @ if  off execute  else  2drop  parsed$ $@ echo  then
+  ;
+: (=)  ( -- )
+  \ Open or close a <h1> heading.
+  first_on_the_line? if
+    ['] <h1> ['] </h1> opened_[=]? markups
+  else  ['] </h1> opened_[=]? close_heading  then
+  ;
+: (==)  ( -- )
+  \ Open or close a <h2> heading.
+  first_on_the_line? if
+    ['] <h2> ['] </h2> opened_[==]? markups
+  else  ['] </h2> opened_[==]? close_heading  then
+  ;
+: (===)  ( -- )
+  \ Open or close a <h3> heading.
+  first_on_the_line? if
+    ['] <h3> ['] </h3> opened_[===]? markups
+  else  ['] </h3> opened_[===]? close_heading  then
+  ;
+: (====)  ( -- )
+  \ Open or close a <h4> heading.
+  first_on_the_line? if
+    ['] <h4> ['] </h4> opened_[====]? markups
+  else  ['] </h4> opened_[====]? close_heading  then
+  ;
+: (=====)  ( -- )
+  \ Open or close a <h5> heading.
+  first_on_the_line? if
+    ['] <h5> ['] </h5> opened_[=====]? markups
+  else  ['] </h5> opened_[=====]? close_heading  then
+  ;
+: (======)  ( -- )
+  \ Open or close a <h6> heading.
+  first_on_the_line? if
+    ['] <h6> ['] </h6> opened_[======]? markups
+  else  ['] </h6> opened_[======]? close_heading  then
+  ;
+
+markup<order
+
+\ **************************************************************
 \ Tools for code markup
 
 : (##)  ( "source code ##" -- )
@@ -462,8 +509,7 @@ $variable forth_code$
   begin   parse-name dup
     if    2dup s" ##" str=
           dup >r 0= if  escaped_source_code _echo  else  2drop  then  r>
-    else  2drop refill 0= dup abort" Missing closing '##'"
-    then
+    else  2drop refill 0= dup abort" Missing closing '##'"  then
   until
   ;
 : ###-line  ( -- ca len )
@@ -595,8 +641,7 @@ variable image_finished?  \ flag, no more image markup to parse?
   s" "
   begin   parse-name dup
     if    2dup end_of_image_section?  otherwise_concatenate
-    else  2drop  more_image?
-    then
+    else  2drop  more_image?  then
   until   alt=!
   ;
 : get_image_raw_attributes  ( "...<space>}}<space>"  -- )
@@ -604,8 +649,7 @@ variable image_finished?  \ flag, no more image markup to parse?
   s" "
   begin   parse-name dup
     if    2dup end_of_image?  otherwise_concatenate
-    else  2drop  more_image?
-    then
+    else  2drop  more_image?  then
   until   ( ca len ) unraw_attributes
   ;
 : parse_image  ( "imagemarkup}}" -- )
@@ -734,8 +778,7 @@ defer parse_link_text  ( "...<spaces>|<spaces>" | "...<spaces>]]<spaces>"  -- )
   s" "
   begin   parse-name dup
     if    2dup end_of_link?  otherwise_concatenate
-    else  2drop  more_link?
-    then
+    else  2drop  more_link?  then
   until   ( ca len ) unraw_attributes
   ;
 $variable last_href$  \ xxx new, experimental, to be used by the application
@@ -975,8 +1018,7 @@ false [if]  \ xxx old
   \ Parse the input stream until a "*}" markup is found.
   begin   parse-name dup
     if    s" *}" str=
-    else  2drop  refill 0=
-    then
+    else  2drop  refill 0= then
   until
   ;  immediate
 : *}  ( -- )
@@ -1116,29 +1158,27 @@ true [if]  \ xxx first version
 
 : =  ( -- )
   \ Open or close a <h1> heading.
-  ['] <h1> ['] </h1> opened_[=]? markups
+  (=)
   ;
 : ==  ( -- )
   \ Open or close a <h2> heading.
-\  cr ." opened_[=]? = " opened_[=]? ? key drop  \ xxx informer
-  ['] <h2> ['] </h2> opened_[==]? markups
-\  depth abort" stack not empty"  \ xxx informer
+  (==)
   ;
 : ===  ( -- )
   \ Open or close a <h3> heading.
-  ['] <h3> ['] </h3> opened_[===]? markups
+  (===)
   ;
 : ====  ( -- )
   \ Open or close a <h4> heading.
-  ['] <h4> ['] </h4> opened_[====]? markups
+  (====)
   ;
 : =====  ( -- )
   \ Open or close a <h5> heading.
-  ['] <h5> ['] </h5> opened_[=====]? markups
+  (=====)
   ;
 : ======  ( -- )
   \ Open or close a <h6> heading.
-  ['] <h6> ['] </h6> opened_[======]? markups
+  (======)
   ;
 
 \ Lists
@@ -1234,14 +1274,25 @@ true [if]  \ xxx first version
 \ Punctuation
 \ xxx todo complete as required
 
-}punctuation: !
 \ }punctuation: "  \ xxx fixme, can not be closing and opening unless
 \ the system is redisegned to track the used punctuations.
+\ }punctuation: '  \ xxx fixme same case than "
+punctuation{: (  \ )
+punctuation{: (¡
+punctuation{: («
+punctuation{: (¿
+punctuation{: [  \ ]
+punctuation{: {  \ }
+punctuation{: ¡
+punctuation{: «
+punctuation{: ¿
+punctuation{: ‘
+punctuation{: “
+}punctuation: !
 }punctuation: ",
 }punctuation: ".
 }punctuation: ":
 }punctuation: ";
-\ }punctuation: '  \ xxx fixme same case than "
 }punctuation: )
 }punctuation: ),
 }punctuation: ).
@@ -1266,15 +1317,8 @@ true [if]  \ xxx first version
 }punctuation: »).
 }punctuation: »,
 }punctuation: ».
-punctuation{: (  \ )
-punctuation{: {  \ }
-punctuation{: [  \ ]
-punctuation{: «
-punctuation{: ¿
-punctuation{: ¡
-punctuation{: («
-punctuation{: (¿
-punctuation{: (¡
+}punctuation: ’
+}punctuation: ”
 
 only forth fendo>order definitions
 
@@ -1527,8 +1571,14 @@ only forth fendo>order definitions
 
 \ 2014-02-28: New: support for PNG images.
 
-\ 2014-03-04: Change: now 'tune_link' is invoqued in 'echo_link'; both
+\ 2014-03-04: Change: now 'tune_link' is invoked in 'echo_link'; both
 \ words were always invoqued together.
+
+\ 2014-03-08: New: Punctuation: Unicodes quotes, single and double.
+
+\ 2014-03-09: Fix: now open headings work only at the start of the line.
+
+\ 2014-03-12: Change: "fendo.addon.source_code.common.fs" filename updated.
 
 .( fendo.markup.wiki.fs compiled ) cr
 

@@ -1,10 +1,10 @@
-.( fendo.addon.dloc_by_prefix.fs) cr
+.( fendo.addon.tagged_pages_by_prefix.fs) cr
 
 \ This file is part of Fendo.
 
-\ This file is the code common to several content lists addons.
+\ This file provides lists of tagged pages.
 
-\ Copyright (C) 2013,2014 Marcos Cruz (programandala.net)
+\ Copyright (C) 2014 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute it and/or modify it
 \ under the terms of the GNU General Public License as published by
@@ -25,49 +25,55 @@
 \ **************************************************************
 \ Change history of this file
 
-\ 2013-11-25: Start. Unfinished.
-\ 2014-03-02: Rewritten with 'traverse_pids'.
-\ 2014-03-03: Draft pages are not included.
-\ 2014-03-06: Typo. Missing requirement.
-\ 2014-03-10: Improvement: faster, with '?exit' and rearranged
-\ conditions.
+\ 2014-03-07: Start.
+\ 2014-03-12: Improvement: '((tagged_pages_by_prefix))' rearranged, faster.
 
 \ **************************************************************
 \ Requirements
 
 \ From Fendo
+require ./fendo.addon.tags.fs
 require ./fendo.addon.traverse_pids.fs
 require ./fendo.addon.dtddoc.fs
 
 \ From Galope
 require galope/module.fs
 
+
 \ **************************************************************
 
-module: fendo.addon.dloc_by_prefix
+module: fendo.addon.tagged_pages_by_prefix
 
-variable prefix
-: ((dloc_by_prefix))  { D: pid -- }
+variable prefix$
+: flags>or  ( f1 ... fn n -- f )
+  1- 0 ?do  or  loop 
+  ;
+: ((tagged_pages_by_prefix))  { D: pid -- }
   \ Create a description list of content
   \ if the given pid starts with the current prefix.
-  pid prefix $@ string-prefix? 0= ?exit
-  pid pid$>data>pid# draft? ?exit
-  pid dtddoc 
-  ;
-: (dloc_by_prefix)  ( ca len -- f )
   \ ca len = pid
   \ f = continue with the next element?
-  ((dloc_by_prefix)) true
+  pid prefix$ $@ string-prefix? 0= ?exit
+  pid pid$>data>pid# dup draft?
+  if    drop
+  else  tags evaluate_tags tag_presence @
+        if  pid dtddoc  tag_presence off  then
+  then
+  ;
+: (tagged_pages_by_prefix)  ( ca len -- f )
+  ((tagged_pages_by_prefix)) true
   ;
 
 export
 
-: dloc_by_prefix  ( ca len -- )
-  \ Create a description list of content
-  \ with pages whose pid starts with the given prefix.
-  prefix $!  [<dl>] ['] (dloc_by_prefix) traverse_pids [</dl>]
+: tagged_pages_by_prefix  ( ca1 len1 ca2 len2 -- )
+  \ ca1 len1 = tag
+  \ ca2 len2 = prefix
+  prefix$ $!  tags_do_presence
+  [<dl>] ['] (tagged_pages_by_prefix) traverse_pids [</dl>]
   ;
 
 ;module
 
-.( fendo.addon.dloc_by_prefix.fs compiled) cr
+.( fendo.addon.tagged_pages_by_prefix.fs compiled) cr
+

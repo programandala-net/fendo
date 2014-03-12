@@ -134,6 +134,7 @@ variable more?  \ flag: keep on parsing more words?; changed by '}content'
   \ ca len = parsed item (markup or printable content)
 \  2dup ." something= " type space order cr  \ xxx informer
 \  depth 2 > abort" something wrong!"  \ xxx informer
+  2dup parsed$ $!
   #nothings off
 \  ." #nothings = " #nothings @ . cr  \ xxx informer
   2dup markup? ?dup if  markup  else  content  then  1 #parsed +!
@@ -162,7 +163,7 @@ variable more?  \ flag: keep on parsing more words?; changed by '}content'
 \ 2013-08-10: experimental new version, with direct execution of
 \ Forth code; unfinished
 
-: something_in_code_zone  ( ca len -- )
+: something_in_code_zone  ( ca len -- )  \ xxx todo
   \ Manage something found in a Forth code zone.
   \ ca len = parsed item
   2dup fendo_markup_wid search-wordlist
@@ -173,7 +174,7 @@ variable more?  \ flag: keep on parsing more words?; changed by '}content'
   then
   1 #parsed +!
   ;
-: something_in_ordinary_zone  ( ca len -- )
+: something_in_ordinary_zone  ( ca len -- )  \ xxx todo
   \ Manage something found out of Forth code zones.
   \ ca len = parsed item (markup or printable content)
   2dup fendo_markup_wid search-wordlist
@@ -184,7 +185,7 @@ variable more?  \ flag: keep on parsing more words?; changed by '}content'
   then
   1 #parsed +!
   ;
-: something  ( ca len -- )
+: something  ( ca len -- )  \ xxx todo
   \ Manage something found on the page content.
   \ ca len = parsed item (markup, Forth code or printable content)
   #nothings off
@@ -396,6 +397,7 @@ variable }content?  \ flag: was '}content' executed?
   do_page?
 \  ~~  \ xxx informer
   if  .sourcefilename
+\    ." content{" cr  \ xxx informer
 \    ~~  \ xxx informer
     (content{)
   else
@@ -510,5 +512,8 @@ set-current
 \ executed; this way some markup errors can be detected.
 
 \ 2013-12-06: New: 'opened_markups_off' in '(content{)'.
+
+\ 2014-03-09: New: 'parsed$' keeps the string in 'something'; required
+\ by the new way the heading wiki markups work.
 
 .( fendo.parser.fs compiled ) cr

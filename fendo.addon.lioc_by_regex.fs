@@ -30,6 +30,8 @@
 \   "pid$" and "pid#" for both types of page ids.
 \ 2014-03-02: Rewritten with 'traverse_pids'. Renamed.
 \ 2014-03-03: Draft pages are not included.
+\ 2014-03-12: Improvement: faster, with '?exit' and rearranged
+\ conditions.
 
 \ **************************************************************
 \ Requirements
@@ -47,13 +49,18 @@ require galope/rgx-wcmatch-question.fs  \ 'rgx-wcmatch?'
 
 module: fendo.addon.lioc_by_regex
 
-: (lioc_by_regex)  ( ca len -- f )
+: ((lioc_by_regex))  { pid -- }
   \ Create an element of a list of content,
   \ if the given pid matches the current regex.
   \ ca len = pid
+  pid regex rgx-wcmatch? 0= ?exit
+  pid pid$>data>pid# draft? ?exit
+  pid lioc 
+  ;
+: (lioc_by_regex)  ( ca len -- f )
+  \ ca len = pid
   \ f = continue with the next element?
-  2dup pid$>data>pid# draft? 0= >r
-  2dup regex rgx-wcmatch? r> and ?lioc true
+  ((lioc_by_regex)) true
   ;
 
 export

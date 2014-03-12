@@ -46,6 +46,11 @@
 \ 2013-12-01: Change: several renamings.
 \ 2014-02-04: Change: 'current_lang#' returns 0 even if no pid is set;
 \ this is useful for testing the localization strings.
+\ 2014-02-22: Change: all "l10n$" renamed to "l10n-str" in names.
+\ 2014-03-02: Change: all "l10n-str" renamed to "l10n-string" in
+\   names; "-str" is used by Forth Foundation Library's str module.
+\ 2014-03-11: Fix: in certain cases, 'pid#>lang#' needed to make sure
+\   'fendo_wid' is in 'order'.
 
 \ **************************************************************
 \ Usage
@@ -106,7 +111,7 @@ true to multilingual?
   \ This number is used as an offset, e.g. for multilingual
   \ texts.
   \ a = page id
-  pid#>lang$ s" _language" s+ evaluate
+  pid#>lang$ s" _language" s+ fendo>order evaluate fendo<order
   ;
 : current_lang#  ( -- n )
   \ Return the language number of the current page
@@ -118,17 +123,17 @@ true to multilingual?
   \ Add the current language number as cells.
   current_lang# cells +
   ;
-: l10n$,  ( ca-n len-n ... ca1 len1 -- )
+: l10n-string,  ( ca-n len-n ... ca1 len1 -- )
   \ Compile the language strings.
   \ ca1 len1 = text in the first language
   \ ca-n len-n = text in the last language
   langs 0 ?do  $!,  loop
   ;
-: (l10n$)  ( -- )
+: (l10n-string)  ( -- )
   \ Define what localization strings do.
   does>   ( -- ca len )  ( pfa ) +lang $@
   ;
-: l10n$  ( ca-n len-n ... ca1 len1 "name" -- )
+: l10n-string  ( ca-n len-n ... ca1 len1 "name" -- )
   \ Create a localization string constant.
   \ It will return the string in the language of the current page.
   \ ca1 len1 = text in the first language
@@ -139,12 +144,14 @@ true to multilingual?
   Strings must be pushed on the stack in reverse alphabetical order
   of its ISO language code.
   *)
-  langs 0= abort" 'langs' is not set; 'l10n$' can not work."
-  create  l10n$,  (l10n$)
+  langs 0= abort" 'langs' is not set; 'l10n-string' can not work."
+  create  l10n-string,  (l10n-string)
   ;
-' l10n$ alias mlsconstant  \ old name
-: noname_l10n$  ( ca-n len-n ... ca1 len1 -- xt )
-  \ Unnamed version of 'l10n$'.
+' l10n-string alias mlsconstant  \ old name
+' l10n-string alias l10n$  \ old name
+' l10n-string alias l10n-str  \ old name
+: noname-l10n-string  ( ca-n len-n ... ca1 len1 -- xt )
+  \ Unnamed version of 'l10n-string'.
   \ Create a localization string constant.
   \ It will return the string in the language of the current page.
   \ ca1 len1 = text in the first language
@@ -154,8 +161,8 @@ true to multilingual?
   Strings must be pushed on the stack in reverse alphabetical order
   of its ISO language code.
   *)
-  langs 0= abort" 'langs' is not set; 'noname_l10n$' can not work."
-  noname create  l10n$,  latestxt  (l10n$)
+  langs 0= abort" 'langs' is not set; 'noname-l10n-string' can not work."
+  noname create  l10n-string,  latestxt  (l10n-string)
   ;
 
 .( fendo.addon.multilingual.fs compiled) cr

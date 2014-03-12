@@ -134,6 +134,9 @@ variable separate?  \ flag: separate the next tag or word from the current one?
 : _echo.  ( n -- )
   n>str echo_space echo
   ;
+: +echo  ( ca len -- )
+  separate? off  echo
+  ;
 
 .( fendo.echo.fs compiled) cr
 
@@ -156,4 +159,5 @@ variable separate?  \ flag: separate the next tag or word from the current one?
 \ 2013-12-06: Fix: 'echo_cr' now does 'separate? off' in order to
 \   remove unnecessary blank spaces.
 \ 2014-02-15: New: 'echo_period'.
+\ 2014-03-11: New: '+echo', experimental, factored from user macros.
 

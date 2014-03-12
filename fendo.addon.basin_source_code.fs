@@ -32,6 +32,7 @@
 \ 2013-12-11 Change: an xt is used, not a translation table; this
 \   makes it possible to use different translation tools.
 \ 2014-02-15: Fix: path of the Fendo addons is converted to relative.
+\ 2014-03-12: Change: module renamed after the filename.
 
 \ **************************************************************
 \ Todo
@@ -54,7 +55,7 @@ require ffl/chr.fs  \ 'chr-digit'
 \ **************************************************************
 \ BASIC source code in BASin format
 
-module: basin_source_code_fendo_addon_module
+module: fendo.addon.basin_source_code
 
 : not_basin_header?  ( ca len -- wf )
   \ ca len = source code line
