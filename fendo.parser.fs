@@ -237,11 +237,21 @@ variable more?  \ flag: keep on parsing more words?; changed by '}content'
   echo> @  echo>string
   >attributes< -attributes  \ use the alternative set and init it
   separate? off
+  [ false ] [if]
+  \ xxx fixme 2014-03-18 the parsing fails when the link text spans
+  \ then next line?
   begin   parse-name dup
     if    more_link_text?
     else  2drop more_link?
     then  0=
   until   echo> ! >attributes<  echoed $@
+  [else]  \ xxx new version, being fixed
+  begin   parse-name ?dup
+    if    more_link_text?
+    else  drop refill more_link?
+    then  0=
+  until   echo> ! >attributes<  echoed $@
+  [then]
 \  2dup ." result of parsed_link_text = " type cr  \ xxx informer
   ;
 : (parse_link_text)  ( "...<space>|<space>" | "...<space>]]<space>"  -- )

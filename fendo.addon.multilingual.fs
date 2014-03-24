@@ -51,6 +51,7 @@
 \   names; "-str" is used by Forth Foundation Library's str module.
 \ 2014-03-11: Fix: in certain cases, 'pid#>lang#' needed to make sure
 \   'fendo_wid' is in 'order'.
+\ 2014-03-24: New: 'pid$>lang#'.
 
 \ **************************************************************
 \ Usage
@@ -107,11 +108,18 @@ true to multilingual?
   current_page ?dup if  pid#>lang$  else  s" en"  then
   ;
 : pid#>lang#  ( a -- n )
-  \ Return the language number of the given page.
+  \ Return the language number of the given page id.
   \ This number is used as an offset, e.g. for multilingual
   \ texts.
   \ a = page id
   pid#>lang$ s" _language" s+ fendo>order evaluate fendo<order
+  ;
+: pid$>lang#  ( ca len -- n )
+  \ Return the language number of the given page id.
+  \ This number is used as an offset, e.g. for multilingual
+  \ texts.
+  \ ca len = page id
+  pid$>data>pid# pid#>lang# 
   ;
 : current_lang#  ( -- n )
   \ Return the language number of the current page

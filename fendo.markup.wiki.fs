@@ -591,7 +591,7 @@ markup<order
 
 : get_image_src_attribute  ( "name" -- )
   \ Parse and store the image src attribute.
-  files_subdir $@ parse-word s+ src=!
+  files_subdir $@ parse-name s+ src=!
   ;
 defer img-open
 defer img-size
@@ -659,7 +659,7 @@ variable image_finished?  \ flag, no more image markup to parse?
   [ true ] [if]  \ simple version
     parse-name end_of_image_section? 0=
     abort" Space not allowed in image filename"
-  [else]  \ no abort
+  [else]  \ xxx old, no abort
     begin  parse-name end_of_image_section? 0=
     while  s" <!-- xxx fixme space in image filename -->" echo
     repeat
@@ -791,17 +791,18 @@ $variable last_href$  \ xxx new, experimental, to be used by the application
   ;  is (get_link_href)  \ defered in <fendo.links.fs>
 : get_link_href  ( "href<spaces>" -- )
   \ Parse and store the link href attribute.
-  parse-word (get_link_href)
+  parse-name (get_link_href)
 \  ." ---> " href=@ type cr  \ xxx informer
 \  external_link? if  ." EXTERNAL LINK: " href=@ type cr  then  \ xxx informer
-  [ false ] [if]  \ simple version
+  [ true ] [if]  \ simple version
     parse-name end_of_link_section? 0=
     abort" Space not allowed in link href"
-  [else]  \ no abort  \ xxx tmp
+  [else]  \ no abort  \ xxx tmp, this causes the parsing never ends
     \ This code is required until the migration from Simplilo is finished
     \ because some URL have "__",
     \ what simplilo2fendo converts to " __ "
     \ (e.g. page <es.diario.2010.08.29.txt>)
+    \ xxx fixme a link shortcut can solve that problem
     begin  parse-name end_of_link_section? 0=
     while  s" <!-- xxx fixme space in link filename or URL -->" echo
     repeat
