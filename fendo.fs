@@ -50,6 +50,7 @@
 \   they are written to make the parser kernel simpler and easier to expand.
 \ 2014-02-05: Change: 'markup>order' and 'markup<order' rewritten with
 \   the new word 'markup_order'.
+\ 2014-03-18: Fix checking "gforth" with 'environment?'.
 
 \ **************************************************************
 \ Todo
@@ -96,10 +97,10 @@
 
 \ 2013-06-08: line comments in data header?
 
-\ 2013-10-30: Fix: 'forth-wordlist' is set to current before
-\   requiring the library files. The problem was <ffl/config.fs>
-\   created 'ffl.version' in the 'fendo' vocabulary, but searched for it
-\   in 'forth-wordlist'.
+\ 2013-10-30: Fix: 'forth-wordlist' is set to current before requiring
+\ the library files. The problem was <ffl/config.fs> created
+\ 'ffl.version' in the 'fendo' vocabulary, but searched for it in
+\ 'forth-wordlist'.
 
 \ **************************************************************
 \ Stack notation
@@ -179,10 +180,9 @@ false [if]
 
   \ xxx tmp
 
-  \ 2014-02-22: It seems the problem has vanished.
-  \ The circular string buffer is not necessary anymore.
-  \ Two words of it are used in <fendo.markup.wiki.fs>,
-  \ that are deactivated here:
+  \ 2014-02-22: It seems the problem has vanished.  The circular
+  \ string buffer is not necessary anymore.  Two words of it are still
+  \ used in <fendo.markup.wiki.fs>; they are deactivated here:
 
   ' noop alias >sb
   ' s+ alias bs&
@@ -192,6 +192,7 @@ false [if]
 anew --fendo--
 
 false [if]  \ xxx todo
+
 false  \ Gforth's dynamic strings instead of FFL's?
 dup     constant gforth-strings?
 dup     constant [gforth-strings?]  immediate
@@ -199,11 +200,11 @@ dup     constant [gforth-strings?]  immediate
         constant [ffl-strings?]  immediate
 [then]
 
-true [if]
-
-\ xxx fixme this will not be necessary with Gforth 0.8.
+s" gforth" environment? drop s" 0.8" str< [if]
 
 \ Safer alternatives for words of Gforth's string.fs
+\ Not necessary with Gforth 0.8.
+
 warnings @  warnings off
 : $@len  ( a -- len )
   \ Return the length of a dynamic string variable,

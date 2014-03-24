@@ -384,6 +384,7 @@ do_content? on
   s" ./" 2swap s+
   ;
 : .required_data_error  ( ca len -- )
+\  order cr  \ xxx informer
   cr ." Error requiring the data of the page <" type ." >" cr
   ;
 : required_data_error  ( ca len ior -- )
