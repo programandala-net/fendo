@@ -1,5 +1,38 @@
 = Fendo to-do list
 
+2014-04-07:
+
+Implement author and title for block quotes, like Asciidoctor, e.g.:
+
+<[ s" Miguel de Cervantes" quote_author! s" El quijote" quote_title! ]>
+""""
+En un lugar de la Mancha.
+""""
+
+That would render a proper footer under the quote block.
+At the end of the block, the variables must be reseted.
+
+
+2014-03-24:
+
+In order to make unnecessary the "plain" versions of some metadata, an
+'unmark' tool could be written. It could just switch all the markups off and
+leave the rest in a string...
+
+2014-03-24:
+
+Fix:
+
+In <fendo.parser.fs>,
+link parsing fails when "]]" is at the start of a new line!
+
+2014-03-18:
+
+Fix:
+
+In <fendo.parser.fs>,
+link parsing fails when the link text spans the next line?
+
 2014-03-12:
 
 Fix:

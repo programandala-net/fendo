@@ -1,10 +1,10 @@
-.( fendo.addon.pid_list_regex_filter.fs) cr
+.( fendo.addon.uloc_by_regex.fs) cr
 
 \ This file is part of Fendo.
 
-\ This file creates the regex tools required to filter a page id list.
+\ This file is the addon that creates unnumbered content lists.
 
-\ Copyright (C) 2013 Marcos Cruz (programandala.net)
+\ Copyright (C) 2013,2014 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute it and/or modify it
 \ under the terms of the GNU General Public License as published by
@@ -26,17 +26,18 @@
 \ Change history of this file
 
 \ 2013-11-26 Start.
+\ 2014-03-02: Renamed and modified after the other related addons.
 
 \ **************************************************************
 
-require ffl/rgx.fs  \ regular expressions
+forth_definitions
+require ./fendo.addon.lioc_by_regex.fs
+fendo_definitions
 
-rgx-create pid_list_filter
-: regex_error  ( ca len n -- )
-  ." Bad regular expression at position " . ." :" cr type abort
-  ;
-: >pid_list_filter  ( ca len -- )
-  2dup pid_list_filter rgx-compile if  2drop  else  regex_error  then
+: uloc_by_regex  ( ca len -- )
+  \ Create an unnumbered list of content
+  \ with pages whose pid matches the given prefix.
+  [<ul>] lioc_by_regex [</ul>]
   ;
 
-.( fendo.addon.pid_list_regex_filter.fs compiled) cr
+.( fendo.addon.uloc_by_regex.fs compiled) cr

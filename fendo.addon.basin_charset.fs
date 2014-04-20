@@ -29,7 +29,9 @@
 
 \ **************************************************************
 
+forth_definitions
 require galope/translated.fs
+fendo_definitions
 
 translations: basin_charset
 \  s" \`" s" &pound;"

@@ -48,7 +48,9 @@
 \ **************************************************************
 \ Requirements
 
+forth_definitions
 require galope/plus-slash-string.fs
+fendo_definitions
 
 \ **************************************************************
 \ Printing

@@ -30,10 +30,20 @@
 \ **************************************************************
 \ Todo
 
+\ 2014-04-21: markup 
+\
+\ 2014-04-21: Idea: flag to make the headers numbered.
+
+\ 2014-04-07: change <s> to the proper semantic tag.
+\ 2014-04-07: do ((( and (( parse the language code, e.g.:
+\     (( eo Saluton ))
+\   This makes unnecessary the ad hoc creation of a word for every
+\   language.
+\ 2014-04-07: do ###: and ##: versions of ### and ## to parse the
+\   language to use for syntax highlighting.
 \ 2014-02-04: write the AsciiDoc's <<< markup for CSS page break.
 \ 2014-02-04: write the AsciiDoc's ++...++ markup for monospaced
 \ inline text.
-\ 2014-02-04: write the Creole's {{{...}}} markup, based on ###...###.
 \ 2013-11-19: factor out '###' to an optional addon.
 \ 2013-11-07: make closing heading optional.
 \ 2013-10-30: Optional file size in file links.
@@ -49,6 +59,9 @@
 \ **************************************************************
 \ Requirements 1
 
+
+forth_definitions
+
 \ 'bs&' is provided by <galope/sb.fs>, included in <fendo.fs>.
 
 \ From Galope:
@@ -57,8 +70,10 @@ require galope/paren-star.fs  \ '(*'
 require galope/replaced.fs  \ 'replaced'
 require galope/trim.fs  \ 'trim'
 
+fendo_definitions
+
 \ From Fendo:
-\ require fendo.addon.source_code.fs  \ xxx not used - needed by '###'
+\ require fendo.addon.source_code.fs  \ xxx not used - needed by '####'
 require fendo.links.fs  \ xxx fixme already loaded by the main file
 
 \ **************************************************************
@@ -158,7 +173,7 @@ variable parsed$      \ latest parsed name
 variable #heading       \ level of the opened heading  \ xxx not used yet
 variable opened_["""]?  \ is there an open block quote?
 variable opened_[""]?   \ is there an open inline quote?
-variable opened_[###]?  \ is there an open block code?
+variable opened_[####]?  \ is there an open block code?
 variable opened_[##]?   \ is there an open inline code?
 variable opened_[**]?   \ is there an open '**'?
 variable opened_[,,]?   \ is there an open ',,'?
@@ -202,7 +217,7 @@ variable opened_[__]?   \ is there an open '__'?
   \ page.
   opened_["""]? off
   opened_[""]? off
-  opened_[###]? off
+  opened_[####]? off
   opened_[##]? off
   opened_[**]? off
   opened_[,,]? off
@@ -512,63 +527,81 @@ markup<order
     else  2drop refill 0= dup abort" Missing closing '##'"  then
   until
   ;
-: ###-line  ( -- ca len )
+: ####-line  ( -- ca len )
   \ Parse a new line from the current source code block.
-  read_source_line 0= abort" Missing closing '###'"
+  read_source_line 0= abort" Missing closing '####'"
   escaped_source_code
   ;
-: "###"?  ( ca len -- wf )
-  \ Does the given string contains only "###"?
-  trim s" ###" str=
+: "####"?  ( ca len -- wf )
+  \ Does the given string contains only "####"?
+  trim s" ####" str=
   ;
-: ###-line?  ( -- ca len wf )
+: ####-line?  ( -- ca len wf )
   \ Parse a new line from the current source code block.
   \ ca len = source code line
-  \ wf = is it "###"?
-  ###-line 2dup "###"?
-\  cr ." exit stack in '###-line?' " .s key drop  \ xxx informer
+  \ wf = is it "####"?
+  ####-line 2dup "####"?
+\  cr ." exit stack in '####-line?' " .s key drop  \ xxx informer
   ;
-: plain_###-zone  ( "source code ###" -- )
+: plain_####-zone  ( "source code ####" -- )
   \ Parse and echo a source code zone "as is".
   begin
-    ###-line? dup >r
+    ####-line? dup >r
     if  2drop  else  escaped_source_code echo_line  then  r>
   until
-\  cr ." exit stack in 'plain_###-zone' " .s key drop  \ xxx informer
+\  cr ." exit stack in 'plain_####-zone' " .s key drop  \ xxx informer
   ;
-: highlighted_###-zone  ( "source code ###" -- )
+: highlighted_####-zone  ( "source code ####" -- )
   \ Parse a source code zone, highlight and echo it.
   new_source_code
   begin
-    ###-line? dup >r
+    ####-line? dup >r
     if  2drop  else  append_source_code_line  then  r>
   until  source_code@ highlighted echo
   ;
-: highlight_###-zone?  ( -- wf )
+: highlight_####-zone?  ( -- wf )
   highlight? programming_language@ nip 0<> and
   ;
-: (###)  ( "source code ###" -- )
+: (####)  ( "source code ####" -- )
   \ Parse and echo a source code zone.
-  highlight_###-zone? if  highlighted_###-zone  else  plain_###-zone  then
+  highlight_####-zone? if  highlighted_####-zone  else  plain_####-zone  then
   ;
 
-: {{{-line  ( -- ca len )
-  \ Parse a new line from the current verbatim block.
-  read_source_line 0= abort" Missing closing '}}}'"
+\ **************************************************************
+\ Tools for literal zones
+
+: literal-line  ( -- ca len )
+  \ Parse a new line from the current literal block.
+  read_source_line 0= abort" Missing closing '....'"
   escaped_source_code
   ;
-: "}}}"?  ( ca len -- wf )
-  \ Does the given string contains only "{{{"?
-  trim s" }}}" str=
+: "...."?  ( ca len -- wf )
+  \ Does the given string contains only "...."?
+  trim s" ...." str=
   ;
-: {{{-line?  ( -- ca len true | false )
-  \ Parse a new line from the current verbatim block.
-  {{{-line 2dup "}}}"? 0=
+: literal-line?  ( -- ca len true | false )
+  \ Parse a new line from the current literal block.
+  literal-line 2dup "...."? 0=
   ;
-: ({{{)  ( "verbatim content }}}" -- )
-  \ Parse and echo a verbatim zone.
-  \ xxx todo translate "<" and "&" ?
-  begin  {{{-line? dup >r ?echo_line r> 0=  until
+: (....)  ( "literal content ...." -- )
+  \ Parse and echo a literal block.
+  begin  literal-line? dup >r ?echo_line r> 0=  until
+  ;
+
+\ **************************************************************
+\ Tools for passthrough zones
+
+: passthrough-line  ( -- ca len )
+  \ Parse a new line from the current passthrough block.
+  read_source_line 0= abort" Missing closing '~~~~'"
+  ;
+: "~~~~"?  ( ca len -- wf )
+  \ Does the given string contains only "~~~~"?
+  trim s" ~~~~" str=
+  ;
+: passthrough-line?  ( -- ca len true | false )
+  \ Parse a new line from the current passthrough block.
+  passthrough-line 2dup "~~~~"? 0=
   ;
 
 \ **************************************************************
@@ -1008,29 +1041,14 @@ variable #nothings  \ counter of empty parsings \ xxx tmp moved from <fendo_pars
 \ The Fendo markup was inspired by Creole (http://wikicreole.org),
 \ text2tags (http://text2tags.org) and others.
 
-only forth markup>order definitions fendo>order
+markup_definitions
 
 \ Comments
-
-false [if]  \ xxx old
-
-: {*  ( "text*}" -- )
-  \ Start a comment.
-  \ Parse the input stream until a "*}" markup is found.
-  begin   parse-name dup
-    if    s" *}" str=
-    else  2drop  refill 0= then
-  until
-  ;  immediate
-: *}  ( -- )
-  true abort" '*}' without '{*'"
-  ;  immediate
-
-[else]
 
 warnings @  warnings off
 ' (* alias (*
 ' *) alias *)
+' \ alias \  immediate
 warnings !
 
 [then]
@@ -1118,6 +1136,7 @@ true [if]  \ xxx first version
   ;
 : --  ( -- )
   \ Open or close a <s> region.
+  \ XXX TODO Use the proper (semantic) HTML tag
   ['] <s> ['] </s> opened_[--]? markups
   ;
 : __  ( -- )
@@ -1150,9 +1169,9 @@ true [if]  \ xxx first version
   \ Open and close an inline <code> region.
   <code> (##) </code>
   ;
-: ###  ( -- )
+: ####  ( -- )
   \ Open and close a block <code> region.
-  block_source_code{ (###) }block_source_code
+  block_source_code{ (####) }block_source_code
   ;
 
 \ Headings
@@ -1241,29 +1260,19 @@ true [if]  \ xxx first version
   </div> separate? on
   ;
 
-\ Verbatim or pass-through blocks
+\ Verbatim blocks
 
-0 [if]
-\ xxx old first version
-: {{{  ( "text<space>}}}<space>" -- )
-  \ Open a verbatim or pass-through block.
-  \ Its content will be copied "as-is" to the target file.
-  \ xxx todo combine with '(###)'?
-  \ xxx todo preserve spaces (reading complete lines)
-  begin
-    read_source_line 0= abort" Missing closing '}}}'"
-    2dup trim s" }}}" str= dup >r 0= ?echo_line r>
-  until
-  ;
-[then]
-: {{{ ( -- )
+: .... ( "verbatim content ...." -- )
   \ Open, parse and close a verbatim block.
-  [<pre>] ({{{) [</pre>]
+  [<pre>] (....) [</pre>]
   ;
-: }}}  ( -- )
-  \ Close a verbatim or pass-through block.
-  true abort" '}}}' without '{{{'"
-  ;  immediate
+
+\ Pass-through blocks
+
+: ~~~~  ( "passthrough content ~~~~" -- )
+  \ Open, parse and close a passthrough block.
+  begin  passthrough-line? dup >r ?echo_line r> 0=  until
+  ;
 
 \ Escape
 
@@ -1321,7 +1330,7 @@ punctuation{: “
 }punctuation: ’
 }punctuation: ”
 
-only forth fendo>order definitions
+fendo_definitions
 
 \ **************************************************************
 \ Change history of this file
@@ -1580,6 +1589,14 @@ only forth fendo>order definitions
 \ 2014-03-09: Fix: now open headings work only at the start of the line.
 
 \ 2014-03-12: Change: "fendo.addon.source_code.common.fs" filename updated.
+
+\ 2014-04-20: Fix: 'fendo>order definitions' was wrong old code,
+\ because fendo consists of several wordlists. Now: 'fendo>order
+\ fendo>current'.
+
+\ 2014-04-20: New: '\' line comment markup.
+
+\ 2014-04-20: General changes in the markup: ### > ####;
 
 .( fendo.markup.wiki.fs compiled ) cr
 

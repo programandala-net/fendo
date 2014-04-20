@@ -32,11 +32,15 @@
 \ **************************************************************
 \ Requirements
 
+forth_definitions
+
 \ From Galope
 require galope/module.fs  \ 'module:', ';module', 'hide', 'export'
 
 \ From Fendo
 require ./fendo.addon.forth_blocks_source_code.fs
+
+fendo_definitions
 
 \ **************************************************************
 

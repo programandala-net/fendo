@@ -31,12 +31,14 @@
 \ **************************************************************
 \ Requirements
 
-\ From Fendo
+forth_definitions
+
+require galope/uncodepaged.fs
+
+fendo_definitions
+
 require ./fendo.addon.source_code.fs
 require ./fendo.addon.latin1_charset.fs
-
-\ From Galope
-require galope/uncodepaged.fs
 
 \ **************************************************************
 \ Source code in latin1 character encoding

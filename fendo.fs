@@ -36,6 +36,8 @@
 \ 2013-06-28: Start of version A-01.
 \ 2013-10-22: Start of version A-02.
 \ 2014-02-15: Start of version A-03. All files are renamed.
+\ 2014-04-20: Start of version A-04. Improved, more homogenous, 
+\   and more regular markup.
 
 \ **************************************************************
 \ Change history of this file
@@ -51,6 +53,11 @@
 \ 2014-02-05: Change: 'markup>order' and 'markup<order' rewritten with
 \   the new word 'markup_order'.
 \ 2014-03-18: Fix checking "gforth" with 'environment?'.
+\ 2014-04-20: New: 'markup_definitions', 'fendo_definitions',
+\   'forth_definitions', 'forth>current'...; this makes some thing
+\   easier, e.g. modules that define markups and require libraries.
+\   The requirements section of all Fendo files is updated with
+\   'forth_definitions' and 'fendo_definitions'.
 
 \ **************************************************************
 \ Todo
@@ -126,7 +133,7 @@ false value [bug_thread] immediate  \ xxx tmp
 \ **************************************************************
 \ Requirements
 
-forth-wordlist set-current
+only forth definitions
 
 \ From Gforth
 
@@ -234,6 +241,9 @@ wordlist constant fendo_markup_wid  \ markup, except HTML entities and user macr
 wordlist constant fendo_wid  \ program, except markup and HTML entities
 wordlist constant fendo_pid_wid  \ page ids
 
+: forth>current  ( -- )
+  forth-wordlist set-current
+  ;
 : markup>current  ( -- )
   fendo_markup_wid set-current
   ;
@@ -290,16 +300,28 @@ wordlist constant fendo_pid_wid  \ page ids
 : [forth>order]  ( -- )
   forth>order
   ;  immediate
+: set_forth_order  ( -- )
+  only forth>order
+  ;
 : set_fendo_order  ( -- )
-  only forth>order fendo>order
+  set_forth_order fendo>order
+  ;
+: markup_definitions  ( -- )
+  set_forth_order markup>order fendo>order markup>current
+  ;
+: fendo_definitions  ( -- )
+  set_fendo_order fendo>current
+  ;
+: forth_definitions  ( -- )
+  set_forth_order forth>current
   ;
 
-fendo>order definitions
+fendo_definitions
 
 \ **************************************************************
 \ Config
 
-s" A-03-201403" 2constant fendo_version
+s" A-04-201404" 2constant fendo_version
 
 false constant link_text_as_attribute?  \ xxx tmp -- experimental
 

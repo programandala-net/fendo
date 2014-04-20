@@ -79,9 +79,13 @@
 \ **************************************************************
 \ Requirements
 
+forth_definitions
+
 require galope/dollar-store-comma.fs  \ '$!,'
 require galope/c-slash-string.fs  \ 'c/string'
 require galope/paren-star.fs  \ '(*'
+
+fendo_definitions
 
 \ **************************************************************
 

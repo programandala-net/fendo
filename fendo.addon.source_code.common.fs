@@ -61,10 +61,13 @@
 \ **************************************************************
 \ Requirements
 
-\ From Galope
+forth_definitions
+
 require galope/sourcepath.fs  \ 'sourcepath'
 require galope/module.fs  \ 'module:', ';module', 'hide', 'export'
 require galope/replaced.fs  \ 'replaced'
+
+fendo_definitions
 
 \ **************************************************************
 

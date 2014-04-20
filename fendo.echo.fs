@@ -30,7 +30,9 @@
 \ **************************************************************
 \ Requirements
 
+forth_definitions
 require galope/number-to-string.fs  \ 'n>str'
+fendo_definitions
 
 \ **************************************************************
 \ Output

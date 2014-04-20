@@ -39,13 +39,13 @@
 \ **************************************************************
 \ Requirements
 
-get-current  forth-wordlist set-current
+forth_definitions
 
 require galope/n-to-r.fs  \ 'n>r'
 require galope/n-r-from.fs  \ 'nr>'
 require galope/tilde-tilde.fs  \ '~~'
 
-set-current
+fendo_definitions
 
 \ **************************************************************
 \ Pending markups

@@ -47,7 +47,8 @@
 \ **************************************************************
 \ Requirements
 
-get-current  forth-wordlist set-current
+
+forth_definitions
 
 \ From Galope
 require galope/slash-csv.fs  \ '/csv'
@@ -56,7 +57,7 @@ require galope/char_count.fs  \ 'char_count'
 \ From Fourth Foundation Library
 require ffl/str.fs  \ dynamic strings
 
-set-current
+fendo_definitions
 
 \ **************************************************************
 \ Page data engine
