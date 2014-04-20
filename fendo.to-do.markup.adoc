@@ -1,0 +1,144 @@
+= Fendo markup to-do
+Marcos Cruz (programanadala.net)
+2014-04-20
+
+////
+
+2014-04-07: Start as part of <fendo.to-do.txt>. First table.
+2014-04-20: Extracted to <fendo.to-do.markup.adoc>.
+
+////
+
+[cols="h,<,<,<"]
+|===
+| function
+| Fendo (next version)
+| Fendo 2014-04-xx
+| Asciidoctor
+
+| addition
+| &#43;&#43; &#43;&#43;&#43;&#43;
+| 
+| 
+| code b
+| \####
+| \###
+| ----
+| code i
+| ##
+| ##
+|
+| comment b
+| (*
+| (*
+| ////
+| comment line
+|
+|
+| //
+| emphatized
+| //
+| //
+| _ __
+| escape
+| ~
+| ~
+| \
+| headers
+| =...
+| =...
+| =...
+| image
+| {{
+| {{
+| image: image::
+| lang b
+| (((( xx
+| xx(((
+|
+| lang i
+| (( xx
+| xx((
+|
+| line break
+| \\
+| \\
+| <<<
+| list dl
+|
+|
+| dt:: dd
+| list ol
+| +
+| +
+| 1. a. ....
+| list ul
+| -
+| -
+| *... -...
+| monospace
+|
+|
+| + ++
+| paragraph
+| _
+| _
+|
+| passthrough b
+| \|\|\|\|
+| {{{
+| ++++
+| passthrough i
+| \|\|
+|
+| +++
+| monospace passthrough i
+|
+|
+| `
+| passthrough i (partial)
+|
+|
+| $$
+| quote b
+| \'''' [4 single quotes]
+| """ [3 double quotes]
+| ____
+| quote i
+| '' [2 single quotes]
+| "" [2 double quotes]
+|
+| quoted (=span)
+|
+|
+| #
+| quoted (=span) unconstrained
+|
+|
+| ##
+| removal
+| \-- ----
+| 
+| 
+| rule
+| ---
+| ----
+|  \''' \*** ---
+| strong
+| **
+| **
+| * **
+| subscript
+| ,,
+| ,,
+| ~~
+| superscript
+| ^^
+| ^^
+| ^
+| underline
+| __
+| __
+|
+|===
+
