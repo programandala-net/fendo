@@ -39,17 +39,18 @@
 \ **************************************************************
 \ Requirements
 
-\ From Gforth
+forth_definitions
+
 require string.fs  \ Gforth's dynamic strings
 
-\ From Galope
 require galope/dollar-variable.fs  \ '$variable'
 require galope/module.fs  \ 'module:', ';module', 'hide', 'export'
 require galope/minus-leading.fs  \ '-leading'
 require galope/string-suffix-question.fs  \ 'string-suffix?'
 require galope/translated.fs  \ 'translated'
 
-\ From Fendo
+fendo_definitions
+
 require ./fendo.addon.source_code.common.fs  \ xxx tmp
 
 module: fendo.addon.source_code

@@ -36,20 +36,22 @@
 \ **************************************************************
 \ Requirements
 
-\ From Fendo
+forth_definitions
+
+require galope/module.fs  \ 'module:', ';module', 'hide', 'export'
+require galope/rgx-wcmatch-question.fs  \ 'rgx-wcmatch?'
+
+fendo_definitions
+
 require ./fendo.addon.traverse_pids.fs
 require ./fendo.addon.regex.fs
 require ./fendo.addon.lioc.fs
-
-\ From Galope
-require galope/module.fs  \ 'module:', ';module', 'hide', 'export'
-require galope/rgx-wcmatch-question.fs  \ 'rgx-wcmatch?'
 
 \ **************************************************************
 
 module: fendo.addon.lioc_by_regex
 
-: ((lioc_by_regex))  { pid -- }
+: ((lioc_by_regex))  { D: pid -- }
   \ Create an element of a list of content,
   \ if the given pid matches the current regex.
   \ ca len = pid

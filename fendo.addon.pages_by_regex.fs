@@ -31,13 +31,15 @@
 \ **************************************************************
 \ Requirements
 
-\ From Fendo
-require ./fendo.addon.traverse_pids.fs
-require ./fendo.addon.regex.fs
+forth_definitions
 
-\ From Galope
 require galope/module.fs  \ 'module:', ';module', 'hide', 'export'
 require galope/rgx-wcmatch-question.fs  \ 'rgx-wcmatch?'
+
+fendo_definitions
+
+require ./fendo.addon.traverse_pids.fs
+require ./fendo.addon.regex.fs
 
 \ **************************************************************
 

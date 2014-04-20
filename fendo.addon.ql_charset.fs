@@ -30,7 +30,9 @@
 
 \ **************************************************************
 
+forth_definitions
 require galope/uncodepaged.fs
+fendo_definitions
 
 \ Reference:
 \ http://pages.zoom.co.uk/selsyn/ql/qlchar.html

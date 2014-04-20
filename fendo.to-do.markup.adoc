@@ -1,6 +1,6 @@
 = Fendo markup to-do
 Marcos Cruz (programandala.net)
-2014-04-20
+2014-04-21
 
 ////
 
@@ -10,6 +10,9 @@ current Fendo, future Fendo and Asciidoctor. Unfinished.
 2014-04-20: Extracted to <fendo.to-do.markup.adoc>. Completed. Added
 Creole and Simplilo. Columns reordered.
 
+2014-04-21: Added txt2tags.
+
+
 ////
 
 NOTE: Alternative marks are shown separated by spaces. Closing marks
@@ -17,28 +20,32 @@ are shown only if they are different than the opening marks; then an
 ellipsis character ("…") represents the content. Some marks have a
 note in brackets.
 
-[cols="h,<,<,<,<,<"]
+[cols="h,<,<,<,<,<,<"]
 |===
 | function
+| txt2tags
 | Creole 1.0
 | Simplilo A-08
 | Asciidoctor
-| Fendo <2014-05
-| Fendo >2014-xx
+| Fendo A-03
+| Fendo A-04
 
 | addition
 |
 |
 |
 |
+|
 | &#43;&#43; &#43;&#43;&#43;&#43;
 | code (block)
+| ```
 |
 | \#!…!#
 | ----
 | \###
 | \####
 | code (inline)
+| ``
 |
 | \#!…!#
 |
@@ -46,11 +53,13 @@ note in brackets.
 | ##
 | comment (block)
 |
+|
 | {\*…*}
 | ////
-| (*…*)
-| (*…*)
+| (\*…*)
+| (\*…*)
 | comment (line)
+| %
 |
 |
 | //
@@ -59,22 +68,26 @@ note in brackets.
 | emphatized
 | //
 | //
+| //
 | _ __ [1 or 2 underscores]
 | //
 | //
 | escape
+|
 |
 | ~
 | \
 | ~
 | ~
 | headers
+| = == === ==== ===== ====== [+ for numbered]
 | = == === ==== ===== ======
 | = == === ==== ===== ======
 | = == === ==== ===== ======
 | = == === ==== ===== ======
 | = == === ==== ===== ======
 | image
+| […]
 | {{…}}
 | {{…}}
 | image: image::
@@ -84,45 +97,67 @@ note in brackets.
 |
 |
 |
+|
 | lang&#40;&#40;&#40;…)))
 | &#40;&#40;&#40;&#40; lang …))))
 | lang (inline)
 |
 |
 |
+|
 | lang&#40;&#40;…))
 | &#40;&#40; lang …))
 | line break
+|
 | \\
 | \\
 | <<<
 | \\
 | \\
 | link
+| […]
 | [[…]]
 | [[…]]
 | http: link:
 | [[…]]
 | [[…]]
 | list dl
+| :
 |
 |
 | ::
 |
 |
 | list ol
+| + [indented for nesting]
 | # [repetaded for nesting]
 | # [repetaded for nesting]
 | 1. a. . [repeated for nesting]
 | # [one level only]
 | # [one level only?]
 | list ul
+| - [indented for nesting]
 | * [repeated for nesting]
 | * [repeated for nesting]
 | * - [repeated for nesting]
 | * [one level only]
 | * [one level only?]
+| literal (block)
+| """
+| {{{…}}}
+| {{{…}}}
+| ....
+| {{{…}}}
+| ....
+| literal (inline)
+| ""
+|
+|
+| pass: ` $$
+|
+| ..
 | monospace
+|
 |
 |
 | + ++
@@ -132,21 +167,25 @@ note in brackets.
 |
 |
 |
+|
 | _ [1 underscore]
 | _ [1 underscore]
 | passthrough (block)
-| {{{…}}}
-| {{{…}}}
+| ''' [3 single quotes]
+| 
+|
 | &#43;&#43;&#43;&#43;
-| {{{…}}}
+|
 | \~~~~
 | passthrough (inline)
+| '' [2 single quotes]
 |
 |
 | pass: ` $$
 |
 | ~~
 | quote (block)
+| [indented]
 |
 | optional_lang"""…""" [3 double quotes]
 | ____ [4 underscores]
@@ -154,17 +193,20 @@ note in brackets.
 | \'''' [4 single quotes]
 | quote (inline)
 |
+|
 | optional_lang""…"" [2 double quotes]
 |
 | "" [2 double quotes]
 | '' [2 single quotes]
 | removal
+| \--
 |
-| --
+| \--
 |
 |
 | \-- ----
 | rule
+| --------------------
 | ----
 | ----
 | \''' \*** ---
@@ -173,10 +215,12 @@ note in brackets.
 | strong
 | **
 | **
+| **
 | * **
 | **
 | **
 | subscript
+|
 |
 | ,, [2 commas]
 | ~~
@@ -184,11 +228,13 @@ note in brackets.
 | ,, [2 commas]
 | superscript
 |
+|
 | ^^
 | ^
 | ^^
 | ^^
 | underline
+| __ [2 underscores]
 |
 | __ [2 underscores]
 |

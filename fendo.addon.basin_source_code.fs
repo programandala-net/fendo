@@ -42,15 +42,16 @@
 \ **************************************************************
 \ Requirements
 
-\ From Galope
-require galope/module.fs  \ 'module:', ';module', 'hide', 'export'
+forth_definitions
 
-\ From Fendo
+require galope/module.fs  \ 'module:', ';module', 'hide', 'export'
+require ffl/chr.fs  \ 'chr-digit'
+
+fendo_definitions
+
 require ./fendo.addon.source_code.fs
 require ./fendo.addon.basin_charset.fs
 
-\ From Forth Foundation Library
-require ffl/chr.fs  \ 'chr-digit'
 
 \ **************************************************************
 \ BASIC source code in BASin format

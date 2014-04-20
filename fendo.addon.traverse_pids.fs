@@ -40,8 +40,12 @@
 
 \ **************************************************************
 
+forth_definitions
+
 require galope/module.fs  \ 'module:', ';module', 'hide', 'export'
 require galope/backslash-end-of-file.fs  \ '\eof'
+
+fendo_definitions
 
 module: fendo.addon.traverse_pids
 

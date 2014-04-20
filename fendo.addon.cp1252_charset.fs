@@ -29,7 +29,9 @@
 
 \ **************************************************************
 
+forth_definitions
 require galope/uncodepaged.fs
+fendo_definitions
 
 \ References:
 \ http://en.wikipedia.org/wiki/Windows-1252

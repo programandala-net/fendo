@@ -52,11 +52,13 @@
 \ **************************************************************
 \ Requirements
 
-\ From Fendo
-require ./fendo.addon.source_code.fs
+forth_definitions
 
-\ From Galope
 require galope/module.fs  \ 'module:', ';module', 'hide', 'export'
+
+fendo_definitions
+
+require ./fendo.addon.source_code.fs
 
 \ **************************************************************
 \ Forth source code in blocks format

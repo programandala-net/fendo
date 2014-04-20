@@ -36,15 +36,16 @@
 \ **************************************************************
 \ Requirements
 
-\ From Gforth
-require string.fs  \ dynamic strings
+forth_definitions
 
-\ From Fendo
+require string.fs  \ Gforth's dynamic strings
+
+require galope/module.fs  \ 'module:', ';module', 'hide', 'export'
+
+fendo_definitions
+
 require ./fendo.addon.traverse_pids.fs
 require ./fendo.addon.lioc.fs
-
-\ From Galope
-require galope/module.fs  \ 'module:', ';module', 'hide', 'export'
 
 \ **************************************************************
 

@@ -30,11 +30,13 @@
 \ **************************************************************
 \ Requirements
 
-\ From Fendo
-require ./fendo.addon.traverse_pids.fs
+forth_definitions
 
-\ From Galope
 require galope/module.fs
+
+fendo_definitions
+
+require ./fendo.addon.traverse_pids.fs
 
 \ **************************************************************
 

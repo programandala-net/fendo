@@ -29,7 +29,9 @@
 
 \ **************************************************************
 
+forth_definitions
 require galope/uncodepaged.fs
+fendo_definitions
 
 \ Reference:
 \ http://www.unicode.org/Public/MAPPINGS/ISO8859/8859-1.TXT

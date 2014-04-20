@@ -32,6 +32,8 @@
 \   (defined in <addons/source_code.fs>).
 \ 2013-11-28: Fix: 'redirected' didn't add the target extension,
 \   only the path; fixed with the new word 'pid$>target'.
+\ 2014-03-02: Change: 'domain&current_target_file', factored from
+\ '(redirected)' to <fendo.data.fs>.
 
 \ **************************************************************
 \ Target file
@@ -85,7 +87,7 @@
   s" ($_SERVER['HTTP_HOST']=='localhost'?'localhost/':'')" s+
   s" .'" s+
 \	S" header('Location: http://localhost/"  \ xxx debugging
-  domain $@ s" /" s+ current_target_file s+ s+
+  domain&current_target_file s+
   s" ');" s+ r@ write-line throw
 	s" exit(0);" r@ write-line throw
 	s" ?>" r> write-line throw

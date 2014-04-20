@@ -44,8 +44,10 @@
 \ **************************************************************
 \ Requirements
 
+forth_definitions
 require galope/n-to-r.fs  \ 'n>r'
 require galope/n-r-from.fs  \ 'nr<'
+fendo_definitions
 
 \ **************************************************************
 \ Tags wordlist

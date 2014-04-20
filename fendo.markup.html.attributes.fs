@@ -58,7 +58,7 @@
 \ **************************************************************
 \ Requirements
 
-get-current  forth-wordlist set-current
+forth_definitions
 
 require galope/3dup.fs
 
@@ -75,7 +75,7 @@ dup constant [gforth_strings_for_attributes?]  immediate
 \  key drop  \ xxx informer
 [then]
 
-set-current
+fendo_definitions
 
 \ **************************************************************
 \ Fetch and store

@@ -52,7 +52,7 @@ wordlist constant fendo_shortcuts_wid  \ for user's shortcuts
     parse-name
     2dup 2>r nextname :
     2r>
-    space 2dup type  \ xxx informer
+\    space 2dup type  \ xxx informer
     postpone sliteral postpone cr
     s" resolving shortcut " postpone sliteral
     postpone type

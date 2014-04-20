@@ -35,12 +35,14 @@
 \ **************************************************************
 \ Requirements
 
-\ From Fendo
+forth_definitions
+
+require galope/module.fs
+
+fendo_definitions
+
 require ./fendo.addon.traverse_pids.fs
 require ./fendo.addon.dtddoc.fs
-
-\ From Galope
-require galope/module.fs
 
 \ **************************************************************
 

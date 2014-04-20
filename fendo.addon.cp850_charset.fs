@@ -31,7 +31,9 @@
 
 \ **************************************************************
 
+forth_definitions
 require galope/uncodepaged.fs
+fendo_definitions
 
 \ References:
 \ http://en.wikipedia.org/wiki/Code_page_850

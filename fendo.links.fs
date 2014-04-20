@@ -35,7 +35,11 @@
 \ **************************************************************
 \ Requirements
 
+forth_definitions
+
 require galope/minus-prefix.fs  \ '-prefix'
+
+fendo_definitions
 
 require fendo.markup.common.fs
 require fendo.markup.html.fs

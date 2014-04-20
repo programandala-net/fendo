@@ -1,10 +1,10 @@
-.( fendo.addon.unnumbered_list_of_content_by_regex.fs) cr
+.( fendo.addon.regex.fs) cr
 
 \ This file is part of Fendo.
 
-\ This file is the addon that creates unnumbered content lists.
+\ This file provides two words to compile a temporary regex.
 
-\ Copyright (C) 2013 Marcos Cruz (programandala.net)
+\ Copyright (C) 2013,2014 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute it and/or modify it
 \ under the terms of the GNU General Public License as published by
@@ -25,16 +25,37 @@
 \ **************************************************************
 \ Change history of this file
 
-\ 2013-11-26 Start.
+\ 2013-11-26: Start.
+\ 2014-03-02: Simplified. Renamed. Generalized.
+
+\ **************************************************************
+\ Requirements
+
+forth_definitions
+
+\ From Forth Foundation Library
+require ffl/rgx.fs  \ regular expressions
+
+\ From Galope
+require galope/module.fs  \ 'module:', ';module', 'hide', 'export'
+
+fendo_definitions
 
 \ **************************************************************
 
-require ./fendo.addon.list_of_content_by_regex.fs
+module: fendo.addon.regex
 
-: unnumbered_list_of_content_by_regex  ( ca len -- )
-  \ Create an unnumbered list of content
-  \ with pages whose page id matches the given prefix.
-  [<ul>] list_of_content_by_regex [</ul>]
+: regex_error  ( ca len n -- )
+  ." Bad regular expression at position " . ." :" cr type abort
   ;
 
-.( fendo.addon.unnumbered_list_of_content_by_regex.fs compiled) cr
+export
+
+rgx-create regex
+: >regex  ( ca len -- )
+  2dup regex rgx-compile if  2drop  else  regex_error  then
+  ;
+
+;module
+
+.( fendo.addon.regex.fs compiled) cr

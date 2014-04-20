@@ -34,7 +34,9 @@
 \ **************************************************************
 \ Requirements
 
+forth_definitions
 require string.fs  \ Gforth's dynamic strings
+fendo_definitions
 
 \ **************************************************************
 \ Configurable variables

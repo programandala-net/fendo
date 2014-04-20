@@ -31,7 +31,6 @@
 \ **************************************************************
 \ Requirements
 
-\ From Fendo
 require ./fendo.addon.forth_blocks_source_code.fs
 require ./fendo.addon.ql_charset.fs
 

@@ -33,17 +33,19 @@
 \ **************************************************************
 \ Requirements
 
-\ From Fendo
+forth_definitions
+
+require galope/max-n.fs  \ 'max-n'
+require galope/module.fs  \ 'module:', ';module', 'hide', 'export'
+require galope/rgx-wcmatch-question.fs  \ 'rgx-wcmatch?'
+
+fendo_definitions
+
 \ require ./fendo.addon.regex.fs  \ xxx todo
 require ./fendo.addon.tags.fs
 require ./fendo.addon.traverse_pids.fs
 require ./fendo.addon.pages_by_regex.fs
 \ require ./fendo.addon.tag_counts_by_prefix.fs  \ xxx todo
-
-\ From Galope
-require galope/max-n.fs  \ 'max-n'
-require galope/module.fs  \ 'module:', ';module', 'hide', 'export'
-require galope/rgx-wcmatch-question.fs  \ 'rgx-wcmatch?'
 
 \ **************************************************************
 \ To-do
