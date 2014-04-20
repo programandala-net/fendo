@@ -1,144 +1,198 @@
 = Fendo markup to-do
-Marcos Cruz (programanadala.net)
+Marcos Cruz (programandala.net)
 2014-04-20
 
 ////
 
-2014-04-07: Start as part of <fendo.to-do.txt>. First table.
-2014-04-20: Extracted to <fendo.to-do.markup.adoc>.
+2014-04-07: Start as part of <fendo.to-do.txt>. First table, with
+current Fendo, future Fendo and Asciidoctor. Unfinished.
+
+2014-04-20: Extracted to <fendo.to-do.markup.adoc>. Completed. Added
+Creole and Simplilo. Columns reordered.
 
 ////
 
-[cols="h,<,<,<"]
+NOTE: Closing marks are shown only if they are different than the
+opening marks; then an ellipsis character ("…") represents the
+content; an space before or after the ellipsed content is significant,
+but no other detail of the syntax is shown.
+
+[cols="h,<,<,<,<,<"]
 |===
 | function
-| Fendo (next version)
-| Fendo 2014-04-xx
+| Creole 1.0
+| Simplilo A-08
 | Asciidoctor
+| Fendo 2014-04-xx
+| Fendo (next version)
 
 | addition
-| &#43;&#43; &#43;&#43;&#43;&#43;
-| 
-| 
-| code b
-| \####
-| \###
-| ----
-| code i
-| ##
-| ##
 |
-| comment b
-| (*
-| (*
+|
+|
+|
+| &#43;&#43; &#43;&#43;&#43;&#43;
+| code (block)
+|
+| \#!…!#
+| ----
+| \###
+| \####
+| code (inline)
+|
+| \#!…!#
+|
+| ##
+| ##
+| comment (block)
+|
+| {\*…*}
 | ////
-| comment line
+| (* … *)
+| (* … *)
+| comment (line)
 |
 |
 | //
+|
+| \
 | emphatized
 | //
 | //
 | _ __
+| //
+| //
 | escape
-| ~
+|
 | ~
 | \
+| ~
+| ~
 | headers
-| =...
-| =...
-| =...
+| = == === ==== ===== ======
+| = == === ==== ===== ======
+| = == === ==== ===== ======
+| = == === ==== ===== ======
+| = == === ==== ===== ======
 | image
-| {{
-| {{
+| {{…}}
+| {{…}}
 | image: image::
-| lang b
-| (((( xx
-| xx(((
+| {{ … }}
+| {{ … }}
+| lang (block)
 |
-| lang i
-| (( xx
-| xx((
 |
+|
+| xx(((…)))
+| (((( xx … ))))
+| lang (inline)
+|
+|
+|
+| xx((…))
+| (( xx … ))
 | line break
 | \\
 | \\
 | <<<
+| \\
+| \\
+| link
+| [[…]]
+| [[…]]
+| http: link:
+| [[ … ]]
+| [[ … ]]
 | list dl
 |
 |
-| dt:: dd
+| ::
+|
+|
 | list ol
-| +
-| +
-| 1. a. ....
+| # [repetaded for nesting]
+| # [repetaded for nesting]
+| 1. a. . [repeated for nesting]
+| # [one level only]
+| # [one level only?]
 | list ul
-| -
-| -
-| *... -...
+| * [repeated for nesting]
+| * [repeated for nesting]
+| * - [repeated for nesting]
+| * [one level only]
+| * [one level only?]
 | monospace
 |
 |
 | + ++
+|
+|
 | paragraph
-| _
-| _
-|
-| passthrough b
-| \|\|\|\|
-| {{{
-| ++++
-| passthrough i
-| \|\|
-|
-| +++
-| monospace passthrough i
 |
 |
-| `
-| passthrough i (partial)
+|
+| _ [1 underscore]
+| _ [1 underscore]
+| passthrough (block)
+| {{{…}}}
+| {{{…}}}
+| &#43;&#43;&#43;&#43;
+| {{{ … }}}
+| \~~~~
+| passthrough (inline)
 |
 |
-| $$
-| quote b
-| \'''' [4 single quotes]
+| pass: ` $$
+|
+| ~~
+| quote (block)
+|
+| optional_lang"""…""" [3 double quotes]
+| ____ [4 underscores]
 | """ [3 double quotes]
-| ____
-| quote i
-| '' [2 single quotes]
+| \'''' [4 single quotes]
+| quote (inline)
+|
+| optional_lang""…"" [2 double quotes]
+|
 | "" [2 double quotes]
-|
-| quoted (=span)
-|
-|
-| #
-| quoted (=span) unconstrained
-|
-|
-| ##
+| '' [2 single quotes]
 | removal
+|
+| --
+|
+|
 | \-- ----
-| 
-| 
 | rule
-| ---
 | ----
-|  \''' \*** ---
+| ----
+| \''' \*** ---
+| ----
+| --------
 | strong
 | **
 | **
 | * **
+| **
+| **
 | subscript
-| ,,
+|
 | ,,
 | ~~
+| ,,
+| ,,
 | superscript
-| ^^
+|
 | ^^
 | ^
+| ^^
+| ^^
 | underline
-| __
-| __
 |
+| __ [2 underscores]
+|
+| __ [2 underscores]
+| __ [2 underscores]
 |===
 
