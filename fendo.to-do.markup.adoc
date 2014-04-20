@@ -12,10 +12,10 @@ Creole and Simplilo. Columns reordered.
 
 ////
 
-NOTE: Closing marks are shown only if they are different than the
-opening marks; then an ellipsis character ("…") represents the
-content; an space before or after the ellipsed content is significant,
-but no other detail of the syntax is shown.
+NOTE: Alternative marks are shown separated by spaces. Closing marks
+are shown only if they are different than the opening marks; then an
+ellipsis character ("…") represents the content. Some marks have a
+note in brackets.
 
 [cols="h,<,<,<,<,<"]
 |===
@@ -23,8 +23,8 @@ but no other detail of the syntax is shown.
 | Creole 1.0
 | Simplilo A-08
 | Asciidoctor
-| Fendo 2014-04-xx
-| Fendo (next version)
+| Fendo <2014-05
+| Fendo >2014-xx
 
 | addition
 |
@@ -48,8 +48,8 @@ but no other detail of the syntax is shown.
 |
 | {\*…*}
 | ////
-| (* … *)
-| (* … *)
+| (*…*)
+| (*…*)
 | comment (line)
 |
 |
@@ -59,7 +59,7 @@ but no other detail of the syntax is shown.
 | emphatized
 | //
 | //
-| _ __
+| _ __ [1 or 2 underscores]
 | //
 | //
 | escape
@@ -78,20 +78,20 @@ but no other detail of the syntax is shown.
 | {{…}}
 | {{…}}
 | image: image::
-| {{ … }}
-| {{ … }}
+| {{…}}
+| {{…}}
 | lang (block)
 |
 |
 |
-| xx(((…)))
-| (((( xx … ))))
+| lang&#40;&#40;&#40;…)))
+| &#40;&#40;&#40;&#40; lang …))))
 | lang (inline)
 |
 |
 |
-| xx((…))
-| (( xx … ))
+| lang&#40;&#40;…))
+| &#40;&#40; lang …))
 | line break
 | \\
 | \\
@@ -102,8 +102,8 @@ but no other detail of the syntax is shown.
 | [[…]]
 | [[…]]
 | http: link:
-| [[ … ]]
-| [[ … ]]
+| [[…]]
+| [[…]]
 | list dl
 |
 |
@@ -138,7 +138,7 @@ but no other detail of the syntax is shown.
 | {{{…}}}
 | {{{…}}}
 | &#43;&#43;&#43;&#43;
-| {{{ … }}}
+| {{{…}}}
 | \~~~~
 | passthrough (inline)
 |
@@ -178,10 +178,10 @@ but no other detail of the syntax is shown.
 | **
 | subscript
 |
-| ,,
+| ,, [2 commas]
 | ~~
-| ,,
-| ,,
+| ,, [2 commas]
+| ,, [2 commas]
 | superscript
 |
 | ^^
