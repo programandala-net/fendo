@@ -2,7 +2,8 @@
 
 \ This file is part of Fendo.
 
-\ This file defines some common words for the markup.
+\ This file defines some common words for the markup definitions, also
+\ required by the links module.
 
 \ Copyright (C) 2013,2014 Marcos Cruz (programandala.net)
 
