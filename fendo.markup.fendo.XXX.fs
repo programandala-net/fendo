@@ -1,8 +1,8 @@
-.( fendo.markup.fs ) cr
+.( fendo.markup.fendo.XXX.fs ) cr
 
 \ This file is part of Fendo.
 
-\ This file defines the markup.
+\ This file defines the Fendo markup for XXX
 
 \ Copyright (C) 2013,2014 Marcos Cruz (programandala.net)
 
@@ -25,21 +25,26 @@
 \ **************************************************************
 \ Change history of this file
 
-\ 2013-06-06: Start. This file is created with part of the old
-\   <fendo_html_tags.fs>.
-\ 2013-06-08: Change: 'forth_block?' renamed to 'forth_code?'.
-\ 2013-06-28: Change: 'forth_code?' changed to 'forth_code_depth', a counter.
-\ 2014-02-03: New: ':echo_name+'.
-\ 2014-03-04: Change: all definitions are moved to
-\ <fendo.markup.common.fs>.
+\ See at the end of the file.
 
 \ **************************************************************
+\ Tools
 
-require ./fendo.markup.common.fs
-require ./fendo.markup.html.fs
-require ./fendo.shortcuts.fs
-require ./fendo.markup.fendo.fs
-require ./fendo.markup.macros.fs
+fendo_definitions
 
-.( fendo.markup.fs compiled) cr
+
+\ **************************************************************
+\ Markup
+
+markup_definitions
+
+
+fendo_definitions
+
+\ **************************************************************
+\ Change history of this file
+
+\ 2014-04-21: Code moved from <fendo.markup.fendo.fs>.
+
+.( fendo.markup.fendo.XXX.fs compiled ) cr
 

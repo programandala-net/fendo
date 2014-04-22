@@ -10,10 +10,15 @@ current Fendo, future Fendo and Asciidoctor. Unfinished.
 2014-04-20: Extracted to <fendo.to-do.markup.adoc>. Completed. Added
 Creole and Simplilo. Columns reordered.
 
-2014-04-21: Added txt2tags.
+2014-04-21: Added txt2tags. Fixes.
 
 
 ////
+
+== Markup comparation table
+
+The Fendo markup was inspired by other markups. This table shows them
+all.
 
 NOTE: Alternative marks are shown separated by spaces. Closing marks
 are shown only if they are different than the opening marks; then an
@@ -22,21 +27,24 @@ note in brackets.
 
 [cols="h,<,<,<,<,<,<"]
 |===
-| function
-| txt2tags
-| Creole 1.0
-| Simplilo A-08
-| Asciidoctor
-| Fendo A-03
-| Fendo A-04
+| | txt2tags | Creole 1.0 | Simplilo A-08 | Asciidoctor | Fendo A-03 | Fendo A-04
 
-| addition
+| addition (block)
 |
 |
 |
 |
 |
-| &#43;&#43; &#43;&#43;&#43;&#43;
+| &#43;&#43;&#43;&#43;
+
+| addition (inline)
+|
+|
+|
+|
+|
+| &#43;&#43;
+
 | code (block)
 | ```
 |
@@ -44,6 +52,7 @@ note in brackets.
 | ----
 | \###
 | \####
+
 | code (inline)
 | ``
 |
@@ -51,6 +60,7 @@ note in brackets.
 |
 | ##
 | ##
+
 | comment (block)
 |
 |
@@ -58,6 +68,7 @@ note in brackets.
 | ////
 | (\*…*)
 | (\*…*)
+
 | comment (line)
 | %
 |
@@ -65,6 +76,7 @@ note in brackets.
 | //
 |
 | \
+
 | emphatized
 | //
 | //
@@ -72,6 +84,7 @@ note in brackets.
 | _ __ [1 or 2 underscores]
 | //
 | //
+
 | escape
 |
 |
@@ -79,13 +92,23 @@ note in brackets.
 | \
 | ~
 | ~
+
 | headers
-| = == === ==== ===== ====== [+ for numbered]
 | = == === ==== ===== ======
 | = == === ==== ===== ======
 | = == === ==== ===== ======
 | = == === ==== ===== ======
 | = == === ==== ===== ======
+| = == === ==== ===== ======
+
+| headers (numbered)
+| &#43; &#43;&#43; &#43;&#43;&#43; &#43;&#43;&#43;&#43; &#43;&#43;&#43;&#43;&#43; &#43;&#43;&#43;&#43;&#43;&#43; 
+|
+|
+| = == === ==== ===== ====== [with :numbered:]
+|
+| XXX TODO
+
 | image
 | […]
 | {{…}}
@@ -93,20 +116,23 @@ note in brackets.
 | image: image::
 | {{…}}
 | {{…}}
+
 | lang (block)
 |
 |
-|
+| lang&#40;&#40;&#40;…)))
 |
 | lang&#40;&#40;&#40;…)))
-| &#40;&#40;&#40;&#40; lang …))))
+| lang&#40;&#40;&#40;…)))
+
 | lang (inline)
 |
 |
-|
+| lang&#40;&#40;…))
 |
 | lang&#40;&#40;…))
-| &#40;&#40; lang …))
+| lang&#40;&#40;…))
+
 | line break
 |
 | \\
@@ -114,6 +140,7 @@ note in brackets.
 | <<<
 | \\
 | \\
+
 | link
 | […]
 | [[…]]
@@ -121,41 +148,47 @@ note in brackets.
 | http: link:
 | [[…]]
 | [[…]]
-| list dl
-| :
+
+| list (bulleted)
+| - [indented for nesting]
+| * [repeated for nesting]
+| * [repeated for nesting]
+| * [repeated for nesting] - [not nested]
+| * - [both not nested]
+| XXX TODO
+
+| list (labeled)
+| &#58;
 |
 |
-| ::
+| &#58;&#58;
 |
-|
-| list ol
+| XXX TODO
+
+| list (numbered)
 | + [indented for nesting]
 | # [repetaded for nesting]
 | # [repetaded for nesting]
 | 1. a. . [repeated for nesting]
 | # [one level only]
-| # [one level only?]
-| list ul
-| - [indented for nesting]
-| * [repeated for nesting]
-| * [repeated for nesting]
-| * - [repeated for nesting]
-| * [one level only]
-| * [one level only?]
+| XXX TODO
+
 | literal (block)
-| """
+| """ [3 double quotes]
 | {{{…}}}
 | {{{…}}}
 | ....
 | {{{…}}}
 | ....
+
 | literal (inline)
-| ""
+| "" [2 double quotes]
 |
 |
 | pass: ` $$
 |
-| ..
+| .. XXX TODO
+
 | monospace
 |
 |
@@ -163,6 +196,7 @@ note in brackets.
 | + ++
 |
 |
+
 | paragraph
 |
 |
@@ -170,48 +204,63 @@ note in brackets.
 |
 | _ [1 underscore]
 | _ [1 underscore]
+
 | passthrough (block)
-| ''' [3 single quotes]
+| &#39;&#39;&#39; [3 single quotes]
 | 
 |
 | &#43;&#43;&#43;&#43;
 |
 | \~~~~
+
 | passthrough (inline)
-| '' [2 single quotes]
+| &#39;&#39; [2 single quotes]
 |
 |
 | pass: ` $$
 |
-| ~~
+| ~~ XXX TODO
+
 | quote (block)
 | [indented]
 |
 | optional_lang"""…""" [3 double quotes]
-| ____ [4 underscores]
+| &#95;&#95;&#95;&#95; [4 underscores]
 | """ [3 double quotes]
-| \'''' [4 single quotes]
+| &#39;&#39;&#39;&#39; [4 single quotes] XXX TODO
+
 | quote (inline)
 |
 |
 | optional_lang""…"" [2 double quotes]
 |
 | "" [2 double quotes]
-| '' [2 single quotes]
-| removal
+| &#39;&#39; [2 single quotes] XXX TODO
+
+| removal (block)
+| 
+|
+| 
+|
+|
+| ----
+
+| removal (inline)
 | \--
 |
 | \--
 |
 |
-| \-- ----
+| \--
+
 | rule
 | --------------------
 | ----
 | ----
-| \''' \*** ---
+| &#39;&#39;&#39; \*** ---
 | ----
 | --------
+
 | strong
 | **
 | **
@@ -219,6 +268,7 @@ note in brackets.
 | * **
 | **
 | **
+
 | subscript
 |
 |
@@ -226,6 +276,7 @@ note in brackets.
 | ~~
 | ,, [2 commas]
 | ,, [2 commas]
+
 | superscript
 |
 |
@@ -233,12 +284,110 @@ note in brackets.
 | ^
 | ^^
 | ^^
+
 | underline
-| __ [2 underscores]
+| &#95;&#95; [2 underscores]
 |
-| __ [2 underscores]
+| &#95;&#95; [2 underscores]
 |
-| __ [2 underscores]
-| __ [2 underscores]
+| &#95;&#95; [2 underscores]
+| &#95;&#95; [2 underscores]
+
+| general (inline; =span)
+|
+|
+|
+| ## #
+|
+| &#40;&#40;…)) XXX TODO
+
+| general (inline; =div)
+|
+|
+|
+| 
+|
+| &#40;&#40;&#40;&#40;…)))) XXX TODO
+
 |===
 
+== Lists
+
+Possible markups for lists:
+
+....
+
+-{
+- element 1 bla bla bla bla bla
+- element2 
+}-
+
+#{
+
+  # element 1
+  # element 2
+
+}#
+
+:{
+
+: term
+  : definition
+
+: term
+  : definition
+
+}:
+
+*{
+
+  * term : definition
+  * term : definition
+
+}*
+....
+
+Nested lists:
+
+
+....
+
+
+-{
+  - element 1 bla bla bla bla bla
+
+    #{
+      # element 1
+      # element 2
+    }#
+
+  - element2 
+}-
+
+{
+  - element 1 bla bla bla bla bla
+
+    {
+      # element 1
+      # element 2
+    }
+
+  - element2 
+}
+....
+
+
+
+== Language marks
+
+....
+
+This is a latine expression: <: s" la" lang=! :> (( alea jacta est )) .
+
+This is a latine expression: <: s" la" lang=! :> <span> alea jacta est
+</span> .
+
+This is a latine expression: la(( alea jacta est )) .
+
+
+....

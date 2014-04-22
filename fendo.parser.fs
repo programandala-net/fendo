@@ -50,25 +50,26 @@ fendo_definitions
 \ **************************************************************
 \ Pending markups
 
-: close_pending_bullet_list  ( -- )
-  \ Close a pending bullet list.
-  [markup>order] </li> </ul> [markup<order]  bullet_list_items off
-  ;
-: close_pending_numbered_list  ( -- )
-  \ Close a pending numbered list.
-  [markup>order] </li> </ol> [markup<order]  numbered_list_items off
-  ;
-: close_pending_list  ( -- )
-  \ Close a pending list, if needed.
-  \ xxx todo maybe an improvement will be required for nested lists
-  bullet_list_items @ if  close_pending_bullet_list  then
-  numbered_list_items @ if  close_pending_numbered_list  then
-  ;
-: close_pending_heading  ( -- )
-  \ Close a pending heading, if needed.
-  \ xxx not used yet
-  opened_[=]? @ if  [markup>order] = [markup<order]  then
-  ;
+\ XXX OLD
+\ : close_pending_bullet_list  ( -- )
+\   \ Close a pending bullet list.
+\   [markup>order] </li> </ul> [markup<order]  bullet_list_items off
+\   ;
+\ : close_pending_numbered_list  ( -- )
+\   \ Close a pending numbered list.
+\   [markup>order] </li> </ol> [markup<order]  numbered_list_items off
+\   ;
+\ : close_pending_list  ( -- )
+\   \ Close a pending list, if needed.
+\   \ xxx todo maybe an improvement will be required for nested lists
+\   bullet_list_items @ if  close_pending_bullet_list  then
+\   numbered_list_items @ if  close_pending_numbered_list  then
+\   ;
+\ : close_pending_heading  ( -- )
+\   \ Close a pending heading, if needed.
+\   \ xxx not used yet
+\   opened_[=]? @ if  [markup>order] = [markup<order]  then
+\   ;
 : close_pending_paragraph  ( -- )
   \ Close a pending paragraph, if needed.
   opened_[_]? @ if  [markup>order] _
@@ -77,6 +78,7 @@ fendo_definitions
   ;
 : close_pending_table  ( -- )
   \ Close a pending table, if needed.
+  \ XXX TODO this will be useless with the new format of tables
   #rows @ if
     [markup>order] </tr> </table> [markup<order]
     #rows off  #cells off
@@ -87,7 +89,7 @@ fendo_definitions
   \ Invoked when an empty line if parsed, and at the end of the
   \ parsing.
 \  ." close_pending because #nothings = " #nothings @ . cr  \ xxx informer
-  close_pending_list close_pending_paragraph close_pending_table echo_cr
+  close_pending_paragraph close_pending_table echo_cr
   ;
 
 \ **************************************************************
