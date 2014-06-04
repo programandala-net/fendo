@@ -107,7 +107,7 @@ note in brackets.
 |
 | = == === ==== ===== ====== [with :numbered:]
 |
-| XXX TODO
+| [TODO]
 
 | image
 | […]
@@ -123,7 +123,7 @@ note in brackets.
 | lang&#40;&#40;&#40;…)))
 |
 | lang&#40;&#40;&#40;…)))
-| lang&#40;&#40;&#40;…)))
+| lang&#40;&#40;&#40;&#40;…))))
 
 | lang (inline)
 |
@@ -155,7 +155,7 @@ note in brackets.
 | * [repeated for nesting]
 | * [repeated for nesting] - [not nested]
 | * - [both not nested]
-| XXX TODO
+| [TODO]
 
 | list (labeled)
 | &#58;
@@ -163,7 +163,7 @@ note in brackets.
 |
 | &#58;&#58;
 |
-| XXX TODO
+| [TODO]
 
 | list (numbered)
 | + [indented for nesting]
@@ -171,7 +171,7 @@ note in brackets.
 | # [repetaded for nesting]
 | 1. a. . [repeated for nesting]
 | # [one level only]
-| XXX TODO
+| [TODO]
 
 | literal (block)
 | """ [3 double quotes]
@@ -187,7 +187,7 @@ note in brackets.
 |
 | pass: ` $$
 |
-| .. XXX TODO
+| .. [TODO]
 
 | monospace
 |
@@ -219,7 +219,7 @@ note in brackets.
 |
 | pass: ` $$
 |
-| ~~ XXX TODO
+| ~~ [TODO]
 
 | quote (block)
 | [indented]
@@ -227,7 +227,7 @@ note in brackets.
 | optional_lang"""…""" [3 double quotes]
 | &#95;&#95;&#95;&#95; [4 underscores]
 | """ [3 double quotes]
-| &#39;&#39;&#39;&#39; [4 single quotes] XXX TODO
+| &#39;&#39;&#39;&#39; [4 single quotes] [TODO]
 
 | quote (inline)
 |
@@ -235,7 +235,7 @@ note in brackets.
 | optional_lang""…"" [2 double quotes]
 |
 | "" [2 double quotes]
-| &#39;&#39; [2 single quotes] XXX TODO
+| &#39;&#39; [2 single quotes] [TODO]
 
 | removal (block)
 | 
@@ -299,7 +299,7 @@ note in brackets.
 |
 | ## #
 |
-| &#40;&#40;…)) XXX TODO
+| &#40;&#40;…)) [TODO]
 
 | general (inline; =div)
 |
@@ -307,7 +307,7 @@ note in brackets.
 |
 | 
 |
-| &#40;&#40;&#40;&#40;…)))) XXX TODO
+| &#40;&#40;&#40;&#40;…)))) [TODO]
 
 |===
 

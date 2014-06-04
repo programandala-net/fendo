@@ -50,21 +50,21 @@ fendo_definitions
 \ **************************************************************
 \ Pending markups
 
+: close_pending_bullet_list  ( -- )
+  \ Close a pending bullet list.
+  [</li>] [</ul>] bullet_list_items off
+  ;
+: close_pending_numbered_list  ( -- )
+  \ Close a pending numbered list.
+  [</li>] [</ol>] numbered_list_items off
+  ;
+: close_pending_list  ( -- )
+  \ Close a pending list, if needed.
+  \ XXX TODO nested lists
+  bullet_list_items @ if  close_pending_bullet_list  then
+  numbered_list_items @ if  close_pending_numbered_list  then
+  ;
 \ XXX OLD
-\ : close_pending_bullet_list  ( -- )
-\   \ Close a pending bullet list.
-\   [markup>order] </li> </ul> [markup<order]  bullet_list_items off
-\   ;
-\ : close_pending_numbered_list  ( -- )
-\   \ Close a pending numbered list.
-\   [markup>order] </li> </ol> [markup<order]  numbered_list_items off
-\   ;
-\ : close_pending_list  ( -- )
-\   \ Close a pending list, if needed.
-\   \ xxx todo maybe an improvement will be required for nested lists
-\   bullet_list_items @ if  close_pending_bullet_list  then
-\   numbered_list_items @ if  close_pending_numbered_list  then
-\   ;
 \ : close_pending_heading  ( -- )
 \   \ Close a pending heading, if needed.
 \   \ xxx not used yet
@@ -73,7 +73,7 @@ fendo_definitions
 : close_pending_paragraph  ( -- )
   \ Close a pending paragraph, if needed.
   opened_[_]? @ if  [markup>order] _
-\  ." CLOSED PARAGRAPH " cr  \ xxx informer
+\  ." CLOSED PARAGRAPH " cr  \ XXX INFORMER
   [markup<order]  then
   ;
 : close_pending_table  ( -- )
@@ -88,8 +88,9 @@ fendo_definitions
   \ Close the pending markups.
   \ Invoked when an empty line if parsed, and at the end of the
   \ parsing.
-\  ." close_pending because #nothings = " #nothings @ . cr  \ xxx informer
-  close_pending_paragraph close_pending_table echo_cr
+\  ." close_pending because #nothings = " #nothings @ . cr  \ XXX INFORMER
+  close_pending_paragraph close_pending_table close_pending_list
+  echo_cr
   ;
 
 \ **************************************************************
@@ -99,7 +100,7 @@ variable more?  \ flag: keep on parsing more words?; changed by '}content'
 
 :noname  ( ca len -- )
   \ Manage a parsed string of content: print it and update the counters.
-\  ." content! " order cr  \ xxx informer
+\  ." content! " order cr  \ XXX INFORMER
   #markups off  _echo  1 #nonmarkups +!
   ;  is content
 : (markup)  ( xt -- )
@@ -112,7 +113,7 @@ variable more?  \ flag: keep on parsing more words?; changed by '}content'
   \ if required.
   \ ca len = name of the markup
   \ xt = execution token of the markup
-\  ." markup! " order cr  \ xxx informer
+\  ." markup! " order cr  \ XXX INFORMER
   execute_markup? @
   if  nip nip (markup)  else  drop content  then
   ;
@@ -123,34 +124,34 @@ variable more?  \ flag: keep on parsing more words?; changed by '}content'
 : markup?  ( ca len -- xt | 0 )
   \ Is the given string any kind of markup
   \ (wiki markup, HTML entity or user macro)?
-\  cr ." markup? " .s key drop  \ xxx informer
+\  cr ." markup? " .s key drop  \ XXX INFORMER
   get-order n>r
-\  cr ." markup? 0 " .s key drop  \ xxx informer
+\  cr ." markup? 0 " .s key drop  \ XXX INFORMER
   set_markup_order found?
-\  cr ." markup? 1 " .s key drop  \ xxx informer
+\  cr ." markup? 1 " .s key drop  \ XXX INFORMER
   nr> set-order
-\  cr ." markup? 2 " .s key drop  \ xxx informer
+\  cr ." markup? 2 " .s key drop  \ XXX INFORMER
   ;
 : something  ( ca len -- )
   \ Manage something found on the page content.
   \ ca len = parsed item (markup or printable content)
-\  2dup ." something= " type space order cr  \ xxx informer
-\  depth 2 > abort" something wrong!"  \ xxx informer
+\  2dup ." something= " type space order cr  \ XXX INFORMER
+\  depth 2 > abort" something wrong!"  \ XXX INFORMER
   2dup parsed$ $!
   #nothings off
-\  ." #nothings = " #nothings @ . cr  \ xxx informer
+\  ." #nothings = " #nothings @ . cr  \ XXX INFORMER
   2dup markup? ?dup if  markup  else  content  then  1 #parsed +!
   ;
 
 0 [if]
-\ xxx old, abandoned on 2014-02-05, in order to implement the user macros
+\ XXX OLD, abandoned on 2014-02-05, in order to implement the user macros
 : something  ( ca len -- )
   \ Manage something found on the page content.
   \ ca len = parsed item (markup or printable content)
-\  2dup cr type space  \ xxx informer
-\  depth 2 > abort" something wrong!"  \ xxx informer
+\  2dup cr type space  \ XXX INFORMER
+\  depth 2 > abort" something wrong!"  \ XXX INFORMER
   #nothings off
-\  ." #nothings = " #nothings @ . cr  \ xxx informer
+\  ." #nothings = " #nothings @ . cr  \ XXX INFORMER
   2dup fendo_markup_wid search-wordlist
   if  markup
   else
@@ -165,7 +166,7 @@ variable more?  \ flag: keep on parsing more words?; changed by '}content'
 \ 2013-08-10: experimental new version, with direct execution of
 \ Forth code; unfinished
 
-: something_in_code_zone  ( ca len -- )  \ xxx todo
+: something_in_code_zone  ( ca len -- )  \ XXX TODO
   \ Manage something found in a Forth code zone.
   \ ca len = parsed item
   2dup fendo_markup_wid search-wordlist
@@ -176,7 +177,7 @@ variable more?  \ flag: keep on parsing more words?; changed by '}content'
   then
   1 #parsed +!
   ;
-: something_in_ordinary_zone  ( ca len -- )  \ xxx todo
+: something_in_ordinary_zone  ( ca len -- )  \ XXX TODO
   \ Manage something found out of Forth code zones.
   \ ca len = parsed item (markup or printable content)
   2dup fendo_markup_wid search-wordlist
@@ -187,11 +188,12 @@ variable more?  \ flag: keep on parsing more words?; changed by '}content'
   then
   1 #parsed +!
   ;
-: something  ( ca len -- )  \ xxx todo
+: something  ( ca len -- )  \ XXX TODO
   \ Manage something found on the page content.
   \ ca len = parsed item (markup, Forth code or printable content)
   #nothings off
-\  ." #nothings = " #nothings @ . cr  \ xxx informer
+\  ." #nothings = " #nothings @ . cr  \ XXX INFORMER
+\  ~~  \ XXX INFORMER
   forth_code_depth @
   if    something_in_code_zone
   else  something_in_ordinary_zone  then
@@ -202,19 +204,20 @@ variable more?  \ flag: keep on parsing more words?; changed by '}content'
   \ Manage a "nothing", a parsed empty name.
   \ The first empty name means the current line is finished;
   \ the second consecutive empty name means the current line is empty.
-\  cr ." nothing"  \ xxx informer
-  preserve_eol? @ if  echo_cr  then  \ xxx tmp
+\  cr ." nothing"  \ XXX INFORMER
+  preserve_eol? @ if  echo_cr  then  \ XXX TMP
   #nothings @  \ an empty line was parsed?
   if    close_pending
   then  1 #nothings +!
-\  ." #nothings = " #nothings @ . cr  \ xxx informer
+\  ." #nothings = " #nothings @ . cr  \ XXX INFORMER
   #parsed off
   ;
 : parse_content  ( "text" -- )
   \ Parse the current input source.
   \ The process is finished by the '}content' markup or the end
   \ of the source.
-\  order key drop  \ xxx informer
+\  order key drop  \ XXX INFORMER
+\  ~~  \ XXX INFORMER
   separate? off  more? on
   begin
     parse-name ?dup
@@ -254,30 +257,30 @@ variable more?  \ flag: keep on parsing more words?; changed by '}content'
     then  0=
   until   echo> ! >attributes<  echoed $@
   [then]
-\  2dup ." result of parsed_link_text = " type cr  \ xxx informer
+\  2dup ." result of parsed_link_text = " type cr  \ XXX INFORMER
   ;
 : (parse_link_text)  ( "...<space>|<space>" | "...<space>]]<space>"  -- )
   \ Parse the link text and store it into 'link_text'.
   s" " link_text!  \ xxx needed?
   parsed_link_text
-\  ." link_text in (parse_link_text) = " 2dup type cr  \ xxx informer  \ xxx informer
+\  ." link_text in (parse_link_text) = " 2dup type cr  \ XXX INFORMER  \ xxx informer
   link_text!
   ;
 ' (parse_link_text) is parse_link_text
 
-0 [if]  \ xxx tmp moved to fendo_files.fs
+0 [if]  \ XXX TMP moved to fendo_files.fs
 
 \ Target file
 
 : (open_target)  ( -- )
   \ Open the target HTML page file.
   current_page
-\  cr ." current_page in (open_target) =  " dup .  \ xxx informer
+\  cr ." current_page in (open_target) =  " dup .  \ XXX INFORMER
   target_path/file
-\  cr ." target file =  " 2dup type cr key drop  \ xxx informer
+\  cr ." target file =  " 2dup type cr key drop  \ XXX INFORMER
   w/o create-file throw target_fid !
-\  ." target file just opened: "  \ xxx informer
-\  target_fid @ . cr  \ xxx informer
+\  ." target file just opened: "  \ XXX INFORMER
+\  target_fid @ . cr  \ XXX INFORMER
 \  s" <!-- xxx -->" target_fid @ write-line throw  \ xxx debugging
   ;
 : open_target  ( -- )
@@ -286,14 +289,14 @@ variable more?  \ flag: keep on parsing more words?; changed by '}content'
   ;
 : (close_target)  ( -- )
   \ Close the target HTML page file.
-\  depth abort" stack not empty"  \ xxx informer
+\  depth abort" stack not empty"  \ XXX INFORMER
   target_fid @ close-file throw
-\  ." target_fid just closed. " \ xxx informer
+\  ." target_fid just closed. " \ XXX INFORMER
   target_fid off
   ;
 : close_target  ( -- )
   \ Close the target HTML page file, if needed.
-\  ." close_target" cr \ xxx informer
+\  ." close_target" cr \ XXX INFORMER
   target_fid @ if  (close_target)  then
   ;
 
@@ -309,10 +312,10 @@ variable more?  \ flag: keep on parsing more words?; changed by '}content'
     if  2drop website_design_subdir $@  then
     current_page template dup 0=  \ xxx individual page templates are useful
     if  2drop website_template $@ then  s+ s+
-  [else]  \ xxx old version, without page fields
+  [else]  \ XXX OLD version, without page fields
     website_design_subdir $@ website_template $@ s+ s+
   [then]
-\  ." template_file = " 2dup type cr  \ xxx informer
+\  ." template_file = " 2dup type cr  \ XXX INFORMER
   ;
 : template_halves  ( ca1 len1 -- ca2 len2 ca3 len3 )
   \ Divide the template in two parts, excluding the content holder.
@@ -348,7 +351,7 @@ variable template_content
   \ Return the template content.
   template_content $@len
   if  get_template_again  else  get_template_first  then
-\  .s  \ xxx informer
+\  .s  \ XXX INFORMER
   ;
 [else]  \ xxx second method; the template file is read twice
 \ xxx 2013-10-27: this alternative is tried in order to see
@@ -374,29 +377,29 @@ variable template_content
 : .sourcefilename  ( -- )
   \ Print the name of the currently parsed file.
   sourcefilename type cr
-\ ."  XXX stack check: " .s  \ xxx informer
+\ ."  XXX stack check: " .s  \ XXX INFORMER
   depth abort" Stack not empty"
-\  depth if  cr ." Stack not empty" cr .s quit  then  \ xxx informer
+\  depth if  cr ." Stack not empty" cr .s quit  then  \ XXX INFORMER
   ;
 variable }content?  \ flag: was '}content' executed?
 : (content{)  ( -- )
   \ Create the top template part of the target page
   \ and parse the page content.
-\  ~~  \ xxx informer
+\  ~~  \ XXX INFORMER
   opened_markups_off
   open_target template{
   }content? off  parse_content
   }content? @ 0= abort" Missing '}content' at the end of the page"
-\  ~~  \ xxx informer
+\  ~~  \ XXX INFORMER
   ;
 : do_page?  ( -- wf )
-\  current_page draft? if  ." DRAFT!" cr  then  \ xxx informer
+\  current_page draft? if  ." DRAFT!" cr  then  \ XXX INFORMER
   do_content? @  current_page draft? 0=  and
-\  do_content? @   \ xxx tmp
+\  do_content? @   \ XXX TMP
   ;
 : skip_page  ( -- )
   \ No target page must be created; skip the current source page.
-\  ." skip_page" cr  \ xxx informer
+\  ." skip_page" cr  \ XXX INFORMER
   \eof  \ skip the rest of the file
   do_content? on  \ set default for the next page
   ;
@@ -404,17 +407,17 @@ variable }content?  \ flag: was '}content' executed?
   \ Create the page content, if needed.
   \ The end of the content is marked with the '}content' markup.
   \ Only one 'content{ ... }content' block is allowed in the page.
-\  ." content{" cr  \ xxx informer
-\  ~~  \ xxx informer
+\  ." content{" cr  \ XXX INFORMER
+\  ~~  \ XXX INFORMER
   do_page?
-\  ~~  \ xxx informer
+\  ~~  \ XXX INFORMER
   if  .sourcefilename
-\    ." content{" cr  \ xxx informer
-\    ~~  \ xxx informer
+\    ." content{" cr  \ XXX INFORMER
+\    ~~  \ XXX INFORMER
     (content{)
   else
     skip_page
-\    ~~  \ xxx informer
+\    ~~  \ XXX INFORMER
   then
   ;
 : finish_the_target  ( -- )
@@ -424,12 +427,12 @@ variable }content?  \ flag: was '}content' executed?
 get-current markup>current
 : }content  ( -- )
   \ Finish the page content.
-\ cr .s cr ." start of }content " \ xxx informer
+\ cr .s cr ." start of }content " \ XXX INFORMER
   finish_the_target
-\  do_content? on  \ default value for the next page  \ xxx old
+\  do_content? on  \ default value for the next page  \ XXX OLD
   only fendo>order forth>order
   }content? on
-\ cr .s cr ." end of }content"  \ xxx informer
+\ cr .s cr ." end of }content"  \ XXX INFORMER
   ;
 set-current
 
@@ -527,5 +530,8 @@ set-current
 
 \ 2014-03-09: New: 'parsed$' keeps the string in 'something'; required
 \ by the new way the heading wiki markups work.
+
+\ 2014-06-04: Change: 'close_pending_list' restored. It was commented
+\ out, but it's necessary.
 
 .( fendo.parser.fs compiled ) cr

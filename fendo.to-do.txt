@@ -1,5 +1,15 @@
 = Fendo to-do list
 
+2014-06-04:
+
+The language markup is not rendered in <img> alt text, see:
+<es.imagen.2012.11.25.raspberry_pi.html>.
+
+2014-06-03:
+
+The flag 'lonely_tags_link_to_content' works with tag clouds.
+Now it must work also with tag lists.
+
 2014-04-07:
 
 Implement author and title for block quotes, like Asciidoctor, e.g.:

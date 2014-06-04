@@ -331,8 +331,6 @@ markup_definitions
   [</div>] separate? on
   ;
 
-markup_definitions
-
 require ./fendo.markup.fendo.code.fs
 require ./fendo.markup.fendo.comment.fs
 require ./fendo.markup.fendo.forth.fs
@@ -348,7 +346,7 @@ require ./fendo.markup.fendo.table.fs
 \ XXX WARNING: Punctuation must be the last markup file required, and
 \ no markup must be defined after the punctuation, because it creates
 \ markup words with the name of Forth words (e.g. '!').
-\ XXX FIXME change the _order_ set by 'markup_definitions'?
+\ XXX FIXME Solvi this by changing the _order_ set by 'markup_definitions'?
 
 require ./fendo.markup.fendo.punctuation.fs
 

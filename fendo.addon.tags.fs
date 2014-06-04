@@ -34,6 +34,11 @@
 \ 2014-03-11: Fix: now 'tag_link' sets the needed wordlist order;
 \   this is needed because the order was changed before evaluating
 \   the tags.
+\ 2014-05-28: New: 'tags_used_only_once_link_to_its_own_page' flag.
+\ 2104-05-28: Change: '(tag_link)' modified in order to implement
+\   'tags_used_only_once_link_to_its_own_page'.
+\ 2014-06-03: Change: 'tags_used_only_once_link_to_its_own_page'
+\   renamed to 'lonely_tags_link_to_content'.
 
 \ **************************************************************
 \ Stack notation
@@ -47,6 +52,7 @@
 forth_definitions
 require galope/n-to-r.fs  \ 'n>r'
 require galope/n-r-from.fs  \ 'nr<'
+require galope/plus-plus.fs  \ '++'
 fendo_definitions
 
 \ **************************************************************
@@ -89,7 +95,10 @@ wordlist constant fendo_tags_wid
   cell+ @ name>string
   ;
 : tag>text  ( tag -- ca len )
-  2 cells + count
+  3 cells + count
+  ;
+: tag>own_page  ( tag -- a )
+  2 cells +
   ;
 
 defer tags_url_section$  \ to be set by the application
@@ -97,19 +106,56 @@ s" tag." 2constant (tags_url_section$)
 ' (tags_url_section$) is tags_url_section$  \ default
 : (tag>pid$)  ( tag -- ca len )
   \ Default conversion from tag to pid.
-  tags_url_section$ rot tag>name s+ 
+  tags_url_section$ rot tag>name s+
   ;
 defer tag>pid$  ( tag -- ca len )
   \ Actual conversion from tag to pid,
   \ to be configured by the application.
 ' (tag>pid$) is tag>pid$
 
+
 \ **************************************************************
 \ Possible behaviours of the tags
 
+variable lonely_tags_link_to_content  \ flag
+
+\ When 'lonely_tags_link_to_content' is on, the tag cloud
+\ links of tags used only once are changed to its actual tagged page.
+\ But this does not work for tag lists. The code required for tag list
+\ would be much more complex. In order to achive the same effect in
+\ tag lists, the user application can create a normal shorcut, e.g.:
+
+\   shortcut: en.tag.dbase  s" en.program.my_database" href!  ;
+
+\ In fact such a shortcut would have effect also in tag clouds, so the
+\ current code triggered by 'lonely_tags_link_to_content'
+\ is unnecessary.
+
+: ((tag_link))  ( tag ca len -- )
+  \ ca len = pid
+  rot tag>text link
+  ;
+: (tag_link_to_tag_page)  ( tag -- )
+  dup tag>pid$ ((tag_link))
+  ;
+: (tag_link_to_own_page)  ( tag -- )
+  dup tag>own_page $@ 
+\  type cr key drop  \ XXX INFORMER
+  ((tag_link))
+  ;
+: tag_link_to_own_page?  ( tag -- wf )
+  tag>count @
+\  dup cr ." tag>count" . \ XXX INFORMER
+  1 =
+  lonely_tags_link_to_content @
+\  dup cr ." lonely_tags_link_to_content" . \ XXX INFORMER
+  and
+  ;
 : (tag_link)  ( tag -- )
   \ Create a link to the given tag.
-  dup tag>pid$ rot tag>text link 
+  dup tag_link_to_own_page?
+  if    (tag_link_to_own_page)
+  else  (tag_link_to_tag_page)  then
   ;
 : tag_link  ( tag -- )
   \ Create a link to the given tag.
@@ -120,7 +166,10 @@ defer tag>pid$  ( tag -- ca len )
   tag>count off
   ;
 : (tag_does_increase)  ( tag -- )
-  tag>count 1 swap +!
+  tag>count ++
+  ;
+: (tag_does_increase_and_save_own_page)  ( tag -- )
+  dup (tag_does_increase)  last_traversed_pid $@ rot tag>own_page $!
   ;
 : (tag_does_total)  ( tag -- +n )
   tag>count @
@@ -164,7 +213,10 @@ export
   ;
 : tags_do_increase  ( -- )
   \ Set the tags to increase their counts.
-  ['] (tag_does_increase) is (tag_does)
+  lonely_tags_link_to_content @
+  if    ['] (tag_does_increase_and_save_own_page)
+  else  ['] (tag_does_increase)
+  then  is (tag_does)
   ;
 : tags_do_total  ( -- )
   \ Set the tags to return their counts.
@@ -204,8 +256,12 @@ export
   \   s" ZX Spectrum" tag zx_spectrum
   get-current >r  fendo_tags_wid set-current
   create
-    \ The body holds a counter, the name token and the text
-    0 , latestxt >name , s,
+    \ The body holds a counter, the name token, the text,
+    \ and the last own page id ( XXX not used yet)
+    0 ,  \ tag counter
+    latestxt >name ,  \ name token
+    0 , \ dynamic string variable, pid of the (last) own page
+    s,  \ text
   r> set-current
   does>   ( -- ) ( dfa ) (tag_does)
   ;
@@ -220,7 +276,7 @@ s" /tmp/fendo.tags.fs" 2constant tags_filename$
   ;
 : create_tags_file  ( -- )
   \ Create a temporary file with the list of all tags.
-  ['] tag_words 
+  ['] tag_words
   tags_filename$ w/o create-file throw dup >r outfile-execute
   r> close-file throw
   ;
