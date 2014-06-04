@@ -1,8 +1,9 @@
-.( fendo.addon.creole_verbatim_block.fs) cr
+.( fendo.addon.markup.creole_verbatim_block.fs) cr
 
 \ This file is part of Fendo.
 
-\ This file provides the Creole markup for verbatim blocks.
+\ This file provides the Creole markup for verbatim blocks, deprecated
+\ from the set of markups used by default.
 
 \ Copyright (C) 2013,2014 Marcos Cruz (programandala.net)
 
@@ -25,8 +26,9 @@
 \ **************************************************************
 \ Change history of this file
 
-\ 2014-04-20: Code deprecated, substituted by Asciidoctor markup.
-\ extracted from <fendo.markup.wiki.fs>;
+\ 2014-04-20: Code deprecated, substituted by the Asciidoctor markup.
+\ Extracted from <fendo.markup.wiki.fs> (then renamed to
+\ <fendo.markup.fendo.fs>.
 
 \ **************************************************************
 

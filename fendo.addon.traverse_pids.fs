@@ -37,6 +37,8 @@
 \   is Forth source, not a simple list anymore.
 \ 2014-03-03: Fix: removed a redundant definition.
 \ 2014-03-11: Fix: '--key=2,2' added to 'sort$'.
+\ 2014-05-28: New: 'last_traversed_pid', required to improve the tag
+\   cloud.
 
 \ **************************************************************
 
@@ -77,12 +79,15 @@ is (traversed_pid)
 
 export
 
+variable last_traversed_pid
+
 : traversed_pid  ( ca len -- )
   \ ca len = pid
+  2dup last_traversed_pid $!
   (traversed_pid) 0= if  \eof  then
   ;
 : traverse_pids  ( xt -- )
-  is (traversed_pid)  create_pids_file  
+  is (traversed_pid)  create_pids_file
   \ pid_file$ included  \ xxx fixme this causes problems:
   \   *** glibc detected *** gforth: free(): invalid pointer: 0xb69fb7f0 ***
   \   Aborted.

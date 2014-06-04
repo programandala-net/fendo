@@ -30,7 +30,11 @@
 \ 2014-03-08: Improved. First draft to change the size of tags.
 \ 2014-03-09: Fix: calculation for the tag font size.
 \ 2014-03-12: Improvement: faster, with additional '?exit' and rearranged
-\ conditions.
+\   conditions.
+\ 2014-05-28: Change: '++' used.
+\ 2014-05-28: New: 'tags_used_only_once_link_to_its_own_page' flag.
+\ 2014-06-03: Change: 'tags_used_only_once_link_to_its_own_page'
+\   renamed to 'lonely_tags_link_to_content'.
 
 \ **************************************************************
 \ Requirements
@@ -77,18 +81,18 @@ variable pages
   ;
 
 : count_tags  ( ca len -- )
+  \ Count the tags in the given pid
   \ ca len = pid
-\  ." count_tags " 2dup type cr  \ xxx informer
   pid$>data>pid# tags evaluate_tags
   ;
 variable prefix$
 : (count_tags_by_prefix)  { D: pid -- }
   \ Increase the count of tags that are in pages whose pid
-  \ matches the current regex. 
+  \ matches the current regex.
 \  ." count_tags_by_prefix " 2dup type cr  \ xxx informer
   pid prefix$ $@ string-prefix? 0= ?exit
   pid pid$>data>pid# draft? ?exit
-  pid count_tags 
+  pid count_tags
   ;
 : count_tags_by_prefix  ( ca len -- f )
   \ ca len = pid
@@ -114,6 +118,7 @@ variable tag_max_size  \ percentage
 tag_cloud_with_counts on
 tag_cloud_with_sizes on
 tag_cloud_counts_sized off
+lonely_tags_link_to_content on
 090 tag_min_size !
 400 tag_max_size !
 
@@ -133,13 +138,13 @@ hide
   tag_max_size @ tag_min_size @ -
   ;
 : tag_count_range  ( -- n )
-  tag_max_count @ tag_min_count @ - 
+  tag_max_count @ tag_min_count @ -
   ;
 : tag_size  ( +n1 -- +n2 )
   \ +n1 = tag count
   \ +n2 = tag size (percentage)
   tag_min_count @ - 100 *  tag_count_range /
-  tag_size_range *  100 /  tag_min_size @ + 
+  tag_size_range *  100 /  tag_min_size @ +
   ;
 : tag_cloud_sizes  ( tag -- )
   \ Set the font size style for the next HTML tag, actually <li> or <a>.
@@ -151,7 +156,7 @@ hide
   tag_cloud_with_sizes @ and if  tag_cloud_sizes  else  drop  then
   ;
 : (tag_does_echo_cloud)  { tag -- }
-  \ Create a tag cloud link to the given tag.
+  \ Create a tag cloud link to the given tag
   tag tag_cloud_counts_sized @ ?tag_cloud_sizes  [<li>]
   tag tag_cloud_counts_sized @ 0= ?tag_cloud_sizes
   tag tag_link  tag tag_count  [</li>]
