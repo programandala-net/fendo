@@ -51,7 +51,6 @@
 forth_definitions
 
 \ From Galope
-require galope/slash-csv.fs  \ '/csv'
 require galope/char_count.fs  \ 'char_count'
 
 \ From Fourth Foundation Library
@@ -519,13 +518,28 @@ do_content? on
 \ **************************************************************
 \ Calculated data
 
+require galope/slash-sides.fs  \ '/sides'
+
+: /ssv  ( ca len -- ca#1 len#1 ... ca#u len#u u )
+  \ Divide a space separated values string.
+  \ ca len = string with space separated values
+  \ ca#1 len#1 ... ca#u len#u = one or more strings
+  \ u = number of strings returned
+  \ XXX TMP provisional solution, copied from '/csv'.
+  \ XXX TODO make it simpler: use 'execute-parsing' instead.
+  depth >r
+  begin  s"  " /sides 0=  until  2drop
+  depth r> 2 - - 2/
+  ;
+
 : property?  ( ca len a -- wf )
   \ ca len = property to check
   \ a = page id (address of its data)
   \ wf = is the property in the properties field of the page?
   { D: property page_id }
   page_id properties  false { result }
-  /csv 0 ?do
+  /ssv 0 ?do
+    \ XXX TODO remove 'trim' when '/ssv' is rewritten
     trim property str= result or to result
   loop  result
   ;
