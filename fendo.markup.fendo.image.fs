@@ -105,6 +105,7 @@ variable image_finished?  \ flag, no more image markup to parse?
   ;
 : parse_image  ( "imagemarkup}}" -- )
   \ Parse and store the image attributes.
+\  cr ." parse_image " key drop  \ XXX INFORMER
   get_image_src_attribute
   set_image_size_attributes
   [ true ] [if]  \ simple version

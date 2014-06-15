@@ -124,7 +124,7 @@ variable more?  \ flag: keep on parsing more words?; changed by '}content'
 : markup?  ( ca len -- xt | 0 )
   \ Is the given string any kind of markup
   \ (wiki markup, HTML entity or user macro)?
-\  cr ." markup? " .s key drop  \ XXX INFORMER
+\  cr ." markup? >> " 2dup type key drop  \ XXX INFORMER
   get-order n>r
 \  cr ." markup? 0 " .s key drop  \ XXX INFORMER
   set_markup_order found?
@@ -132,6 +132,8 @@ variable more?  \ flag: keep on parsing more words?; changed by '}content'
   nr> set-order
 \  cr ." markup? 2 " .s key drop  \ XXX INFORMER
   ;
+\ variable evaluate_the_markup?  \ flag XXX OLD
+\ evaluate_the_markup? on  \ XXX OLD
 : something  ( ca len -- )
   \ Manage something found on the page content.
   \ ca len = parsed item (markup or printable content)
@@ -140,7 +142,14 @@ variable more?  \ flag: keep on parsing more words?; changed by '}content'
   2dup parsed$ $!
   #nothings off
 \  ." #nothings = " #nothings @ . cr  \ XXX INFORMER
+  [ true ] [if]  \ XXX first version
   2dup markup? ?dup if  markup  else  content  then  1 #parsed +!
+  [else]  \ XXX OLD second version
+  evaluate_the_markup? @
+  if    2dup markup? ?dup if  markup  else  content  then
+  else  content
+  then  1 #parsed +!
+  [then]
   ;
 
 0 [if]
@@ -216,7 +225,7 @@ variable more?  \ flag: keep on parsing more words?; changed by '}content'
   \ Parse the current input source.
   \ The process is finished by the '}content' markup or the end
   \ of the source.
-\  order key drop  \ XXX INFORMER
+\  cr ." order in parse_content >> " order key drop  \ XXX INFORMER
 \  ~~  \ XXX INFORMER
   separate? off  more? on
   begin
@@ -229,6 +238,7 @@ variable more?  \ flag: keep on parsing more words?; changed by '}content'
 
 : (evaluate_content)  ( ca len -- )
   \ Evaluate a string as page content.
+\  cr cr ." (evaluate_content) >> " 2dup type key drop  \ XXX INFORMER
   ['] parse_content execute-parsing  #nothings off
   ;
 ' (evaluate_content) is evaluate_content
@@ -239,6 +249,13 @@ variable more?  \ flag: keep on parsing more words?; changed by '}content'
   ;
 : parsed_link_text  ( "text<spaces>|<spaces>" | "text<spaces>]]<spaces>"  -- ca len )
   \ Parse and return the link text.
+  \ The possible markup in the link text is not evaluated here,
+  \ but at a higher level, when the link is actually echoed. The
+  \ reason is links can be created also by direct commands.
+
+\  XXX OLD
+\  evaluate_the_markup? off  \ deactivate the markup rendering in 'something' 
+
   echo> @  echo>string
   >attributes< -attributes  \ use the alternative set and init it
   separate? off
@@ -257,14 +274,18 @@ variable more?  \ flag: keep on parsing more words?; changed by '}content'
     then  0=
   until   echo> ! >attributes<  echoed $@
   [then]
-\  2dup ." result of parsed_link_text = " type cr  \ XXX INFORMER
+\  cr ." result of parsed_link_text = " 2dup type key drop  \ XXX INFORMER
+\  evaluate_the_markup? on  \ XXX OLD
   ;
 : (parse_link_text)  ( "...<space>|<space>" | "...<space>]]<space>"  -- )
   \ Parse the link text and store it into 'link_text'.
   s" " link_text!  \ xxx needed?
   parsed_link_text
-\  ." link_text in (parse_link_text) = " 2dup type cr  \ XXX INFORMER  \ xxx informer
+  \ XXX FIXME link_text@ here returns a string with macros already
+  \ parsed! why?
+\  cr ." link_text$ in (parse_link_text) = " 2dup type key drop  \ XXX INFORMER
   link_text!
+  link_text_already_evaluated? on  \ for 'evaluate_link_text' in <fendo.links.fs>
   ;
 ' (parse_link_text) is parse_link_text
 
@@ -533,5 +554,19 @@ set-current
 
 \ 2014-06-04: Change: 'close_pending_list' restored. It was commented
 \ out, but it's necessary.
+
+\ 2014-06-15: Fix: The new flag 'evaluate_the_markup?' (temporarily
+\ turned off in 'parsed_link_text) fixes the following problem: link
+\ texts were rendered twice: during parsing and during echoing. For
+\ example, this caused an abbr macro was recognized and executed
+\ during parsing, and then another abbr macro inside the title
+\ attribute of the first abbr was recognized and executed as well,
+\ what ruined the HTML.  But the fix causes a new problem: images
+\ inside link texts crash. The solution was to make the evaluation
+\ optional at the higher level, in <fendo.links.fs>, as follows:
+
+\ 2014-06-15: Fix: repeated evaluation of link texts is solved with
+\ the new 'link_text_already_evaluated?' flag, defined and checked in
+\ <fendo.links.fs>.
 
 .( fendo.parser.fs compiled ) cr

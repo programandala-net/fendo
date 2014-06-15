@@ -31,6 +31,9 @@
 \   notation: "pid$" and "pid#" for both types of page ids.
 \ 2014-03-03: New: 'link<pid#'.
 \ 2014-03-03: Change: 'title_link' renamed to 'link<pid$'.
+\ 2014-06-15: Fix: repeated evaluation of link texts is solved
+\ with the new 'link_text_already_evaluated?' flag.
+
 
 \ **************************************************************
 \ Requirements
@@ -83,8 +86,15 @@ $variable link_text
   \ store the given string into it.
   link_text@ empty? if  link_text!  else  2drop  then
   ;
+variable link_text_already_evaluated?  \ flag
+link_text_already_evaluated? off
 : evaluate_link_text  ( -- )
-  link_text@ evaluate_content
+  \ Note: 'link_text_already_evaluated?' is turned on by
+  \ '(parse_link_text)' in <fendo.parser.fs>.
+  link_text@
+\  2dup cr ." in evaluate_link_text >> " type key drop  \ XXX INFORMER
+  link_text_already_evaluated? @ if  echo  else  evaluate_content  then
+  link_text_already_evaluated? off
   ;
 [then]
 
@@ -243,6 +253,9 @@ defer link_suffix
 : echo_link  ( -- )
   \ Echo a link, if possible.
   \ All link attributes have been set.
+  \ XXX FIXME link_text@ here returns a string with macros already
+  \ parsed! why?
+\  cr ." link_text$ in echo_link >> " link_text@ type key drop  \ XXX INFORMER
   tune_link  echo_link?
   if  (echo_link)  else  echo_link_text  then  reset_link
   ;
