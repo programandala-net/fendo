@@ -124,6 +124,7 @@ variable link_finished?  \ flag, no more link markup to parse?
 : end_of_link?  ( ca len -- wf )
   \ ca len = latest name parsed
   s" ]]" str=  dup link_finished? !
+\  cr ." end_of_link? >> " dup .  \ XXX INFORMER
   ;
 : end_of_link_section?  ( ca len -- wf )
   \ ca len = latest name parsed

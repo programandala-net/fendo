@@ -58,6 +58,9 @@
 \   easier, e.g. modules that define markups and require libraries.
 \   The requirements section of all Fendo files is updated with
 \   'forth_definitions' and 'fendo_definitions'.
+\ 2014-06-14: New: 'recognize_macros?'.
+\ 2014-06-15: Change: 'recognize_macros?' is commented out. The
+\ problem was solved with 'evaluate_the_markup?' in <fendo.parser.fs>.
 
 \ **************************************************************
 \ Todo
@@ -250,11 +253,17 @@ wordlist constant fendo_pid_wid  \ page ids
 : entities>current  ( -- )
   fendo_markup_html_entities_wid set-current
   ;
+\ XXX OLD
+\ variable recognize_macros?  \ flag, turned off for parsing HTML parameters
+\ recognize_macros? on
 : markup_wids  ( -- wid'1 ... wid'n )
   \ Return the wordlists that contain markup to be recognized.
   \ wid'1 = highest priority wordlist
   \ wid'n = lowest priority wordlist
-  fendo_markup_macros_wid
+\ XXX OLD
+\  recognize_macros? @ if
+    fendo_markup_macros_wid
+\  then
   fendo_markup_html_entities_wid
   fendo_markup_wid
   ;
