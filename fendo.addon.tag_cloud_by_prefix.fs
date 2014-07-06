@@ -126,7 +126,9 @@ hide
 
 : (tag_count)  ( tag -- )
   s\" &nbsp;<span class=\"tagCount\">(" echo
-  tag>count @ echo.
+  tag>count @ 
+\  dup ."  count=" . key drop  \ XXX INFORMER
+  echo.
 \  s" /" echo pages @ echo.  \ xxx tmp
 \  ." pages " pages @ .  \ xxx xxx informer
   s" )</span>" echo
@@ -157,6 +159,7 @@ hide
   ;
 : (tag_does_echo_cloud)  { tag -- }
   \ Create a tag cloud link to the given tag
+\  tag tag>name cr type  \ XXX INFORMER
   tag tag_cloud_counts_sized @ ?tag_cloud_sizes  [<li>]
   tag tag_cloud_counts_sized @ 0= ?tag_cloud_sizes
   tag tag_link  tag tag_count  [</li>]

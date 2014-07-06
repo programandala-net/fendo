@@ -45,13 +45,12 @@ module: fendo.addon.tagged_pages_by_prefix
 
 variable prefix$
 : flags>or  ( f1 ... fn n -- f )
-  1- 0 ?do  or  loop 
+  1- 0 ?do  or  loop
   ;
 : ((tagged_pages_by_prefix))  { D: pid -- }
   \ Create a description list of content
   \ if the given pid starts with the current prefix.
-  \ ca len = pid
-  \ f = continue with the next element?
+\  ." ((tagged_pages_by_prefix)) " pid type cr ~~  \ XXX INFORMER
   pid prefix$ $@ string-prefix? 0= ?exit
   pid pid$>data>pid# dup draft?
   if    drop
@@ -59,7 +58,9 @@ variable prefix$
         if  pid dtddoc  tag_presence off  then
   then
   ;
-: (tagged_pages_by_prefix)  ( ca len -- f )
+: (tagged_pages_by_prefix)  ( ca len -- wf )
+  \ ca len = pid
+  \ f = continue with the next element?
   ((tagged_pages_by_prefix)) true
   ;
 
