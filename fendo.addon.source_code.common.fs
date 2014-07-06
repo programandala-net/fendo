@@ -55,6 +55,9 @@
 
 \ 2014-03-12: Change: filename and module renamed.
 
+\ 2014-06-16: Fix: <source_code.vim> renamed to
+\ <fendo.addon.source_code.vim>.
+
 \ **************************************************************
 \ Todo
 
@@ -129,7 +132,7 @@ s" vim -f " (base_highlight_command$) $!
   (base_highlight_command$) $@
   ;
 [then]
-sourcepath s" source_code.vim " s+ 2constant vim_program$
+sourcepath s" fendo.addon.source_code.vim " s+ 2constant vim_program$
 hide
 
 : program+  ( ca len -- ca' len' )

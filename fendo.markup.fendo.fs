@@ -323,7 +323,7 @@ markup_definitions
   [</span>] separate? on
   ;
 : ((((  ( -- )
-  \ End a generic block zone.
+  \ Start a generic block zone.
   [<div>] separate? off
   ;
 : ))))  ( -- )

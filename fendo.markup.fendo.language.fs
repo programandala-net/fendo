@@ -43,8 +43,9 @@ fendo_definitions
   language_markup: eo
   language_markup: es
 
-For every language markups are created: 'lang((' for inline zones and
-'lang((((' for block zones.
+For every language, the following markups are created:
+- 'lang((' for inline zones
+- 'lang((((' for block zones
 
 Usage example:
 
@@ -70,7 +71,7 @@ Usage example:
 : language_block_markup  ( ca len -- )
   \ Create a language block markup.
   \ ca len = ISO code of a language
-  2dup s" (((" s+ :create_markup s,
+  2dup s" ((((" s+ :create_markup s,
   does>  ( -- )
     ( dfa ) count (xml:)lang=! [<div>]
   ;
@@ -93,6 +94,8 @@ Usage example:
 \ Change history of this file
 
 \ 2014-04-21: Code moved from <fendo.markup.fendo.fs>.
+\ 2014-06-06: ")))" changed to "))))", after the last changes in
+\ Fendo's markup.
 
 .( fendo.markup.fendo.language.fs compiled ) cr
 

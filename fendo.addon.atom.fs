@@ -3,6 +3,7 @@
 \ This file is part of Fendo.
 
 \ This file is the Atom addon.
+\ XXX TODO --- unfinished
 
 \ Copyright (C) 2009,2014 Marcos Cruz (programandala.net)
 
@@ -28,6 +29,8 @@
 \ 2014-06-05: Start, using the code of the Atom module (last version,
 \ from 2009-10-21) of: ForthCMS ("Forth Calm Maker of Sites") version
 \ B-00-201206 (http://programandala.net/en.program.forthcms.html).
+\ 2014-07-06: First changes. 'echo' and 'echo_line' used instead of
+\ the old ForthCMS words.
 
 \ **************************************************************
 \ TODO
@@ -47,8 +50,6 @@ svariable atom-file
 
 ' create-html alias create-atom
 ' close-html alias close-atom
-' >html alias >atom
-' >>html alias >>atom
 
 : {atom-link}  ( ca1 len1 ca2 len2 ca3 len3 -- )
   +rel-attribute 2swap {link}
@@ -64,49 +65,49 @@ svariable atom-file
   \ ca1 len1 = xml tag
   \ ca2 len2 = content type (xhtml or html)
   +type-attribute
-  iso-lang +xml:lang-attribute >atom
-  s" >" >>atom
+  iso-lang +xml:lang-attribute echo_line
+  s" >" echo
   ;
 
 : {atom-title}  ( -- )  s" <title" s" html" +atom-lang-attributes}  ;
 ' {/title} alias {/atom-title}
-: {atom-title/}  ( -- )  {atom-title} >>atom {/atom-title}  ;
-: {author}  ( -- )  s" <author>" >atom  ;
-: {/author}  ( -- )  s" </author>" >atom  ;
-: {entry}  ( -- )  s" <entry>" >atom  ;
-: {/entry}  ( -- )  s" </entry>" >atom  ;
-: {icon}  ( -- )  s" <icon>" >atom  ;
-: {/icon}  ( -- )  s" </icon>" >>atom  ;
-: {icon/}  ( ca len -- )  {icon} >>atom {/icon}  ;
-: {id}  ( -- )  s" <id>" >atom  ;
-: {/id}  ( -- )  s" </id>" >>atom  ;
-: {id/}  ( ca len -- )  {id} >>atom {/id}  ;
-: {logo}  ( -- )  s" <logo>" >atom  ;
-: {/logo}  ( -- )  s" </logo>" >>atom  ;
-: {logo/}  ( ca len -- )  {logo} >>atom {/logo}  ;
-: {name}  ( -- )  s" <name>" >atom  ;
-: {/name}  ( -- )  s" </name>" >>atom  ;
-: {name/}  ( ca len -- )  {name} >>atom {/name}  ;
-: {published}  ( -- )  s" <published>" >atom  ;
-: {/published}  ( -- )  s" </published>" >>atom  ;
-: {published/}  ( ca len -- )  {published} >>atom {/published}  ;
+: {atom-title/}  ( -- )  {atom-title} echo {/atom-title}  ;
+: {author}  ( -- )  s" <author>" echo  ;
+: {/author}  ( -- )  s" </author>" echo_line  ;
+: {entry}  ( -- )  s" <entry>" echo  ;
+: {/entry}  ( -- )  s" </entry>" echo_line  ;
+: {icon}  ( -- )  s" <icon>" echo_line  ;
+: {/icon}  ( -- )  s" </icon>" echo  ;
+: {icon/}  ( ca len -- )  {icon} echo {/icon}  ;
+: {id}  ( -- )  s" <id>" echo_line  ;
+: {/id}  ( -- )  s" </id>" echo  ;
+: {id/}  ( ca len -- )  {id} echo {/id}  ;
+: {logo}  ( -- )  s" <logo>" echo_line  ;
+: {/logo}  ( -- )  s" </logo>" echo  ;
+: {logo/}  ( ca len -- )  {logo} echo {/logo}  ;
+: {name}  ( -- )  s" <name>" echo_line  ;
+: {/name}  ( -- )  s" </name>" echo  ;
+: {name/}  ( ca len -- )  {name} echo {/name}  ;
+: {published}  ( -- )  s" <published>" echo_line  ;
+: {/published}  ( -- )  s" </published>" echo  ;
+: {published/}  ( ca len -- )  {published} echo {/published}  ;
 : {subtitle}  ( -- )  s" <subtitle" s" html" +atom-lang-attributes}  ;
-: {/subtitle}  ( -- )  s" </subtitle>" >>atom  ;
-: {subtitle/}  ( ca len -- )  {subtitle} >>atom {/subtitle}  ;
+: {/subtitle}  ( -- )  s" </subtitle>" echo  ;
+: {subtitle/}  ( ca len -- )  {subtitle} echo {/subtitle}  ;
 : {summary}  ( -- )  s" <summary" s" html" +atom-lang-attributes}  ;
-: {/summary}  ( -- )  s" </summary>" >>atom  ;
-: {summary/}  ( ca len -- )  {summary} >>atom {/summary}  ;
+: {/summary}  ( -- )  s" </summary>" echo  ;
+: {summary/}  ( ca len -- )  {summary} echo {/summary}  ;
 
 : {atom-xhtml-summary}  ( -- )
   s" <summary" s" xhtml" +atom-lang-attributes}
-  s" <div xmlns='http://www.w3.org/1999/xhtml'>" >atom
+  s" <div xmlns='http://www.w3.org/1999/xhtml'>" echo_line
   ;
 
 : {/atom-xhtml-summary}  ( -- )  {/div} {/summary}  ;
 
-: {updated}  ( -- )  s" <updated>" >atom  ;
-: {/updated}  ( -- )  s" </updated>" >>atom  ;
-: {updated/}  ( ca len -- )  {updated} >>atom {/updated}  ;
+: {updated}  ( -- )  s" <updated>" echo_line  ;
+: {/updated}  ( -- )  s" </updated>" echo  ;
+: {updated/}  ( ca len -- )  {updated} echo {/updated}  ;
 
 : atom-feed-header-author  ( -- )  {author} "site-author" {name/} {/author}  ;
 : atom-feed-header-id  ( -- )  "site-uri" {id/}  ;
@@ -115,7 +116,7 @@ svariable atom-file
 : atom-feed-header-selflink  ( ca len -- )  atom-file count str+ {atom-self-link}  ;
 : atom-feed-header-links  ( -- )  "site-uri" 2dup  {atom-alternate-link}  atom-feed-header-selflink  ;
 : atom-feed-header-updated  ( -- )  {updated} time&date iso-date&time>html {/updated}  ;
-: atom-feed-header-generator  ( -- )  s" <generator>forthCMS</generator>" >atom  ;
+: atom-feed-header-generator  ( -- )  s" <generator>forthCMS</generator>" echo_line  ;
 : atom-feed-header-icon  ( -- ) "site-icon" {icon/}  ;
 
 : atom-feed-header
@@ -130,12 +131,12 @@ svariable atom-file
   ;
 
 : atom-feed{  ( -- )
-  s" <feed xmlns='http://www.w3.org/2005/Atom'>" >atom
+  s" <feed xmlns='http://www.w3.org/2005/Atom'>" echo_line
   atom-feed-header
   ;
 
 : }atom-feed  ( -- )
-  s" </feed>" >atom
+  s" </feed>" echo_line
   ;
 
 : atom{  ( ca1 len1 ca2 len2 -- )
@@ -143,7 +144,7 @@ svariable atom-file
   \ ca1 len1 = encoding
   \ ca2 len2 = file name
   2dup atom-file place  create-atom
-  s" <?xml version='1.0' encoding='" >>atom >>atom s" '?>" >>atom
+  s" <?xml version='1.0' encoding='" echo echo s" '?>" echo
   atom-feed{
   ;
 
@@ -172,17 +173,17 @@ defer atom-"updated_page"
 defer atom-entry-summary
 : atom-entry-default-summary  ( page-id -- )  >page-description {summary/}  ;
 
-: .atom-entry-comment  ( ca len page-id -- page-id )  >r >atom r>  ;
+: .atom-entry-comment  ( ca len page-id -- page-id )  >r echo_line r>  ;
 
 : atom-entry-custom-summary  ( page-id xt -- )
   \ Create a summary field with a custom content.
   \ xt = xt of the string constant with the custom header to be shown before the actual content
   {atom-xhtml-summary}
   {p}
-  execute >atom  \ custom header
+  execute echo_line  \ custom header
   \ .atom-entry-comment
-  \ atom-"content"  >atom
-  >page-description >atom
+  \ atom-"content"  echo_line
+  >page-description echo_line
   {/p}
   {/atom-xhtml-summary}
   ;

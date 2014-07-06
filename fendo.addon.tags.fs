@@ -189,7 +189,13 @@ variable lonely_tags_link_to_content  \ flag
 variable tag_searched_for$
 variable tag_presence  \ counter
 : (tag_does_presence)  ( tag -- )
-  tag>name tag_searched_for$ $@ str=  abs tag_presence +!
+\  ." (tag_does_presence)" cr  \ XXX INFORMER
+  tag>name
+\  2dup type space  \ XXX INFORMER
+  tag_searched_for$ $@
+\  2dup type space  \ XXX INFORMER
+  str= abs tag_presence +!
+\  tag_presence @ . cr  \ XXX INFORMER
   ;
 
 defer (tag_does)  \ current behaviour of the tags
@@ -241,6 +247,7 @@ export
 : tags_do_presence  ( ca len -- )
   \ Set the tags to check if their name is the given name.
   \ ca len = tag name
+\  ." tags_do_presence " 2dup type cr ~~  \ XXX INFORMER
   tag_searched_for$ $!   tag_presence off
   ['] (tag_does_presence) is (tag_does)
   ;
@@ -281,6 +288,7 @@ s" /tmp/fendo.tags.fs" 2constant tags_filename$
   r> close-file throw
   ;
 : evaluate_tags  ( ca len -- )
+\  ." evaluate_tags " 2dup type cr ~~  \ XXX INFORMER
   get-order n>r set_tags_order  evaluate  nr> set-order
   ;
 : check_tags  ( ca len -- )
