@@ -213,6 +213,9 @@ datum: template  \ HTML template filename in the design subdir
 : domain&current_target_file  ( -- ca len )
   domain $@ s" /" s+ current_target_file s+
   ;
+: pid#>url  ( a -- ca len )
+  target_file s" http://" domain $@ s+ 2swap s+
+  ;
 : +target_dir  ( ca1 len1 -- ca2 len2 )
   \ Add the target path to a file name.
   \ ca1 len1 = file name
@@ -672,6 +675,8 @@ require galope/slash-sides.fs  \ '/sides'
 
 \ 2014-03-03: New: 'filename>hierarchy'.  Change: '(hierarchy)'
 \ renamed to 'pid$>hierarchy'; 'hierarchy' updated.
+
+\ 2014-07-11: New: 'pid#>url', needed by the Atom module.
 
 *)
 

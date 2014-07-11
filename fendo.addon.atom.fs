@@ -27,10 +27,12 @@
 \ Change history of this file
 
 \ 2014-06-05: Start, using the code of the Atom module (last version,
-\ from 2009-10-21) of: ForthCMS ("Forth Calm Maker of Sites") version
-\ B-00-201206 (http://programandala.net/en.program.forthcms.html).
+\   from 2009-10-21) of: ForthCMS ("Forth Calm Maker of Sites") version
+\   B-00-201206 (http://programandala.net/en.program.forthcms.html).
 \ 2014-07-06: First changes. 'echo' and 'echo_line' used instead of
-\ the old ForthCMS words.
+\   the old ForthCMS words.
+\ 2014-07-08: Site variables converted to Fendo.
+\ 2014-07-10: More changes to make the code work with Fendo.
 
 \ **************************************************************
 \ TODO
@@ -45,184 +47,238 @@
 \ XXX TODO
 
 \ **************************************************************
+\ Configurable texts
 
-svariable atom-file
+s" Content"
+2constant atom_default_"content"
+defer atom_"content"
+' atom_default_"content" is atom_"content"
 
-' create-html alias create-atom
-' close-html alias close-atom
+s" <strong>New page<strong>: "
+2constant atom_default_"new_page"
+defer atom_"new_page"
+' atom_default_"new_page" is atom_"new_page"
 
-: {atom-link}  ( ca1 len1 ca2 len2 ca3 len3 -- )
-  +rel-attribute 2swap {link}
+s" <strong>Updated page</strong>: "
+2constant atom_default_"updated_page"
+defer atom_"updated_page"
+' atom_default_"updated_page" is atom_"updated_page"
+
+\ **************************************************************
+\ Calculated data
+
+: pid#>taguri  ( a -- ca len )
+  \ Return the tag URI of a page.
+  \ Code converted from ForthCMS' '>page-taguri', by the same author.
+  >r s" tag:" domain $@ s+ s" ," s+ 
+  r@ created s+ s" :" s+
+  r> target_file s+
   ;
-: {atom-self-link}  ( ca len -- )
-  s" " s" self" {atom-link}
-  ;
-: {atom-alternate-link}  ( ca len -- )
-  iso-lang >hreflang-attribute  s" alternate" {atom-link}
-  ;
 
-: +atom-lang-attributes}  ( ca1 len1 c-addr2 c2 -- )
+\ **************************************************************
+\ Tags
+
+: {atom_link}  ( ca1 len1 ca2 len2 ca3 len3 -- )
+  \ XXX TODO convert to Fendo
+  +rel_attribute 2swap {link}
+  ;
+: {atom_self_link}  ( ca len -- )
+  s" " s" self" {atom_link}
+  ;
+: {atom_alternate_link}  ( ca len -- )
+  \ XXX TODO convert to Fendo
+  iso_lang >hreflang_attribute  s" alternate" {atom_link}
+  ;
+: +atom_lang_attributes}  ( ca1 len1 c_addr2 c2 -- )
+  \ XXX TODO convert to Fendo
   \ ca1 len1 = xml tag
   \ ca2 len2 = content type (xhtml or html)
-  +type-attribute
-  iso-lang +xml:lang-attribute echo_line
+  +type_attribute
+  iso_lang +xml:lang_attribute echo_line
   s" >" echo
   ;
 
-: {atom-title}  ( -- )  s" <title" s" html" +atom-lang-attributes}  ;
-' {/title} alias {/atom-title}
-: {atom-title/}  ( -- )  {atom-title} echo {/atom-title}  ;
+: {atom_title}  ( -- )  s" <title" s" html" +atom_lang_attributes}  ;
+' {/title} alias {/atom_title}
+: {atom_title/}  ( -- )  {atom_title} echo {/atom_title}  ;
 : {author}  ( -- )  s" <author>" echo  ;
 : {/author}  ( -- )  s" </author>" echo_line  ;
 : {entry}  ( -- )  s" <entry>" echo  ;
 : {/entry}  ( -- )  s" </entry>" echo_line  ;
-: {icon}  ( -- )  s" <icon>" echo_line  ;
-: {/icon}  ( -- )  s" </icon>" echo  ;
+: {generator}  ( -- )  s" <generator>" echo  ;
+: {/generator}  ( -- )  s" </generator>" echo_line  ;
+: {icon}  ( -- )  s" <icon>" echo  ;
+: {/icon}  ( -- )  s" </icon>" echo_line  ;
 : {icon/}  ( ca len -- )  {icon} echo {/icon}  ;
-: {id}  ( -- )  s" <id>" echo_line  ;
-: {/id}  ( -- )  s" </id>" echo  ;
+: {id}  ( -- )  s" <id>" echo  ;
+: {/id}  ( -- )  s" </id>" echo_line  ;
 : {id/}  ( ca len -- )  {id} echo {/id}  ;
-: {logo}  ( -- )  s" <logo>" echo_line  ;
-: {/logo}  ( -- )  s" </logo>" echo  ;
+: {logo}  ( -- )  s" <logo>" echo  ;
+: {/logo}  ( -- )  s" </logo>" echo_line  ;
 : {logo/}  ( ca len -- )  {logo} echo {/logo}  ;
-: {name}  ( -- )  s" <name>" echo_line  ;
-: {/name}  ( -- )  s" </name>" echo  ;
+: {name}  ( -- )  s" <name>" echo  ;
+: {/name}  ( -- )  s" </name>" echo_line  ;
 : {name/}  ( ca len -- )  {name} echo {/name}  ;
-: {published}  ( -- )  s" <published>" echo_line  ;
-: {/published}  ( -- )  s" </published>" echo  ;
+: {published}  ( -- )  s" <published>" echo  ;
+: {/published}  ( -- )  s" </published>" echo_line  ;
 : {published/}  ( ca len -- )  {published} echo {/published}  ;
-: {subtitle}  ( -- )  s" <subtitle" s" html" +atom-lang-attributes}  ;
+: {subtitle}  ( -- )  s" <subtitle" s" html" +atom_lang_attributes}  ;
 : {/subtitle}  ( -- )  s" </subtitle>" echo  ;
 : {subtitle/}  ( ca len -- )  {subtitle} echo {/subtitle}  ;
-: {summary}  ( -- )  s" <summary" s" html" +atom-lang-attributes}  ;
-: {/summary}  ( -- )  s" </summary>" echo  ;
+: {summary}  ( -- )  s" <summary" s" html" +atom_lang_attributes}  ;
+: {/summary}  ( -- )  s" </summary>" echo_line  ;
 : {summary/}  ( ca len -- )  {summary} echo {/summary}  ;
-
-: {atom-xhtml-summary}  ( -- )
-  s" <summary" s" xhtml" +atom-lang-attributes}
-  s" <div xmlns='http://www.w3.org/1999/xhtml'>" echo_line
-  ;
-
-: {/atom-xhtml-summary}  ( -- )  {/div} {/summary}  ;
-
 : {updated}  ( -- )  s" <updated>" echo_line  ;
 : {/updated}  ( -- )  s" </updated>" echo  ;
 : {updated/}  ( ca len -- )  {updated} echo {/updated}  ;
 
-: atom-feed-header-author  ( -- )  {author} "site-author" {name/} {/author}  ;
-: atom-feed-header-id  ( -- )  "site-uri" {id/}  ;
-: atom-feed-header-title  ( -- )  "site-title" untag {atom-title/}  ;
-: atom-feed-header-subtitle  ( -- )  "site-subtitle" untag {subtitle/}  ;
-: atom-feed-header-selflink  ( ca len -- )  atom-file count str+ {atom-self-link}  ;
-: atom-feed-header-links  ( -- )  "site-uri" 2dup  {atom-alternate-link}  atom-feed-header-selflink  ;
-: atom-feed-header-updated  ( -- )  {updated} time&date iso-date&time>html {/updated}  ;
-: atom-feed-header-generator  ( -- )  s" <generator>forthCMS</generator>" echo_line  ;
-: atom-feed-header-icon  ( -- ) "site-icon" {icon/}  ;
+\ **************************************************************
+\ Atom feed
 
-: atom-feed-header
-  atom-feed-header-title
-  atom-feed-header-subtitle
-  atom-feed-header-links
-  atom-feed-header-icon
-  atom-feed-header-updated
-  atom-feed-header-author
-  atom-feed-header-id
-  atom-feed-header-generator
+: {atom_xhtml_summary}  ( -- )
+  s" <summary" s" xhtml" +atom_lang_attributes}
+  s" <div xmlns='http://www.w3.org/1999/xhtml'>" echo_line
+  ;
+: {/atom_xhtml_summary}  ( -- )
+  {/div} {/summary}
   ;
 
-: atom-feed{  ( -- )
+: atom_feed_header_author  ( -- )
+  {author} site_author $@ {name/} {/author}
+  ;
+: atom_feed_header_id  ( -- )
+  domain $@ {id/}
+  ;
+: atom_feed_header_title  ( -- )
+  site_plain_title $@ {atom_title/}
+  ;
+: atom_feed_header_subtitle  ( -- )
+  site_plain_subtitle $@ {subtitle/}
+  ;
+: atom_feed_header_selflink  ( ca len -- )
+  domain&current_target_file {atom_self_link}
+  ;
+: atom_feed_header_links  ( -- )
+  domain $@ 2dup  {atom_alternate_link}  atom_feed_header_selflink
+  ;
+: atom_feed_header_updated  ( -- )
+  {updated} time&date iso_date&time>html {/updated}
+  ;
+: atom_feed_header_generator  ( -- )
+  {generator} s" Fendo " echo fendo_version echo {/generator}
+  ;
+: atom_feed_header_icon  ( -- )
+  site_icon $@ {icon/}
+  ;
+
+: atom_feed_header  ( -- )
+  atom_feed_header_title
+  atom_feed_header_subtitle
+  atom_feed_header_links
+  atom_feed_header_icon
+  atom_feed_header_updated
+  atom_feed_header_author
+  atom_feed_header_id
+  atom_feed_header_generator
+  ;
+
+: atom_feed{  ( -- )
   s" <feed xmlns='http://www.w3.org/2005/Atom'>" echo_line
-  atom-feed-header
+  atom_feed_header
   ;
 
-: }atom-feed  ( -- )
+: }atom_feed  ( -- )
   s" </feed>" echo_line
   ;
 
-: atom{  ( ca1 len1 ca2 len2 -- )
+: (atom{)  ( ca1 len1 ca2 len2 -- )
   \ Create an Atom file.
-  \ ca1 len1 = encoding
-  \ ca2 len2 = file name
-  2dup atom-file place  create-atom
-  s" <?xml version='1.0' encoding='" echo echo s" '?>" echo
-  atom-feed{
+  open_target
+  s" <?xml version='1.0' encoding='utf-8'?>" echo_line
+  atom_feed{
+  ;
+
+: atom{  ( "text }content" -- )
+  \ Start the Atom content, if needed.
+  \ The end of the content is marked with the '}atom' markup.
+  \ Only one 'atom{ ... }atom' block is allowed in the page.
+  do_page? if  .sourcefilename (atom{)  else  skip_page  then
   ;
 
 : }atom  ( -- )
-  \ Close the Atom file.
-  }atom-feed  close-atom
+  \ Finish and close the Atom file.
+  }atom_feed close_target
   ;
 
-s" Content" sconstant atom-default-"content"
-defer atom-"content"
-' atom-default-"content" is atom-"content"
+\ **************************************************************
+\ Atom entries
 
-s" <strong>New page<strong>: " sconstant atom-default-"new_page"
-defer atom-"new_page"
-' atom-default-"new_page" is atom-"new_page"
-
-s" <strong>Updated page</strong>: " sconstant atom-default-"updated_page"
-defer atom-"updated_page"
-' atom-default-"updated_page" is atom-"updated_page"
-
-: atom-entry-title  ( page-id -- )  >page-title {atom-title/}  ;
-: atom-entry-id  ( page-id -- )  >page-taguri {id/}  ;
-: atom-entry-links  ( page-id -- )  >page-url {atom-alternate-link}  ;
-: atom-entry-updated  ( page-id -- )  >page-change >iso-full-date {updated/}  ;
-: atom-entry-published  ( page-id -- )  >page-created >iso-full-date {published/}  ;
-defer atom-entry-summary
-: atom-entry-default-summary  ( page-id -- )  >page-description {summary/}  ;
-
-: .atom-entry-comment  ( ca len page-id -- page-id )  >r echo_line r>  ;
-
-: atom-entry-custom-summary  ( page-id xt -- )
+: atom_entry_title  ( page_id -- )
+  title {atom_title/}
+  ;
+: atom_entry_id  ( page_id -- )
+  pid#>taguri {id/}
+  ;
+: atom_entry_links  ( page_id -- )
+  pid#>url {atom_alternate_link}
+  ;
+: atom_entry_updated  ( page_id -- )
+  modified {updated/}
+  ;
+: atom_entry_published  ( page_id -- )
+  created {published/}
+  ;
+defer atom_entry_summary
+: atom_entry_default_summary  ( page_id -- )
+  description {summary/}
+  ;
+: .atom_entry_comment  ( ca len page_id -- page_id )
+  >r echo_line r>
+  ;
+: atom_entry_custom_summary  ( page_id xt -- )
   \ Create a summary field with a custom content.
   \ xt = xt of the string constant with the custom header to be shown before the actual content
-  {atom-xhtml-summary}
+  {atom_xhtml_summary}
   {p}
   execute echo_line  \ custom header
-  \ .atom-entry-comment
-  \ atom-"content"  echo_line
-  >page-description echo_line
+  \ .atom_entry_comment
+  \ atom_"content"  echo_line
+  description echo_line
   {/p}
-  {/atom-xhtml-summary}
+  {/atom_xhtml_summary}
   ;
-
-: atom-entry-updated-summary  ( page-id -- )
-  ['] atom-"updated_page"  atom-entry-custom-summary
+: atom_entry_updated_summary  ( page_id -- )
+  ['] atom_"updated_page"  atom_entry_custom_summary
   ;
-
-: atom-entry-new-summary  ( ca len page-id -- )
-  ['] atom-"new_page"  atom-entry-custom-summary
+: atom_entry_new_summary  ( ca len page_id -- )
+  ['] atom_"new_page"  atom_entry_custom_summary
   ;
-
-: default-atom-entry-summary  ( -- )  ['] atom-entry-default-summary is atom-entry-summary ;
-default-atom-entry-summary
-
-: atom-entry  ( ca len page-id | page-id -- )
+: default_atom_entry_summary  ( -- )
+  ['] atom_entry_default_summary is atom_entry_summary
+  ;
+default_atom_entry_summary
+: atom_entry  ( ca len page_id | page_id -- )
   \ Create an Atom entry in the Atom file.
   {entry}
   >r
-  r@ atom-entry-title
-  r@ atom-entry-id
-  r@ atom-entry-links
-  r@ atom-entry-published
-  r@ atom-entry-updated
-  r> atom-entry-summary
+  r@ atom_entry_title
+  r@ atom_entry_id
+  r@ atom_entry_links
+  r@ atom_entry_published
+  r@ atom_entry_updated
+  r> atom_entry_summary
   {/entry}
   ;
-
-: atom-updated-entry  ( ca len page-id -- )
+: atom_updated_entry  ( ca len page_id -- )
   \ Create an Atom entry in the Atom file, about an updated page of the site.
-  atom-entry
-  default-atom-entry-summary
+  atom_entry
+  default_atom_entry_summary
   ;
-
-: atom-new-entry  ( ca len page-id -- )
+: atom_new_entry  ( ca len page_id -- )
   \ Create an Atom entry in the Atom file, about a new page of the site.
-  ['] atom-entry-new-summary is atom-entry-summary
-  atom-entry
-  default-atom-entry-summary
+  ['] atom_entry_new_summary is atom_entry_summary
+  atom_entry
+  default_atom_entry_summary
   ;
 
 .( fendo.addon.atom.fs compiled) cr
