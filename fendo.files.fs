@@ -34,12 +34,13 @@
 \   only the path; fixed with the new word 'pid$>target'.
 \ 2014-03-02: Change: 'domain&current_target_file', factored from
 \ '(redirected)' to <fendo.data.fs>.
+\ 2014-07-13: New: 'set_current_target_modification_time'.
 
 \ **************************************************************
 \ Target file
 
 : (open_target)  ( -- )
-  \ Open the target HTML page file.
+  \ Open the target file (HTML or Atom).
   current_page
 \  cr ." current_page in (open_target) =  " dup .  \ xxx informer
   target_path/file
@@ -50,18 +51,27 @@
 \  s" <!-- xxx -->" target_fid @ write-line throw  \ xxx debugging
   ;
 : open_target  ( -- )
-  \ Open the target HTML page file, if needed.
+  \ Open the target file (HTML or Atom), if needed.
   echo>file? if  (open_target)  then
   ;
+: set_current_target_modification_time  ( -- )
+  \ Set the modification time of the current target file
+  \ to the correspondant metadata of the source file.
+  \ The host operating system shell is used (Linux only).
+  s" touch --date=" 
+  current_page modifed s+ s"  " s+
+  current_page target_path/file s+
+  system $? abort" Error in set_current_target_modification_time"
+  ;
 : (close_target)  ( -- )
-  \ Close the target HTML page file.
+  \ Close the target file (HTML or Atom).
 \  depth abort" stack not empty"  \ xxx informer
   target_fid @ close-file throw
 \  ." target_fid just closed. " \ xxx informer
-  target_fid off
+  target_fid off  set_current_target_modification_time
   ;
 : close_target  ( -- )
-  \ Close the target HTML page file, if needed.
+  \ Close the target file (HTML or Atom), if needed.
 \  ." close_target" cr \ xxx informer
   target_fid @ if  (close_target)  then
   ;

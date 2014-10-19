@@ -33,7 +33,13 @@
 \ 2014-03-03: Change: 'title_link' renamed to 'link<pid$'.
 \ 2014-06-15: Fix: repeated evaluation of link texts is solved
 \ with the new 'link_text_already_evaluated?' flag.
-
+\ 2014-07-11: Change: 'pid$>url' moved to <fendo.data.fs>.
+\ 2014-08-15: Fix: comment updated.
+\ 2014-08-15: Fix: 'link_text_already_evaluated? off' was missing
+\   in 'evaluate_link_text'.
+\ 2014-10-12: Fix: 'evaluate_link_text' now preserves the content of 'separate?'
+\   in the return stack; it ruined the stack before calling
+\   'evaluate_content'.
 
 \ **************************************************************
 \ Requirements
@@ -91,10 +97,15 @@ link_text_already_evaluated? off
 : evaluate_link_text  ( -- )
   \ Note: 'link_text_already_evaluated?' is turned on by
   \ '(parse_link_text)' in <fendo.parser.fs>.
+\  separate? @  \ XXX TMP 2014-08-13 try to fix the bug described in the to-do
   link_text@
-\  2dup cr ." in evaluate_link_text >> " type key drop  \ XXX INFORMER
-  link_text_already_evaluated? @ if  echo  else  evaluate_content  then
-  link_text_already_evaluated? off
+\  cr ." In evaluate_link_text in fendo.links.fs link_text is " 2dup type  \ XXX INFORMER
+  link_text_already_evaluated? @
+\  dup cr ." ( in evaluate_link_text if fendo.links.fs link_text_already_evaluated? = ) " . key drop  \ XXX INFORMER
+  if    echo  link_text_already_evaluated? off
+  else  separate? @ >r evaluate_content r> separate? !  then
+\  separate? !  \ XXX TMP 2014-08-13 try to fix the bug described in the to-do
+  \ XXX TMP saving and restoring 'separate?' makes no difference
   ;
 [then]
 
@@ -174,11 +185,6 @@ true [if]  \ xxx tmp
   \ Convert a raw local href to a finished href.
   dup if  pid$>data>pid# target_file  then  link_anchor+
   ;
-: pid$>url  ( ca1 len1 -- ca2 len2 )
-  \ xxx not used?
-  s" http://" domain $@ s+ 2swap
-  pid$>data>pid# target_file s+
-  ;
 : -file://  ( ca len -- ca' len' )
   s" file://" -prefix
   ;
@@ -239,6 +245,7 @@ defer link_suffix
 ' noop  dup is link_text_suffix  is link_suffix
 : (echo_link)  ( -- )
   \ Echo the final link.
+\  cr ." In (echo_link) link_text$ is " link_text@ type  \ XXX INFORMER
   [<a>] evaluate_link_text link_text_suffix [</a>] link_suffix
   ;
 : echo_link?  ( -- wf )
@@ -255,14 +262,14 @@ defer link_suffix
   \ All link attributes have been set.
   \ XXX FIXME link_text@ here returns a string with macros already
   \ parsed! why?
-\  cr ." link_text$ in echo_link >> " link_text@ type key drop  \ XXX INFORMER
+\  cr ." In echo_link link_text$ is " link_text@ type  \ XXX INFORMER
   tune_link  echo_link?
   if  (echo_link)  else  echo_link_text  then  reset_link
   ;
 [then]
 
 defer (get_link_href)  ( ca len -- )
-  \ Defined in <fendo.markup.wiki.fs>.
+  \ Defined in <fendo.markup.fendo.link.fs>.
 
 \ **************************************************************
 \ Links xxx note: original words of <fendo.tools.fs>
@@ -278,6 +285,8 @@ defer (get_link_href)  ( ca len -- )
   \ Its attributes have to be set previously.
   \ ca1 len1 = page id, URL or shortcut
   \ ca2 len2 = link text
+\  cr ." In link the link text is " 2dup type  \ XXX INFORMER
+\  ."  and the page id is " 2over type  \ XXX INFORMER
   link_text! (link)
   ;
 : link<pid$  ( ca len -- )

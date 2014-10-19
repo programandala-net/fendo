@@ -44,6 +44,10 @@
 \ 2014-02-15: New: '[<strong>]', '[</strong>]', '[</div>]'.
 \ 2014-02-15: New: '(html{})' for empty tags (it does the same than
 \   '(html{)' but without the separation).
+\ 2014-07-13: New: '[<q>]', '[</q>]', '[<blockquote>]',
+\   '[</blockquote>]'.
+\ 2014-07-14: New: '[<title>]', '[</title>]', needed by the Atom
+\   module; also '<meta/>'.
 
 \ **************************************************************
 \ Requirements
@@ -68,6 +72,7 @@ fendo_definitions
 : (html{)  ( ca len -- )
   \ Start an opening HTML tag.
   \ ca len = HTML tag
+\  cr ." separate? in (html{) is " separate? ?  \ XXX INFORMER 2014-08-13
   s" <" _echo echo echo_attributes
   ;
 : (}html)  ( -- )
@@ -212,6 +217,7 @@ get-current markup>current
 : </mark>  ( -- )  s" mark" html}  ;
 : <meta>  ( -- )  echo_cr s" meta" {html  ;
 : </meta>  ( -- )  s" meta" html}  ;
+: <meta/>  ( -- )  echo_cr s" meta" {html}  ;
 : <nav>  ( -- )  echo_cr s" nav" {html  ;
 : </nav>  ( -- )  echo_cr s" nav" html}  ;
 : <noscript>  ( -- )  echo_cr s" noscript" {html  ;
@@ -309,6 +315,8 @@ markup>order
 : [</a>]  ( -- )  postpone </a>  ;  immediate
 : [<abbr>]  ( -- )  postpone <abbr>  ;  immediate
 : [</abbr>]  ( -- )  postpone </abbr>  ;  immediate
+: [<blockquote>]  ( -- )  postpone <blockquote>  ;  immediate
+: [</blockquote>]  ( -- )  postpone </blockquote>  ;  immediate
 : [<br/>]  ( -- )  postpone <br/>  ;  immediate
 : [<caption>]  ( -- )  postpone <caption>  ;  immediate
 : [<code>]  ( -- )  postpone <code>  ;  immediate
@@ -344,6 +352,8 @@ markup>order
 : [</p>]  ( -- )  postpone </p>  ;  immediate
 : [<pre>]  ( -- )  postpone <pre>  ;  immediate
 : [</pre>]  ( -- )  postpone </pre>  ;  immediate
+: [<q>]  ( -- )  postpone <q>  ;  immediate
+: [</q>]  ( -- )  postpone </q>  ;  immediate
 : [<span>]  ( -- )  postpone <span>  ;  immediate
 : [</span>]  ( -- )  postpone </span>  ;  immediate
 : [<strong>]  ( -- )  postpone <strong>  ;  immediate
@@ -351,6 +361,8 @@ markup>order
 : [<table>]  ( -- )  postpone <table>  ;  immediate
 : [</td>]  ( -- )  postpone </td>  ;  immediate
 : [</th>]  ( -- )  postpone </th>  ;  immediate
+: [<title>]  ( -- )  postpone <title>  ;  immediate
+: [</title>]  ( -- )  postpone </title>  ;  immediate
 : [<tr>]  ( -- )  postpone <tr>  ;  immediate
 : [</tr>]  ( -- )  postpone </tr>  ;  immediate
 : [<ul>]  ( -- )  postpone <ul>  ;  immediate

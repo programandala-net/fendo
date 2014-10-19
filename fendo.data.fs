@@ -188,22 +188,27 @@ datum: template  \ HTML template filename in the design subdir
   \ Add the Forth extension to a filename.
   forth_extension $@ s+
   ;
-: source>target_extension  ( ca1 len1 -- ca2 len2 )
+: source>current_target_extension  ( ca1 len1 -- ca2 len2 )
   \ Change the Forth extension to the current target extension.
   \ ca1 len1 = Forth source page filename
   \ ca2 len2 = target HTML page filename
-  \ xxx todo rename to current_source>target ?
   -forth_extension current_target_extension s+
   ;
 : /sourcefilename  ( -- ca len )
   \ Return the current source filename, without path.
   sourcefilename -path
   ;
+: pid#>pid$  ( a -- ca len )
+  \ Convert a numerical page id to its string form.
+  \ a = page id
+  \ ca len = page id
+  source_file -forth_extension
+  ;
 : target_file  ( a -- ca len )
   \ Return a target HTML page filename.
   \ a = page id
   \ ca len = target HTML page file name
-  source_file source>target_extension
+  dup >r pid#>pid$ r> target_extension s+
   ;
 : current_target_file  ( -- ca len )
   \ Return the target HTML page filename of the current page.
@@ -211,10 +216,19 @@ datum: template  \ HTML template filename in the design subdir
   current_page target_file
   ;
 : domain&current_target_file  ( -- ca len )
-  domain $@ s" /" s+ current_target_file s+
+  domain s" /" s+ current_target_file s+
+  ;
+: domain_url  ( -- ca len )
+  s" http://" domain s+
+  ;
+: current_target_file_url  ( -- ca len )
+  s" http://" domain&current_target_file s+
+  ;
+: +domain_url  ( ca len -- ca' len' )
+  domain_url s" /" s+ 2swap s+
   ;
 : pid#>url  ( a -- ca len )
-  target_file s" http://" domain $@ s+ 2swap s+
+  target_file +domain_url
   ;
 : +target_dir  ( ca1 len1 -- ca2 len2 )
   \ Add the target path to a file name.
@@ -261,12 +275,6 @@ datum: template  \ HTML template filename in the design subdir
   \ Create the current page id and its data space, if needed.
   current_pid$ 2dup known_pid$?
   if  drop 2drop  else  (:pid)  then
-  ;
-: pid#>pid$  ( a -- ca len )
-  \ Convert a numerical page id to its string form.
-  \ a = page id
-  \ ca len = page id
-  source_file -forth_extension
   ;
 : pid$>pid#  ( ca len -- a | false )
   \ Convert a string page id to its numerical form,
@@ -499,6 +507,9 @@ do_content? on
 \  cr ." pid$>(data>)pid# " 2dup type cr  \ xxx informer
   dup if  pid$>data>pid#  else  2drop current_page  then
   ;
+: pid$>url  ( ca1 len1 -- ca2 len2 )
+  pid$>data>pid# target_file +domain_url
+  ;
 : source>pid$  ( ca1 len1 -- ca2 len2 )
   \ Convert a source page to a page id.
   \ ca1 len1 = Forth source page filename with path
@@ -676,7 +687,21 @@ require galope/slash-sides.fs  \ '/sides'
 \ 2014-03-03: New: 'filename>hierarchy'.  Change: '(hierarchy)'
 \ renamed to 'pid$>hierarchy'; 'hierarchy' updated.
 
-\ 2014-07-11: New: 'pid#>url', needed by the Atom module.
+\ 2014-07-11:
+\ New: 'pid#>url', needed by the Atom module.
+\ New: 'domain_url' factored out; needed by the Atom module.
+\ New: '+domain_url' factored out.
+\ New: 'pid$>url', moved here from <fendo.links.fs>.
+
+\ 2014-07-14:
+\ Change: 'domain' is updated; it's not a dynamic variable
+\   anymore, after the changes in <fendo.config.fs>.
+\ New: 'current_target_file_url', used by the Atom module.
+\ Fix: the separator slash was missing in '+domain_url'.
+\ Change: 'source>target_extension' renamed to
+\   'source>current_target_extension'.
+\ Fix: 'target_file' added the current target extension, not
+\   the target extension for the given page id. 
 
 *)
 

@@ -43,11 +43,11 @@ require ./fendo.addon.traverse_pids.fs
 
 module: fendo.addon.pages_by_prefix
 
-variable prefix
+variable prefix$  \ module variable; in <fendo.addon.tag_cloud_by_prefix.fs> there's another one
 variable pages
 : ((pages_by_prefix))  { D: pid -- }
   \ Increase the number of pages whose pid starts with the given prefix.
-  pid prefix $@ string-prefix? 0= ?exit
+  pid prefix$ $@ string-prefix? 0= ?exit
   pid pid$>data>pid# draft? ?exit  1 pages +!
   ;
 : (pages_by_prefix)  ( ca len -- f )
@@ -61,7 +61,10 @@ export
 
 : pages_by_prefix  ( ca len -- n )
   \ Number of pages whose pid starts with the given prefix.
-  prefix $!  pages off   ['] (pages_by_prefix) traverse_pids  pages @
+  \ Update 'prefix' and 'pages'.
+\  cr ." In pages_by_prefix the prefix is " 2dup type  \ xxx informer
+  prefix$ $!  pages off   ['] (pages_by_prefix) traverse_pids  pages @
+\  ." and the pages count is " dup . \ xxx informer
   ;
 
 ;module

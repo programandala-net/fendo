@@ -155,6 +155,9 @@ hide
 : highlighting_command$  ( -- ca len )
   \ Return the complete highlighting command,
   \ ready to be executed by the shell.
+  \ The command calls Vim in execution mode, this way:
+  \   ex -f -b -c "set filetype=PROGRAMMING_LANGUAGE"
+  \      -S ~/forth/fendo/fendo.addon.source_code.vim /tmp/fendo_addon.source_code.txt
   base_highlight_command$ parameters+ program+ file+
 \  ." highlighting_command$ = " 2dup type cr  \ xxx informer
   ;
@@ -174,7 +177,9 @@ hide
   \ ca1 len1 = plain source code
   \ ca2 len2 = source code highlighted with <span> XHTML tags
   >input_file
-  highlighting_command$ system
+  highlighting_command$ 
+\  cr ." In (highlighted) the content of highlighting_command$ is:" cr 2dup type cr cr  \ XXX INFORMER
+  system
   $? abort" The highlighting command failed"
   <output_file
   ;

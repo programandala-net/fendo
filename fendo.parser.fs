@@ -289,41 +289,12 @@ variable more?  \ flag: keep on parsing more words?; changed by '}content'
   ;
 ' (parse_link_text) is parse_link_text
 
-0 [if]  \ XXX TMP moved to fendo_files.fs
-
-\ Target file
-
-: (open_target)  ( -- )
-  \ Open the target HTML page file.
-  current_page
-\  cr ." current_page in (open_target) =  " dup .  \ XXX INFORMER
-  target_path/file
-\  cr ." target file =  " 2dup type cr key drop  \ XXX INFORMER
-  w/o create-file throw target_fid !
-\  ." target file just opened: "  \ XXX INFORMER
-\  target_fid @ . cr  \ XXX INFORMER
-\  s" <!-- xxx -->" target_fid @ write-line throw  \ xxx debugging
-  ;
-: open_target  ( -- )
-  \ Open the target HTML page file, if needed.
-  echo>file? if  (open_target)  then
-  ;
-: (close_target)  ( -- )
-  \ Close the target HTML page file.
-\  depth abort" stack not empty"  \ XXX INFORMER
-  target_fid @ close-file throw
-\  ." target_fid just closed. " \ XXX INFORMER
-  target_fid off
-  ;
-: close_target  ( -- )
-  \ Close the target HTML page file, if needed.
-\  ." close_target" cr \ XXX INFORMER
-  target_fid @ if  (close_target)  then
-  ;
-
-[then]
-
+\ **************************************************************
 \ Design template
+
+\ XXX TODO An alternative method: instead of divide the template by
+\ the '{CONTENT}' markup, it would be easier to parse it and create a
+\ '{CONTENT}' word.
 
 : template_file  ( -- ca len )
   \ Return the full path to the template file.
@@ -393,6 +364,7 @@ variable template_content
   get_template template_bottom evaluate_content
   ;
 
+\ **************************************************************
 \ Markup
 
 : .sourcefilename  ( -- )

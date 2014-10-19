@@ -51,6 +51,7 @@ fendo_definitions
 
 require ./fendo.addon.source_code.fs
 require ./fendo.addon.basin_charset.fs
+require ./fendo.addon.latin1_source_code.fs
 
 
 \ **************************************************************
@@ -64,6 +65,8 @@ module: fendo.addon.basin_source_code
   ;
 : skip_basin_header  ( -- )
   \ Read the opened source file and skip the lines of the BASin header.
+  \ XXX FIXME When the file does not have a header, the result is
+  \ empty.
   0.  \ fake file position, for the first 2drop
   begin
     2drop  \ file position from the previous loop
@@ -84,6 +87,16 @@ export
   s" basin" programming_language!
   ['] basin_source_code_translated is source_code_posttranslated
   open_source_code skip_basin_header (opened_source_code)
+  no_source_code_translation  \ default
+  ;
+
+: headerless_basin_latin1_source_code  ( ca len -- )
+  \ Read the content of a headerless BASin file, written with Latin1 encoding, and echo it.
+  \ ca len = file name
+  s" basin" programming_language!
+  ['] latin1_source_code_translated is source_code_pretranslated
+  ['] basin_source_code_translated is source_code_posttranslated
+  open_source_code (opened_source_code)
   no_source_code_translation  \ default
   ;
 

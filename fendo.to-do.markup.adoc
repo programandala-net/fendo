@@ -1,6 +1,6 @@
 = Fendo markup to-do
 Marcos Cruz (programandala.net)
-2014-04-21
+2014-07-13
 
 ////
 
@@ -12,6 +12,7 @@ Creole and Simplilo. Columns reordered.
 
 2014-04-21: Added txt2tags. Fixes.
 
+2014-07-13: Updated.
 
 ////
 
@@ -227,7 +228,7 @@ note in brackets.
 | optional_lang"""…""" [3 double quotes]
 | &#95;&#95;&#95;&#95; [4 underscores]
 | """ [3 double quotes]
-| &#39;&#39;&#39;&#39; [4 single quotes] [TODO]
+| &#39;&#39;&#39;&#39; [4 single quotes]
 
 | quote (inline)
 |
@@ -235,7 +236,7 @@ note in brackets.
 | optional_lang""…"" [2 double quotes]
 |
 | "" [2 double quotes]
-| &#39;&#39; [2 single quotes] [TODO]
+| &#39;&#39; [2 single quotes]
 
 | removal (block)
 | 
@@ -299,7 +300,7 @@ note in brackets.
 |
 | ## #
 |
-| &#40;&#40;…)) [TODO]
+| &#40;&#40;…))
 
 | general (inline; =div)
 |
@@ -307,7 +308,7 @@ note in brackets.
 |
 | 
 |
-| &#40;&#40;&#40;&#40;…)))) [TODO]
+| &#40;&#40;&#40;&#40;…))))
 
 |===
 
