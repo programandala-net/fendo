@@ -4,7 +4,7 @@
 
 \ This file is the Forth blocks source code addon.
 
-\ Copyright (C) 2013 Marcos Cruz (programandala.net)
+\ Copyright (C) 2013,2014 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute it and/or modify it
 \ under the terms of the GNU General Public License as published by
@@ -28,19 +28,19 @@
 \ 2013-12-10: Code extracted from <addons/forth_blocks_source_code.fs>.
 \ 2014-02-15: Fix: path of the Fendo addons is converted to relative.
 \ 2014-03-12: Change: module renamed after the filename.
+\ 2014-10-13: Improvement: UDG chars are translated.
 
 \ **************************************************************
 \ Requirements
 
 forth_definitions
 
-\ From Galope
 require galope/module.fs  \ 'module:', ';module', 'hide', 'export'
 
-\ From Fendo
-require ./fendo.addon.forth_blocks_source_code.fs
-
 fendo_definitions
+
+require ./fendo.addon.forth_blocks_source_code.fs
+require ./fendo.addon.zx_spectrum_charset.fs
 
 \ **************************************************************
 
@@ -75,7 +75,7 @@ export
 : abersoft_forth_blocks_source_code  ( ca len -- )
   \ Read the content of a ZX Spectrum's Abersoft Forth blocks TAP file and echo it.
   \ ca len = file name
-
+  ['] zx_spectrum_source_code_translated is source_code_posttranslated
   ['] tidy_line is tidy_forth_block_line
   highlight_forth_block_0? off
   open_source_code skip_tap_header (forth_blocks_source_code) close_source_code

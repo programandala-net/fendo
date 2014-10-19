@@ -154,6 +154,7 @@ variable lonely_tags_link_to_content  \ flag
 : (tag_link)  ( tag -- )
   \ Create a link to the given tag.
   dup tag_link_to_own_page?
+\  cr ." In (tag_link) the test is " dup .  \ XXX INFORMER
   if    (tag_link_to_own_page)
   else  (tag_link_to_tag_page)  then
   ;

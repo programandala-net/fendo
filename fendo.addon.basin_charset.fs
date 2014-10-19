@@ -39,7 +39,7 @@ translations: basin_charset
   s" \@" s" @"
 \  s" \*" s" &copy;"
   s" \*" s" ©"
-  s" \ " s" <span class='ZXSpectrumBlockGraph'>&nbsp;</span>"
+  s" \  " s" <span class='ZXSpectrumBlockGraph'>&nbsp;</span>"
   s" \ '" s" <span class='ZXSpectrumBlockGraph'>&#x259D;</span>"
   s" \' " s" <span class='ZXSpectrumBlockGraph'>&#x2598;</span>"
   s" \''" s" <span class='ZXSpectrumBlockGraph'>&#x2580;</span>"

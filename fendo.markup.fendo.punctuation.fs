@@ -30,16 +30,16 @@
 \ **************************************************************
 \ Tools
 
-\ Punctuation markup is needed in order to print it properly
+\ Punctuation markup is needed in order to print punctuation properly
 \ after another markup. Example:
 
 \   This // emphasis // does the right spacing.
-\   But this // emphasis // , well
+\   But this // emphasis // , well, it
 \   needs to be followed by a markup comma.
 
-\ The ',' markup must print a comma without a leading space.
-\ If',' were not a markup but an ordinary printable content,
-\ a leading space would be printed.
+\ The ',' markup must print a comma without a leading space.  If ','
+\ were not a markup but an ordinary printable content, a leading space
+\ would be printed.
 
 \ The same happens with opening parens and other opening punctuaction
 \ characters, e.g.:
@@ -72,8 +72,8 @@ markup_definitions
 
 \ xxx todo complete as required
 
-\ }punctuation: "  \ xxx fixme, can not be closing and opening unless
-\ the system is redisegned to track the used punctuations.
+\ }punctuation: "  \ xxx fixme, the same punctuation can not be closing and opening 
+\ unless the system is redisegned to track the used punctuations.
 \ }punctuation: '  \ xxx fixme same case than "
 punctuation{: (  \ )
 punctuation{: (¡
@@ -88,6 +88,7 @@ punctuation{: ‘
 punctuation{: “
 
 }punctuation: !
+}punctuation: "
 }punctuation: ",
 }punctuation: ".
 }punctuation: ":
@@ -118,6 +119,7 @@ punctuation{: “
 }punctuation: ».
 }punctuation: ’
 }punctuation: ”
+}punctuation: 's
 
 
 fendo_definitions
@@ -126,5 +128,8 @@ fendo_definitions
 \ Change history of this file
 
 \ 2014-04-21: Code moved from <fendo.markup.fendo.fs>.
+\ 2014-07-14: New: double quote as ending punctuation. This removes the
+\   ending space in calculated HTML attributes in the template.
+\ 2014-10-12: New: ''s', though it's not punctuation.
 
 .( fendo.markup.fendo.punctuation.fs compiled ) cr

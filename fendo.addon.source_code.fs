@@ -4,7 +4,7 @@
 
 \ This file is the source code addon.
 
-\ Copyright (C) 2013 Marcos Cruz (programandala.net)
+\ Copyright (C) 2013,2014 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute it and/or modify it
 \ under the terms of the GNU General Public License as published by
@@ -55,7 +55,7 @@ require ./fendo.addon.source_code.common.fs  \ xxx tmp
 
 module: fendo.addon.source_code
 
-: (filename>filetype)  { D: filename -- ca2 len2 }
+: (filename>filetype)  { D: filename -- ca len }
   \ Convert a filename to a Vim's filetype.
   \ xxx todo make this configurable by the application
   filename s" .4th" string-suffix? if s" forth" exit  then
@@ -63,10 +63,14 @@ module: fendo.addon.source_code
   filename s" .bac" string-suffix? if s" bacon" exit  then
   filename s" .bas" string-suffix? if s" basic" exit  then
   filename s" .bb" string-suffix? if s" beta_basic" exit  then
+  filename s" .bbas" string-suffix? if s" beta_basic" exit  then
+  filename s" .betabas" string-suffix? if s" beta_basic" exit  then
   filename s" .bbim" string-suffix? if s" bbim" exit  then
-  filename s" .fs" string-suffix? if s" forth" exit  then
+  filename s" .fs" string-suffix? if s" gforth" exit  then
   filename s" .ini" string-suffix? if s" dosini" exit  then
   filename s" .mb" string-suffix? if s" masterbasic" exit  then
+  filename s" .mbas" string-suffix? if s" masterbasic" exit  then
+  filename s" .masterbas" string-suffix? if s" masterbasic" exit  then
   filename s" .mbim" string-suffix? if s" mbim" exit  then
   filename s" .opl" string-suffix? if s" oplplus" exit  then
   filename s" .opl.txt" string-suffix? if s" oplplus" exit  then
@@ -78,10 +82,12 @@ module: fendo.addon.source_code
   filename s" .seq" string-suffix? if s" forth" exit  then
   filename s" .sh" string-suffix? if s" sh" exit  then
   filename s" .vim" string-suffix? if s" vim" exit  then
+  filename s" .vbas" string-suffix? if s" vimclairbasic" exit  then
   filename s" .xbas" string-suffix? if s" x11basic" exit  then
   filename s" .yab" string-suffix? if s" yabasic" exit  then
   filename s" .z80s" string-suffix? if s" z80" exit  then
   filename s" _bas" string-suffix? if  s" superbasic" exit  then
+  filename s" _sbim" string-suffix? if  s" sbim" exit  then
 \  filename s" _scr" string-suffix? if  s" forth" exit  then  \ xxx  todo
 \  filename s" _cmd" string-suffix? if  s" text" exit  then  \ xxx todo
   filename s" boot" str=  if  s" superbasic" exit  then
@@ -90,9 +96,11 @@ module: fendo.addon.source_code
   ;
 : filename>filetype  ( ca1 len1 -- ca2 len2 )
   \ Convert a filename to a Vim's filetype, if needed.
-  \ If 'filetype$' has been set, use it; this let the application
+  \ If 'programming_language$' has been set, use it; this let the application
   \ to override the default guessing based on the filename.
+\  cr ." In filename>filetype " 2dup type ."  --> "  \ XXX INFORMER
   programming_language$ $@ dup if  2nip  else  2drop (filename>filetype)  then
+\  2dup type cr cr cr  \ XXX INFORMER
   ;
 
 \ **************************************************************
@@ -168,6 +176,7 @@ no_source_code_translation
   ;
 : >source_code<  ( ca len -- ca' len' )
   \ Translate and highlight a source code.
+\  cr ." In >source_code<"  \ XXX INFORMER
   source_code_pretranslated highlighted source_code_posttranslated
   ;
 : echo_source_code  ( ca len -- )
@@ -187,12 +196,10 @@ no_source_code_translation
 : source_code  ( ca len -- )
   \ Read and echo the content of a source code file.
   \ The Vim filetype is guessed from the filename, unless
-  \ already set in the 'programming_language$' dinamyc string.
+  \ already set in the 'programming_language$' dynamic string.
   \ ca len = file name
   2dup filename>filetype programming_language!  (source_code)
   ;
-
-' source_code alias zx_spectrum_source_code  \ xxx tmp
 
 ;module
 
@@ -237,5 +244,11 @@ no_source_code_translation
 \ 2014-02-06: New: 'source_code_finished' now does all reseting final task.
 \   This fixes some obscure issues too.
 \ 2014-03-12: Change: module renamed after the filename.
+\ 2014-10-13: New: 'zx_spectrum_source_code'.
+\ 2014-10-17: Change: 'zx_spectrum_source_code' is moved to its own
+\   file <fendo.addon.zx_spectrum_source_code.fs>.
+\ 2014-10-17: Improvement: '(filename>filetype)' is updated with
+\   Vimclair BASIC filetype, and alternative extensions for MasterBASIC
+\   and Beta BASIC.
 
 .( fendo.addon.source_code.fs compiled) cr

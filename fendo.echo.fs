@@ -69,6 +69,7 @@ variable echoed  \ used as dynamic string
   ;
 
 echo>file
+\ echo>screen  \ XXX for debugging
 
 \ **************************************************************
 \ Echo

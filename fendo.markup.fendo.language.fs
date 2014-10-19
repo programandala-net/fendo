@@ -62,12 +62,13 @@ Usage example:
   does>  ( -- )
     ( dfa ) count (xml:)lang=! [<span>]
   ;
-\ XXX OLD
-\ : ((:  ( "name" -- )
-\   \ Create a language inline markup.
-\   \ name = ISO code of a language
-\   parse-name? abort" Missing language code" (((:)
-\   ;
+: language_inline_quote_markup  ( ca len -- )
+  \ Create a language inline quote markup.
+  \ ca len = ISO code of a language
+  2dup s" ''" s+ :create_markup s,
+  does>  ( -- )
+    ( dfa ) count (xml:)lang=! [markup>order] '' [markup<order]
+  ;
 : language_block_markup  ( ca len -- )
   \ Create a language block markup.
   \ ca len = ISO code of a language
@@ -75,19 +76,21 @@ Usage example:
   does>  ( -- )
     ( dfa ) count (xml:)lang=! [<div>]
   ;
-\ XXX old
-\ : (((:  ( "name" -- )
-\   \ Create a language block markup.
-\   \ name = ISO code of a language
-\   parse-name? abort" Missing language code" ((((:)
-\   ;
+: language_block_quote_markup  ( ca len -- )
+  \ Create a language block quote markup.
+  \ ca len = ISO code of a language
+  2dup s" ''''" s+ :create_markup s,
+  does>  ( -- )
+    ( dfa ) count (xml:)lang=! [markup>order] '''' [markup<order]
+  ;
 : language_markup:  ( "name" -- )
-  \ Create inline and block language markups.
+  \ Create inline and block language and quote markups.
   \ Used by the website application to create all
   \ language markups used in the contents.
   \ name = ISO code of a language
   parse-name? abort" Expected language code"
-  2dup language_inline_markup language_block_markup
+  2dup language_inline_markup  2dup language_inline_quote_markup
+  2dup language_block_markup  language_block_quote_markup
   ;
 
 \ **************************************************************
@@ -96,6 +99,7 @@ Usage example:
 \ 2014-04-21: Code moved from <fendo.markup.fendo.fs>.
 \ 2014-06-06: ")))" changed to "))))", after the last changes in
 \ Fendo's markup.
+\ 2014-07-13: New: inline and block quotes.
 
 .( fendo.markup.fendo.language.fs compiled ) cr
 

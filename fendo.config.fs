@@ -32,6 +32,9 @@
 \ 2014-03-04: 'xhtml?' moved here from <fendo.markup.common.fs>.
 \ 2014-07-08: New: Site variables, needed for the Atom module;
 \   they are going to be used in the site template too.
+\ 2014-07-14: Change: site variables, and 'domain' as well,
+\   are converted to defered words, in order to make them
+\   configurable as multilingual constants.
 
 \ **************************************************************
 \ Requirements
@@ -41,15 +44,15 @@ require string.fs  \ Gforth's dynamic strings
 fendo_definitions
 
 \ **************************************************************
-\ Configurable variables
+\ Configurable site data
 
-\ Config values are stored in ordinary variables, but as dynamic
-\ strings (with  '$!', '$@', etc.).
+\ Some site data are stored in ordinary variables, but as dynamic
+\ strings (with  '$!', '$@', etc.). Other are defered words, in order
+\ to make them configurable as multilingual constants.
 
 \ All directories and subdirectories must have an ending slash.
 
-variable domain
-s" yourdomain.com" domain $!
+defer domain
 
 \ Filename extensions (with dot)
 
@@ -85,30 +88,20 @@ s" {CONTENT}" content_markup $!
 
 \ Target HTML
 
+\ XXX TODO convert to value
 variable xhtml?  \ flag, XHTML syntax?
 
-\ Site variables
+\ Site constants and variables
 
-\ Some variables are defered words in order to convert them into
-\ multilingual variables if needed.
+\ They are defered words in order to convert them into multilingual
+\ constants if needed.
 
-variable (site_title)
 defer site_title
-' (site_title) is site_title
-
-variable (site_plain_title)  \ a copy without markups
-defer site_plain_title
-' (site_plain_title) is site_plain_title
-
-variable (site_subtitle)
+defer site_plain_title  \ a copy without markups
 defer site_subtitle
-' (site_subtitle) is site_subtitle
+defer site_plain_subtitle  \ a copy without markups
 
-variable (site_plain_subtitle)  \ a copy without markups
-defer site_plain_subtitle
-' (site_plain_subtitle) is site_plain_subtitle
-
-variable site_icon
-variable site_author
+defer site_icon
+defer site_author
 
 .( fendo.config.fs compiled) cr

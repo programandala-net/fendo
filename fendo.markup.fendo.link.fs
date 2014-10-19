@@ -175,15 +175,21 @@ $variable last_href$  \ xxx new, experimental, to be used by the application
 : parse_link  ( "linkmarkup ]]" -- )
   \ Parse and store the link attributes.
 \  ." entering parse_link -- order = " order cr \ xxx informer
+\  cr ." separate? in parse_link (0) is " separate? ?  \ XXX INFORMER 2014-08-13
   get_link_href
+\  cr ." separate? in parse_link (1) is " separate? ?  \ XXX INFORMER 2014-08-13
 \  ." ---> " href=@ type cr  \ xxx informer
   link_finished? @ 0= if
 \    ." link not finished; href= " href=@ type cr  \ xxx informer
-    parse_link_text link_finished? @ 0=
+\  cr ." separate? in parse_link (0) is " separate? ?  \ XXX INFORMER 2014-08-13
+    separate? @  parse_link_text  separate? !
+    link_finished? @ 0=
+\  cr ." separate? in parse_link (1) is " separate? ?  \ XXX INFORMER 2014-08-13
     if
 \      ." link not finished; link text= " link_text $@ type cr  \ xxx informer
       get_link_raw_attributes
       then
+\  cr ." separate? in parse_link (2) is " separate? ?  \ XXX INFORMER 2014-08-13
   then
 \  ." ---> " href=@ type cr  \ xxx informer
   ;
@@ -226,7 +232,7 @@ false [if]  \ xxx tmp
   ;
 : pid$>url  ( ca1 len1 -- ca2 len2 )
   \ xxx not used?
-  s" http://" domain $@ s+ 2swap
+  s" http://" domain s+ 2swap
   pid$>data>pid# target_file s+
   ;
 : -file://  ( ca len -- ca' len' )
@@ -289,6 +295,7 @@ defer link_suffix
 ' noop  dup is link_text_suffix  is link_suffix
 : (echo_link)  ( -- )
   \ Echo the final link.
+\  cr ." separate? in (echo_link) is " separate? ?  \ XXX INFORMER 2014-08-13
   [<a>] evaluate_link_text link_text_suffix [</a>] link_suffix
   ;
 : echo_link?  ( -- wf )
@@ -303,6 +310,7 @@ defer link_suffix
 : echo_link  ( -- )
   \ Echo a link, if possible.
   \ All link attributes have been set.
+\  cr ." separate? in echo_link is " separate? ?  \ XXX INFORMER 2014-08-13
   tune_link  echo_link?
   if  (echo_link)  else  echo_link_text  then  reset_link
   ;
@@ -327,6 +335,13 @@ fendo_definitions
 \ Change history of this file
 
 \ 2014-04-21: Code moved from <fendo.markup.fendo.fs>.
+\ 2014-07-14: Change: 'domain' is updated; it's not a dinamyc variable
+\   anymore, after the changes in <fendo.config.fs>.
+\ 2014-08-13: Fix: 'separate?' is saved and restored in 'parse_link',
+\ because 'parse_link_text' changed it to true, what ruined previous
+\ opening punctuation. For example, in this source
+\           bla bla bla ( [[ url | link text ]] )
+\ the bug caused the opening paren to remain separated from the link.
 
 .( fendo.markup.fendo.link.fs compiled ) cr
 

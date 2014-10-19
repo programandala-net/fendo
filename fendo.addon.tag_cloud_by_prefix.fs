@@ -35,6 +35,8 @@
 \ 2014-05-28: New: 'tags_used_only_once_link_to_its_own_page' flag.
 \ 2014-06-03: Change: 'tags_used_only_once_link_to_its_own_page'
 \   renamed to 'lonely_tags_link_to_content'.
+\ 2014-10-12: Fix: now 'tag_cloud_by_prefix' also sets the 'prefix$'
+\   variable, because 'pages_by_prefix' sets a homonymous module variable.
 
 \ **************************************************************
 \ Requirements
@@ -85,11 +87,12 @@ variable pages
   \ ca len = pid
   pid$>data>pid# tags evaluate_tags
   ;
-variable prefix$
+variable prefix$  \ module variable; in <fendo.addon.pages_by_prefix.fs> there's another one
 : (count_tags_by_prefix)  { D: pid -- }
   \ Increase the count of tags that are in pages whose pid
   \ matches the current regex.
-\  ." count_tags_by_prefix " 2dup type cr  \ xxx informer
+\  cr ." In count_tags_by_prefix pid is " pid type  \ xxx informer
+\  ."  and prefix is <" prefix$ $@ type ." >" cr  \ XXX INFORMER
   pid prefix$ $@ string-prefix? 0= ?exit
   pid pid$>data>pid# draft? ?exit
   pid count_tags
@@ -153,20 +156,22 @@ hide
   tag>count @ tag_size n>str s" %" s+ s" font-size:" 2swap s+ style=!
   ;
 : ?tag_cloud_sizes  ( tag f -- )
-  \ Set the font size style for the next HTML tag, actually <li> or
-  \ <a>, if needed.
+  \ Set the font size style for the next HTML tag, actually <li> or <a>,
+  \ if needed.
   tag_cloud_with_sizes @ and if  tag_cloud_sizes  else  drop  then
   ;
 : (tag_does_echo_cloud)  { tag -- }
-  \ Create a tag cloud link to the given tag
-\  tag tag>name cr type  \ XXX INFORMER
+  \ Create a tag cloud link to the given tag.
+\  tag tag>name cr ." In (tag_does_echo_cloud) the tag name is " type  \ XXX INFORMER
   tag tag_cloud_counts_sized @ ?tag_cloud_sizes  [<li>]
   tag tag_cloud_counts_sized @ 0= ?tag_cloud_sizes
   tag tag_link  tag tag_count  [</li>]
   ;
 : tag_does_echo_cloud  ( tag -- )
   \ Create a tag cloud link to the given tag, if needed.
-  dup tag>count @ if  (tag_does_echo_cloud)  else  drop  then
+  dup tag>count @
+\  dup cr ." In tag_does_echo_cloud the tag count is " .  \ XXX INFORMER
+  if  (tag_does_echo_cloud)  else  drop  then
   ;
 : tags_do_echo_cloud  ( -- )
   ['] tag_does_echo_cloud is (tag_does)
@@ -185,12 +190,9 @@ export
 : tag_cloud_by_prefix  ( ca len -- )
   \ Create a tag cloud
   \ with pages whose pid matches the given prefix.
-\  ." tag_cloud_by_prefix " 2dup type cr  \ xxx informer
-  2dup pages_by_prefix
-\  dup ." pages " . cr  \ xxx informer
-  pages !  prefix$ $!
-  ['] count_tags_by_prefix do_tag_cloud
-  ;
+\  cr ." In tag_cloud_by_prefix the prefix is " 2dup type  \ xxx informer
+  2dup prefix$ $!  pages_by_prefix drop
+  ['] count_tags_by_prefix do_tag_cloud ;
 
 ;module
 

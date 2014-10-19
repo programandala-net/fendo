@@ -49,6 +49,7 @@
 \   <fendo_markup_wiki.fs>.
 \ 2013-12-05: New: '(xml:)lang=!', factored from
 \   <fendo_markup_wiki.fs>; '(xml:)lang=@'.
+\ 2014-07-13: New: 'xmlnl=' attribute, needed by the Atom module.
 
 \ **************************************************************
 \ Todo
@@ -283,6 +284,7 @@ attribute: value=
 attribute: width=
 attribute: xml:base=
 attribute: xml:lang=
+attribute: xmlns=
 
 \ **************************************************************
 \ Virtual attributes

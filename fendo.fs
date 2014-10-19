@@ -330,7 +330,8 @@ fendo_definitions
 \ **************************************************************
 \ Config
 
-s" A-04-201404" 2constant fendo_version
+s" A-04-20140714" 2constant fendo_version
+s" Fendo (Forth Engine for Net DOcuments) " fendo_version s+ 2constant generator
 
 false constant link_text_as_attribute?  \ xxx tmp -- experimental
 

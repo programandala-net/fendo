@@ -1,9 +1,32 @@
 = Fendo to-do list
 
-2014-06-04:
+2014-08-13: --FIXED--
 
-The language markup is not rendered in <img> alt text, see:
-<es.imagen.2012.11.25.raspberry_pi.html>.
+Subtle bug found:
+
+the value of 'separate?' is changed by 'parse_link_text', what is a problem is this case:
+
+   bla bla bla ( [[ http:/blabla | PROBLEM HERE ]] )
+
+The open paren is a punctuation word that sets 'separate?' to false, in order
+to print the link right after the paren. But the link code modifies it when
+evaluating the link text. Only after that the link is actually echoed.
+
+The solution could be to print <a> first, then parse and print the link text
+and finally print </a>. But it seems that's how it actually already works!
+
+Fixed by saving and restoring 'separate?' at the right place.
+
+
+2014-07-13:
+
+Update the 'modified' metadatum with the modification time of every source code
+file included into the page. This way, the target modification time will be
+that of the most recent source code, even if the page is older. This way the
+FTP updates will be easier.
+
+For the same reason, update the 'modified' metadatum of tag pages with the
+most recent time of any of its tagged pages.
 
 2014-06-03:
 
