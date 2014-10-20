@@ -29,6 +29,8 @@
 \ 2014-02-15: Fix: path of the Fendo addons is converted to relative.
 \ 2014-03-12: Change: module renamed after the filename.
 \ 2014-10-13: Improvement: UDG chars are translated.
+\ 2014-10-19: Improvement: The code is highlighted with a specific Vim
+\   syntax file, created for Abersoft Forth.
 
 \ **************************************************************
 \ Requirements
@@ -75,6 +77,7 @@ export
 : abersoft_forth_blocks_source_code  ( ca len -- )
   \ Read the content of a ZX Spectrum's Abersoft Forth blocks TAP file and echo it.
   \ ca len = file name
+  s" abersoft_forth" programming_language!
   ['] zx_spectrum_source_code_translated is source_code_posttranslated
   ['] tidy_line is tidy_forth_block_line
   highlight_forth_block_0? off

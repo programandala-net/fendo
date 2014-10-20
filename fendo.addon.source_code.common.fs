@@ -35,8 +35,8 @@
 \ 2014-01-06: Fix: 'append_source_code_line' now escapes de the code
 \ with 'escaped_source_code'.
 
-\ 2014-02-06: Fix: 'highlighted' reseted 'programming_language$' befor
-\ exiting, what turned off the highlighting of Forth blocks.
+\ 2014-02-06: Fix: 'highlighted' reseted 'programming_language$'
+\ before exiting, what turned off the highlighting of Forth blocks.
 
 \ 2014-02-07: Fix: now 'append_source_code_line' calls
 \ 'escaped_source_code' only if 'highlight?' is false, because Vim
@@ -90,7 +90,11 @@ $variable programming_language$  \ same values than Vim's 'filetype'
   ;
 : programming_language?  ( -- wf )
   \ Has a programming language been set?
-  programming_language@ nip 0<>
+  programming_language$ $@len 0<>
+  ;
+: programming_language?!  ( ca len -- )
+  \ Set the Vim's filetype for syntax highlighting, if not already set.
+  programming_language? if  2drop  else  programming_language! then
   ;
 
 $variable source_code$
@@ -188,7 +192,7 @@ export
   \ Highlight the given source code, if needed.
   \ ca1 len1 = plain source code
   \ ca2 len2 = source code highlighted with <span> XHTML tags
-\  ." programming_language$ in highlighted is " programming_language$ $@ type cr  \ xxx informer
+\  ." programming_language$ in highlighted is " programming_language$ $@ type cr cr cr  \ xxx informer
 \  ." plain source code in highlighted" cr 2dup type key drop  \ xxx informer
   highlight? if  (highlighted)  then
   ;

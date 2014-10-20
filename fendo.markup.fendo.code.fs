@@ -79,6 +79,8 @@ fendo_definitions
     ####-line? dup >r
     if  2drop  else  append_source_code_line  then  r>
   until  source_code@ highlighted echo
+  \ XXX FIXME here, 'source_code_finished' must be called, but it's
+  \ defined in <fendo.addon.source.code.fs>
   ;
 : highlight_####-zone?  ( -- wf )
   highlight? programming_language@ nip 0<> and
@@ -136,7 +138,7 @@ fendo_definitions
 : code_inline_markup  ( ca len -- )
   \ Create inline code markup for a specific Vim filetype.
   \ ca len = Vim filetype (for syntax highlighting)
-  parse-name 2dup s" ##" 2swap s+ :create_markup s,
+  2dup s" ##" 2swap s+ :create_markup s,
   does>  ( -- )
     ( dfa )  count programming_language!
     [markup>order] ## [markup<order]
@@ -144,7 +146,7 @@ fendo_definitions
 : code_block_markup  ( ca len -- )
   \ Create block code markup for a specific Vim filetype.
   \ ca len = Vim filetype (for syntax highlighting)
-  parse-name 2dup s" ####" 2swap s+ :create_markup s,
+  2dup s" ####" 2swap s+ :create_markup s,
   does>  ( -- )
     ( dfa )  count programming_language!
     [markup>order] #### [markup<order]
@@ -162,6 +164,7 @@ fendo_definitions
 \ Change history of this file
 
 \ 2014-04-21: Code moved from <fendo.markup.fendo.fs>.
+\ 2014-04-22: Fix: silly bug.
 
 .( fendo.markup.fendo.code.fs compiled ) cr
 
