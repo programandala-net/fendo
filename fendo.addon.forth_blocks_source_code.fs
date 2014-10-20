@@ -38,8 +38,11 @@
 \ 2013-12-10: Change: All Abersoft Forth code is moved to its own file
 \   <addons/abersoft_forth_blocks_source_code.fs>.
 \ 2014-02-05: Fix: 'update_forth_block_0_highlighting' set 'highlight?'
-\ when it was unset!
+\   when it was unset!
 \ 2014-03-12: Change: module renamed after the filename.
+\ 2014-10-19: Improvement: the programming language is not set to
+\   Forth if it's not empty; this allows other flavours of Forth to be
+\   used, e.g. ZX Spectrum's Abersoft Forth or QL's SuperForth.
 
 \ **************************************************************
 \ Todo
@@ -135,8 +138,7 @@ hide
   ;
 export
 : (forth_blocks_source_code)  ( -- )
-  \ xxx todo let abersoft forth to be set
-  s" forth" programming_language!
+  s" forth" programming_language?!  \ set it if unset
   0 forth_block !
   0 forth_block_line !
   0 forth_block_lenght !

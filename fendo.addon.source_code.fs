@@ -59,6 +59,8 @@ module: fendo.addon.source_code
   \ Convert a filename to a Vim's filetype.
   \ xxx todo make this configurable by the application
   filename s" .4th" string-suffix? if s" forth" exit  then
+  filename s" .acef" string-suffix? if s" ace_forth" exit  then
+  filename s" .acefs" string-suffix? if s" ace_forth" exit  then
   filename s" .asm" string-suffix? if s" z80" exit  then
   filename s" .bac" string-suffix? if s" bacon" exit  then
   filename s" .bas" string-suffix? if s" basic" exit  then
@@ -86,6 +88,7 @@ module: fendo.addon.source_code
   filename s" .xbas" string-suffix? if s" x11basic" exit  then
   filename s" .yab" string-suffix? if s" yabasic" exit  then
   filename s" .z80s" string-suffix? if s" z80" exit  then
+  filename s" .zxbas" string-suffix? if s" zxbasic" exit  then
   filename s" _bas" string-suffix? if  s" superbasic" exit  then
   filename s" _sbim" string-suffix? if  s" sbim" exit  then
 \  filename s" _scr" string-suffix? if  s" forth" exit  then  \ xxx  todo
@@ -98,9 +101,9 @@ module: fendo.addon.source_code
   \ Convert a filename to a Vim's filetype, if needed.
   \ If 'programming_language$' has been set, use it; this let the application
   \ to override the default guessing based on the filename.
-\  cr ." In filename>filetype " 2dup type ."  --> "  \ XXX INFORMER
+  cr ." In filename>filetype " 2dup type ."  --> "  \ XXX INFORMER
   programming_language$ $@ dup if  2nip  else  2drop (filename>filetype)  then
-\  2dup type cr cr cr  \ XXX INFORMER
+  2dup type cr cr cr  \ XXX INFORMER
   ;
 
 \ **************************************************************
@@ -250,5 +253,6 @@ no_source_code_translation
 \ 2014-10-17: Improvement: '(filename>filetype)' is updated with
 \   Vimclair BASIC filetype, and alternative extensions for MasterBASIC
 \   and Beta BASIC.
+\ 2014-10-19: New: 'programming_language?!'.
 
 .( fendo.addon.source_code.fs compiled) cr
