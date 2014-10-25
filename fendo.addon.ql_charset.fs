@@ -27,6 +27,8 @@
 
 \ 2013-12-10: Written with <galope/translated.fs>.
 \ 2013-12-12: Rewritten with <galope/uncodepaged.fs>.
+\ 2014-10-24: Solution for the QL char 0xB5: Unicode chars U+01A8 and U+0323 combined.
+\ 2014-10-24: Reference URL no longer exists; updated to a copy in web.archive.org.
 
 \ **************************************************************
 
@@ -35,7 +37,7 @@ require galope/uncodepaged.fs
 fendo_definitions
 
 \ Reference:
-\ http://pages.zoom.co.uk/selsyn/ql/qlchar.html
+\ http://web.archive.org/web/20080907083614/http://pages.zoom.co.uk/selsyn/ql/qlchar.html
 
 uncodepage: ql_charset_to_html
   \ Translation table from the Sinclair QL charset
@@ -97,7 +99,7 @@ uncodepage: ql_charset_to_html
   0xB2 s" &#967;"  \ Greek phi
   0xB3 s" &#161;"  \ inverted !
   0xB4 s" &#191;"  \ inverted ?
-  \ 0xB5 s" "  \ reverse S underdot ??? \ xxx todo
+  0xB5 s" &#424;&#803;"  \ reversed S with dot below
   0xB6 s" &#167;"  \ section
   0xB7 s" &#164;"  \ generic currency
   0xB8 s" &#171;"  \ left angle quote
@@ -169,7 +171,7 @@ uncodepage: ql_charset_to_utf8
   0xB2 s" χ"  \ Greek phi
   0xB3 s" ¡"  \ inverted !
   0xB4 s" ¿"  \ inverted ?
-  \ 0xB5 s" "  \ reverse S underdot ??? \ xxx todo
+  0xB5 s" ƨ̣"  \ reversed S with dot below (U+01A8 and U+0323 combined) \ XXX Note: this doesn't look right with Vimprobable, but yes with Midori.
   0xB6 s" §"  \ section
   0xB7 s" ¤"  \ generic currency
   0xB8 s" «"  \ left angle quote

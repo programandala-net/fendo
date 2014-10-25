@@ -60,57 +60,7 @@
 \   'forth_definitions' and 'fendo_definitions'.
 \ 2014-06-14: New: 'recognize_macros?'.
 \ 2014-06-15: Change: 'recognize_macros?' is commented out. The
-\ problem was solved with 'evaluate_the_markup?' in <fendo.parser.fs>.
-
-\ **************************************************************
-\ Todo
-
-\ 2013-12-11: finish the charset translations of the source_code
-\ addons: two translation tables are required for every conversion,
-\ one to be done before the highlighting (actual chars) and other
-\ after it (strings converted to HTML), as required by
-\ basin_source_code.
-
-\ 2013-12-05: do not echo a space before the first html tag on the line.
-
-\ 2013-11-11: link tools in <fendo_tools.fs>.
-
-\ 2013-11-09: rename 'filetype$' to 'programming_language$'.
-
-\ 2013-11-05: bug: when a link text is evaluated with
-\ 'evaluate_content', and it has markup, the attributes set for the
-\ link are used by the those markups? not sure yet. the attributes set
-\ must be an array pointed by a counter.
-\ (2013-11-07 this seems solved after the implementation of anchors?)
-
-\ 2013-10-28: distinction: 'language' (metadatum) and 'lang'
-\ (filename prefix).
-
-\ 2013-10-26: hardcoded '.html'?; use it in the page id?
-
-\ 2013-10-26: fix local links to draft pages!
-
-\ 2013-08-15: defered words at the start (and end?) of tags,
-\ to let the website application insert hooks.
-
-\ 2013-08-14: 'raw=' is already converted by 'unraw_attributes';
-\ maybe the 'raw=' fake attribute can be removed.
-
-\ 2013-08-14: Fix: <p> is closed when ]] is at the end of line!
-
-\ 2013-08-14: Choose better names for different meanings of "content":
-\ 1) raw content of the page (printable content and markups)
-\ 2) printable content only, not executable markups
-
-\ 2013-06-28: Make "plain_" data fields optional; they can be
-\ filled as default data, if empty.
-
-\ 2013-06-08: line comments in data header?
-
-\ 2013-10-30: Fix: 'forth-wordlist' is set to current before requiring
-\ the library files. The problem was <ffl/config.fs> created
-\ 'ffl.version' in the 'fendo' vocabulary, but searched for it in
-\ 'forth-wordlist'.
+\   problem was solved with 'evaluate_the_markup?' in <fendo.parser.fs>.
 
 \ **************************************************************
 \ Stack notation
