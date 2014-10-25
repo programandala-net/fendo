@@ -101,9 +101,9 @@ module: fendo.addon.source_code
   \ Convert a filename to a Vim's filetype, if needed.
   \ If 'programming_language$' has been set, use it; this let the application
   \ to override the default guessing based on the filename.
-  cr ." In filename>filetype " 2dup type ."  --> "  \ XXX INFORMER
+\  cr ." In filename>filetype " 2dup type ."  --> "  \ XXX INFORMER
   programming_language$ $@ dup if  2nip  else  2drop (filename>filetype)  then
-  2dup type cr cr cr  \ XXX INFORMER
+\  2dup type cr cr cr  \ XXX INFORMER
   ;
 
 \ **************************************************************

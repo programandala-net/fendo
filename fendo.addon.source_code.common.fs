@@ -58,6 +58,9 @@
 \ 2014-06-16: Fix: <source_code.vim> renamed to
 \ <fendo.addon.source_code.vim>.
 
+\ 2014-10-24: Change: 'escaped_source_code' only works if 'highlight?'
+\ is off; otherwise Vim does its own substitutions.
+
 \ **************************************************************
 \ Todo
 
@@ -101,8 +104,10 @@ $variable source_code$
 : escaped_source_code  ( ca len -- ca' len' )
   \ Escape special chars in source code.
   \ Used by the wiki markup module and the source code addon.
-  \ s" &amp;" s" &" replaced  \ xxx fixme this ruins the others
-  s" &lt;" s" <" replaced
+  highlight? 0= if
+    s" &lt;" s" <" replaced
+    s" &amp;" s" &" replaced  \ xxx fixme this ruins the others
+  then
   ;
 : append_source_code_line  ( ca len -- )
   highlight? 0= if  escaped_source_code  then

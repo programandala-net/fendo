@@ -375,6 +375,9 @@ defer set_default_data  ( -- )
   in_data_header? on
   ;
 : data_already_got?  ( -- 0 | xt +-1 )
+  \ XXX FIXME this check means pids of draft can not be created...
+  \ XXX ...but they are useful to do some checkings, e.g. in
+  \ Fendo-programandala's related_pages.
   current_pid$ known_pid$?
   ;
 : data{  ( "<text><spaces>}data" -- )
