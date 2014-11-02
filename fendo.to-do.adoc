@@ -1,0 +1,141 @@
+= Fendo to-do list
+
+.2013-06-28:
+
+Make "plain_" data fields optional; they can be
+filled as default data, if empty.
+
+.2013-08-14:
+
+'raw=' is already converted by 'unraw_attributes';
+maybe the 'raw=' fake attribute can be removed.
+
+.2013-08-14:
+
+Choose better names for different meanings of "content":
+1) raw content of the page (printable content and markups)
+2) printable content only, not executable markups
+
+.2013-08-15:
+
+defered words at the start (and end?) of tags,
+to let the website application insert hooks.
+
+.2013-11-05:
+
+bug: when a link text is evaluated with
+'evaluate_content', and it has markup, the attributes set for the
+link are used by the those markups? not sure yet. the attributes set
+must be an array pointed by a counter.
+(2013-11-07 this seems solved after the implementation of anchors?)
+
+.2014-03-03:
+
+Lists of rencent changes?
+
+.2014-03-03:
+
+Inform the Gforth list about this:
+
+----
+: traversed_pid  ( ca len -- )
+  \ ca len = pid
+  (traversed_pid) 0= if  \eof  then
+  ;
+: traverse_pids  ( xt -- )
+  is (traversed_pid)  create_pids_file  
+  \ pid_file$ included  \ xxx fixme this causes problems:
+  \   *** glibc detected *** gforth: free(): invalid pointer: 0xb69fb7f0 ***
+  \   Aborted.
+  pids_file$ slurp-file evaluate  \ xxx this works
+  ;
+----
+
+.2014-03-04:
+
+Make sure all Galope and FFL modules are included to the Forth wordlist.
+
+.2014-03-08:
+
+meta markups ~- and ~+ to change the separation of the next item.
+
+.2014-03-12:
+
+Fix:
+
+Add tag list to the project descriptions.  This fails with projects of a
+different language than the current language, because tag links are built
+using the current language: a link to the English tag "X" built in a Spanish
+page will try to link to the missing page "es.etiqueta.X" instead of
+"en.tag.X".
+
+.2014-03-12:
+
+finish <fendo.addon.tag_cloud_by_regex.fs>
+
+.2014-03-12:
+
+Implement the automatic use of the alternative-language metadata (title.en,
+description.eo, etc) How? A special metadatum? Defer every metadatum?
+
+.2014-03-24:
+
+In order to make unnecessary the "plain" versions of some metadata, an
+'unmark' tool could be written. It could just switch all the markups off and
+leave the rest in a string...
+
+.2014-04-07:
+
+Implement author and title for block quotes, like Asciidoctor, e.g.:
+
+<[ s" Miguel de Cervantes" quote_author! s" El quijote" quote_title! ]>
+""""
+En un lugar de la Mancha.
+""""
+
+That would render a proper footer under the quote block.
+At the end of the block, the variables must be reseted.
+
+.2014-07-13:
+
+Update the 'modified' metadatum with the modification time of every
+source code file included into the page. This way, the target
+modification time will be that of the most recent source code, even if
+the page is older. This way the FTP updates will be easier. [Update,
+2014-11-01: this has a drawback: a trivial modification of a source
+file would force the date of the webpage.]
+
+For the same reason, update the 'modified' metadatum of tag pages with
+the most recent time of any of its tagged pages. [Update, 2014-11-01:
+not very useful.]
+
+.2014-10-20:
+
+Bug:
+In 'highlighted_####-zone' (<fendo.markup.fendo.code.fs>),
+'source_code_finished' must be called at the end, but it's
+defined in <fendo.addon.source.code.fs>.
+
+.2014-10-25:
+
+Problem in fendo.data.fs:
+
+----
+: data_already_got?  ( -- 0 | xt +-1 )
+  \ XXX FIXME this check means pids of draft can not be created...
+  \ XXX ...but they are useful to do some checkings, e.g. in
+  \ Fendo-programandala's related_pages.
+  current_pid$ known_pid$?
+  ;
+----
+
+.2014-11-01:
+
+(Problem since 2014-03.)
+
+Link parsing fails when the link text spans the next line.
+
+Link parsing fails when "]]" is at the start of a new line!
+
+Make it possible to split links in severals lines of text.
+

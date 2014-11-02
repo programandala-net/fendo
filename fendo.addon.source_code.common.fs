@@ -61,6 +61,9 @@
 \ 2014-10-24: Change: 'escaped_source_code' only works if 'highlight?'
 \ is off; otherwise Vim does its own substitutions.
 
+\ 2014-11-01: Fix: 'escaped_source_code' converted "&" to HTML
+\ notation, what ruined the HTML entities.
+
 \ **************************************************************
 \ Todo
 
@@ -106,7 +109,6 @@ $variable source_code$
   \ Used by the wiki markup module and the source code addon.
   highlight? 0= if
     s" &lt;" s" <" replaced
-    s" &amp;" s" &" replaced  \ xxx fixme this ruins the others
   then
   ;
 : append_source_code_line  ( ca len -- )
@@ -186,7 +188,7 @@ hide
   \ ca1 len1 = plain source code
   \ ca2 len2 = source code highlighted with <span> XHTML tags
   >input_file
-  highlighting_command$ 
+  highlighting_command$
 \  cr ." In (highlighted) the content of highlighting_command$ is:" cr 2dup type cr cr  \ XXX INFORMER
   system
   $? abort" The highlighting command failed"
