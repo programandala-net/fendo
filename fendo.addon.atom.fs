@@ -3,7 +3,6 @@
 \ This file is part of Fendo.
 
 \ This file is the Atom addon.
-\ XXX TODO --- unfinished
 
 \ Copyright (C) 2009,2014 Marcos Cruz (programandala.net)
 
@@ -41,6 +40,8 @@
 \ add hreflang to <link>
 \ add xml:lang to all human readable fields
 \ add <logo> (larger image, twice as wide as it's tall)
+\ hack the description, in order to let the application to provide a
+\ custom string
 
 \ **************************************************************
 \ Requirements

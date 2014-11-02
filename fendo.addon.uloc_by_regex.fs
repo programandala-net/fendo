@@ -36,7 +36,7 @@ fendo_definitions
 
 : uloc_by_regex  ( ca len -- )
   \ Create an unnumbered list of content
-  \ with pages whose pid matches the given prefix.
+  \ with pages whose pid matches the given regex.
   [<ul>] lioc_by_regex [</ul>]
   ;
 

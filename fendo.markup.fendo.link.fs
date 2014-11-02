@@ -162,11 +162,6 @@ $variable last_href$  \ xxx new, experimental, to be used by the application
     parse-name end_of_link_section? 0=
     abort" Space not allowed in link href"
   [else]  \ no abort  \ xxx tmp, this causes the parsing never ends
-    \ This code is required until the migration from Simplilo is finished
-    \ because some URL have "__",
-    \ what simplilo2fendo converts to " __ "
-    \ (e.g. page <es.diario.2010.08.29.txt>)
-    \ xxx fixme a link shortcut can solve that problem
     begin  parse-name end_of_link_section? 0=
     while  s" <!-- xxx fixme space in link filename or URL -->" echo
     repeat
