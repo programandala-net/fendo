@@ -120,6 +120,7 @@ punctuation{: “
 }punctuation: ’
 }punctuation: ”
 }punctuation: 's
+}punctuation: &#39;s
 
 
 fendo_definitions
@@ -130,6 +131,8 @@ fendo_definitions
 \ 2014-04-21: Code moved from <fendo.markup.fendo.fs>.
 \ 2014-07-14: New: double quote as ending punctuation. This removes the
 \   ending space in calculated HTML attributes in the template.
-\ 2014-10-12: New: ''s', though it's not punctuation.
+\ 2014-10-12: New: "'s", though it's not punctuation.
+\ 2014-11-04: New: '&#39;s' (HTML version of "'s"; useful in certain
+\   cases).
 
 .( fendo.markup.fendo.punctuation.fs compiled ) cr

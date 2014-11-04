@@ -2,7 +2,8 @@
 
 \ This file is part of Fendo.
 
-\ This file defines the Fendo markup for passthroughs.
+\ This file defines the Fendo markup for passthroughs,
+\ used to output content 'as is'.
 
 \ Copyright (C) 2013,2014 Marcos Cruz (programandala.net)
 
@@ -25,7 +26,8 @@
 \ **************************************************************
 \ Change history of this file
 
-\ See at the end of the file.
+\ 2014-04-21: Code moved from <fendo.markup.fendo.fs>.
+\ 2014-11-04: Simpler loop in '~~~~'.
 
 \ **************************************************************
 \ Todo
@@ -64,9 +66,12 @@ markup_definitions
 
 \ Block passthroughs
 
-: ~~~~  ( "passthrough content ~~~~" -- )
+: ~~~~  ( "text<cr>~~~~" -- )
   \ Open, parse and close a passthrough block.
-  begin  passthrough-line? dup >r ?echo_line r> 0=  until
+  \ The block is echoed 'as is', line by line,  ignoring any markups
+  \ but the end of the block, that must be on its own line.
+\  begin  passthrough-line? dup >r ?echo_line r> 0=  until  \ XXX OLD
+  begin  passthrough-line?  while  echo_line  repeat  2drop
   ;
 
 \ Escape
@@ -78,11 +83,6 @@ markup_definitions
 
 
 fendo_definitions
-
-\ **************************************************************
-\ Change history of this file
-
-\ 2014-04-21: Code moved from <fendo.markup.fendo.fs>.
 
 .( fendo.markup.fendo.passthrough.fs compiled ) cr
 
