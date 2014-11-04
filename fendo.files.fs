@@ -25,16 +25,27 @@
 \ **************************************************************
 \ Change history of this file
 
-\ 2013-10-01: File created for the page redirection tools; 'open_target' and
-\ 'close_target' are moved here from "fendo_parser.fs".
+\ 2013-10-01: File created for the page redirection tools;
+\ 'open_target' and 'close_target' are moved here from
+\ "fendo_parser.fs".
+\
 \ 2013-10-02: Page redirection tools.
+\
 \ 2013-11-18: New: 'file>local', factored from 'open_source_code',
-\   (defined in <addons/source_code.fs>).
-\ 2013-11-28: Fix: 'redirected' didn't add the target extension,
-\   only the path; fixed with the new word 'pid$>target'.
+\ (defined in <addons/source_code.fs>).
+\
+\ 2013-11-28: Fix: 'redirected' didn't add the target extension, only
+\ the path; fixed with the new word 'pid$>target'.
+\
 \ 2014-03-02: Change: 'domain&current_target_file', factored from
 \ '(redirected)' to <fendo.data.fs>.
+\
 \ 2014-07-13: New: 'set_current_target_modification_time'.
+\
+\ 2014-11-04: Improvement: 'redirected' set the file modification time
+\ of the redirected file with the correspondant metadadatum of its
+\ goal page. This way server updates will be easier.
+\ 'set_current_target_modification_time ' was factored out.
 
 \ **************************************************************
 \ Target file
@@ -54,14 +65,18 @@
   \ Open the target file (HTML or Atom), if needed.
   echo>file? if  (open_target)  then
   ;
+: set_modification_time  ( ca len -- )
+  \ Set the modification time of the given file
+  \ to the correspondant metadata of the current page.
+  \ The host operating system shell is used (Linux only).
+  2>r s" touch --date=" current_page modifed s+ s"  " s+ 2r> s+
+  system $? abort" Error in set_current_target_modification_time"
+  ;
 : set_current_target_modification_time  ( -- )
   \ Set the modification time of the current target file
   \ to the correspondant metadata of the source file.
   \ The host operating system shell is used (Linux only).
-  s" touch --date=" 
-  current_page modifed s+ s"  " s+
-  current_page target_path/file s+
-  system $? abort" Error in set_current_target_modification_time"
+  current_page target_path/file set_modification_time
   ;
 : (close_target)  ( -- )
   \ Close the target file (HTML or Atom).
@@ -114,7 +129,8 @@
   \ Create a file that redirects to the current page.
   \ ca len = page id (old page filename without path and extension)
   \ 2013-10-02 Start, based on code from ForthCMS.
-  redirected>target w/o create-file throw  dup (redirected)  close-file throw
+  redirected>target 2dup 2>r w/o create-file throw  dup (redirected)  close-file throw
+  2r> set_modification_time
   ;
 : redirect ( ca len -- )
   \ Create a file that redirects to the current page.
