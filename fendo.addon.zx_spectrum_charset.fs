@@ -26,139 +26,175 @@
 \ Change history of this file
 
 \ 2014-10-12: Start.
+\
+\ 2014-11-05: Fix: charset translation worked only when highlighting
+\ was on. Now, 'set_zx_spectrum_source_code_translation' (factored
+\ from  'zx_spectrum_source_code', defined in
+\ <fendo.addon.zx_spectrum_source_code.fs>) does the proper selection.
+\
+\ 2014-11-05: Change: <galope/uncodepaged.fs> is used instead of
+\ <galope/translated.fs> for one of the translation tables. It finally
+\ works, but something strange happened in certain cases. It seems a
+\ strange bug in uncodepaged (the details are in the code).
 
 \ **************************************************************
 
 forth_definitions
+require galope/uncodepaged.fs
 require galope/translated.fs
-require galope/char-to-string.fs
 fendo_definitions
 
-false [if]  \ old first version
+uncodepage: zx_spectrum_charset_below_128
+  \ These translations can be done with (and before) or without syntax
+  \ highlighting.
+  \ XXX FIXME -- see 'zx_spectrum_source_code_translated_without_highlighting'.
+  096 s" £"  \ British pound sterling
+  127 s" ©"  \ copyright
+;uncodepage
 
-translations: zx_spectrum_charset
+uncodepage: zx_spectrum_charset_without_highlighting
 
-  \ These translations are useless before the syntax highlighting,
-  \ because the syntax highlighting converts the HTML markups to
-  \ explicit characters.
+  \ These translations have to be used when highlighting is on.
+  \
+  \ Note: These translations would be useless before the syntax
+  \ highlighting, because the syntax highlighting would convert the
+  \ HTML markups to explicit characters.
 
-  144 c>str s" <span class='ZXSpectrumUDG'>A</span>"
-  145 c>str s" <span class='ZXSpectrumUDG'>B</span>"
-  146 c>str s" <span class='ZXSpectrumUDG'>C</span>"
-  147 c>str s" <span class='ZXSpectrumUDG'>D</span>"
-  148 c>str s" <span class='ZXSpectrumUDG'>E</span>"
-  149 c>str s" <span class='ZXSpectrumUDG'>F</span>"
-  150 c>str s" <span class='ZXSpectrumUDG'>G</span>"
-  151 c>str s" <span class='ZXSpectrumUDG'>H</span>"
-  152 c>str s" <span class='ZXSpectrumUDG'>I</span>"
-  153 c>str s" <span class='ZXSpectrumUDG'>J</span>"
-  154 c>str s" <span class='ZXSpectrumUDG'>K</span>"
-  155 c>str s" <span class='ZXSpectrumUDG'>L</span>"
-  156 c>str s" <span class='ZXSpectrumUDG'>M</span>"
-  157 c>str s" <span class='ZXSpectrumUDG'>N</span>"
-  158 c>str s" <span class='ZXSpectrumUDG'>O</span>"
-  159 c>str s" <span class='ZXSpectrumUDG'>P</span>"
-  160 c>str s" <span class='ZXSpectrumUDG'>Q</span>"
-  161 c>str s" <span class='ZXSpectrumUDG'>R</span>"
-  162 c>str s" <span class='ZXSpectrumUDG'>S</span>"
-  163 c>str s" <span class='ZXSpectrumUDG'>T</span>"
-  164 c>str s" <span class='ZXSpectrumUDG'>U</span>"
-  165 c>str s" <span class='ZXSpectrumToken'>RND</span>"
-  166 c>str s" <span class='ZXSpectrumToken'>INKEY$</span>"
-  167 c>str s" <span class='ZXSpectrumToken'>PI</span>"
-  168 c>str s" <span class='ZXSpectrumToken'>FN</span>"
-  169 c>str s" <span class='ZXSpectrumToken'>POINT</span>"
-  170 c>str s" <span class='ZXSpectrumToken'>SCREEN$</span>"
-  171 c>str s" <span class='ZXSpectrumToken'>ATTR</span>"
-  172 c>str s" <span class='ZXSpectrumToken'>AT</span>"
-  173 c>str s" <span class='ZXSpectrumToken'>TAB</span>"
-  174 c>str s" <span class='ZXSpectrumToken'>VAL$</span>"
-  175 c>str s" <span class='ZXSpectrumToken'>CODE</span>"
-  176 c>str s" <span class='ZXSpectrumToken'>VAL</span>"
-  177 c>str s" <span class='ZXSpectrumToken'>LEN</span>"
-  178 c>str s" <span class='ZXSpectrumToken'>SIN</span>"
-  179 c>str s" <span class='ZXSpectrumToken'>COS</span>"
-  180 c>str s" <span class='ZXSpectrumToken'>TAN</span>"
-  181 c>str s" <span class='ZXSpectrumToken'>ASN</span>"
-  182 c>str s" <span class='ZXSpectrumToken'>ACS</span>"
-  183 c>str s" <span class='ZXSpectrumToken'>ATN</span>"
-  184 c>str s" <span class='ZXSpectrumToken'>LN</span>"
-  185 c>str s" <span class='ZXSpectrumToken'>EXP</span>"
-  186 c>str s" <span class='ZXSpectrumToken'>INT</span>"
-  187 c>str s" <span class='ZXSpectrumToken'>SQR</span>"
-  188 c>str s" <span class='ZXSpectrumToken'>SGN</span>"
-  189 c>str s" <span class='ZXSpectrumToken'>ABS</span>"
-  190 c>str s" <span class='ZXSpectrumToken'>PEEK</span>"
-  191 c>str s" <span class='ZXSpectrumToken'>IN</span>"
-  192 c>str s" <span class='ZXSpectrumToken'>USR</span>"
-  193 c>str s" <span class='ZXSpectrumToken'>STR$</span>"
-  194 c>str s" <span class='ZXSpectrumToken'>CHR$</span>"
-  195 c>str s" <span class='ZXSpectrumToken'>NOT</span>"
-  196 c>str s" <span class='ZXSpectrumToken'>BIN</span>"
-  197 c>str s" <span class='ZXSpectrumToken'>OR</span>"
-  198 c>str s" <span class='ZXSpectrumToken'>AND</span>"
-  199 c>str s" <span class='ZXSpectrumToken'>&lt;=</span>"
-  200 c>str s" <span class='ZXSpectrumToken'>&gt;=</span>"
-  201 c>str s" <span class='ZXSpectrumToken'>&lt;&gt;</span>"
-  202 c>str s" <span class='ZXSpectrumToken'>LINE</span>"
-  203 c>str s" <span class='ZXSpectrumToken'>THEN</span>"
-  204 c>str s" <span class='ZXSpectrumToken'>TO</span>"
-  205 c>str s" <span class='ZXSpectrumToken'>STEP</span>"
-  206 c>str s" <span class='ZXSpectrumToken'>DEF FN</span>"
-  207 c>str s" <span class='ZXSpectrumToken'>CAT</span>"
-  208 c>str s" <span class='ZXSpectrumToken'>FORMAT</span>"
-  209 c>str s" <span class='ZXSpectrumToken'>MOVE</span>"
-  210 c>str s" <span class='ZXSpectrumToken'>ERASE</span>"
-  211 c>str s" <span class='ZXSpectrumToken'>OPEN#</span>"
-  212 c>str s" <span class='ZXSpectrumToken'>CLOSE#</span>"
-  213 c>str s" <span class='ZXSpectrumToken'>MERGE</span>"
-  214 c>str s" <span class='ZXSpectrumToken'>VERIFY</span>"
-  215 c>str s" <span class='ZXSpectrumToken'>BEEP</span>"
-  216 c>str s" <span class='ZXSpectrumToken'>CIRCLE</span>"
-  217 c>str s" <span class='ZXSpectrumToken'>INK</span>"
-  218 c>str s" <span class='ZXSpectrumToken'>PAPER</span>"
-  219 c>str s" <span class='ZXSpectrumToken'>FLASH</span>"
-  220 c>str s" <span class='ZXSpectrumToken'>BRIGHT</span>"
-  221 c>str s" <span class='ZXSpectrumToken'>INVERSE</span>"
-  222 c>str s" <span class='ZXSpectrumToken'>OVER</span>"
-  223 c>str s" <span class='ZXSpectrumToken'>OUT</span>"
-  224 c>str s" <span class='ZXSpectrumToken'>LPRINT</span>"
-  225 c>str s" <span class='ZXSpectrumToken'>LLIST</span>"
-  226 c>str s" <span class='ZXSpectrumToken'>STOP</span>"
-  227 c>str s" <span class='ZXSpectrumToken'>READ</span>"
-  228 c>str s" <span class='ZXSpectrumToken'>DATA</span>"
-  229 c>str s" <span class='ZXSpectrumToken'>RESTORE</span>"
-  230 c>str s" <span class='ZXSpectrumToken'>NEW</span>"
-  231 c>str s" <span class='ZXSpectrumToken'>BORDER</span>"
-  232 c>str s" <span class='ZXSpectrumToken'>CONTINUE</span>"
-  233 c>str s" <span class='ZXSpectrumToken'>DIM</span>"
-  234 c>str s" <span class='ZXSpectrumToken'>REM</span>"
-  235 c>str s" <span class='ZXSpectrumToken'>FOR</span>"
-  236 c>str s" <span class='ZXSpectrumToken'>GO TO</span>"
-  237 c>str s" <span class='ZXSpectrumToken'>GO SUB</span>"
-  238 c>str s" <span class='ZXSpectrumToken'>INPUT</span>"
-  239 c>str s" <span class='ZXSpectrumToken'>LOAD</span>"
-  240 c>str s" <span class='ZXSpectrumToken'>LIST</span>"
-  241 c>str s" <span class='ZXSpectrumToken'>LET</span>"
-  242 c>str s" <span class='ZXSpectrumToken'>PAUSE</span>"
-  243 c>str s" <span class='ZXSpectrumToken'>NEXT</span>"
-  244 c>str s" <span class='ZXSpectrumToken'>POKE</span>"
-  245 c>str s" <span class='ZXSpectrumToken'>PRINT</span>"
-  246 c>str s" <span class='ZXSpectrumToken'>PLOT</span>"
-  247 c>str s" <span class='ZXSpectrumToken'>RUN</span>"
-  248 c>str s" <span class='ZXSpectrumToken'>SAVE</span>"
-  249 c>str s" <span class='ZXSpectrumToken'>RANDOMIZE</span>"
-  250 c>str s" <span class='ZXSpectrumToken'>IF</span>"
-  251 c>str s" <span class='ZXSpectrumToken'>CLS</span>"
-  252 c>str s" <span class='ZXSpectrumToken'>DRAW</span>"
-  253 c>str s" <span class='ZXSpectrumToken'>CLEAR</span>"
-  254 c>str s" <span class='ZXSpectrumToken'>RETURN</span>"
-  255 c>str s" <span class='ZXSpectrumToken'>COPY</span>"
-;translations
+  \ XXX FIXME -- see 'zx_spectrum_source_code_translated_without_highlighting'.
+  096 s" £"  \ British pound sterling
+  127 s" ©"  \ copyright
 
-[then]
+  128 s" <span class='ZXSpectrumBlockGraph'>&nbsp;</span>"
+  129 s" <span class='ZXSpectrumBlockGraph'>&#x259D;</span>"
+  130 s" <span class='ZXSpectrumBlockGraph'>&#x2598;</span>"
+  131 s" <span class='ZXSpectrumBlockGraph'>&#x2580;</span>"
+  132 s" <span class='ZXSpectrumBlockGraph'>&#x2597;</span>"
+  133 s" <span class='ZXSpectrumBlockGraph'>&#x2590;</span>"
+  134 s" <span class='ZXSpectrumBlockGraph'>&#x259A;</span>"
+  135 s" <span class='ZXSpectrumBlockGraph'>&#x259C;</span>"
+  136 s" <span class='ZXSpectrumBlockGraph'>&#x2596;</span>"
+  137 s" <span class='ZXSpectrumBlockGraph'>&#x259E;</span>"
+  138 s" <span class='ZXSpectrumBlockGraph'>&#x258C;</span>"
+  139 s" <span class='ZXSpectrumBlockGraph'>&#x259B;</span>"
+  140 s" <span class='ZXSpectrumBlockGraph'>&#x2584;</span>"
+  141 s" <span class='ZXSpectrumBlockGraph'>&#x259F;</span>"
+  142 s" <span class='ZXSpectrumBlockGraph'>&#x2599;</span>"
+  143 s" <span class='ZXSpectrumBlockGraph'>&#x2588</span>"
+  144 s" <span class='ZXSpectrumUDG'>A</span>"
+  145 s" <span class='ZXSpectrumUDG'>B</span>"
+  146 s" <span class='ZXSpectrumUDG'>C</span>"
+  147 s" <span class='ZXSpectrumUDG'>D</span>"
+  148 s" <span class='ZXSpectrumUDG'>E</span>"
+  149 s" <span class='ZXSpectrumUDG'>F</span>"
+  150 s" <span class='ZXSpectrumUDG'>G</span>"
+  151 s" <span class='ZXSpectrumUDG'>H</span>"
+  152 s" <span class='ZXSpectrumUDG'>I</span>"
+  153 s" <span class='ZXSpectrumUDG'>J</span>"
+  154 s" <span class='ZXSpectrumUDG'>K</span>"
+  155 s" <span class='ZXSpectrumUDG'>L</span>"
+  156 s" <span class='ZXSpectrumUDG'>M</span>"
+  157 s" <span class='ZXSpectrumUDG'>N</span>"
+  158 s" <span class='ZXSpectrumUDG'>O</span>"
+  159 s" <span class='ZXSpectrumUDG'>P</span>"
+  160 s" <span class='ZXSpectrumUDG'>Q</span>"
+  161 s" <span class='ZXSpectrumUDG'>R</span>"
+  162 s" <span class='ZXSpectrumUDG'>S</span>"
+  163 s" <span class='ZXSpectrumUDG'>T</span>"
+  164 s" <span class='ZXSpectrumUDG'>U</span>"
+  165 s" <span class='ZXSpectrumToken'>RND</span>"
+  166 s" <span class='ZXSpectrumToken'>INKEY$</span>"
+  167 s" <span class='ZXSpectrumToken'>PI</span>"
+  168 s" <span class='ZXSpectrumToken'>FN</span>"
+  169 s" <span class='ZXSpectrumToken'>POINT</span>"
+  170 s" <span class='ZXSpectrumToken'>SCREEN$</span>"
+  171 s" <span class='ZXSpectrumToken'>ATTR</span>"
+  172 s" <span class='ZXSpectrumToken'>AT</span>"
+  173 s" <span class='ZXSpectrumToken'>TAB</span>"
+  174 s" <span class='ZXSpectrumToken'>VAL$</span>"
+  175 s" <span class='ZXSpectrumToken'>CODE</span>"
+  176 s" <span class='ZXSpectrumToken'>VAL</span>"
+  177 s" <span class='ZXSpectrumToken'>LEN</span>"
+  178 s" <span class='ZXSpectrumToken'>SIN</span>"
+  179 s" <span class='ZXSpectrumToken'>COS</span>"
+  180 s" <span class='ZXSpectrumToken'>TAN</span>"
+  181 s" <span class='ZXSpectrumToken'>ASN</span>"
+  182 s" <span class='ZXSpectrumToken'>ACS</span>"
+  183 s" <span class='ZXSpectrumToken'>ATN</span>"
+  184 s" <span class='ZXSpectrumToken'>LN</span>"
+  185 s" <span class='ZXSpectrumToken'>EXP</span>"
+  186 s" <span class='ZXSpectrumToken'>INT</span>"
+  187 s" <span class='ZXSpectrumToken'>SQR</span>"
+  188 s" <span class='ZXSpectrumToken'>SGN</span>"
+  189 s" <span class='ZXSpectrumToken'>ABS</span>"
+  190 s" <span class='ZXSpectrumToken'>PEEK</span>"
+  191 s" <span class='ZXSpectrumToken'>IN</span>"
+  192 s" <span class='ZXSpectrumToken'>USR</span>"
+  193 s" <span class='ZXSpectrumToken'>STR$</span>"
+  194 s" <span class='ZXSpectrumToken'>CHR$</span>"
+  195 s" <span class='ZXSpectrumToken'>NOT</span>"
+  196 s" <span class='ZXSpectrumToken'>BIN</span>"
+  197 s" <span class='ZXSpectrumToken'>OR</span>"
+  198 s" <span class='ZXSpectrumToken'>AND</span>"
+  199 s" <span class='ZXSpectrumToken'>&lt;=</span>"
+  200 s" <span class='ZXSpectrumToken'>&gt;=</span>"
+  201 s" <span class='ZXSpectrumToken'>&lt;&gt;</span>"
+  202 s" <span class='ZXSpectrumToken'>LINE</span>"
+  203 s" <span class='ZXSpectrumToken'>THEN</span>"
+  204 s" <span class='ZXSpectrumToken'>TO</span>"
+  205 s" <span class='ZXSpectrumToken'>STEP</span>"
+  206 s" <span class='ZXSpectrumToken'>DEF FN</span>"
+  207 s" <span class='ZXSpectrumToken'>CAT</span>"
+  208 s" <span class='ZXSpectrumToken'>FORMAT</span>"
+  209 s" <span class='ZXSpectrumToken'>MOVE</span>"
+  210 s" <span class='ZXSpectrumToken'>ERASE</span>"
+  211 s" <span class='ZXSpectrumToken'>OPEN#</span>"
+  212 s" <span class='ZXSpectrumToken'>CLOSE#</span>"
+  213 s" <span class='ZXSpectrumToken'>MERGE</span>"
+  214 s" <span class='ZXSpectrumToken'>VERIFY</span>"
+  215 s" <span class='ZXSpectrumToken'>BEEP</span>"
+  216 s" <span class='ZXSpectrumToken'>CIRCLE</span>"
+  217 s" <span class='ZXSpectrumToken'>INK</span>"
+  218 s" <span class='ZXSpectrumToken'>PAPER</span>"
+  219 s" <span class='ZXSpectrumToken'>FLASH</span>"
+  220 s" <span class='ZXSpectrumToken'>BRIGHT</span>"
+  221 s" <span class='ZXSpectrumToken'>INVERSE</span>"
+  222 s" <span class='ZXSpectrumToken'>OVER</span>"
+  223 s" <span class='ZXSpectrumToken'>OUT</span>"
+  224 s" <span class='ZXSpectrumToken'>LPRINT</span>"
+  225 s" <span class='ZXSpectrumToken'>LLIST</span>"
+  226 s" <span class='ZXSpectrumToken'>STOP</span>"
+  227 s" <span class='ZXSpectrumToken'>READ</span>"
+  228 s" <span class='ZXSpectrumToken'>DATA</span>"
+  229 s" <span class='ZXSpectrumToken'>RESTORE</span>"
+  230 s" <span class='ZXSpectrumToken'>NEW</span>"
+  231 s" <span class='ZXSpectrumToken'>BORDER</span>"
+  232 s" <span class='ZXSpectrumToken'>CONTINUE</span>"
+  233 s" <span class='ZXSpectrumToken'>DIM</span>"
+  234 s" <span class='ZXSpectrumToken'>REM</span>"
+  235 s" <span class='ZXSpectrumToken'>FOR</span>"
+  236 s" <span class='ZXSpectrumToken'>GO TO</span>"
+  237 s" <span class='ZXSpectrumToken'>GO SUB</span>"
+  238 s" <span class='ZXSpectrumToken'>INPUT</span>"
+  239 s" <span class='ZXSpectrumToken'>LOAD</span>"
+  240 s" <span class='ZXSpectrumToken'>LIST</span>"
+  241 s" <span class='ZXSpectrumToken'>LET</span>"
+  242 s" <span class='ZXSpectrumToken'>PAUSE</span>"
+  243 s" <span class='ZXSpectrumToken'>NEXT</span>"
+  244 s" <span class='ZXSpectrumToken'>POKE</span>"
+  245 s" <span class='ZXSpectrumToken'>PRINT</span>"
+  246 s" <span class='ZXSpectrumToken'>PLOT</span>"
+  247 s" <span class='ZXSpectrumToken'>RUN</span>"
+  248 s" <span class='ZXSpectrumToken'>SAVE</span>"
+  249 s" <span class='ZXSpectrumToken'>RANDOMIZE</span>"
+  250 s" <span class='ZXSpectrumToken'>IF</span>"
+  251 s" <span class='ZXSpectrumToken'>CLS</span>"
+  252 s" <span class='ZXSpectrumToken'>DRAW</span>"
+  253 s" <span class='ZXSpectrumToken'>CLEAR</span>"
+  254 s" <span class='ZXSpectrumToken'>RETURN</span>"
+  255 s" <span class='ZXSpectrumToken'>COPY</span>"
+;uncodepage
 
-translations: zx_spectrum_charset
+translations: zx_spectrum_charset_with_highlighting
 
   \ These translations work after the syntax highlighting.
 
@@ -292,9 +328,44 @@ translations: zx_spectrum_charset
   s" &lt;ff&gt;" s" <span class='ZXSpectrumToken'>COPY</span>"
 ;translations
 
-: zx_spectrum_source_code_translated  ( ca len -- ca' len' )
+: zx_spectrum_source_code_pretranslated_with_highlighting  ( ca len -- ca' len' )
+  \ Convert the content of a ZX Spectrum file to UTF-8,
+  \ before the syntax highlighting.
+  zx_spectrum_charset_below_128 uncodepaged
+  ;
+: zx_spectrum_source_code_posttranslated_with_highlighting  ( ca len -- ca' len' )
+  \ Convert the content of a ZX Spectrum file to UTF-8,
+  \ after the syntax highlighting.
+  zx_spectrum_charset_with_highlighting translated
+  ;
+: zx_spectrum_source_code_translated_without_highlighting  ( ca len -- ca' len' )
   \ Convert the content of a ZX Spectrum file to UTF-8.
-  zx_spectrum_charset translated
+  \
+  \ XXX FIXME When 'zx_spectrum_charset_below_128' is used here,
+  \ the translation done with
+  \ 'zx_spectrum_charset_without_highlighting' is ruined
+  \ (if the order is changed, it seems to work, but it is not a good
+  \ solution, because one of the chars translated is 127).
+  \ That's why all translations are done in 
+  \ 'zx_spectrum_charset_without_highlighting'.
+  \ It seems the bug is in 'uncodepaged':
+  \ when two translations are done on a chain way, something
+  \ can go wrong.
+  \
+\  zx_spectrum_charset_below_128 uncodepaged  \ XXX FIXME -- old
+  zx_spectrum_charset_without_highlighting uncodepaged
+  ;
+: set_zx_spectrum_source_code_translation  ( -- )
+  \ Set the proper translation for ZX Spectrum source code files.
+  highlight? if
+    ['] zx_spectrum_source_code_pretranslated_with_highlighting
+    is source_code_pretranslated
+    ['] zx_spectrum_source_code_posttranslated_with_highlighting
+    is source_code_posttranslated
+  else
+    ['] zx_spectrum_source_code_translated_without_highlighting
+    is source_code_pretranslated
+  then
   ;
 
 .( fendo.addon.zx_spectrum_charset.fs compiled) cr

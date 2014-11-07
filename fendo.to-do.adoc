@@ -1,5 +1,14 @@
 = Fendo to-do list
 
+.2013-06-07:
+
+In <fendo.data.fs>: Calculated data: 'rendered_title',
+'plain_title'...  Also 'description'? Better: filter words.
+
+.2013-06-08:
+
+In <fendo.data.fs>, can 'current_page' be used instead of ''data'?
+
 .2013-06-28:
 
 Make "plain_" data fields optional; they can be
@@ -139,3 +148,18 @@ Link parsing fails when "]]" is at the start of a new line!
 
 Make it possible to split links in severals lines of text.
 
+.2014-11-06:
+
+Create an addon to share the URL of the current page. Example:
+
+Current URL:
+http://www.iconarchive.com/show/whistlepuff-icons-by-firstfear/programs-icon.html
+Share links:
+http://www.facebook.com/sharer.php?u=http%3A%2F%2Fwww.iconarchive.com%2Fshow%2Fwhistlepuff-icons-by-firstfear%2Fprograms-icon.html&t=Programs+Icon+%7C+Whistlepuff+Iconset+%7C+firstfear
+http://twitter.com/home?status=http%3A%2F%2Fwww.iconarchive.com%2Fshow%2Fwhistlepuff-icons-by-firstfear%2Fprograms-icon.html
+https://plus.google.com/share?url=http%3A%2F%2Fwww.iconarchive.com%2Fshow%2Fwhistlepuff-icons-by-firstfear%2Fprograms-icon.html
+http://www.blogger.com/blog_this.pyra?t=&u=http%3A%2F%2Fwww.iconarchive.com%2Fshow%2Fwhistlepuff-icons-by-firstfear%2Fprograms-icon.html&n=Programs+Icon+%7C+Whistlepuff+Iconset+%7C+firstfear
+
+.2014-11-07:
+
+'link_text_as_attribute?' is the condition of an unbalanced '[if]' in <fendo.links.fs>.

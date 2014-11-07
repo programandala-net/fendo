@@ -26,19 +26,31 @@
 \ Change history of this file
 
 \ 2014-03-02: Start.
+\
 \ 2014-03-03: First draft.
+\
 \ 2014-03-04: New: 'evaluate_tags' and wid order words; words for
-\   listed links.
+\ listed links.
+\
 \ 2014-03-04: Change: 'execute_tags' renamed to 'execute_all_tags'.
+\
 \ 2014-03-07: Change: 'tag_link' factored from '(does_tag_link)'.
-\ 2014-03-11: Fix: now 'tag_link' sets the needed wordlist order;
-\   this is needed because the order was changed before evaluating
-\   the tags.
+\
+\ 2014-03-11: Fix: now 'tag_link' sets the needed wordlist order; this
+\ is needed because the order was changed before evaluating the tags.
+\
 \ 2014-05-28: New: 'tags_used_only_once_link_to_its_own_page' flag.
+\
 \ 2104-05-28: Change: '(tag_link)' modified in order to implement
-\   'tags_used_only_once_link_to_its_own_page'.
+\ 'tags_used_only_once_link_to_its_own_page'.
+\
 \ 2014-06-03: Change: 'tags_used_only_once_link_to_its_own_page'
-\   renamed to 'lonely_tags_link_to_content'.
+\ renamed to 'lonely_tags_link_to_content'.
+\
+\ 2014-11-05: Improvement: In order to add a class to the last element
+\ of a tag link list (what makes some things easier for CSS), new
+\ words are added: '#tags', '#tag', '(tag_does_count)' and
+\ 'tag_do_count'.
 
 \ **************************************************************
 \ Stack notation
@@ -100,6 +112,11 @@ wordlist constant fendo_tags_wid
 : tag>own_page  ( tag -- a )
   2 cells +
   ;
+
+\ Counters used to mark the last element of a tag list, in order to
+\ make it easier to manipulate the list with CSS:
+variable #tags  \ number of evaluated tags (how many tags were evaluated)
+variable #tag   \ number of the tag that is being evaluated
 
 defer tags_url_section$  \ to be set by the application
 s" tag." 2constant (tags_url_section$)
@@ -164,28 +181,43 @@ variable lonely_tags_link_to_content  \ flag
   ;
 
 : (tag_does_reset)  ( tag -- )
+  \ Reset the given tag.
   tag>count off
   ;
 : (tag_does_increase)  ( tag -- )
+  \ Increase the count of the given tag.
   tag>count ++
   ;
 : (tag_does_increase_and_save_own_page)  ( tag -- )
   dup (tag_does_increase)  last_traversed_pid $@ rot tag>own_page $!
   ;
 : (tag_does_total)  ( tag -- +n )
+  \ Count of the given tag.
   tag>count @
   ;
 : (tag_does_name)  ( tag -- ca len )
+  \ Name of the given tag.
   tag>name
   ;
 : (tag_does_text)  ( tag -- ca len )
+  \ Text of the given tag.
   tag>text
   ;
 : (tag_does_link)  ( tag -- )
+  \ Create a link to the page of the given tag.
   tag_link
   ;
+: last_listed_link?  ( -- f )
+  1 #tag +!  #tag @ #tags @ =
+  ;
 : (tag_does_list_link)  ( tag -- )
-  [<li>] tag_link [</li>]
+  \ Create a list element with a link to the page of the given tag.
+  \ Note: Before creating the link list,
+  \ the '#tag' variable must be set to zero, and
+  \ the '#tags' variable must be calculated.
+  \ See the definition of 'tag_list' in <fendo.addon.tag_list.fs>
+  \ as as example how a tag link list is built.
+  last_listed_link? if  s" last" class=!  then  [<li>] tag_link [</li>]
   ;
 variable tag_searched_for$
 variable tag_presence  \ counter
@@ -197,6 +229,10 @@ variable tag_presence  \ counter
 \  2dup type space  \ XXX INFORMER
   str= abs tag_presence +!
 \  tag_presence @ . cr  \ XXX INFORMER
+  ;
+: (tag_does_count)  ( tag -- )
+  \ Increase the count of evaluated tags.
+  drop  1 #tags +!
   ;
 
 defer (tag_does)  \ current behaviour of the tags
@@ -251,6 +287,11 @@ export
 \  ." tags_do_presence " 2dup type cr ~~  \ XXX INFORMER
   tag_searched_for$ $!   tag_presence off
   ['] (tag_does_presence) is (tag_does)
+  ;
+: tags_do_count  ( -- )
+  \ Set the tags to count how many tags are executed.
+  \ Output will be in the '#tags' variable.
+  #tags off  ['] (tag_does_count) is (tag_does)
   ;
 
 \ **************************************************************
@@ -309,14 +350,5 @@ s" /tmp/fendo.tags.fs" 2constant tags_filename$
   \ Execute all tags with the given behaviour.
   is (tag_does)  execute_all_tags
   ;
-
-\ **************************************************************
-\ Other
-
-: #tags  ( -- n )
-  \ Number of tags
-  \ xxx todo
-  ;
-
 
 .( fendo.addon.tags.fs compiled) cr

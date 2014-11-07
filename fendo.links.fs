@@ -27,20 +27,31 @@
 \ Change history of this file
 
 \ 2013-11-11: Code extracted from <fendo_markup_wiki.fs>: 'link'.
+\
 \ 2013-11-26: Change: several words renamed, after a new uniform
-\   notation: "pid$" and "pid#" for both types of page ids.
+\ notation: "pid$" and "pid#" for both types of page ids.
+\
 \ 2014-03-03: New: 'link<pid#'.
+\
 \ 2014-03-03: Change: 'title_link' renamed to 'link<pid$'.
-\ 2014-06-15: Fix: repeated evaluation of link texts is solved
-\ with the new 'link_text_already_evaluated?' flag.
+\
+\ 2014-06-15: Fix: repeated evaluation of link texts is solved with
+\ the new 'link_text_already_evaluated?' flag.
+\
 \ 2014-07-11: Change: 'pid$>url' moved to <fendo.data.fs>.
+\
 \ 2014-08-15: Fix: comment updated.
-\ 2014-08-15: Fix: 'link_text_already_evaluated? off' was missing
-\   in 'evaluate_link_text'.
-\ 2014-10-12: Fix: 'evaluate_link_text' now preserves the content of 'separate?'
-\   in the return stack; it ruined the stack before calling
-\   'evaluate_content'.
-
+\
+\ 2014-08-15: Fix: 'link_text_already_evaluated? off' was missing in
+\ 'evaluate_link_text'.
+\
+\ 2014-10-12: Fix: 'evaluate_link_text' now preserves the content of
+\ 'separate?' in the return stack; it ruined the stack before calling
+\ 'evaluate_content'.
+\
+\ 2014-11-07: a '[then]' was missing (more details in a comment marked
+\ thi this date).
+\
 \ **************************************************************
 \ Requirements
 
@@ -55,9 +66,9 @@ require fendo.markup.html.fs
 
 
 \ **************************************************************
-\ Tools for links xxx note: from <fendo.markup.wiki.fs>
+\ Tools for links
 
-true [if]  \ xxx tmp
+true [if]  \ xxx tmp -- moved from <fendo.markup.fendo.link.fs>
 : file://?  ( ca len -- wf )
   \ Does a string start with "file://"?
   s" file://" string-prefix?
@@ -79,7 +90,7 @@ true [if]  \ xxx tmp
   \ Is a href attribute external?
   2dup http://? >r  2dup https://? >r  ftp://? r> or r> or
   ;
-link_text_as_attribute? 0= [if]  \ xxx tmp
+link_text_as_attribute?  0= [if]  \ xxx tmp -- XXX FIXME unbalanced condition
 $variable link_text
 : link_text!  ( ca len -- )
   link_text $!
@@ -92,6 +103,10 @@ $variable link_text
   \ store the given string into it.
   link_text@ empty? if  link_text!  else  2drop  then
   ;
+[then]  \ XXX 2014-11-07 this was missing,
+        \ but still no sure if this is the right position:
+        \ it was placed here after comparation with
+        \ <fendo.markup.fendo.link>.
 variable link_text_already_evaluated?  \ flag
 link_text_already_evaluated? off
 : evaluate_link_text  ( -- )
@@ -109,7 +124,7 @@ link_text_already_evaluated? off
   ;
 [then]
 
-true [if]  \ xxx tmp
+true [if]  \ xxx tmp -- moved from <fendo.markup.fendo.link.fs>
 $variable link_anchor
 : -anchor  ( ca len -- ca len | ca' len' )
   \ Extract the anchor from a href attribute and store it.
@@ -148,7 +163,7 @@ variable link_type
   link_type @ file_link =
   ;
 [then]
-true [if]  \ xxx tmp
+true [if]  \ xxx tmp -- moved from <fendo.markup.fendo.link.fs>
 : missing_local_link_text  ( -- ca len )
 \  ." missing_local_link_text" cr  \ xxx informer
   href=@ -extension 2dup required_data<pid$

@@ -39,7 +39,7 @@ require galope/dollar-variable.fs  \ '$variable'
 
 fendo_definitions
 
-false [if]  \ xxx tmp
+false [if]  \ xxx tmp -- moved to <fendo.links.fs>
 : file://?  ( ca len -- wf )
   \ Does a string start with "file://"?
   s" file://" string-prefix?
@@ -80,7 +80,7 @@ $variable link_text
   ;
 [then]
 
-false [if]  \ xxx tmp
+false [if]  \ xxx tmp -- moved to <fendo.links.fs>
 $variable link_anchor
 : -anchor  ( ca len -- ca len | ca' len' )
   \ Extract the anchor from a href attribute and store it.
@@ -188,7 +188,7 @@ $variable last_href$  \ xxx new, experimental, to be used by the application
   then
 \  ." ---> " href=@ type cr  \ xxx informer
   ;
-false [if]  \ xxx tmp
+false [if]  \ xxx tmp -- moved to <fendo.links.fs>
 : missing_local_link_text  ( -- ca len )
 \  ." missing_local_link_text" cr  \ xxx informer
   href=@ -extension 2dup required_data<pid$

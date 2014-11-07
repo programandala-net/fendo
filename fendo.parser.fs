@@ -292,8 +292,8 @@ variable more?  \ flag: keep on parsing more words?; changed by '}content'
 \ **************************************************************
 \ Design template
 
-\ XXX TODO An alternative method: instead of divide the template by
-\ the '{CONTENT}' markup, it would be easier to parse it and create a
+\ XXX TODO An alternative method: instead of dividing the template by
+\ the '{CONTENT}' markup, it would be simpler to parse it and create a
 \ '{CONTENT}' word.
 
 : template_file  ( -- ca len )

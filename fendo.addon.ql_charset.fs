@@ -44,7 +44,7 @@ uncodepage: ql_charset_to_html
   \ to HTML entities.
 \  0x22 s" &quot;"  \ double quotes
   0x60 s" &#163;"  \ British pound sterling
-  0x7F s" &#copy;"  \ copyright
+  0x7F s" &copy;"  \ copyright
   0x7E s" &tilde;"  \ '~'
   0x80 s" &#228;"  \ a umlaut
   0x81 s" &#227;"  \ a tilde

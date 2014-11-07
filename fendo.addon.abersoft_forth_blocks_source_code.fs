@@ -77,8 +77,7 @@ export
 : abersoft_forth_blocks_source_code  ( ca len -- )
   \ Read the content of a ZX Spectrum's Abersoft Forth blocks TAP file and echo it.
   \ ca len = file name
-  s" abersoft_forth" programming_language!
-  ['] zx_spectrum_source_code_translated is source_code_posttranslated
+  s" abersoft_forth" programming_language!  set_zx_spectrum_source_code_translation
   ['] tidy_line is tidy_forth_block_line
   highlight_forth_block_0? off
   open_source_code skip_tap_header (forth_blocks_source_code) close_source_code
