@@ -28,25 +28,7 @@
 \ See at the end of the file.
 
 \ **************************************************************
-\ Todo
-
-\ 2013-06-08: Can 'current_page' be used instead of ''data'?
-\ 2013-06-07: Calculated data: rendered_title plain_title
-\   ... same with description. Better: filter words!
-\ 2014-02-15: Fix: 'forth-wordlist' is set to current before
-\   requiring the library files. The problem was <ffl/config.fs>
-\   created 'ffl.version' in the 'fendo' vocabulary, but searched for it
-\   in 'forth-wordlist'. This somehow arised after renaming all Fendo
-\   files for version A-03. The same problem happened in <fendo.fs>
-\   on 2013-10-30.
-\ 2014-03-03: Fix: 'abort"' added to 'pid$>data>pid#', in order to
-\   detect temporary shortcuts of missing pages that return an empty
-\   string (these temporary shortcuts make links possible, but made
-\   the program crash when trying to load the page metadata).
-
-\ **************************************************************
 \ Requirements
-
 
 forth_definitions
 
@@ -587,125 +569,175 @@ require galope/slash-sides.fs  \ '/sides'
 \ **************************************************************
 \ Change history of this file
 
-(*
-
 \ 2013-04-28: Start.
+\
 \ 2013-05-01: Fixed and finished the data system.
-\ 2013-05-17: Fix: There were two words with the name '>datum';
-\   it caused no problem in practice, but was confusing.
+\
+\ 2013-05-17: Fix: There were two words with the name '>datum'; it
+\ caused no problem in practice, but was confusing.
+\
 \ 2013-05-17: Improvement: 'data{' gets the data only the first time.
-\ 2013-05-17: New: 'require_data' is moved here from its own file,
-\   and simplified.
+\
+\ 2013-05-17: New: 'require_data' is moved here from its own file, and
+\ simplified.
+\
 \ 2013-05-18: Change: data fields return their offset, not their
-\   content (neccessary to write 'datum!'; '>datum' removed
-\   (now '+' can be used instead). 'datum!' is necessary in
-\   order to set default values to certain fields.
+\ content (neccessary to write 'datum!'; '>datum' removed (now '+' can
+\ be used instead). 'datum!' is necessary in order to set default
+\ values to certain fields.
+\
 \ 2013-05-18: New: 'parse_datum' is rewriten and factored out to
-\   'datum!'.
+\ 'datum!'.
+\
 \ 2013-06-07: Fix: The check in 'data{' was obsolete; it has been
-\   rewritten.
-\ 2013-06-08: Fix: The leading spaces of parsed data were not
-\   removed.
-\ 2013-06-08: Fix: now 'datum@' returns an empty string if the
-\   datum was not set.
-\ 2013-06-08: Fix: '@' missing in 'default_data'; beside, renamed
-\   to "set_default_data'.
-\ 2013-06-08: Change: 'datum@' and 'datum!' are removed;
-\   '$@' and '$!' are used instead (from Gforth's <string.fs>)).
-\ 2013-06-08: Fix: name clash (old 'source_filename' >
-\   '+source_path'; new 'source_filename' > '/sourcefilename').
-\ 2013-06-23: Change: design and template fields are renamed
-\   after the changes in the config module.
-\ 2013-06-28: Change: hierarchy metadata fields are renamed with
-\   the "_page" prefix, to avoid the clash with 'next' and make
-\   the code clearer; 'up' is renamed to 'upper_page'.
-\ 2013-06-28: Change: metadata fields return their values, not
-\   their addresses; a parallel word is created to return the
-\   address, only needed to set the default data;
-\   this change makes the code nicer.
+\ rewritten.
+\
+\ 2013-06-08: Fix: The leading spaces of parsed data were not removed.
+\
+\ 2013-06-08: Fix: now 'datum@' returns an empty string if the datum
+\ was not set.
+\
+\ 2013-06-08: Fix: '@' missing in 'default_data'; beside, renamed to
+\ "set_default_data'.
+\
+\ 2013-06-08: Change: 'datum@' and 'datum!' are removed; '$@' and '$!'
+\ are used instead (from Gforth's <string.fs>)).
+\
+\ 2013-06-08: Fix: name clash (old 'source_filename' > '+source_path';
+\ new 'source_filename' > '/sourcefilename').
+\
+\ 2013-06-23: Change: design and template fields are renamed after the
+\ changes in the config module.
+\
+\ 2013-06-28: Change: hierarchy metadata fields are renamed with the
+\ "_page" prefix, to avoid the clash with 'next' and make the code
+\ clearer; 'up' is renamed to 'upper_page'.
+\
+\ 2013-06-28: Change: metadata fields return their values, not their
+\ addresses; a parallel word is created to return the address, only
+\ needed to set the default data; this change makes the code nicer.
+\
 \ 2013-06-29: Change: '/sourcefilename' moved here from
-\   <fendo_files.fs>.
-\ 2013-06-29: Change: 'source>target_extension' moved here
-\   from <fendo_files.fs>.
+\ <fendo_files.fs>.
+\
+\ 2013-06-29: Change: 'source>target_extension' moved here from
+\ <fendo_files.fs>.
+\
 \ 2013-06-29: New: 'target_extension'; now target filename extension
-\   depends on the corresponding optional metadatum too.
+\ depends on the corresponding optional metadatum too.
+\
 \ 2013-07-28: New: 'required_data', '-forth_extension',
-\   '+forth_extension'.
+\ '+forth_extension'.
+\
 \ 2013-09-06: Fix: '(required_data)' didn't save 'current_page'.
+\
 \ 2013-09-06: New: 'property?', 'draft?'.
-\ 2013-09-29: Fix: 'current_page' was not properly preserved
-\   when 'require_data' was used. This caused many pages were
-\   not created. This bug was difficult to find out.
+\
+\ 2013-09-29: Fix: 'current_page' was not properly preserved when
+\ 'require_data' was used. This caused many pages were not created.
+\ This bug was difficult to find out.
+\
 \ 2013-10-22: Change: the new word 'trim', defined in the Galope
-\   library, is used instead of '-trailing -leading'.
+\ library, is used instead of '-trailing -leading'.
+\
 \ 2013-10-22: Fix: 'parse_datum' now uses 'trim' instead of
-\   '-leading'.
+\ '-leading'.
+\
 \ 2013-10-22: New: 'data<id$>id'.
-\ 2013-10-23: Improvement: 'unshortcut' is used in
-\   'required_data<id$' and 'data<id$>id'.
+\
+\ 2013-10-23: Improvement: 'unshortcut' is used in 'required_data<id$'
+\ and 'data<id$>id'.
+\
 \ 2013-11-06: New: '(data<)id$>id'.
+\
 \ 2013-11-07: New: '(required_data)' traps the errors and show an
-\   additional error message that includes the filename. This is
-\   important because the actual filename could be different from
-\   the filename taken from the markup, because of the
-\   "unshortcuttting" system.
+\ additional error message that includes the filename. This is
+\ important because the actual filename could be different from the
+\ filename taken from the markup, because of the "unshortcuttting"
+\ system.
+\
 \ 2013-11-11: Change: '/csv' moved to the Galope library.
+\
 \ 2013-11-24: New: 'page_id$', 'descendant?', 'current_page_id$'.
+\
 \ 2013-11-25: New: 'source>id$', 'source>id'.
-\ 2013-11-26: Change: several words renamed, after a new uniform notation:
-\   "pid$" and "pid#" for both types of page ids.
+\
+\ 2013-11-26: Change: several words renamed, after a new uniform
+\ notation: "pid$" and "pid#" for both types of page ids.
+\
 \ 2013-11-26: New: 'pid$>pid#'; page ids are created in a specific
-\   wordlist.
+\ wordlist.
+\
 \ 2013-11-27: New: '(pid$>data>pid#)' factored out from
-\   'pid$>data>pid#', as required by 'pid$_list@' (defined in
-\   <addons/pid_list.fs>), where 'unshortcut' is inconvenient.
+\ 'pid$>data>pid#', as required by 'pid$_list@' (defined in
+\ <addons/pid_list.fs>), where 'unshortcut' is inconvenient.
+\
 \ 2013-11-28: New: 'known_pid$?', factored from 'pid$>pid#' to be
-\   reused in ':pid'.
+\ reused in ':pid'.
+\
 \ 2013-11-28: New: 'pid$>target', to fix 'redirected' (in
-\   <fendo_files.fs>)
+\ <fendo_files.fs>)
+\
 \ 2013-12-05: Change: 'current_file_pid$' renamed to 'current_pid$'.
+\
 \ 2013-12-06: New: 'pid$>level' and 'pid#>level'.
+\
 \ 2014-01-05: Typo: 'modifed' corrected to 'modified'; alias created
-\   for the remaining mentions in the old pages.
+\ for the remaining mentions in the old pages.
+\
 \ 2014-01-06: New: 'replaced', used by the wiki markup module and the
-\   common source code addon.
+\ common source code addon.
+\
+\ 2014-02-15: Fix: 'forth-wordlist' is set to current before requiring
+\ the library files. The problem was <ffl/config.fs> created
+\ 'ffl.version' in the 'fendo' vocabulary, but searched for it in
+\ 'forth-wordlist'. This somehow arised after renaming all Fendo files
+\ for version A-03. The same problem happened in <fendo.fs> on
+\ 2013-10-30.
+\
 \ 2014-02-23: Fix: '(:pid)' now erases the data space.
+\
 \ 2014-02-23: Change: '(:pid)' is factored to 'new_page_data_space'.
+\
 \ 2014-02-25: Change: 'required_data<pid' renamed to
-\   'required_data<pid#'.
-\ 2014-02-25: Still debugging: some data is copied to a different page.
+\ 'required_data<pid#'.
+\
+\ 2014-02-25: Still debugging: some data is copied to a different
+\ page.
+\
 \ 2014-02-28: 'replaced' is moved to the Galope library.
-
+\
 \ 2014-02-28: Fix: stack notations and parameters in 'pid:' and
 \ '(pid:)'.
-
+\
 \ 2014-02-28: Fix: 'data_already_got?' checked 'fendo_wid', not
 \ 'fendo_pid_wid'! That was the reason of the data corruption between
 \ pages. Besides, 'data_already_got?' can be factored with
 \ 'known_pid$?'.
-
+\
 \ 2014-03-02: New: 'domain&current_target_file', factored from
 \ '(redirected)' (defined in <fendo.files.fs>).
-
+\
 \ 2014-03-03: New: 'filename>hierarchy'.  Change: '(hierarchy)'
 \ renamed to 'pid$>hierarchy'; 'hierarchy' updated.
-
-\ 2014-07-11:
-\ New: 'pid#>url', needed by the Atom module.
-\ New: 'domain_url' factored out; needed by the Atom module.
-\ New: '+domain_url' factored out.
-\ New: 'pid$>url', moved here from <fendo.links.fs>.
-
-\ 2014-07-14:
-\ Change: 'domain' is updated; it's not a dynamic variable
-\   anymore, after the changes in <fendo.config.fs>.
-\ New: 'current_target_file_url', used by the Atom module.
-\ Fix: the separator slash was missing in '+domain_url'.
-\ Change: 'source>target_extension' renamed to
-\   'source>current_target_extension'.
-\ Fix: 'target_file' added the current target extension, not
-\   the target extension for the given page id. 
-
-*)
+\
+\ 2014-03-03: Fix: 'abort"' added to 'pid$>data>pid#', in order to
+\ detect temporary shortcuts of missing pages that return an empty
+\ string (these temporary shortcuts make links possible, but made the
+\ program crash when trying to load the page metadata).
+\
+\ 2014-07-11: New: 'pid#>url', needed by the Atom module.  New:
+\ 'domain_url' factored out; needed by the Atom module.  New:
+\ '+domain_url' factored out.  New: 'pid$>url', moved here from
+\ <fendo.links.fs>.
+\
+\ 2014-07-14: Change: 'domain' is updated; it's not a dynamic variable
+\ anymore, after the changes in <fendo.config.fs>.  New:
+\ 'current_target_file_url', used by the Atom module.  Fix: the
+\ separator slash was missing in '+domain_url'.  Change:
+\ 'source>target_extension' renamed to
+\ 'source>current_target_extension'.  Fix: 'target_file' added the
+\ current target extension, not the target extension for the given
+\ page id. 
 
 .( fendo.data.fs compiled) cr

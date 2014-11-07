@@ -23,7 +23,7 @@
 \ <http://gnu.org/licenses>.
 
 \ **************************************************************
-\ Change history of this file
+\ History of this file
 
 \ 2013-10-01: File created for the page redirection tools;
 \ 'open_target' and 'close_target' are moved here from
@@ -68,14 +68,14 @@
 : set_modification_time  ( ca len -- )
   \ Set the modification time of the given file
   \ to the correspondant metadata of the current page.
-  \ The host operating system shell is used (Linux only).
+  \ The host operating system shell is used.
   2>r s" touch --date=" current_page modifed s+ s"  " s+ 2r> s+
   system $? abort" Error in set_current_target_modification_time"
   ;
 : set_current_target_modification_time  ( -- )
   \ Set the modification time of the current target file
   \ to the correspondant metadata of the source file.
-  \ The host operating system shell is used (Linux only).
+  \ The host operating system shell is used.
   current_page target_path/file set_modification_time
   ;
 : (close_target)  ( -- )
@@ -106,17 +106,16 @@
 : (redirected) ( fid -- )
   \ Create the content of a file that redirects to the current page.
   >r  s" <?php" r@ write-line throw
-	s" header('HTTP/1.1 301 Moved Permanently');" r@ write-line throw
-	s" header('Status: 301 Moved Permanently');" r@ write-line throw
-	S" header('Location: http://'."
+  s" header('HTTP/1.1 301 Moved Permanently');" r@ write-line throw
+  s" header('Status: 301 Moved Permanently');" r@ write-line throw
+  S" header('Location: http://'."
   s" ($_SERVER['HTTP_HOST']=='localhost'?'localhost/':'')" s+
   s" .'" s+
-\	S" header('Location: http://localhost/"  \ xxx debugging
   domain&current_target_file s+
   s" ');" s+ r@ write-line throw
-	s" exit(0);" r@ write-line throw
-	s" ?>" r> write-line throw
-	;
+  s" exit(0);" r@ write-line throw
+  s" ?>" r> write-line throw
+  ;
 : redirected>target  ( ca1 len1 -- ca2 len2 )
   \ Convert an old page id (whose filename does not exist any more)
   \ to its correspondant target filename.

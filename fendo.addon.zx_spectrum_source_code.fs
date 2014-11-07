@@ -38,12 +38,7 @@ require ./fendo.addon.zx_spectrum_charset.fs
 \ **************************************************************
 
 : zx_spectrum_source_code  ( ca len -- )
-  \ Read and echo the content of a ZX Spectrum source code file.
-  \ The Vim filetype is guessed from the filename, unless
-  \ already set in the 'programming_language$' dynamic string.
-  \ ca len = file name
-  ['] zx_spectrum_source_code_translated is source_code_posttranslated
-  source_code
+  set_zx_spectrum_source_code_translation source_code
   ;
 
 \ **************************************************************

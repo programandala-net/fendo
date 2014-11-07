@@ -59,14 +59,14 @@ module: fendo.addon.source_code
   \ Convert a filename to a Vim's filetype.
   \ xxx todo make this configurable by the application
   filename s" .4th" string-suffix? if s" forth" exit  then
-  filename s" .acef" string-suffix? if s" ace_forth" exit  then
-  filename s" .acefs" string-suffix? if s" ace_forth" exit  then
+  filename s" .acef" string-suffix? if s" aceforth" exit  then
+  filename s" .acefs" string-suffix? if s" aceforth" exit  then
   filename s" .asm" string-suffix? if s" z80" exit  then
   filename s" .bac" string-suffix? if s" bacon" exit  then
   filename s" .bas" string-suffix? if s" basic" exit  then
-  filename s" .bb" string-suffix? if s" beta_basic" exit  then
-  filename s" .bbas" string-suffix? if s" beta_basic" exit  then
-  filename s" .betabas" string-suffix? if s" beta_basic" exit  then
+  filename s" .bb" string-suffix? if s" betabasic" exit  then
+  filename s" .bbas" string-suffix? if s" betabasic" exit  then
+  filename s" .betabas" string-suffix? if s" betabasic" exit  then
   filename s" .bbim" string-suffix? if s" bbim" exit  then
   filename s" .fs" string-suffix? if s" gforth" exit  then
   filename s" .ini" string-suffix? if s" dosini" exit  then
@@ -78,7 +78,7 @@ module: fendo.addon.source_code
   filename s" .opl.txt" string-suffix? if s" oplplus" exit  then
   filename s" .opp" string-suffix? if s" oplplus" exit  then
   filename s" .php" string-suffix? if s" php" exit  then
-	filename s" .prg" string-suffix? if  s" clipper" exit  then
+  filename s" .prg" string-suffix? if  s" clipper" exit  then
   filename s" .sbim" string-suffix? if s" sbim" exit  then
   filename s" .sdlbas" string-suffix? if s" sdlbasic" exit  then
   filename s" .seq" string-suffix? if s" forth" exit  then
