@@ -26,32 +26,8 @@
 \ **************************************************************
 \ Change history of this file
 
-\ 2013-11-11: Code extracted from <fendo_markup_wiki.fs>: 'link'.
-\
-\ 2013-11-26: Change: several words renamed, after a new uniform
-\ notation: "pid$" and "pid#" for both types of page ids.
-\
-\ 2014-03-03: New: 'link<pid#'.
-\
-\ 2014-03-03: Change: 'title_link' renamed to 'link<pid$'.
-\
-\ 2014-06-15: Fix: repeated evaluation of link texts is solved with
-\ the new 'link_text_already_evaluated?' flag.
-\
-\ 2014-07-11: Change: 'pid$>url' moved to <fendo.data.fs>.
-\
-\ 2014-08-15: Fix: comment updated.
-\
-\ 2014-08-15: Fix: 'link_text_already_evaluated? off' was missing in
-\ 'evaluate_link_text'.
-\
-\ 2014-10-12: Fix: 'evaluate_link_text' now preserves the content of
-\ 'separate?' in the return stack; it ruined the stack before calling
-\ 'evaluate_content'.
-\
-\ 2014-11-07: a '[then]' was missing (more details in a comment marked
-\ thi this date).
-\
+\ See at the end of the file.
+
 \ **************************************************************
 \ Requirements
 
@@ -232,7 +208,7 @@ variable local_link_to_draft_page?
 \  link_text@ ." link_text in tune_local_link (0) = " type cr  \ xxx informer
 \  r@ title ." title in tune_local_link (1) = " type cr  \ xxx informer
   r@ draft? local_link_to_draft_page? !
-  r@ plain_description title=?!
+  r@ description unmarkup title=?!
 \  link_text@ ." link_text in tune_local_link (1) = " type cr  \ xxx informer
   r@ title
 \  ." title in tune_local_link (2) = " 2dup type cr  \ xxx informer
@@ -319,5 +295,37 @@ defer (get_link_href)  ( ca len -- )
   \ If 'link_text' is not set, the page title will be used.
   dup title link_text?! pid#>pid$ (link)
   ;
+
+\ **************************************************************
+\ Change history of this file
+
+\ 2013-11-11: Code extracted from <fendo_markup_wiki.fs>: 'link'.
+\
+\ 2013-11-26: Change: several words renamed, after a new uniform
+\ notation: "pid$" and "pid#" for both types of page ids.
+\
+\ 2014-03-03: New: 'link<pid#'.
+\
+\ 2014-03-03: Change: 'title_link' renamed to 'link<pid$'.
+\
+\ 2014-06-15: Fix: repeated evaluation of link texts is solved with
+\ the new 'link_text_already_evaluated?' flag.
+\
+\ 2014-07-11: Change: 'pid$>url' moved to <fendo.data.fs>.
+\
+\ 2014-08-15: Fix: comment updated.
+\
+\ 2014-08-15: Fix: 'link_text_already_evaluated? off' was missing in
+\ 'evaluate_link_text'.
+\
+\ 2014-10-12: Fix: 'evaluate_link_text' now preserves the content of
+\ 'separate?' in the return stack; it ruined the stack before calling
+\ 'evaluate_content'.
+\
+\ 2014-11-07: a '[then]' was missing (more details in a comment marked
+\ with this date).
+\
+\ 2014-11-08: Change: 'unmarkup' (just implemented) is used instead of
+\ hard-coded plain text versions of some data fields.
 
 .( fendo.links.fs ) cr

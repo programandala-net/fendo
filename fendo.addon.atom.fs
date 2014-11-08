@@ -26,13 +26,20 @@
 \ Change history of this file
 
 \ 2014-06-05: Start, using the code of the Atom module (last version,
-\   from 2009-10-21) of: ForthCMS ("Forth Calm Maker of Sites") version
-\   B-00-201206 (http://programandala.net/en.program.forthcms.html).
+\ from 2009-10-21) of: ForthCMS ("Forth Calm Maker of Sites") version
+\ B-00-201206 (http://programandala.net/en.program.forthcms.html).
+\
 \ 2014-07-06: First changes. 'echo' and 'echo_line' used instead of
-\   the old ForthCMS words.
+\ the old ForthCMS words.
+\
 \ 2014-07-08: Site variables converted to Fendo.
+\
 \ 2014-07-10: More changes to make the code compatible with Fendo.
+\
 \ 2014-07-11: More changes to make the code compatible with Fendo.
+\
+\ 2014-11-08: Change: 'unmarkup' (just implemented) is used instead of
+\ hard-coded plain text versions of some data fields.
 
 \ **************************************************************
 \ TODO
@@ -129,10 +136,10 @@ defer atom_"updated_page"
   <id> current_lang$ pid$>url echo </id>
   ;
 : atom_feed_title  ( -- )
-  [<title>] site_plain_title echo [</title>]
+  [<title>] site_title unmarkup echo [</title>]
   ;
 : atom_feed_subtitle  ( -- )
-  <subtitle> site_plain_subtitle echo </subtitle>
+  <subtitle> site_subtitle unmarkup echo </subtitle>
   ;
 : atom_feed_alternate_link  ( -- )
   \ iso_lang hreflang=!  \ XXX TODO convert to Fendo
@@ -215,7 +222,7 @@ defer atom_"updated_page"
 defer atom_entry_summary
 : atom_entry_default_summary  ( a -- )
   \ a = page id
-  <summary> plain_description echo </summary>
+  <summary> description unmarkup echo </summary>
   ;
 : .atom_entry_comment  ( ca len a -- a )
   \ a = page id

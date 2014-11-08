@@ -111,9 +111,9 @@ datum: source_file
 
 datum: language  \ ISO code of the page's language
 datum: title  \ page title; can include markups
-datum: plain_title  \ the same without markups
+\ datum: plain_title  \ the same without markups  \ XXX OLD
 datum: description  \ page description; can include markups?
-datum: plain_description  \ the same without markups
+\ datum: plain_description  \ the same without markups  \ XXX OLD
 
 \ Dates in ISO format:
 datum: created  \ creation date
@@ -739,5 +739,9 @@ require galope/slash-sides.fs  \ '/sides'
 \ 'source>current_target_extension'.  Fix: 'target_file' added the
 \ current target extension, not the target extension for the given
 \ page id. 
+\
+\ 2014-11-08: Change: the 'plain_title' and 'plain_description' data
+\ fields are removed because 'unmarkup' (just implemented) makes them
+\ unnecessary.
 
 .( fendo.data.fs compiled) cr

@@ -29,9 +29,14 @@
 \ Change history of this file
 
 \ 2013-10-14 Moved from the application Fendo-programandala.
+\
 \ 2013-10-27 Change: 'hierarchy_meta_link' simplified.
+\
 \ 2013-11-26 Change: several words renamed, after a new uniform
-\   notation: "pid$" and "pid#" for both types of page ids.
+\ notation: "pid$" and "pid#" for both types of page ids.
+\
+\ 2014-11-08: Change: 'unmarkup' (just implemented) is used instead of
+\ hard-coded plain text versions of some data fields.
 
 \ **************************************************************
 
@@ -44,7 +49,7 @@
 \  2dup ."  --> " type  \ xxx informer
   pid$>data>pid#
   dup target_file href=!
-  dup plain_title title=!
+  dup title unmarkup title=!
   ?hreflang=!
   [<link/>]
   ;

@@ -262,7 +262,7 @@ variable local_link_to_draft_page?
 \  link_text@ ." link_text in tune_local_link (0) = " type cr  \ xxx informer
 \  r@ title ." title in tune_local_link (1) = " type cr  \ xxx informer
   r@ draft? local_link_to_draft_page? !
-  r@ plain_description title=?!
+  r@ description unmarkup title=?!
 \  link_text@ ." link_text in tune_local_link (1) = " type cr  \ xxx informer
   r@ title
 \  ." title in tune_local_link (2) = " 2dup type cr  \ xxx informer
@@ -330,13 +330,18 @@ fendo_definitions
 \ Change history of this file
 
 \ 2014-04-21: Code moved from <fendo.markup.fendo.fs>.
+\
 \ 2014-07-14: Change: 'domain' is updated; it's not a dinamyc variable
-\   anymore, after the changes in <fendo.config.fs>.
+\ anymore, after the changes in <fendo.config.fs>.
+\
 \ 2014-08-13: Fix: 'separate?' is saved and restored in 'parse_link',
 \ because 'parse_link_text' changed it to true, what ruined previous
-\ opening punctuation. For example, in this source
-\           bla bla bla ( [[ url | link text ]] )
-\ the bug caused the opening paren to remain separated from the link.
+\ opening punctuation. For example, in the source "bla bla bla ( [[
+\ url | link text ]] )" the bug caused the opening paren to remain
+\ separated from the link.
+\
+\ 2014-11-08: Change: 'unmarkup' (just implemented) is used instead of
+\ hard-coded plain text versions of some data fields.
 
 .( fendo.markup.fendo.link.fs compiled ) cr
 
