@@ -33,34 +33,24 @@
 \ Version history of Fendo
 
 \ 2012-06-30: Start of version A-00.
+\
 \ 2013-06-28: Start of version A-01.
+\
 \ 2013-10-22: Start of version A-02.
+\
 \ 2014-02-15: Start of version A-03. All files are renamed.
-\ 2014-04-20: Start of version A-04. Improved, more homogenous, 
-\   and more regular markup.
+\
+\ 2014-04-20: Start of version A-04. Improved, more homogenous, and
+\ more regular markup.
+\
+\ 2014-11-08: Start of version A-05. Many fixes and improvements.  The
+\ last one: 'unmarkup' is used instead of duplicated plain text
+\ versions of the main data fields.
 
 \ **************************************************************
 \ Change history of this file
 
-\ 2012-06-30: Start.
-\ 2013-04-28: New: <fendo_data.fs>, <fendo_content.fs>.
-\ 2013-05-07: New: <fendo_require.fs>.
-\ 2013-06: New: Generic tool words; wordlists.
-\ 2013-07-09: Change: 'parse-name?' moved to Galope.
-\ 2014-02-05: New: 'fendo_markup_macros_wid'.
-\ 2014-02-05: New: 'markup_wids', 'markup_order', 'set_markup_order';
-\   they are written to make the parser kernel simpler and easier to expand.
-\ 2014-02-05: Change: 'markup>order' and 'markup<order' rewritten with
-\   the new word 'markup_order'.
-\ 2014-03-18: Fix checking "gforth" with 'environment?'.
-\ 2014-04-20: New: 'markup_definitions', 'fendo_definitions',
-\   'forth_definitions', 'forth>current'...; this makes some thing
-\   easier, e.g. modules that define markups and require libraries.
-\   The requirements section of all Fendo files is updated with
-\   'forth_definitions' and 'fendo_definitions'.
-\ 2014-06-14: New: 'recognize_macros?'.
-\ 2014-06-15: Change: 'recognize_macros?' is commented out. The
-\   problem was solved with 'evaluate_the_markup?' in <fendo.parser.fs>.
+\ See at the end of the file.
 
 \ **************************************************************
 \ Stack notation
@@ -308,4 +298,38 @@ depth [if] abort [then]  \ xxx debugging
 include ./fendo.parser.fs
 depth [if] abort [then]  \ xxx debugging
 
+\ **************************************************************
+\ Change history of this file
+
+\ 2012-06-30: Start.
+\ 
+\ 2013-04-28: New: <fendo_data.fs>, <fendo_content.fs>.
+\
+\ 2013-05-07: New: <fendo_require.fs>.
+\
+\ 2013-06: New: Generic tool words; wordlists.
+\
+\ 2013-07-09: Change: 'parse-name?' moved to Galope.
+\
+\ 2014-02-05: New: 'fendo_markup_macros_wid'.
+\
+\ 2014-02-05: New: 'markup_wids', 'markup_order', 'set_markup_order';
+\ they are written to make the parser kernel simpler and easier to
+\ expand.
+\
+\ 2014-02-05: Change: 'markup>order' and 'markup<order' rewritten with
+\ the new word 'markup_order'.
+\
+\ 2014-03-18: Fix checking "gforth" with 'environment?'.
+\
+\ 2014-04-20: New: 'markup_definitions', 'fendo_definitions',
+\ 'forth_definitions', 'forth>current'...; this makes some thing
+\ easier, e.g. modules that define markups and require libraries.  The
+\ requirements section of all Fendo files is updated with
+\ 'forth_definitions' and 'fendo_definitions'.
+\
+\ 2014-06-14: New: 'recognize_macros?'.
+\
+\ 2014-06-15: Change: 'recognize_macros?' is commented out. The
+\ problem was solved with 'evaluate_the_markup?' in <fendo.parser.fs>.
 .( fendo.fs compiled) cr
