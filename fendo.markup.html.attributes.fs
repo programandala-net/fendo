@@ -42,16 +42,9 @@ require galope/xstack.fs
 require galope/minus-cell-bounds.fs  \ '-cell-bounds'
 
 \ Dynamic strings system used for attributes
-false  \ Gforth strings instead of FFL strings?
-dup constant [gforth_strings_for_attributes?]  immediate
-[if]    require string.fs
-[else]
-\  .included  \ xxx informer
-\  .( about to require ffl/str.fs)  \ xxx informer
-\  key drop  \ xxx informer
-  require ffl/str.fs
-\  .( after requiring ffl/str.fs)  \ xxx informer
-\  key drop  \ xxx informer
+false  dup constant [gforth_strings_for_attributes?]  immediate
+[if]    require string.fs  \ Gforth
+[else]  require ffl/str.fs  \ Forth Foundation Library
 [then]
 
 fendo_definitions
@@ -108,23 +101,8 @@ fendo_definitions
   does>  ( "text<quote>" -- )
     ( dfa ) [char] " parse  rot perform attribute!
   ;
-
-false [if]  \ XXX OLD
-variable attributes_set  \ 0 or 1
-: >attributes<  ( -- )
-  \ Exchange the attributes set (0->1, 1->0)
-  \ xxx todo also 'link_text' ?
-\  ." >attributes<" cr  \ XXX INFORMER
-  attributes_set @ 0= abs  attributes_set !
-  ;
-[else]  \ XXX TMP
-: >attributes<  ( -- )
-  ." WARNING: '>attributes<' must be replaced."
-  ;
-[then]
-
 : ((attribute:))  ( -- )
-  \ Compile and init one of the two dynamic strings of an attribute.
+  \ Compile and init the dynamic string of an attribute.
   [gforth_strings_for_attributes?]
   [if]    s" " here 0 , $!
   [else]  str-new dup , str-init  [then]
@@ -308,19 +286,20 @@ create 'attributes_xt  \ table for the execution tokens of the attribute variabl
 \ **************************************************************
 \ Tools
 
-: -attributes  ( -- )
-  \ Clear all HTML attributes with empty strings.
-  'attributes_xt #attributes cells bounds ?do
-    [gforth_strings_for_attributes?]
-    [if]    s" " i perform $!
-    [else]  i perform @ str-init  [then]
-  cell +loop
-  ;
 : attributes_xt_zone  ( -- a len )
   \ Return the start and length of the ''attribute_xt' table.
-  \ XXX TODO why '1-' here?
-  \ 'attributes_xt #attributes 1- cells  \ XXX OLD
+  \ 'attributes_xt #attributes 1- cells  \ XXX OLD -- why '1-'?
   'attributes_xt #attributes cells
+  ;
+: -attribute  ( xt -- )
+  \ Clear a HTML attribute with an empty string.
+  [gforth_strings_for_attributes?]
+  [if]    s" " rot perform $!
+  [else]  perform @ str-init  [then]
+  ;
+: -attributes  ( -- )
+  \ Clear all HTML attributes with empty strings.
+  attributes_xt_zone bounds ?do  i -attribute  cell +loop
   ;
 : ?hreflang=!  ( a -- )
   \ If the given page has a different language than the current one,
@@ -440,6 +419,8 @@ create 'attributes_xt  \ table for the execution tokens of the attribute variabl
 \
 \ 2014-11-09: Change: all code related to the old unused 'raw='
 \ pseudo-attribute attribute is removed.
+\
+\ 2014-11-09: '-attribute' factored out from '-attributes'.
 
 .( fendo.markup.html.attributes.fs compiled) cr
 

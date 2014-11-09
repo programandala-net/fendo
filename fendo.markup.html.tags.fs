@@ -25,29 +25,7 @@
 \ **************************************************************
 \ Change history of this file
 
-\ 2013-06-10: Start. Factored from <fendo_markup_html.fs>.
-\ 2013-06-15: Void tags are closed depending on HTML or XHTML
-\   syntaxes. Tag alias in both syntaxes.
-\ 2013-10-23: New: immediate version of some tags,
-\   for the user's application.
-\ 2013-10-26: New: immediate version of '<p>'.
-\ 2013-10-27: New: '<link/>' and its immediate version '[<link/>]'.
-\ 2013-10-30: New: More immediate versions of tags.
-\ 2013-11-18: New: '[<br/>]', '[<hr/>]'.
-\ 2013-11-26: New: Immediate version of definition lists tags.
-\ 2013-11-30: New: Immediate version of <abbr> tags.
-\ 2013-12-06: Change: '(html{)' and '(}html)' factored from '{html}'
-\   and '{html'.
-\ 2013-12-06: Change: carriage returns in tags have been corrected, and
-\   removed from the immediate versions; this makes the final HTML
-\   clearer.
-\ 2014-02-15: New: '[<strong>]', '[</strong>]', '[</div>]'.
-\ 2014-02-15: New: '(html{})' for empty tags (it does the same than
-\   '(html{)' but without the separation).
-\ 2014-07-13: New: '[<q>]', '[</q>]', '[<blockquote>]',
-\   '[</blockquote>]'.
-\ 2014-07-14: New: '[<title>]', '[</title>]', needed by the Atom
-\   module; also '<meta/>'.
+\ See at the end of the file.
 
 \ **************************************************************
 \ Requirements
@@ -78,7 +56,7 @@ fendo_definitions
 : (}html)  ( -- )
   \ Common tasks after an empty or opening HTML tag.
   separate? off
-  s" About to clear the attributes in '(}html)'" type cr  \ XXX INFORMER
+\  s" About to clear the attributes in '(}html)'" type cr  \ XXX INFORMER
   -attributes  \ XXX FIXME this is the problem!
   ;
 : {html}  ( ca len -- )
@@ -380,5 +358,52 @@ markup<order
 : }block_source_code  ( -- )
   [</code>] [</pre>]
   ;
+
+\ **************************************************************
+\ Change history of this file
+
+\ 2013-06-10: Start. Factored from <fendo_markup_html.fs>.
+\
+\ 2013-06-15: Void tags are closed depending on HTML or XHTML
+\ syntaxes. Tag alias in both syntaxes.
+\
+\ 2013-10-23: New: immediate version of some tags, for the user's
+\ application.
+\
+\ 2013-10-26: New: immediate version of '<p>'.
+\
+\ 2013-10-27: New: '<link/>' and its immediate version '[<link/>]'.
+\
+\ 2013-10-30: New: More immediate versions of tags.
+\
+\ 2013-11-18: New: '[<br/>]', '[<hr/>]'.
+\
+\ 2013-11-26: New: Immediate version of definition lists tags.
+\
+\ 2013-11-30: New: Immediate version of <abbr> tags.
+\
+\ 2013-12-06: Change: '(html{)' and '(}html)' factored from '{html}'
+\ and '{html'.
+\
+\ 2013-12-06: Change: carriage returns in tags have been corrected,
+\ and removed from the immediate versions; this makes the final HTML
+\ clearer.
+\
+\ 2014-02-15: New: '[<strong>]', '[</strong>]', '[</div>]'.
+\
+\ 2014-02-15: New: '(html{})' for empty tags (it does the same than
+\ '(html{)' but without the separation).
+\
+\ 2014-07-13: New: '[<q>]', '[</q>]', '[<blockquote>]',
+\ '[</blockquote>]'.
+\
+\ 2014-07-14: New: '[<title>]', '[</title>]', needed by the Atom
+\ module; also '<meta/>'.
+\
+\ 2014-11-09: Fix: the '-attributes' in '(}html)' caused a problem
+\ after the recent implementation of 'unmarkup': the 'href=' attribute
+\ was deleted, because 'unmarkup' uses 'evaluate_content'. The
+\ solution was to save and restore the attributes in
+\ '(evaluate_content)' (defined in <fendo.parser.fs>).
 
 .( fendo.markup.html.tags.fs compiled) cr

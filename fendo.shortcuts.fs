@@ -123,6 +123,9 @@ shortcut: gforth_ext
   while   execute href=@
 \  2dup ." --> " type  \ xxx informer
   repeat  href=@
+  .s cr  \ XXX INFORMER
+  save-mem  \ XXX needed to preserve the actual zone of 'href='?
+  .s cr  \ XXX INFORMER
 \  cr  \ xxx informer
   ;  is unshortcut  \ defered in <fendo.fs>
 :noname  ( ca len -- ca len | ca' len' )
@@ -130,7 +133,9 @@ shortcut: gforth_ext
   \ without modifing any attribute.
   \ ca len = href attribute
   \ ca' len' = actual href attribute
-  >attributes< unshortcut >attributes<
+  save_attributes unshortcut
+  ." 'href=' in 'just_unshortcut' before 'restore_attributes' = " s" href=@" evaluate .s cr type cr  \ xxx informer
+  restore_attributes
   ;  is just_unshortcut  \ defered in <fendo.fs>
 
 .( fendo.shortcuts.fs compiled ) cr
