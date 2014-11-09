@@ -37,10 +37,15 @@
 \
 \ 2014-11-08: Change: 'unmarkup' (just implemented) is used instead of
 \ hard-coded plain text versions of some data fields.
+\
+\ 2014-11-08: Improved: 'hierarchy_meta_link' factored out from
+\ 'hierarchy_meta_links'; 'unshortcut' added.
+\
+\ 2014-11-08: Fix: 'unshortcut' was missing.
 
 \ **************************************************************
 
-: hierarchy_meta_link  ( ca1 len1 ca2 len2 -- )
+: (hierarchy_meta_link)  ( ca1 len1 ca2 len2 -- )
   \ Create a hierarchy meta link in the HTML header.
   \ ca1 len1 = page id
   \ ca2 len2 = rel
@@ -53,19 +58,19 @@
   ?hreflang=!
   [<link/>]
   ;
-
+: hierarchy_meta_link  ( ca1 len1 ca2 len2 -- )
+  \ Create a hierarchy meta link in the HTML header, if needed.
+  \ ca1 len1 = rel
+  \ ca2 len2 = page id
+  unshortcut dup if  2swap (hierarchy_meta_link)  else  2drop  then
+  ;
 : hierarchy_meta_links  ( -- )
   \ Create the required hierarchy meta links in the HTML header.
-  current_page upper_page dup if
-    s" up" hierarchy_meta_link  else  2drop  then
-  current_page next_page dup if
-    s" next" hierarchy_meta_link  else  2drop  then
-  current_page previous_page dup if
-    s" prev" hierarchy_meta_link  else  2drop  then
-  current_page first_page dup if
-    s" first" hierarchy_meta_link  else  2drop  then
-  current_page last_page dup if
-    s" last" hierarchy_meta_link  else  2drop  then
+  s" up" current_page upper_page hierarchy_meta_link
+  s" next" current_page next_page hierarchy_meta_link
+  s" prev" current_page previous_page hierarchy_meta_link
+  s" first" current_page first_page hierarchy_meta_link
+  s" last" current_page last_page hierarchy_meta_link
   ;
 
 .( fendo.addon.hierarchy_meta_links.fs compiled) cr
