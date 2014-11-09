@@ -77,7 +77,9 @@ fendo_definitions
   ;
 : (}html)  ( -- )
   \ Common tasks after an empty or opening HTML tag.
-  separate? off  -attributes
+  separate? off
+  s" About to clear the attributes in '(}html)'" type cr  \ XXX INFORMER
+  -attributes  \ XXX FIXME this is the problem!
   ;
 : {html}  ( ca len -- )
   \ Print an empty HTML tag (e.g. <br/>, <hr/>),

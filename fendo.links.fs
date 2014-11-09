@@ -44,7 +44,6 @@ require fendo.markup.html.fs
 \ **************************************************************
 \ Tools for links
 
-true [if]  \ xxx tmp -- moved from <fendo.markup.fendo.link.fs>
 : file://?  ( ca len -- wf )
   \ Does a string start with "file://"?
   s" file://" string-prefix?
@@ -98,9 +97,7 @@ link_text_already_evaluated? off
 \  separate? !  \ XXX TMP 2014-08-13 try to fix the bug described in the to-do
   \ XXX TMP saving and restoring 'separate?' makes no difference
   ;
-[then]
 
-true [if]  \ xxx tmp -- moved from <fendo.markup.fendo.link.fs>
 $variable link_anchor
 : -anchor  ( ca len -- ca len | ca' len' )
   \ Extract the anchor from a href attribute and store it.
@@ -138,15 +135,14 @@ variable link_type
 : file_link?  ( -- wf )
   link_type @ file_link =
   ;
-[then]
-true [if]  \ xxx tmp -- moved from <fendo.markup.fendo.link.fs>
 : missing_local_link_text  ( -- ca len )
 \  ." missing_local_link_text" cr  \ xxx informer
   href=@ -extension 2dup required_data<pid$
   >sb  \ xxx tmp
   evaluate title
   save_echo echo>string
-  >attributes< -attributes  \ use the alternative set and init it
+  >attributes<  \ use the alternative set
+  -attributes  \ init it XXX TMP needed?
   evaluate_content echoed $@
   save-mem  \ XXX TODO needed?
   >attributes<
@@ -269,7 +265,6 @@ defer link_suffix
   tune_link  echo_link?
   if  (echo_link)  else  echo_link_text  then  reset_link
   ;
-[then]
 
 defer (get_link_href)  ( ca len -- )
   \ Defined in <fendo.markup.fendo.link.fs>.
@@ -339,5 +334,9 @@ defer (get_link_href)  ( ca len -- )
 \
 \ 2014-11-08: Change: 'unmarkup' (just implemented) is used instead of
 \ hard-coded plain text versions of some data fields.
+\
+\ 2014-11-09: Change: all 'true [if]' that compiled code that long ago
+\ was moved from <fendo.markup.fendo.link.fs> have been removed. Those
+\ conditions were needed just in case strange things happened.
 
 .( fendo.links.fs ) cr

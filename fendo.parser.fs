@@ -137,52 +137,53 @@ variable more?  \ flag: keep on parsing more words?; changed by '}content'
 : something  ( ca len -- )
   \ Manage something found on the page content.
   \ ca len = parsed item (markup or printable content)
-\  2dup ." something= " type space order cr  \ XXX INFORMER
+\  ." Parameter in 'something' = " 2dup type cr  \ XXX INFORMER
 \  depth 2 > abort" something wrong!"  \ XXX INFORMER
+\  s" href=@" evaluate ." href in 'something' = " type cr  \ xxx informer
   2dup parsed$ $!
   #nothings off
 \  ." #nothings = " #nothings @ . cr  \ XXX INFORMER
   2dup markup? ?dup if  markup  else  content  then  1 #parsed +!
   ;
 
-0 [if]
-
-\ 2013-08-10: experimental new version, with direct execution of
-\ Forth code; unfinished
-
-: something_in_code_zone  ( ca len -- )  \ XXX TODO
-  \ Manage something found in a Forth code zone.
-  \ ca len = parsed item
-  2dup fendo_markup_wid search-wordlist
-  if  markup
-  else
-    2dup fendo_markup_html_entities_wid search-wordlist
-    if  markup  else  content  then
-  then
-  1 #parsed +!
-  ;
-: something_in_ordinary_zone  ( ca len -- )  \ XXX TODO
-  \ Manage something found out of Forth code zones.
-  \ ca len = parsed item (markup or printable content)
-  2dup fendo_markup_wid search-wordlist
-  if  markup
-  else
-    2dup fendo_markup_html_entities_wid search-wordlist
-    if  markup  else  content  then
-  then
-  1 #parsed +!
-  ;
-: something  ( ca len -- )  \ XXX TODO
-  \ Manage something found on the page content.
-  \ ca len = parsed item (markup, Forth code or printable content)
-  #nothings off
-\  ." #nothings = " #nothings @ . cr  \ XXX INFORMER
-\  ~~  \ XXX INFORMER
-  forth_code_depth @
-  if    something_in_code_zone
-  else  something_in_ordinary_zone  then
-  ;
-[then]
+\ 0 [if]
+\ 
+\ \ 2013-08-10: experimental new version, with direct execution of
+\ \ Forth code; unfinished
+\ 
+\ : something_in_code_zone  ( ca len -- )  \ XXX TODO
+\   \ Manage something found in a Forth code zone.
+\   \ ca len = parsed item
+\   2dup fendo_markup_wid search-wordlist
+\   if  markup
+\   else
+\     2dup fendo_markup_html_entities_wid search-wordlist
+\     if  markup  else  content  then
+\   then
+\   1 #parsed +!
+\   ;
+\ : something_in_ordinary_zone  ( ca len -- )  \ XXX TODO
+\   \ Manage something found out of Forth code zones.
+\   \ ca len = parsed item (markup or printable content)
+\   2dup fendo_markup_wid search-wordlist
+\   if  markup
+\   else
+\     2dup fendo_markup_html_entities_wid search-wordlist
+\     if  markup  else  content  then
+\   then
+\   1 #parsed +!
+\   ;
+\ : something  ( ca len -- )  \ XXX TODO
+\   \ Manage something found on the page content.
+\   \ ca len = parsed item (markup, Forth code or printable content)
+\   #nothings off
+\ \  ." #nothings = " #nothings @ . cr  \ XXX INFORMER
+\ \  ~~  \ XXX INFORMER
+\   forth_code_depth @
+\   if    something_in_code_zone
+\   else  something_in_ordinary_zone  then
+\   ;
+\ [then]
 
 : nothing  ( -- )
   \ Manage a "nothing", a parsed empty name.
@@ -203,10 +204,12 @@ variable more?  \ flag: keep on parsing more words?; changed by '}content'
 \  ~~  \ XXX INFORMER
   separate? off  more? on
   begin
+\    s" href=@" evaluate ." href (start of 'parse_content' loop) = " type cr  \ xxx informer
     parse-name ?dup
     if    something more? @
     else  drop nothing refill
     then  0=
+\    s" href=@" evaluate ." href (end of 'parse_content' loop) = " type cr  \ xxx informer
   until
   ;
 
