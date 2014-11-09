@@ -475,10 +475,12 @@ do_content? on
 \  2drop s" en.program.samforth"  \ xxx tmp, works, no shortcut
 \  2dup cr type ."  to unshortcut in data<pid$>pid"  \ xxx informer
 \  key drop  \ xxx informer
-\  ." href= (before unshortcut) " s" href=@" evaluate type cr  \ xxx informer
+  ."   PROBLEM:" cr  \ XXX INFORMER
+  ." 'href=' in 'pid$>data>pid#' before 'just_unshortcut' = " s" href=@" evaluate type cr  \ xxx informer
   just_unshortcut  \ xxx tmp
 \  ." pid$>data>pid# after just_unshortcut: " 2dup type cr  \ xxx informer
-\  ." href= (after unshortcut) " s" href=@" evaluate type cr  \ xxx informer
+  ." 'href=' in 'pid$>data>pid#' after 'just_unshortcut' = " s" href=@" evaluate type cr  \ xxx informer
+  ."   ;PROBLEM" cr  \ XXX INFORMER
   dup 0= abort" Empty page-id"  \ xxx tmp
   (pid$>data>pid#)
 \  find-name name>int execute  \ xxx second version; no difference, same corruption of the input stream

@@ -87,6 +87,8 @@ finish <fendo.addon.tag_cloud_by_regex.fs>
 Implement the automatic use of the alternative-language metadata (title.en,
 description.eo, etc) How? A special metadatum? Defer every metadatum?
 
+Could be done also in 'tune_local_link'.
+
 .2014-03-24:
 
 In order to make unnecessary the "plain" versions of some metadata, an
@@ -169,23 +171,7 @@ Remove double spaces in '(unmarkup)'?
 
 .2014-11-09:
 
-The bug that cleared the href attribute has been found in <fendo.markup.html.tags.fs>:
-
-----
-: (}html)  ( -- )
-  \ Common tasks after an empty or opening HTML tag.
-  separate? off
-  s" About to clear the attributes in '(}html)'" type cr  \ XXX INFORMER
-  -attributes  \ XXX FIXME this is the problem!
-  ;
-----
-
-The problem started after removing all plain versions of data fields.
-Now 'unmarkup' has to be used, and it uses 'evaluate_content'...
-
-The solution could be a stack of attributes sets.
-
-Beside:
+Convert the attribute system to use a variable address, not an xt:
 
 ----
 : attribute:  ( "name" -- xt )
@@ -196,3 +182,17 @@ Beside:
   \ XXX TODO since the dual set system is removed, an address would be
   \ enough, not an xt...
 ----
+
+New problem: in the following case, the shortcut works fine but 
+restoring the old attributes keeps the old len:
+____
+ PROBLEM:
+'href=' in 'pid$>data>pid#' before 'just_unshortcut' = en.article.2009.06.24.forth_style
+'href=' in 'just_unshortcut' before 'restore_attributes' = en.text.2009.06.24.forth_style
+'href=' in 'pid$>data>pid#' after 'just_unshortcut' = en.text.2009.06.24.forth_styleyle
+  ;PROBLEM
+____
+
+So it seems the shortcut "text" overwrites the original "article". So far so good.
+
+

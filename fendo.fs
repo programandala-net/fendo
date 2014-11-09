@@ -44,8 +44,10 @@
 \ more regular markup.
 \
 \ 2014-11-08: Start of version A-05. Many fixes and improvements.  The
-\ last one: 'unmarkup' is used instead of duplicated plain text
-\ versions of the main data fields.
+\ main ones are: 'unmarkup' is used instead of duplicated plain text
+\ versions of the main data fields; there are not two sets of HTML
+\ attributes anymore (the main one and the alternative one), but just
+\ one set and a stack to save and restore them in nested way.
 
 \ **************************************************************
 \ Change history of this file

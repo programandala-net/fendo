@@ -42,6 +42,9 @@
 \ 'hierarchy_meta_links'; 'unshortcut' added.
 \
 \ 2014-11-08: Fix: 'unshortcut' was missing.
+\
+\ 2014-11-08: Fix: second '2drop' was missing in
+\ 'hierarchy_meta_link'.
 
 \ **************************************************************
 
@@ -62,7 +65,7 @@
   \ Create a hierarchy meta link in the HTML header, if needed.
   \ ca1 len1 = rel
   \ ca2 len2 = page id
-  unshortcut dup if  2swap (hierarchy_meta_link)  else  2drop  then
+  unshortcut dup if  2swap (hierarchy_meta_link)  else  2drop 2drop  then
   ;
 : hierarchy_meta_links  ( -- )
   \ Create the required hierarchy meta links in the HTML header.

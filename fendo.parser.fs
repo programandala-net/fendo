@@ -139,7 +139,7 @@ variable more?  \ flag: keep on parsing more words?; changed by '}content'
   \ ca len = parsed item (markup or printable content)
 \  ." Parameter in 'something' = " 2dup type cr  \ XXX INFORMER
 \  depth 2 > abort" something wrong!"  \ XXX INFORMER
-\  s" href=@" evaluate ." href in 'something' = " type cr  \ xxx informer
+\  s" href=@" evaluate ." 'href=' in 'something' = " type cr  \ xxx informer
   2dup parsed$ $!
   #nothings off
 \  ." #nothings = " #nothings @ . cr  \ XXX INFORMER
@@ -216,7 +216,9 @@ variable more?  \ flag: keep on parsing more words?; changed by '}content'
 : (evaluate_content)  ( ca len -- )
   \ Evaluate a string as page content.
 \  cr cr ." (evaluate_content) >> " 2dup type key drop  \ XXX INFORMER
+  save_attributes
   ['] parse_content execute-parsing  #nothings off
+  restore_attributes
   ;
 ' (evaluate_content) is evaluate_content
 : more_link_text?  ( ca len -- wf )
@@ -234,7 +236,7 @@ variable more?  \ flag: keep on parsing more words?; changed by '}content'
 \  evaluate_the_markup? off  \ deactivate the markup rendering in 'something' 
 
   save_echo echo>string
-  >attributes< -attributes  \ use the alternative set and init it
+  save_attributes -attributes
   separate? off
 
   [ false ] [if]
@@ -257,8 +259,9 @@ variable more?  \ flag: keep on parsing more words?; changed by '}content'
 
   [then]
 
-  >attributes<  echoed $@
+  echoed $@
   save-mem   \ XXX needed?
+  restore_attributes
   restore_echo
 \  cr ." result of parsed_link_text = " 2dup type key drop  \ XXX INFORMER
 \  evaluate_the_markup? on  \ XXX OLD
@@ -505,5 +508,8 @@ set-current
 \
 \ 2014-11-09: Old code that was not used or commented out has been
 \ removed.
+\
+\ 2014-11-09: Fix: Now '(evaluate_content)' saves and restores the
+\ HTML attributes.
 
 .( fendo.parser.fs compiled ) cr
