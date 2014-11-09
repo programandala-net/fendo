@@ -163,3 +163,36 @@ http://www.blogger.com/blog_this.pyra?t=&u=http%3A%2F%2Fwww.iconarchive.com%2Fsh
 .2014-11-07:
 
 'link_text_as_attribute?' is the condition of an unbalanced '[if]' in <fendo.links.fs>.
+It has been fixed, but it has to be tested.
+
+Remove double spaces in '(unmarkup)'?
+
+.2014-11-09:
+
+The bug that cleared the href attribute has been found in <fendo.markup.html.tags.fs>:
+
+----
+: (}html)  ( -- )
+  \ Common tasks after an empty or opening HTML tag.
+  separate? off
+  s" About to clear the attributes in '(}html)'" type cr  \ XXX INFORMER
+  -attributes  \ XXX FIXME this is the problem!
+  ;
+----
+
+The problem started after removing all plain versions of data fields.
+Now 'unmarkup' has to be used, and it uses 'evaluate_content'...
+
+The solution could be a stack of attributes sets.
+
+Beside:
+
+----
+: attribute:  ( "name" -- xt )
+  \ Create an attribute variable in the markup vocabulary,
+  \ and four words to manage it.
+  \ "name" = ca len = name of the attribute variable
+  \ xt = execution token of the attribute variable
+  \ XXX TODO since the dual set system is removed, an address would be
+  \ enough, not an xt...
+----

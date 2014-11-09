@@ -91,14 +91,17 @@ variable forth_code_depth  \ depth level of the parsed Forth code block?
   \ XXX TODO remove double spaces?
   \ XXX FIXME this sometimes blanks the 'href=' attribute, why?
   ." parameter in (unmarkup) = " 2dup type cr  \ xxx informer
-  s" href=@" evaluate ." href (before 'evaluate_content') = " type cr  \ xxx informer
+\  s" href=@" evaluate ." href (before 'echo>string') = " type cr  \ xxx informer
   \ XXX FIXME the problem happens when there are markups in the
   \ parameter string; something goes wrong in the complex 'evaluate_content'.
-  echo>string evaluate_content
-  s" href=@" evaluate ." href  (after 'evaluate_content') = " type ." <<< PROBLEM" cr  \ xxx informer
-  \ XXX FIXME the problem is the set of attributes has been changed...
-  \ ...and not restored:
-  s" >attributes< href=@ >attributes<" evaluate ." alternative href = " type ."  <<< it is in the alternative set!" cr  \ xxx informer
+  echo>string 
+  ." href (before 'evaluate_content') = " s" href=@" evaluate type cr  \ xxx informer
+  ." alternative href = " s" >attributes< href=@ >attributes<" evaluate type cr  \ xxx informer
+\  ." and 'attributes_set' = " s" attributes_set" evaluate ? cr  \ XXX INFORMER
+  evaluate_content
+  ." href (after 'evaluate_content') = " s" href=@" evaluate type ." <<< PROBLEM" cr  \ xxx informer
+  ." alternative href = " s" >attributes< href=@ >attributes<" evaluate type cr  \ xxx informer
+\  ." and 'attributes_set' = " s" attributes_set" evaluate ? cr  \ XXX INFORMER
   echoed $@
   save-mem  \ XXX TODO needed?
   unhtml
@@ -107,8 +110,6 @@ variable forth_code_depth  \ depth level of the parsed Forth code block?
 \ variable (echoed)
 : unmarkup  ( ca len -- ca' len' )
   \ Remove the markup of a string; the current status of 'echo' is preserved.
-  \ The method used is to convert it to HTML and then remove the HTML,
-  \ easier than removing all possible original markups.
   save_echo (unmarkup) restore_echo
   ;
 

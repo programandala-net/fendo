@@ -25,31 +25,7 @@
 \ **************************************************************
 \ Change history of this file
 
-\ 2013-06-10: Start. Factored from <fendo_markup_html.fs>.
-\ 2013-06-29: Fix: the 'raw=' attribute, the last in the table,
-\   wasn't cleared by '-attributes'.
-\ 2013-07-03: New: secondary set of attributes, selectable
-\ with a variable, in order to let nested markups.
-\ 2013-07-03: Change: attributes are stored in dynamic strings.
-\ 2013-07-21: Change: code rearranged a bit.
-\ 2013-08-10: Change: FFL's strings as a compile option.
-\ 2013-08-12: New: 'attribute!' and 'attribute@' hide the conditional
-\   compilation required to change the string system.
-\ 2013-08-14: Change: The 'raw=' attributte is removed; the word
-\   'unraw_attributes' (defined in <fendo_markup_wiki.fs>)
-\   makes it unnecessary.
-\ 2013-08-15: New: ':attribute?!', required by the bookmarked links.
-\ 2013-10-27: New: '?hreflang=!', factored out from 'hierarchy_meta_link' in
-\   <addons/hierarchy_meta_links.fs>.
-\ 2013-10-30: Fix: 'forth-wordlist' is set to current before
-\   requiring the library files. The problem was <ffl/config.fs>
-\   created 'ffl.version' in the 'fendo' vocabulary, but searched for it
-\   in 'forth-wordlist'.
-\ 2013-12-05: Change: '(xml:)lang=' moved here from
-\   <fendo_markup_wiki.fs>.
-\ 2013-12-05: New: '(xml:)lang=!', factored from
-\   <fendo_markup_wiki.fs>; '(xml:)lang=@'.
-\ 2014-07-13: New: 'xmlnl=' attribute, needed by the Atom module.
+\ See at the end of the file.
 
 \ **************************************************************
 \ Todo
@@ -62,6 +38,8 @@
 forth_definitions
 
 require galope/3dup.fs
+require galope/xstack.fs
+require galope/minus-cell-bounds.fs  \ '-cell-bounds'
 
 \ Dynamic strings system used for attributes
 false  \ Gforth strings instead of FFL strings?
@@ -107,6 +85,7 @@ fendo_definitions
   \ ca1 len1 = attribute value
   rot rot s" !" s+ :create  ,
   does>  ( ca1 len1 -- )
+\    ." Parameter in 'does>' of ':attribute!' = " 2dup type cr  \ XXX INFORMER
     ( ca1 len1 dfa ) perform attribute!
   ;
 : :attribute?!  ( ca len xt -- )
@@ -130,20 +109,27 @@ fendo_definitions
     ( dfa ) [char] " parse  rot perform attribute!
   ;
 
+false [if]  \ XXX OLD
 variable attributes_set  \ 0 or 1
 : >attributes<  ( -- )
   \ Exchange the attributes set (0->1, 1->0)
   \ xxx todo also 'link_text' ?
+\  ." >attributes<" cr  \ XXX INFORMER
   attributes_set @ 0= abs  attributes_set !
   ;
+[else]  \ XXX TMP
+: >attributes<  ( -- )
+  ." WARNING: '>attributes<' must be replaced."
+  ;
+[then]
 
 : ((attribute:))  ( -- )
   \ Compile and init one of the two dynamic strings of an attribute.
   [gforth_strings_for_attributes?]
   [if]    s" " here 0 , $!
-  [else]  str-new dup , str-init
-  [then]
+  [else]  str-new dup , str-init  [then]
   ;
+false [if]  \ XXX OLD first version
 : (attribute:)  ( ca len -- xt )
   \ Create an attribute variable.
   \ It holds two values. The 'attributes_set' variable
@@ -153,15 +139,27 @@ variable attributes_set  \ 0 or 1
   :create   latestxt >r  ((attribute:)) ((attribute:))  r>
   does>     ( -- a )  ( dfa ) attributes_set @ cells +
   ;
+[then]
+: (attribute:)  ( ca len -- xt )
+  \ Create an attribute variable.
+  \ ca len = name of the attribute variable
+  \ xt = execution token of the attribute variable
+  :create   latestxt >r  ((attribute:))  r>
+  ;
 : attribute:  ( "name" -- xt )
   \ Create an attribute variable in the markup vocabulary,
   \ and four words to manage it.
   \ "name" = ca len = name of the attribute variable
   \ xt = execution token of the attribute variable
+  \ XXX TODO since the dual set system is removed, an address would be
+  \ enough, not an xt...
   get-current fendo>current
   parse-name? abort" Missing name after 'attribute:'"
   2dup (attribute:) ( ca len xt )  dup >r
-  3dup :attribute" 3dup :attribute! 3dup :attribute?! :attribute@
+  3dup :attribute"
+  3dup :attribute!
+  3dup :attribute?!
+  :attribute@
   set-current  r>
   ;
 
@@ -173,17 +171,11 @@ depth [if]
   abort
 [then]
 
-\ The first attribute defined (thus the last one in the table) is a
-\ special one that lets to include any raw content in the HTML
-\ tag, without label or surrounding quotes:
-\ attribute: raw=  \ xxx old
-
 link_text_as_attribute? [if]  \ xxx tmp
   attribute: link_text
 [then]
 \ xxx fixme -- the first attribute is not managed by the attributes loops
 
-\ Real attributes
 \ References:
 \   <http://dev.w3.org/html5/markup/>
 \   <http://dev.w3.org/html5/markup/global-attributes.html>
@@ -286,6 +278,8 @@ attribute: xml:base=
 attribute: xml:lang=
 attribute: xmlns=
 
+depth constant #attributes  \ count of defined attributes
+
 \ **************************************************************
 \ Virtual attributes
 
@@ -308,7 +302,6 @@ attribute: xmlns=
 \ **************************************************************
 \ Table
 
-depth constant #attributes  \ count of defined attributes
 create 'attributes_xt  \ table for the execution tokens of the attribute variables
 #attributes 0 [?do]  ,  [loop]  \ fill the table
 
@@ -323,9 +316,11 @@ create 'attributes_xt  \ table for the execution tokens of the attribute variabl
     [else]  i perform @ str-init  [then]
   cell +loop
   ;
-: attributes_xt_zone  ( -- ca len )
+: attributes_xt_zone  ( -- a len )
   \ Return the start and length of the ''attribute_xt' table.
-  'attributes_xt #attributes 1- cells
+  \ XXX TODO why '1-' here?
+  \ 'attributes_xt #attributes 1- cells  \ XXX OLD
+  'attributes_xt #attributes cells
   ;
 : ?hreflang=!  ( a -- )
   \ If the given page has a different language than the current one,
@@ -360,24 +355,91 @@ create 'attributes_xt  \ table for the execution tokens of the attribute variabl
   dup execute attribute@
   dup if  (+attribute)  else  2drop drop  then
   ;
-: echo_real_attributes  ( -- )
-  \ Echo all non-empty real attributes.
+: echo_attributes  ( -- )
+  \ Echo all non-empty attributes.
   attributes_xt_zone bounds ?do
     i @ echo_real_attribute
   cell +loop
   ;
-[defined] raw= [if]
-: echo_raw_attribute  ( -- )
-  \ Echo the special raw attribute, if not empty.
-  attributes_xt_zone + perform attribute@
-  dup if  echo_space echo echo_space  else  2drop  then
+
+\ **************************************************************
+\ Saving and restoring the attributes
+
+\ XXX TODO
+
+\ Create a stack for the attributes (2 cells per attribute string,
+\ and 4 nesting levels):
+#attributes 2* 4 * xstack attributes_stack
+
+: save_attribute  ( xt -- )
+  \ Save an attribute.
+  \ xt = execution token of the attribute variable
+  execute attribute@ 2>x
   ;
-[then]
-: echo_attributes  ( -- )
-  \ Echo all non-empty attributes.
-  echo_real_attributes
-  [defined] raw= [if]  echo_raw_attribute  [then]
+: save_attributes  ( -- )
+  \ Save all attributes.
+  attributes_stack
+  attributes_xt_zone bounds ?do
+    i @ save_attribute
+  cell +loop
   ;
+: restore_attribute  ( xt -- )
+  \ Restore an attribute.
+  \ xt = execution token of the attribute variable
+  2x> rot execute attribute!
+  ;
+: restore_attributes  ( -- )
+  \ Restore all attributes.
+  attributes_stack
+  attributes_xt_zone -cell-bounds ?do
+    i @ restore_attribute
+  [ cell negate ] literal +loop
+  ;
+
+\ **************************************************************
+\ Change history of this file
+
+\ 2013-06-10: Start. Factored from <fendo_markup_html.fs>.
+\
+\ 2013-06-29: Fix: the 'raw=' attribute, the last in the table, wasn't
+\ cleared by '-attributes'.
+\
+\ 2013-07-03: New: secondary set of attributes, selectable with a
+\ variable, in order to let nested markups.
+\
+\ 2013-07-03: Change: attributes are stored in dynamic strings.
+\
+\ 2013-07-21: Change: code rearranged a bit.
+\
+\ 2013-08-10: Change: FFL's strings as a compile option.
+\
+\ 2013-08-12: New: 'attribute!' and 'attribute@' hide the conditional
+\ compilation required to change the string system.
+\
+\ 2013-08-14: Change: The 'raw=' attributte is removed; the word
+\ 'unraw_attributes' (defined in <fendo_markup_wiki.fs>) makes it
+\ unnecessary.
+\
+\ 2013-08-15: New: ':attribute?!', required by the bookmarked links.
+\
+\ 2013-10-27: New: '?hreflang=!', factored out from
+\ 'hierarchy_meta_link' in <addons/hierarchy_meta_links.fs>.
+\
+\ 2013-10-30: Fix: 'forth-wordlist' is set to current before requiring
+\ the library files. The problem was <ffl/config.fs> created
+\ 'ffl.version' in the 'fendo' vocabulary, but searched for it in
+\ 'forth-wordlist'.
+\
+\ 2013-12-05: Change: '(xml:)lang=' moved here from
+\ <fendo_markup_wiki.fs>.
+\
+\ 2013-12-05: New: '(xml:)lang=!', factored from
+\ <fendo_markup_wiki.fs>; '(xml:)lang=@'.
+\
+\ 2014-07-13: New: 'xmlnl=' attribute, needed by the Atom module.
+\
+\ 2014-11-09: Change: all code related to the old unused 'raw='
+\ pseudo-attribute attribute is removed.
 
 .( fendo.markup.html.attributes.fs compiled) cr
 

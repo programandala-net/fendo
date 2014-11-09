@@ -115,6 +115,7 @@ shortcut: gforth_ext
   \ ca len = href attribute
   \ ca' len' = actual href attribute
 \  cr ." order = " order cr ." entering unshortcut " 2dup type  \ xxx informer
+\  ." Parameter in 'unshortcut' = " 2dup type cr  \ xxx informer
   2dup href=!
   0 rot rot  \ fake xt
 \  2dup cr ." order = " order cr ." about to unshortcut " type  \ xxx informer

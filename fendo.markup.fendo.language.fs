@@ -44,14 +44,18 @@ fendo_definitions
   language_markup: es
 
 For every language, the following markups are created:
+
 - 'lang((' for inline zones
 - 'lang((((' for block zones
+- 'lang''' for inline quotes
+- 'lang''''' for block quotes
 
 Usage example:
 
-  In English you say: Hello world! .
-  In Esperanto you say: eo(( Saluton, mondo! )) .
-  In Spanish you say: es(( ¡Hola mundo! )) .
+  In English you say: Hello world!
+  In Esperanto you say eo'' Saluton, mondo! ''
+  In Spanish you say: es'' ¡Hola mundo! ''
+  Please do it la(( ipso facto )) , es(( gracias )) .
 
 [then]
 
@@ -97,9 +101,13 @@ Usage example:
 \ Change history of this file
 
 \ 2014-04-21: Code moved from <fendo.markup.fendo.fs>.
+\
 \ 2014-06-06: ")))" changed to "))))", after the last changes in
 \ Fendo's markup.
+\
 \ 2014-07-13: New: inline and block quotes.
+\
+\ 2014-11-09: The usage text is updated.
 
 .( fendo.markup.fendo.language.fs compiled ) cr
 
