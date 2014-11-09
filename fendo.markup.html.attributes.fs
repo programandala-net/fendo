@@ -53,53 +53,55 @@ fendo_definitions
 \ Fetch and store
 
 : attribute@  ( a -- ca len )
+  \ a = attribute variable
   [gforth_strings_for_attributes?] [if]  $@  [else]  @ str-get  [then]
   ;
 : attribute!  ( ca len a -- )
+  \ a = attribute variable
   [gforth_strings_for_attributes?] [if]  $!  [else]  @ str-set  [then]
   ;
 
 \ **************************************************************
 \ Defining words
 
-: :attribute@  ( ca len xt -- )
+: :attribute@  ( ca len a -- )
   \ Create a word that fetchs an attribute.
   \ ca len = name of the attribute variable
-  \ xt = execution token of the attribute variable
+  \ a = attribute variable
   \ ca1 len1 = attribute value
   rot rot s" @" s+ :create ,
   does>  ( -- ca1 len1 )
-    ( dfa ) perform attribute@
+    ( dfa ) @ attribute@
   ;
-: :attribute!  ( ca len xt -- )
+: :attribute!  ( ca len a -- )
   \ Create a word that stores an attribute.
   \ ca len = name of the attribute variable
-  \ xt = execution token of the attribute variable
+  \ a = attribute variable
   \ ca1 len1 = attribute value
   rot rot s" !" s+ :create  ,
   does>  ( ca1 len1 -- )
 \    ." Parameter in 'does>' of ':attribute!' = " 2dup type cr  \ XXX INFORMER
-    ( ca1 len1 dfa ) perform attribute!
+    ( ca1 len1 dfa ) @ attribute!
   ;
-: :attribute?!  ( ca len xt -- )
+: :attribute?!  ( ca len a -- )
   \ xxx not used
   \ Create a word that stores an attribute,
   \ if it's empty.
   \ ca len = name of the attribute variable
-  \ xt = execution token of the attribute variable
+  \ a = attribute variable
   \ ca1 len1 = attribute value
   rot rot s" ?!" s+ :create  ,
   does>  ( ca1 len1 -- )
-    ( ca1 len1 dfa ) perform
-    dup attribute@ empty? if  attribute!  else  drop 2drop  then
+    ( ca1 len1 dfa ) 
+    @ dup attribute@ empty? if  attribute!  else  drop 2drop  then
   ;
-: :attribute"  ( ca len xt -- )
+: :attribute"  ( ca len a -- )
   \ Create a word that parses and stores an attribute.
   \ ca len = name of the attribute variable
-  \ xt = execution token of the attribute variable
+  \ a = attribute variable
   rot rot s\" \"" s+ :create  ,
   does>  ( "text<quote>" -- )
-    ( dfa ) [char] " parse  rot perform attribute!
+    ( dfa ) [char] " parse  rot @ attribute!
   ;
 : ((attribute:))  ( -- )
   \ Compile and init the dynamic string of an attribute.
@@ -107,33 +109,20 @@ fendo_definitions
   [if]    s" " here 0 , $!
   [else]  str-new dup , str-init  [then]
   ;
-false [if]  \ XXX OLD first version
-: (attribute:)  ( ca len -- xt )
-  \ Create an attribute variable.
-  \ It holds two values. The 'attributes_set' variable
-  \ lets to choose which value is pointed to.
-  \ ca len = name of the attribute variable
-  \ xt = execution token of the attribute variable
-  :create   latestxt >r  ((attribute:)) ((attribute:))  r>
-  does>     ( -- a )  ( dfa ) attributes_set @ cells +
-  ;
-[then]
-: (attribute:)  ( ca len -- xt )
+: (attribute:)  ( ca len -- a )
   \ Create an attribute variable.
   \ ca len = name of the attribute variable
-  \ xt = execution token of the attribute variable
-  :create   latestxt >r  ((attribute:))  r>
+  \ a = attribute variable
+  :create   here >r ((attribute:)) r>
   ;
-: attribute:  ( "name" -- xt )
+: attribute:  ( "name" -- a )
   \ Create an attribute variable in the markup vocabulary,
   \ and four words to manage it.
   \ "name" = ca len = name of the attribute variable
-  \ xt = execution token of the attribute variable
-  \ XXX TODO since the dual set system is removed, an address would be
-  \ enough, not an xt...
+  \ a = attribute variable
   get-current fendo>current
   parse-name? abort" Missing name after 'attribute:'"
-  2dup (attribute:) ( ca len xt )  dup >r
+  2dup (attribute:) ( ca len a )  dup >r
   3dup :attribute"
   3dup :attribute!
   3dup :attribute?!
@@ -158,7 +147,7 @@ link_text_as_attribute? [if]  \ xxx tmp
 \   <http://dev.w3.org/html5/markup/>
 \   <http://dev.w3.org/html5/markup/global-attributes.html>
 \ xxx todo complete
-attribute: accesskey=
+attribute: accesskey= 
 attribute: align=
 attribute: alt=
 attribute: autofocus=
@@ -280,26 +269,26 @@ depth constant #attributes  \ count of defined attributes
 \ **************************************************************
 \ Table
 
-create 'attributes_xt  \ table for the execution tokens of the attribute variables
+create attributes  \ table for the attribute variables
 #attributes 0 [?do]  ,  [loop]  \ fill the table
 
 \ **************************************************************
 \ Tools
 
-: attributes_xt_zone  ( -- a len )
+: (attributes)  ( -- a len )
   \ Return the start and length of the ''attribute_xt' table.
-  \ 'attributes_xt #attributes 1- cells  \ XXX OLD -- why '1-'?
-  'attributes_xt #attributes cells
+  \ attributes #attributes 1- cells  \ XXX OLD -- why '1-'?
+  attributes #attributes cells
   ;
-: -attribute  ( xt -- )
-  \ Clear a HTML attribute with an empty string.
+: -attribute  ( a -- )
+  \ Clear an attribute variable with an empty string.
+  \ a = attribute variable
   [gforth_strings_for_attributes?]
-  [if]    s" " rot perform $!
-  [else]  perform @ str-init  [then]
+  [if]  s" " rot $!  [else]  @ str-init  [then]
   ;
 : -attributes  ( -- )
   \ Clear all HTML attributes with empty strings.
-  attributes_xt_zone bounds ?do  i -attribute  cell +loop
+  (attributes) bounds ?do  i @ -attribute  cell +loop
   ;
 : ?hreflang=!  ( a -- )
   \ If the given page has a different language than the current one,
@@ -321,23 +310,22 @@ create 'attributes_xt  \ table for the execution tokens of the attribute variabl
 \  2over ." value<< " type ." >> " cr  \ xxx informer
   echo_space echo echo_quote echo echo_quote
   ;
-: (+attribute)  ( xt ca len -- )
+: (+attribute)  ( a ca len -- )
   \ Echo an attribute.
-  \ xt = execution token of the attribute variable
+  \ a = attribute variable
   \ ca len = attribute value
-  rot >name name>string ((+attribute))
+  rot body> >name name>string ((+attribute))
   ;
-: echo_real_attribute  ( xt -- )
-  \ Echo a real attribute, if not empty.
-  \ xt = execution token of the attribute variable
+: echo_attribute  ( a -- )
+  \ Echo an attribute, if not empty.
+  \ a = attribute variable
 \  ." {{{ " dup >name ?dup if  id.  else  ." ?"  then  ." }}}"  \ xxx informer
-  dup execute attribute@
-  dup if  (+attribute)  else  2drop drop  then
+  dup attribute@ dup if  (+attribute)  else  2drop drop  then
   ;
 : echo_attributes  ( -- )
   \ Echo all non-empty attributes.
-  attributes_xt_zone bounds ?do
-    i @ echo_real_attribute
+  (attributes) bounds ?do
+    i @ echo_attribute
   cell +loop
   ;
 
@@ -350,27 +338,27 @@ create 'attributes_xt  \ table for the execution tokens of the attribute variabl
 \ and 4 nesting levels):
 #attributes 2* 4 * xstack attributes_stack
 
-: save_attribute  ( xt -- )
+: save_attribute  ( a -- )
   \ Save an attribute.
-  \ xt = execution token of the attribute variable
-  execute attribute@ 2>x
+  \ a = attribute variable
+  attribute@ 2>x
   ;
 : save_attributes  ( -- )
   \ Save all attributes.
   attributes_stack
-  attributes_xt_zone bounds ?do
+  (attributes) bounds ?do
     i @ save_attribute
   cell +loop
   ;
-: restore_attribute  ( xt -- )
+: restore_attribute  ( a -- )
   \ Restore an attribute.
-  \ xt = execution token of the attribute variable
-  2x> rot execute attribute!
+  \ a = attribute variable
+  2x> rot attribute!
   ;
 : restore_attributes  ( -- )
   \ Restore all attributes.
   attributes_stack
-  attributes_xt_zone -cell-bounds ?do
+  (attributes) -cell-bounds ?do
     i @ restore_attribute
   [ cell negate ] literal +loop
   ;
@@ -421,6 +409,14 @@ create 'attributes_xt  \ table for the execution tokens of the attribute variabl
 \ pseudo-attribute attribute is removed.
 \
 \ 2014-11-09: '-attribute' factored out from '-attributes'.
+\
+\ 2014-11-10: Change: Attribute variables don't contain an execution
+\ token anymore. Now they behave as ordinary variables that contain a
+\ dynamic string. The execution token was used to select one of the
+\ two actual values of the attributes, because there were two sets
+\ attributes. Now there's only one set of attributes, and all of them
+\ are saved and restore when needed, using a specific stack. All
+\ related words have been adapted.
 
 .( fendo.markup.html.attributes.fs compiled) cr
 
