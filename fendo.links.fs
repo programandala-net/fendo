@@ -145,10 +145,12 @@ true [if]  \ xxx tmp -- moved from <fendo.markup.fendo.link.fs>
   href=@ -extension 2dup required_data<pid$
   >sb  \ xxx tmp
   evaluate title
-  echo> @ >r echo>string
+  save_echo echo>string
   >attributes< -attributes  \ use the alternative set and init it
-  evaluate_content
-  r> echo> ! >attributes< echoed $@
+  evaluate_content echoed $@
+  save-mem  \ XXX TODO needed?
+  >attributes<
+  restore_echo
   ;
 : missing_external_link_text  ( -- ca len )
   href=@
@@ -204,11 +206,17 @@ variable local_link_to_draft_page?
 : tune_local_link  ( -- )
   \ xxx todo fetch alternative language title and description
 \  ." tune_local_link" cr  \ xxx informer
-  href=@ pid$>(data>)pid#  >r
+  href=@ 
+\  ." href in tune_local_link (0) = " 2dup type cr  \ xxx informer
+  pid$>(data>)pid#  >r
 \  link_text@ ." link_text in tune_local_link (0) = " type cr  \ xxx informer
 \  r@ title ." title in tune_local_link (1) = " type cr  \ xxx informer
   r@ draft? local_link_to_draft_page? !
-  r@ description unmarkup title=?!
+  r@ description 
+\  href=@ ." href in tune_local_link (1) = " type cr  \ xxx informer
+  unmarkup 
+\  href=@ ." href in tune_local_link (2) = " type ." <<< PROBLEM" cr  \ xxx informer
+  title=?!
 \  link_text@ ." link_text in tune_local_link (1) = " type cr  \ xxx informer
   r@ title
 \  ." title in tune_local_link (2) = " 2dup type cr  \ xxx informer
@@ -221,7 +229,11 @@ variable local_link_to_draft_page?
 : tune_link  ( -- )  \ xxx todo
   \ Tune the attributes parsed from the link.
   local_link? if  tune_local_link  then
-  href=@ convert_link_href href=!
+  href=@
+\  ." href in tune_link (0) = " 2dup type cr  \ xxx informer
+  convert_link_href
+\  ." href in tune_link (1) = " 2dup type cr  \ xxx informer
+  href=!
   link_text@ empty? if  missing_link_text link_text!  then
   external_link? if  external_class  then
   ;
@@ -277,7 +289,7 @@ defer (get_link_href)  ( ca len -- )
   \ ca1 len1 = page id, URL or shortcut
   \ ca2 len2 = link text
 \  cr ." In link the link text is " 2dup type  \ XXX INFORMER
-\  ."  and the page id is " 2over type  \ XXX INFORMER
+\  ."  and the page id is " 2over type cr  \ XXX INFORMER
   link_text! (link)
   ;
 : link<pid$  ( ca len -- )

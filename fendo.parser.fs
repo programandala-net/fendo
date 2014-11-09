@@ -142,34 +142,9 @@ variable more?  \ flag: keep on parsing more words?; changed by '}content'
   2dup parsed$ $!
   #nothings off
 \  ." #nothings = " #nothings @ . cr  \ XXX INFORMER
-  [ true ] [if]  \ XXX first version
   2dup markup? ?dup if  markup  else  content  then  1 #parsed +!
-  [else]  \ XXX OLD second version
-  evaluate_the_markup? @
-  if    2dup markup? ?dup if  markup  else  content  then
-  else  content
-  then  1 #parsed +!
-  [then]
   ;
 
-0 [if]
-\ XXX OLD, abandoned on 2014-02-05, in order to implement the user macros
-: something  ( ca len -- )
-  \ Manage something found on the page content.
-  \ ca len = parsed item (markup or printable content)
-\  2dup cr type space  \ XXX INFORMER
-\  depth 2 > abort" something wrong!"  \ XXX INFORMER
-  #nothings off
-\  ." #nothings = " #nothings @ . cr  \ XXX INFORMER
-  2dup fendo_markup_wid search-wordlist
-  if  markup
-  else
-    2dup fendo_markup_html_entities_wid search-wordlist
-    if  markup  else  content  then
-  then
-  1 #parsed +!
-  ;
-[then]
 0 [if]
 
 \ 2013-08-10: experimental new version, with direct execution of
@@ -216,8 +191,7 @@ variable more?  \ flag: keep on parsing more words?; changed by '}content'
 \  cr ." nothing"  \ XXX INFORMER
   preserve_eol? @ if  echo_cr  then  \ XXX TMP
   #nothings @  \ an empty line was parsed?
-  if    close_pending
-  then  1 #nothings +!
+  if  close_pending  then  1 #nothings +!
 \  ." #nothings = " #nothings @ . cr  \ XXX INFORMER
   #parsed off
   ;
@@ -256,24 +230,33 @@ variable more?  \ flag: keep on parsing more words?; changed by '}content'
 \  XXX OLD
 \  evaluate_the_markup? off  \ deactivate the markup rendering in 'something' 
 
-  echo> @  echo>string
+  save_echo echo>string
   >attributes< -attributes  \ use the alternative set and init it
   separate? off
+
   [ false ] [if]
+
   \ xxx fixme 2014-03-18 the parsing fails when the link text spans
-  \ then next line?
+  \ the next line?
   begin   parse-name dup
     if    more_link_text?
     else  2drop more_link?
     then  0=
-  until   echo> ! >attributes<  echoed $@
+  until
+
   [else]  \ xxx new version, being fixed
+
   begin   parse-name ?dup
     if    more_link_text?
     else  drop refill more_link?
     then  0=
-  until   echo> ! >attributes<  echoed $@
+  until
+
   [then]
+
+  >attributes<  echoed $@
+  save-mem   \ XXX needed?
+  restore_echo
 \  cr ." result of parsed_link_text = " 2dup type key drop  \ XXX INFORMER
 \  evaluate_the_markup? on  \ XXX OLD
   ;
@@ -299,14 +282,10 @@ variable more?  \ flag: keep on parsing more words?; changed by '}content'
 : template_file  ( -- ca len )
   \ Return the full path to the template file.
   target_dir $@
-  [ true ] [if]  \ xxx new version
-    current_page design_subdir dup 0=  \ xxx useful?
-    if  2drop website_design_subdir $@  then
-    current_page template dup 0=  \ xxx individual page templates are useful
-    if  2drop website_template $@ then  s+ s+
-  [else]  \ XXX OLD version, without page fields
-    website_design_subdir $@ website_template $@ s+ s+
-  [then]
+  current_page design_subdir dup 0=  \ xxx useful?
+  if  2drop website_design_subdir $@  then
+  current_page template dup 0=  \ xxx individual page templates are useful
+  if  2drop website_template $@ then  s+ s+
 \  ." template_file = " 2dup type cr  \ XXX INFORMER
   ;
 : template_halves  ( ca1 len1 -- ca2 len2 ca3 len3 )
@@ -329,30 +308,10 @@ variable more?  \ flag: keep on parsing more words?; changed by '}content'
   \ ca2 len2 = bottom half of the template content
   template_halves 2nip
   ;
-false [if]  \ xxx first method; the template file is read only once
-variable template_content
-: get_template_first  ( -- ca len )
-  \ Return the template content, the first time.
-  template_file slurp-file 2dup template_content $!
-  ;
-: get_template_again  ( -- ca len )
-  \ Return the template content, the second time.
-  template_content $@  template_content $off
-  ;
-: get_template  ( -- ca len )
-  \ Return the template content.
-  template_content $@len
-  if  get_template_again  else  get_template_first  then
-\  .s  \ XXX INFORMER
-  ;
-[else]  \ xxx second method; the template file is read twice
-\ xxx 2013-10-27: this alternative is tried in order to see
-\ its effect on the strange corruption of the input stream.
 : get_template  ( -- ca len )
   \ Return the template content.
   template_file slurp-file
   ;
-[then]
 : template{  ( -- )
   \ Echo the top half of the current template,
   \ above the page content.
@@ -433,100 +392,100 @@ set-current
 \ Change history of this file
 
 \ 2013-04-28: Start.
-
+\
 \ 2013-05-18: New: parser; 'skip_content{'.
-
+\
 \ 2013-06-01: New: parser rewritten from scratch. Management of empty
 \ names and empty lines.
-
+\
 \ 2013-06-02: New: counters for both types of elements (markups and
 \ printable words); required in order to separate words.
-
+\
 \ 2013-06-04: Fix: lists were not properly closed by an empty space.
-
+\
 \ 2013-06-05: Fix: 'markup' now uses a name token; this was required
 \ in order to define '~', a markup that parses the next name is the
 \ source.
-
+\
 \ 2013-06-05: New: '#parsed', required for implementing the table
 \ markup.
-
+\
 \ 2013-06-05: Change: clearer code for closing the pending markups.
-
+\
 \ 2013-06-06: Change: renamed from "fendo_content.fs" to
 \ "fendo_parser.fs".
-
+\
 \ 2013-06-06: New: template implemented.
-
+\
 \ 2013-06-08: Improved: Template management.
-
+\
 \ 2013-06-08: New: first code for output redirection.
-
+\
 \ 2013-06-08: New: first implementation of target directories.
-
+\
 \ 2013-06-11: Fix: the target file is opened and closed depending on
 \ the 'dry?' config variable.
-
+\
 \ 2013-06-11: Fix: typo in comment of 'template_halves'.
-
+\
 \ 2013-06-16: Change: The parser has been rewritten; now
 \ 'search-wordlist' is used instead of 'parse-name' and 'find-name';
 \ this was needed to avoid matches in the Root wordlist.
-
+\
 \ 2013-06-16: Fix: Now '}content' toggles the parsing off and sets the
 \ normal wordlist order.
-
+\
 \ 2013-06-23: Change: design and template variables are renamed after
 \ the changes in the config module.
-
+\
 \ 2013-06-28: Change: '$@' is no longer required by metadata fields,
 \ after Fendo A-01.
-
+\
 \ 2013-07-03: Change: 'dry?' renamed to 'echo>screen?', after the
 \ changes in the echo module.
-
+\
 \ 2013-07-03: Change: words that check the current echo have been
 \ renamed, after the  changes in the echo module.
-
+\
 \ 2013-07-28: New: 'parse_link_text' moved here from
 \ <fendo_markup_wiki.fs>.
-
+\
 \ 2013-07-28: Fix: old '[previous]' changed to '[markup<order]'; this
 \ was the reason the so many wordlists remained in the search order.
-
+\
 \ 2013-08-10: Fix: wrong exit flags in 'parsed_link_text' caused only
 \ the first word was parsed.
-
+\
 \ 2013-08-10: Fix: the alternative attributes set was needed in
 \ 'parsed_link_text', to preserve the current attributes already used
 \ for the <a> tag.
-
+\
 \ 2013-08-10: Change: 'parse_string' renamed to 'evaluate_content'.
-
+\
 \ 2013-08-14: Fix: '#nothings off' was needed at the end of
 \ '(evaluate_content)'. Otherwise '#nothings' activated
 \ 'close_pending' before expected, e.g. this happened when a link was
 \ at the end of a line.
-
+\
 \ 2013-09-06: New: 'do_page?'.
-
+\
 \ 2013-09-06: Fix: 'content{' doesn't call 'skip_content' anymore but
 \ '\eof'; the reason is 'skip_content' parsed until "}content" was
 \ found, what was wrong when this word was mentioned in the content
 \ itself! That happened in one page and was hard to solve. It's
 \ simpler to ignore the whole file. 'skip_content' has been removed.
-
+\
 \ 2013-09-29: New: '}content?' flag is used to check if '}content' was
 \ executed; this way some markup errors can be detected.
-
+\
 \ 2013-12-06: New: 'opened_markups_off' in '(content{)'.
-
+\
 \ 2014-03-09: New: 'parsed$' keeps the string in 'something'; required
 \ by the new way the heading wiki markups work.
-
+\
 \ 2014-06-04: Change: 'close_pending_list' restored. It was commented
 \ out, but it's necessary.
-
+\
 \ 2014-06-15: Fix: The new flag 'evaluate_the_markup?' (temporarily
 \ turned off in 'parsed_link_text) fixes the following problem: link
 \ texts were rendered twice: during parsing and during echoing. For
@@ -536,9 +495,12 @@ set-current
 \ what ruined the HTML.  But the fix causes a new problem: images
 \ inside link texts crash. The solution was to make the evaluation
 \ optional at the higher level, in <fendo.links.fs>, as follows:
-
+\
 \ 2014-06-15: Fix: repeated evaluation of link texts is solved with
 \ the new 'link_text_already_evaluated?' flag, defined and checked in
 \ <fendo.links.fs>.
+\
+\ 2014-11-09: Old code that was not used or commented out has been
+\ removed.
 
 .( fendo.parser.fs compiled ) cr

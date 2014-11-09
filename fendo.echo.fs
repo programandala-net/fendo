@@ -32,6 +32,7 @@
 
 forth_definitions
 require galope/number-to-string.fs  \ 'n>str'
+require galope/xstack.fs
 fendo_definitions
 
 \ **************************************************************
@@ -44,6 +45,17 @@ variable echo>  \ destination of the output
 2 constant >string
 
 variable echoed  \ used as dynamic string
+s" " echoed $!
+
+8 xstack echo_stack  echo_stack  \ create an activate an extra xstack
+: save_echo  ( -- )
+  \ Save the echo status into the extra stack.
+  echo> @ >x  echoed $@ 2>x
+  ;
+: restore_echo  ( -- )
+  \ Restore the echo status from the extra stack.
+  2x> echoed $!  x> echo> !
+  ;
 
 : echo>string  ( -- )
   \ Redirect the output to the dynamic string 'echoed'.
