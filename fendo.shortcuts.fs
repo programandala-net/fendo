@@ -32,10 +32,18 @@
 \ Change history of this file
 
 \ 2013-10-22: Created with code extracted from <fendo_markup_wiki.fs>
-\   and <fendo.fs>. New terminology: every "link" is renamed to
-\   "shortcut".
+\ and <fendo.fs>. New terminology: every "link" is renamed to
+\ "shortcut".
+\
 \ 2013-10-23: Fix: stack comments.
+\ 
 \ 2013-10-25: New: debugging version of 'shortcut:'.
+\
+\ 2014-11-11: Fix: 'just_unshortcut' now preserves the 'href='
+\ attribute with 'save-mem'. The problem started because of the use of
+\ 'save_attributes' and 'restore_attributes'.
+
+\ **************************************************************
 
 wordlist constant fendo_shortcuts_wid  \ for user's shortcuts
 
@@ -103,11 +111,13 @@ shortcut: gforth_ext
 : (shortcut?)  ( xt ca len -- xt xt true  |  false )
   \ Is an href attribute a shortcut different from xt?
   \ ca len = href attribute (not empty)
+\  ." Parameter in '(shortcut?)' = " 2dup type .s cr  \ xxx informer
   fendo_shortcuts_wid search-wordlist ((shortcut?))
   ;
 : shortcut?  ( xt ca len -- xt xt true  |  false )
   \ Is an href attribute a shortcut different from xt?
   \ ca len = href attribute (or an empty string)
+\  ." Parameter in 'shortcut?' = " 2dup type .s cr  \ xxx informer
   dup  if  (shortcut?)  else  nip nip  then
   ;
 :noname  ( ca len -- ca len | ca' len' )
@@ -115,27 +125,43 @@ shortcut: gforth_ext
   \ ca len = href attribute
   \ ca' len' = actual href attribute
 \  cr ." order = " order cr ." entering unshortcut " 2dup type  \ xxx informer
-\  ." Parameter in 'unshortcut' = " 2dup type cr  \ xxx informer
+\  ." Parameter in 'unshortcut' = " 2dup type .s cr  \ xxx informer
   2dup href=!
   0 rot rot  \ fake xt
 \  2dup cr ." order = " order cr ." about to unshortcut " type  \ xxx informer
   begin   ( xt ca len ) shortcut?  ( xt' xt' true  |  false )
   while   execute href=@
-\  2dup ." --> " type  \ xxx informer
+\  ." --> " 2dup type  \ xxx informer
   repeat  href=@
-  .s cr  \ XXX INFORMER
-  save-mem  \ XXX needed to preserve the actual zone of 'href='?
-  .s cr  \ XXX INFORMER
+\  ." Result of 'unshortcut' = " 2dup type .s cr  \ xxx informer
+\ save-mem  \ XXX TMP -- needed to preserve the actual zone of 'href='? No.
+\  .s cr  \ XXX INFORMER
 \  cr  \ xxx informer
   ;  is unshortcut  \ defered in <fendo.fs>
 :noname  ( ca len -- ca len | ca' len' )
   \ Unshortcut an href attribute recursively,
+  \ but preserving all other attributes.
+  \ ca len = href attribute
+  \ ca' len' = actual href attribute
+\  ." Parameter in 'just_unshortcut' = " 2dup type .s cr  \ xxx informer
+  save_attributes
+  unshortcut save-mem 2>r
+\  ." 'href=' in 'just_unshortcut' before 'restore_attributes' = " s" href=@" evaluate .s cr type cr  \ xxx informer
+  restore_attributes
+  2r> 2dup href=!
+\  ." 'href=' in 'just_unshortcut' after 'restore_attributes' = " s" href=@" evaluate .s cr type cr  \ xxx informer
+  ;  is just_unshortcut  \ defered in <fendo.fs>
+:noname  ( ca len -- ca len | ca' len' )  \ XXX TMP -- for debugging
+  \ Unshortcut an href attribute recursively,
   \ without modifing any attribute.
   \ ca len = href attribute
   \ ca' len' = actual href attribute
-  save_attributes unshortcut
-  ." 'href=' in 'just_unshortcut' before 'restore_attributes' = " s" href=@" evaluate .s cr type cr  \ xxx informer
+  save_attributes
+  unshortcut 2>r
+\  ." 'href=' in 'just_unshortcut' before 'restore_attributes' = " s" href=@" evaluate .s cr type cr  \ xxx informer
   restore_attributes
-  ;  is just_unshortcut  \ defered in <fendo.fs>
+  2r> save-mem
+\  ." 'href=' in 'just_unshortcut' after 'restore_attributes' = " s" href=@" evaluate .s cr type cr  \ xxx informer
+  ;  is dry_unshortcut  \ defered in <fendo.fs>
 
 .( fendo.shortcuts.fs compiled ) cr
