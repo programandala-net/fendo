@@ -456,31 +456,23 @@ do_content? on
   ;
 : (pid$>data>pid#)  ( ca len -- a )
   \ Require a page file in order to get its data
-  \ and convert its string page id to number page id.
+  \ and convert its string page id to its number page id.
   \ ca len = page id of an existant page file
   \ a = page id
   2dup (required_data<pid$) pid$>pid#
   ;
 : pid$>data>pid#  ( ca len -- a )
   \ Require a page file in order to get its data
-  \ and convert its string page id to number page id.
+  \ and convert its string page id to its number page id.
   \ ca len = page id
   \ a = page id
-\  ." pid$>data>pid# " 2dup type cr  \ xxx informer
-\  2drop s" es"  \ xxx tmp, works, no shortcut
-\  2drop s" es.programa.sideras"  \ xxx tmp, works, one shortcut level
-\  2drop s" samforth"  \ xxx tmp, works, one shortcut level
-\  2drop s" local2"  \ xxx tmp, works, two shortcuts levels
-\  2drop s" local3"  \ xxx tmp, works, three shortcuts levels
-\  2drop s" en.program.samforth"  \ xxx tmp, works, no shortcut
-\  2dup cr type ."  to unshortcut in data<pid$>pid"  \ xxx informer
+\  ." Parameter in 'pid$>data>pid#' = " 2dup type cr  \ xxx informer
 \  key drop  \ xxx informer
-  ."   PROBLEM:" cr  \ XXX INFORMER
-  ." 'href=' in 'pid$>data>pid#' before 'just_unshortcut' = " s" href=@" evaluate type cr  \ xxx informer
+\  ." 'href=' in 'pid$>data>pid#' before 'just_unshortcut' = " s" href=@" evaluate type cr  \ xxx informer
   just_unshortcut  \ xxx tmp
 \  ." pid$>data>pid# after just_unshortcut: " 2dup type cr  \ xxx informer
-  ." 'href=' in 'pid$>data>pid#' after 'just_unshortcut' = " s" href=@" evaluate type cr  \ xxx informer
-  ."   ;PROBLEM" cr  \ XXX INFORMER
+\  ." 'href=' in 'pid$>data>pid#' after 'just_unshortcut' = " s" href=@" evaluate type cr  \ xxx informer
+\  ." Parameter in 'pid$>data>pid#' after 'just_unshortcut' = " 2dup type cr  \ xxx informer
   dup 0= abort" Empty page-id"  \ xxx tmp
   (pid$>data>pid#)
 \  find-name name>int execute  \ xxx second version; no difference, same corruption of the input stream

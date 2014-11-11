@@ -286,6 +286,7 @@ include ./fendo.config.fs
 depth [if] abort [then]  \ xxx debugging
 defer unshortcut  \ defined in <fendo.shortcuts.fs>
 defer just_unshortcut  \ defined in <fendo.shortcuts.fs>
+defer dry_unshortcut  \ defined in <fendo.shortcuts.fs>  \ XXX TMP
 include ./fendo.data.fs
 depth [if] abort [then]  \ xxx debugging
 include ./fendo.echo.fs

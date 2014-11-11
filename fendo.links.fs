@@ -171,7 +171,7 @@ variable link_type
   ;
 : convert_local_link_href  ( ca1 len1 -- ca2 len2 )
   \ Convert a raw local href to a finished href.
-  ." Parameter in 'convert_local_link_href' = " 2dup type cr  \ XXX INFORMER
+\  ." Parameter in 'convert_local_link_href' = " 2dup type cr  \ XXX INFORMER
   dup if  pid$>data>pid# target_file  then  link_anchor+
   ;
 : -file://  ( ca len -- ca' len' )
@@ -182,7 +182,7 @@ variable link_type
   ;
 : convert_link_href  ( ca len -- ca' len' )
   \ ca len = href attribute, without anchor
-  ." Parameter in 'convert_link_href' = " 2dup type cr  \ XXX INFORMER
+\  ." Parameter in 'convert_link_href' = " 2dup type cr  \ XXX INFORMER
   link_type @ case
     local_link      of  convert_local_link_href     endof
     file_link       of  convert_file_link_href      endof
@@ -204,15 +204,15 @@ variable local_link_to_draft_page?
   \ xxx todo fetch alternative language title and description
 \  ." tune_local_link" cr  \ xxx informer
   href=@
-  ." 'href=' in 'tune_local_link' (0) = " 2dup type cr  \ xxx informer
+\  ." 'href=' in 'tune_local_link' (0) = " 2dup type cr  \ xxx informer
   pid$>(data>)pid#  >r
 \  link_text@ ." link_text in tune_local_link (0) = " type cr  \ xxx informer
 \  r@ title ." title in tune_local_link (1) = " type cr  \ xxx informer
   r@ draft? local_link_to_draft_page? !
   r@ description 
-  ." 'href=' in 'tune_local_link' (1) = " href=@ type cr  \ xxx informer
+\  ." 'href=' in 'tune_local_link' (1) = " href=@ type cr  \ xxx informer
   unmarkup
-  ." 'href=' in 'tune_local_link' (2) = " href=@ type cr  \ xxx informer
+\  ." 'href=' in 'tune_local_link' (2) = " href=@ type cr  \ xxx informer
   title=?!
 \  link_text@ ." link_text in tune_local_link (1) = " type cr  \ xxx informer
   r@ title
@@ -227,9 +227,9 @@ variable local_link_to_draft_page?
   \ Tune the attributes parsed from the link.
   local_link? if  tune_local_link  then
   href=@
-  ." 'href=' in 'tune_link' (0) = " 2dup type cr  \ xxx informer
+\  ." 'href=' in 'tune_link' (0) = " 2dup type cr  \ xxx informer
   convert_link_href
-  ." 'href=' in 'tune_link' (1) = " 2dup type cr  \ xxx informer
+\  ." 'href=' in 'tune_link' (1) = " 2dup type cr  \ xxx informer
   href=!
   link_text@ empty? if  missing_link_text link_text!  then
   external_link? if  external_class  then
@@ -263,7 +263,7 @@ defer link_suffix
   \ XXX FIXME link_text@ here returns a string with macros already
   \ parsed! why?
 \  ." In 'echo_link', 'link_text$' = " link_text@ type cr  \ XXX INFORMER
-  ." In 'echo_link', 'href=' = " href=@ type cr  \ XXX INFORMER
+\  ." In 'echo_link', 'href=' = " href=@ 2dup type ." [".s 2drop ." ]" cr  \ XXX INFORMER
   tune_link  echo_link?
   if  (echo_link)  else  echo_link_text  then  reset_link
   ;
