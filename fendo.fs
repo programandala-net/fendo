@@ -287,6 +287,10 @@ depth [if] abort [then]  \ xxx debugging
 defer unshortcut  \ defined in <fendo.shortcuts.fs>
 defer just_unshortcut  \ defined in <fendo.shortcuts.fs>
 defer dry_unshortcut  \ defined in <fendo.shortcuts.fs>  \ XXX TMP
+defer -anchor  \ defined in <fendo.links.fs>  \ XXX TMP
+defer -anchor!  \ defined in <fendo.links.fs>  \ XXX TMP
+$variable link_anchor  \ XXX TMP -- moved from <fendo.links.fs>
+defer link_anchor+  \ defined in <fendo.links.fs>  \ XXX TMP
 include ./fendo.data.fs
 depth [if] abort [then]  \ xxx debugging
 include ./fendo.echo.fs

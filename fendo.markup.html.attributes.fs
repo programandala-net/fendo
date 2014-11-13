@@ -332,11 +332,12 @@ create attributes  \ table for the attribute variables
 \ **************************************************************
 \ Saving and restoring the attributes
 
-\ XXX TODO
+\ The URL anchor does not work like an attribute, but it must be saved
+\ and restored with them.
 
-\ Create a stack for the attributes (2 cells per attribute string,
-\ and 4 nesting levels):
-#attributes 2* 4 * xstack attributes_stack
+\ Create a stack for the attributes plus the link anchor (2 cells per
+\ element, and 4 nesting levels):
+#attributes 1+ 2* 4 * xstack attributes_stack
 
 : save_attribute  ( a -- )
   \ Save an attribute.
@@ -344,8 +345,9 @@ create attributes  \ table for the attribute variables
   attribute@ 2>x
   ;
 : save_attributes  ( -- )
-  \ Save all attributes.
+  \ Save the link anchor and all attributes.
   attributes_stack
+  link_anchor $@ 2>x
   (attributes) bounds ?do
     i @ save_attribute
   cell +loop
@@ -356,11 +358,12 @@ create attributes  \ table for the attribute variables
   2x> rot attribute!
   ;
 : restore_attributes  ( -- )
-  \ Restore all attributes.
+  \ Restore all attributes, and the link anchor.
   attributes_stack
   (attributes) -cell-bounds ?do
     i @ restore_attribute
   [ cell negate ] literal +loop
+  2x> link_anchor $!
   ;
 
 \ **************************************************************

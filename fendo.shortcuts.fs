@@ -50,11 +50,11 @@ wordlist constant fendo_shortcuts_wid  \ for user's shortcuts
 : shortcut:  ( "name" -- )
   \ Create an user's shortcut.
   [ true ] [if]
-    \ xxx normal version; works fine
+    \ xxx normal version; it works fine
     get-current >r  fendo_shortcuts_wid set-current :
     r> set-current
   [else]
-    \ xxx debugging version
+    \ xxx TMP -- debugging version
     get-current >r
     fendo_shortcuts_wid set-current
     parse-name
@@ -105,6 +105,7 @@ shortcut: gforth_ext
 : ((shortcut?))  ( xt1 xt2 1|-1  |  xt1 0  --  xt2 xt2 true  |  false )
   \ xt1 = old xt (former loop)
   \ xt2 = new xt
+\  if    2dup <> dup >r if  nip dup  else  2drop  then  r>  \ XXX OLD -- alternative
   if    2dup <> if  nip dup true  else  2drop false  then
   else  drop false  then
   ;

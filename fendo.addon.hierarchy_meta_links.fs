@@ -54,7 +54,7 @@
   \ ca2 len2 = rel
 \  cr 2dup type ."  --> " 2over type  \ xxx informer
   rel=!
-\  2dup ."  --> " type  \ xxx informer
+  ." Pid parameter in '(hierarchy_meta_link)' = " 2dup type cr  \ xxx informer
   pid$>data>pid#
   dup target_file href=!
   dup title unmarkup title=!
@@ -65,6 +65,7 @@
   \ Create a hierarchy meta link in the HTML header, if needed.
   \ ca1 len1 = rel
   \ ca2 len2 = page id
+  ." Parameter in 'hierarchy_meta_link' = " 2dup type cr  \ xxx informer
   unshortcut dup if  2swap (hierarchy_meta_link)  else  2drop 2drop  then
   ;
 : hierarchy_meta_links  ( -- )

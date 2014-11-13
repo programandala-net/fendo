@@ -70,7 +70,7 @@ $variable last_href$  \ xxx new, experimental, to be used by the application
   unshortcut
 \  ." (get_link_href) 1 " 2dup type cr  \ xxx informer
   2dup set_link_type
-  local_link? if  -anchor  then  
+\  local_link? if  -anchor!  then  \ XXX OLD
 \  ." (get_link_href) 2 " 2dup type cr  \ xxx informer
   2dup last_href$ $! href=!
   ;  is (get_link_href)  \ defered in <fendo.links.fs>
