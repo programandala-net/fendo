@@ -28,15 +28,15 @@
 \ **************************************************************
 \ Change history of this file
 
-\ 2013-06-23 Start.
-\ 2013-10-14 Moved from the application Fendo-programandala.
+\ 2013-06-23: Start.
+\ 2013-10-14: Moved from the application Fendo-programandala.
+\ 2014-11-13: Change: Simpler, with immediate tags. Fix: stack
+\ notation.
 
 \ **************************************************************
 
-: anchor ( "name" -- )
-  [markup>order]
-  id=!  <a> </a>
-  [markup<order]
+: anchor ( ca len -- )
+  id=! [<a>] [</a>]
   ;
 
 .( fendo.addon.anchor.fs compiled) cr

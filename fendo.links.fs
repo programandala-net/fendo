@@ -98,18 +98,34 @@ link_text_already_evaluated? off
   \ XXX TMP saving and restoring 'separate?' makes no difference
   ;
 
-$variable link_anchor
-: -anchor  ( ca len -- ca len | ca' len' )
+\ $variable link_anchor  \ XXX OLD -- moved to fendo.markup.html.attributes.fs>
+: /anchor ( ca1 len1 -- ca2 len2 ca3 len3 )
+  \ Divide a href attribute at its anchor.
+  \ ca1 len1 = href attribute
+  \ ca2 len2 = href attribute without the anchor
+  \ ca3 len3 = anchor without the "#" character
+  s" #" sides/ drop
+  ; 
+:noname ( ca len -- ca len | ca' len' )
+  \ Remove the anchor from a href attribute.
+  \ ca len = href attribute
+  \ ca' len' = href attribute without anchor
+  \ XXX TODO factor out
+  /anchor 2drop
+  ; is -anchor  \ defered in <fendo.fs>
+:noname ( ca len -- ca len | ca' len' )
   \ Extract the anchor from a href attribute and store it.
   \ ca len = href attribute
   \ ca' len' = href attribute without anchor
-  s" #" sides/ drop link_anchor $!
-  ;
-: +anchor  { ca1 len1 ca2 len2 -- ca3 len3 }
+  \ XXX TODO factor out
+  /anchor link_anchor $!
+  ; is -anchor!  \ defered in <fendo.fs>
+: +anchor  ( ca1 len1 ca2 len2 -- ca1 len1 | ca3 len3 )
   \ Add a link anchor to a href attribute.
   \ ca1 len1 = href attribute
   \ ca2 len2 = anchor, without "#"
-  ca1 len1 len2 if  s" #" s+ ca2 len2 s+  then
+  ." Anchor parameter in '+anchor' = " 2dup type cr  \ XXX INFORMER
+  dup if  2>r s" #" s+ 2r> s+  else  2drop  then
   ;
 variable link_type
 1 enum local_link
@@ -165,13 +181,13 @@ variable link_type
   \ Add "external" to the class attribute.
   class=@ s" external" bs& class=!
   ;
-: link_anchor+  ( ca len -- )
+:noname  ( ca len -- )
   \ Restore the link anchor of the local href attribute, if any.
   link_anchor $@ +anchor
-  ;
+  ; is link_anchor+
 : convert_local_link_href  ( ca1 len1 -- ca2 len2 )
   \ Convert a raw local href to a finished href.
-\  ." Parameter in 'convert_local_link_href' = " 2dup type cr  \ XXX INFORMER
+  ." Parameter in 'convert_local_link_href' = " 2dup type cr  \ XXX INFORMER
   dup if  pid$>data>pid# target_file  then  link_anchor+
   ;
 : -file://  ( ca len -- ca' len' )
@@ -227,9 +243,9 @@ variable local_link_to_draft_page?
   \ Tune the attributes parsed from the link.
   local_link? if  tune_local_link  then
   href=@
-\  ." 'href=' in 'tune_link' (0) = " 2dup type cr  \ xxx informer
+  ." 'href=' in 'tune_link' before 'convert_link_href' = " 2dup type cr  \ xxx informer
   convert_link_href
-\  ." 'href=' in 'tune_link' (1) = " 2dup type cr  \ xxx informer
+  ." 'href=' in 'tune_link' after 'convert_link_href' = " 2dup type cr  \ xxx informer
   href=!
   link_text@ empty? if  missing_link_text link_text!  then
   external_link? if  external_class  then
@@ -285,8 +301,8 @@ defer (get_link_href)  ( ca len -- )
   \ Its attributes have to be set previously.
   \ ca1 len1 = page id, URL or shortcut
   \ ca2 len2 = link text
-\  cr ." In link the link text is " 2dup type  \ XXX INFORMER
-\  ."  and the page id is " 2over type cr  \ XXX INFORMER
+  ." In 'link' the link text is " 2dup type cr  \ XXX INFORMER
+  ." In 'link' the page id is " 2over type cr  \ XXX INFORMER
   link_text! (link)
   ;
 : link<pid$  ( ca len -- )
@@ -340,5 +356,7 @@ defer (get_link_href)  ( ca len -- )
 \ 2014-11-09: Change: all 'true [if]' that compiled code that long ago
 \ was moved from <fendo.markup.fendo.link.fs> have been removed. Those
 \ conditions were needed just in case strange things happened.
+\
+\ 2014-11-11: Change: '+anchor' rewritten without locals.
 
 .( fendo.links.fs ) cr

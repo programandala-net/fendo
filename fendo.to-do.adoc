@@ -169,30 +169,10 @@ It has been fixed, but it has to be tested.
 
 Remove double spaces in '(unmarkup)'?
 
-.2014-11-09:
+.2014-11-11:
 
-Convert the attribute system to use a variable address, not an xt:
+The anchor system doesn't work fine anymore. Why?
+Now a shortcut href with an anchor crashes 'pid$>data>pid#'.
+I've defered and included '-anchor', as a temporary solution.
 
-----
-: attribute:  ( "name" -- xt )
-  \ Create an attribute variable in the markup vocabulary,
-  \ and four words to manage it.
-  \ "name" = ca len = name of the attribute variable
-  \ xt = execution token of the attribute variable
-  \ XXX TODO since the dual set system is removed, an address would be
-  \ enough, not an xt...
-----
-
-New problem: in the following case, the shortcut works fine but 
-restoring the old attributes keeps the old len:
-____
- PROBLEM:
-'href=' in 'pid$>data>pid#' before 'just_unshortcut' = en.article.2009.06.24.forth_style
-'href=' in 'just_unshortcut' before 'restore_attributes' = en.text.2009.06.24.forth_style
-'href=' in 'pid$>data>pid#' after 'just_unshortcut' = en.text.2009.06.24.forth_styleyle
-  ;PROBLEM
-____
-
-So it seems the shortcut "text" overwrites the original "article". So far so good.
-
-
+The anchors management has to be explored. Do they better be apart of the href?

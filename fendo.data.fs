@@ -111,9 +111,7 @@ datum: source_file
 
 datum: language  \ ISO code of the page's language
 datum: title  \ page title; can include markups
-\ datum: plain_title  \ the same without markups  \ XXX OLD
 datum: description  \ page description; can include markups?
-\ datum: plain_description  \ the same without markups  \ XXX OLD
 
 \ Dates in ISO format:
 datum: created  \ creation date
@@ -190,7 +188,7 @@ datum: template  \ HTML template filename in the design subdir
   \ Return a target HTML page filename.
   \ a = page id
   \ ca len = target HTML page file name
-  dup >r pid#>pid$ r> target_extension s+
+  dup >r pid#>pid$ r> target_extension s+ link_anchor+
   ;
 : current_target_file  ( -- ca len )
   \ Return the target HTML page filename of the current page.
@@ -234,7 +232,7 @@ datum: template  \ HTML template filename in the design subdir
 \ when the data has been required by other page).  Then a
 \ page id is created: it's the source filename without path
 \ or extension. The execution of the page id returns the address of
-\ the page data, in order to access the individual data fields.
+\ the page data.
 
 : current_pid$  ( -- ca len )
   \ Return the name of the current page id.
@@ -263,10 +261,7 @@ datum: template  \ HTML template filename in the design subdir
   \ or return false if the page id is unknown.
   \ ca len = page id
   \ a = page id
-\  2dup type ."  pid$>pid#"  \ xxx informer
-  known_pid$?
-\  .s cr  \ xxx informer
-  if  execute  else  false  then
+  known_pid$? if  execute  else  false  then
   ;
 : current_page_pid$  ( -- ca len )
   \ Return the string page id of the current page.
@@ -279,17 +274,17 @@ datum: template  \ HTML template filename in the design subdir
   \ ca2 len2 = page id
   s" ." s+ 2swap s" ." s+  \
   { D: descendant D: ancestor }
-\  descendant ancestor str= ?dup if  0= exit  then
+\  descendant ancestor str= ?dup if  0= exit  then  \ XXX OLD
   descendant ancestor string-prefix?
   ;
 : pid$>level  ( ca len -- n )
   \ Return the hierarchy level of the given page id.
-  \ Top pages' level is 0.
-  char . char_count
+  \ The top level is 0.
+  [char] . char_count
   ;
 : pid#>level  ( a -- n )
   \ Return the hierarchy level of the given page id.
-  \ Top pages' level is 0.
+  \ The top level is 0.
   pid#>pid$ pid$>level
   ;
 
@@ -430,7 +425,8 @@ do_content? on
 : (required_data<pid$)  ( ca len -- )
   \ Require a page file in order to get its data.
   \ ca len = page id
-\  ." (required_data<pid$) " 2dup type cr  \ xxx informer
+  ." Parameter in '(required_data<pid$)' = " 2dup type cr  \ xxx informer
+  ." 'link_anchor' in '(required_data<pid$)' = " link_anchor $@ type cr  \ xxx informer
   +forth_extension required_data
   ;
 : required_data<pid$  ( ca len -- )
@@ -459,6 +455,8 @@ do_content? on
   \ and convert its string page id to its number page id.
   \ ca len = page id of an existant page file
   \ a = page id
+  -anchor \ XXX TMP
+  ." 'link_anchor' in '(pid$>data>pid#)' = " link_anchor $@ type cr  \ xxx informer
   2dup (required_data<pid$) pid$>pid#
   ;
 : pid$>data>pid#  ( ca len -- a )
@@ -466,13 +464,14 @@ do_content? on
   \ and convert its string page id to its number page id.
   \ ca len = page id
   \ a = page id
-\  ." Parameter in 'pid$>data>pid#' = " 2dup type cr  \ xxx informer
+  ." Parameter in 'pid$>data>pid#' = " 2dup type cr  \ xxx informer
 \  key drop  \ xxx informer
 \  ." 'href=' in 'pid$>data>pid#' before 'just_unshortcut' = " s" href=@" evaluate type cr  \ xxx informer
+  ." 'link_anchor' in 'pid$>data>pid#' before 'just_unshortcut' = " link_anchor $@ type cr  \ xxx informer
   just_unshortcut  \ xxx tmp
-\  ." pid$>data>pid# after just_unshortcut: " 2dup type cr  \ xxx informer
 \  ." 'href=' in 'pid$>data>pid#' after 'just_unshortcut' = " s" href=@" evaluate type cr  \ xxx informer
-\  ." Parameter in 'pid$>data>pid#' after 'just_unshortcut' = " 2dup type cr  \ xxx informer
+  ." Parameter in 'pid$>data>pid#' after 'just_unshortcut' = " 2dup type cr  \ xxx informer
+  ." 'link_anchor' in 'pid$>data>pid#' after 'just_unshortcut' = " link_anchor $@ type cr  \ xxx informer
   dup 0= abort" Empty page-id"  \ xxx tmp
   (pid$>data>pid#)
 \  find-name name>int execute  \ xxx second version; no difference, same corruption of the input stream
@@ -483,7 +482,7 @@ do_content? on
   \ if it's different from the current page, require its data.
   \ This word is needed to manage links to the current page
   \ (href attributes that contain just an anchor).
-\  cr ." pid$>(data>)pid# " 2dup type cr  \ xxx informer
+  ." Parameter in 'pid$>(data>)pid#'  = " 2dup type cr  \ xxx informer
   dup if  pid$>data>pid#  else  2drop current_page  then
   ;
 : pid$>url  ( ca1 len1 -- ca2 len2 )
@@ -504,8 +503,7 @@ do_content? on
 
 : pid$>target  ( ca1 len1 -- ca2 len2 )
   \ Convert a page id to a target filename.
-  2dup pid$>data>pid# target_extension s+
-  +target_dir
+  2dup pid$>data>pid# target_extension s+ +target_dir
   ;
 
 \ **************************************************************
@@ -553,12 +551,11 @@ require galope/slash-sides.fs  \ '/sides'
   \ ca len = filename (without path; with extension)
   pid$>hierarchy 1- 
   ;
-: hierarchy  ( a -- u )
+: pid#>hierarchy  ( a -- u )
   \ Return the hierarchy level of a page (0 is the top level).
   \ a = page id (address of its data)
   pid#>pid$ pid$>hierarchy
   ;
-' hierarchy alias pid#>hierarchy  \ alternative name
 
 \ **************************************************************
 \ Change history of this file
@@ -737,5 +734,15 @@ require galope/slash-sides.fs  \ '/sides'
 \ 2014-11-08: Change: the 'plain_title' and 'plain_description' data
 \ fields are removed because 'unmarkup' (just implemented) makes them
 \ unnecessary.
+\
+\ 2014-11-11: Change: 'hierarchy' renamed to 'pid#>hierarchy'; the old
+\ alias is removed.
+\
+\ 2014-11-11: Change: '-anchor' was defered and added to
+\ '(pid$>data>pid#)'. XXX TMP
+\
+\ 2014-11-11: Fix: 'link_anchor+' was missing in 'target_file'.
+\
+\ 2014-11-13: Fix: 'pid$>level'.
 
 .( fendo.data.fs compiled) cr
