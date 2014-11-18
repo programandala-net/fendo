@@ -1,8 +1,9 @@
-.( fendo.markup.macros.fs ) cr
+.( fendo.addon.uloc_by_wild-match.fs) cr
 
 \ This file is part of Fendo.
 
-\ This file provides the tools to create the user macros.
+\ This file is the addon that creates unnumbered content lists
+\ filtered by a wild-match string.
 
 \ Copyright (C) 2014 Marcos Cruz (programandala.net)
 
@@ -16,9 +17,8 @@
 \ or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
 \ License for more details.
 
-\ You should have received a copy of the GNU General Public
-\ License along with this program; if not, see
-\ <http://gnu.org/licenses>.
+\ You should have received a copy of the GNU General Public License
+\ along with this program; if not, see <http://gnu.org/licenses>.
 
 \ Fendo is written in Forth with Gforth
 \ (<http://www.bernd-paysan.de/gforth.html>).
@@ -26,20 +26,17 @@
 \ **************************************************************
 \ Change history of this file
 
-\ 2014-02-05: Start, based on <addons/abbr.fs>.
-\ 2014-11-18: Comment modified.
+\ 2014-11-16 Start.
 
 \ **************************************************************
 
-: macro: ( "name" -- )
-  \ Create an user macro.
-  get-current >r  fendo_markup_macros_wid set-current  :
-  r> set-current
-  ;
-: macro_alias ( "name" -- )
-  \ Create a macro alias of the latest word (that is supposed to be a user macro).
-  get-current  fendo_markup_macros_wid set-current  latestxt alias
-  set-current
+require ./fendo.addon.lioc_by_wild-match.fs
+
+: uloc_by_wild-match  ( ca len -- )
+  \ Create an unnumbered list of content
+  \ with pages whose pid matches the given wild-match string.
+  [<ul>] lioc_by_wild-match [</ul>]
   ;
 
-.( fendo.markup.macros.fs compiled ) cr
+.( fendo.addon.uloc_by_wild-match.fs compiled) cr
+

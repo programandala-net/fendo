@@ -32,7 +32,9 @@
 \ Requirements
 
 forth_definitions
+
 require galope/module.fs
+
 fendo_definitions
 
 require ./fendo.addon.tags.fs
@@ -50,17 +52,22 @@ variable prefix$
 : ((tagged_pages_by_prefix))  { D: pid -- }
   \ Create a description list of content
   \ if the given pid starts with the current prefix.
-\  ." ((tagged_pages_by_prefix)) " pid type cr ~~  \ XXX INFORMER
+\  ." Parameter in '((tagged_pages_by_prefix))' = " pid type cr  \ XXX INFORMER
   pid prefix$ $@ string-prefix? 0= ?exit
-  pid pid$>data>pid# dup draft?
+  pid pid$>data>pid#
+\  ." pid# = " dup . cr  \ XXX INFORMER
+  dup draft?
   if    drop
-  else  tags evaluate_tags tag_presence @
+  else  tags
+\        ." 'tags' in '((tagged_pages_by_prefix))' = " 2dup type cr  \ XXX INFORMER
+        evaluate_tags tag_presence @
+\        ." 'tag_presence' in '((tagged_pages_by_prefix))' = " dup . cr  \ XXX INFORMER
         if  pid dtddoc  tag_presence off  then
   then
   ;
-: (tagged_pages_by_prefix)  ( ca len -- wf )
+: (tagged_pages_by_prefix)  ( ca len -- true )
   \ ca len = pid
-  \ f = continue with the next element?
+  \ true = continue with the next element?
   ((tagged_pages_by_prefix)) true
   ;
 

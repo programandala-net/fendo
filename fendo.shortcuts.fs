@@ -157,12 +157,16 @@ shortcut: gforth_ext
   \ without modifing any attribute.
   \ ca len = href attribute
   \ ca' len' = actual href attribute
+\  ." 'href=' in 'dry_unshortcut' before 'save_attributes'    = " s" href=@" evaluate .s space type cr  \ xxx informer
   save_attributes
-  unshortcut 2>r
-\  ." 'href=' in 'just_unshortcut' before 'restore_attributes' = " s" href=@" evaluate .s cr type cr  \ xxx informer
+\  ." 'href=' in 'dry_unshortcut' after 'save_attributes'     = " s" href=@" evaluate .s space type cr  \ xxx informer
+  unshortcut 
+\  ." TOS in 'dry_unshortcut' after 'unshortcut'              = " .s space 2dup type cr  \ xxx informer
+  save-mem 2>r
+\  ." 'href=' in 'dry_unshortcut' before 'restore_attributes' = " s" href=@" evaluate .s space type cr  \ xxx informer
   restore_attributes
-  2r> save-mem
-\  ." 'href=' in 'just_unshortcut' after 'restore_attributes' = " s" href=@" evaluate .s cr type cr  \ xxx informer
+\  ." 'href=' in 'dry_unshortcut' after 'restore_attributes'  = " s" href=@" evaluate .s space type cr  \ xxx informer
+  2r> 
   ;  is dry_unshortcut  \ defered in <fendo.fs>
 
 .( fendo.shortcuts.fs compiled ) cr

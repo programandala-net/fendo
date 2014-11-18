@@ -216,9 +216,9 @@ variable more?  \ flag: keep on parsing more words?; changed by '}content'
 : (evaluate_content)  ( ca len -- )
   \ Evaluate a string as page content.
 \  cr cr ." (evaluate_content) >> " 2dup type key drop  \ XXX INFORMER
-  save_attributes
+  save_attributes -attributes  separate? @ >r
   ['] parse_content execute-parsing  #nothings off
-  restore_attributes
+  r> separate? !  restore_attributes
   ;
 ' (evaluate_content) is evaluate_content
 : more_link_text?  ( ca len -- wf )
@@ -511,5 +511,8 @@ set-current
 \
 \ 2014-11-09: Fix: Now '(evaluate_content)' saves and restores the
 \ HTML attributes.
+\
+\ 2014-11-17: Fix: Now '(evaluate_content)' deletes the HTML
+\ attributes after saving them, and preserves 'separate?'.
 
 .( fendo.parser.fs compiled ) cr

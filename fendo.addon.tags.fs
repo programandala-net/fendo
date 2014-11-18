@@ -25,32 +25,7 @@
 \ **************************************************************
 \ Change history of this file
 
-\ 2014-03-02: Start.
-\
-\ 2014-03-03: First draft.
-\
-\ 2014-03-04: New: 'evaluate_tags' and wid order words; words for
-\ listed links.
-\
-\ 2014-03-04: Change: 'execute_tags' renamed to 'execute_all_tags'.
-\
-\ 2014-03-07: Change: 'tag_link' factored from '(does_tag_link)'.
-\
-\ 2014-03-11: Fix: now 'tag_link' sets the needed wordlist order; this
-\ is needed because the order was changed before evaluating the tags.
-\
-\ 2014-05-28: New: 'tags_used_only_once_link_to_its_own_page' flag.
-\
-\ 2104-05-28: Change: '(tag_link)' modified in order to implement
-\ 'tags_used_only_once_link_to_its_own_page'.
-\
-\ 2014-06-03: Change: 'tags_used_only_once_link_to_its_own_page'
-\ renamed to 'lonely_tags_link_to_content'.
-\
-\ 2014-11-05: Improvement: In order to add a class to the last element
-\ of a tag link list (what makes some things easier for CSS), new
-\ words are added: '#tags', '#tag', '(tag_does_count)' and
-\ 'tag_do_count'.
+\ See at the end of the file.
 
 \ **************************************************************
 \ Stack notation
@@ -222,13 +197,7 @@ variable lonely_tags_link_to_content  \ flag
 variable tag_searched_for$
 variable tag_presence  \ counter
 : (tag_does_presence)  ( tag -- )
-\  ." (tag_does_presence)" cr  \ XXX INFORMER
-  tag>name
-\  2dup type space  \ XXX INFORMER
-  tag_searched_for$ $@
-\  2dup type space  \ XXX INFORMER
-  str= abs tag_presence +!
-\  tag_presence @ . cr  \ XXX INFORMER
+  tag>name tag_searched_for$ $@ str= abs tag_presence +!
   ;
 : (tag_does_count)  ( tag -- )
   \ Increase the count of evaluated tags.
@@ -284,7 +253,6 @@ export
 : tags_do_presence  ( ca len -- )
   \ Set the tags to check if their name is the given name.
   \ ca len = tag name
-\  ." tags_do_presence " 2dup type cr ~~  \ XXX INFORMER
   tag_searched_for$ $!   tag_presence off
   ['] (tag_does_presence) is (tag_does)
   ;
@@ -299,7 +267,7 @@ export
 
 : tag  ( ca len "name" -- )
   \ Create a new tag.
-  \ ca len = tag text name, to be used in links
+  \ ca len = tag text name, to be used in link text
   \ "name" = tag word name, to be used in URL
   \ Example usage:
   \   s" ZX Spectrum" tag zx_spectrum
@@ -350,5 +318,35 @@ s" /tmp/fendo.tags.fs" 2constant tags_filename$
   \ Execute all tags with the given behaviour.
   is (tag_does)  execute_all_tags
   ;
+
+\ **************************************************************
+\ Change history of this file
+
+\ 2014-03-02: Start.
+\
+\ 2014-03-03: First draft.
+\
+\ 2014-03-04: New: 'evaluate_tags' and wid order words; words for
+\ listed links.
+\
+\ 2014-03-04: Change: 'execute_tags' renamed to 'execute_all_tags'.
+\
+\ 2014-03-07: Change: 'tag_link' factored from '(does_tag_link)'.
+\
+\ 2014-03-11: Fix: now 'tag_link' sets the needed wordlist order; this
+\ is needed because the order was changed before evaluating the tags.
+\
+\ 2014-05-28: New: 'tags_used_only_once_link_to_its_own_page' flag.
+\
+\ 2104-05-28: Change: '(tag_link)' modified in order to implement
+\ 'tags_used_only_once_link_to_its_own_page'.
+\
+\ 2014-06-03: Change: 'tags_used_only_once_link_to_its_own_page'
+\ renamed to 'lonely_tags_link_to_content'.
+\
+\ 2014-11-05: Improvement: In order to add a class to the last element
+\ of a tag link list (what makes some things easier for CSS), new
+\ words are added: '#tags', '#tag', '(tag_does_count)' and
+\ 'tag_do_count'.
 
 .( fendo.addon.tags.fs compiled) cr

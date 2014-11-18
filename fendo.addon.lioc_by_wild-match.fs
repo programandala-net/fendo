@@ -1,10 +1,10 @@
-.( fendo.addon.lioc_by_prefix.fs) cr
+.( fendo.addon.lioc_by_wild-match.fs) cr
 
 \ This file is part of Fendo.
 
 \ This file is the code common to several content lists addons.
 
-\ Copyright (C) 2013,2014 Marcos Cruz (programandala.net)
+\ Copyright (C) 2014 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute it and/or modify it
 \ under the terms of the GNU General Public License as published by
@@ -25,20 +25,12 @@
 \ **************************************************************
 \ Change history of this file
 
-\ 2013-11-25: Code extracted from the application Fendo-programandala.
-\ 2013-11-27: Change: several words renamed, after a new uniform notation:
-\   "pid$" and "pid#" for both types of page ids.
-\ 2014-03-02: Rewritten with 'traverse_pids'. Renamed.
-\ 2014-03-03: Draft pages are not included.
-\ 2014-03-12: Improvement: faster, with '?exit' and rearranged
-\ conditions.
+\ 2014-11-16 Start.
 
 \ **************************************************************
 \ Requirements
 
 forth_definitions
-
-require string.fs  \ Gforth's dynamic strings
 
 require galope/module.fs  \ 'module:', ';module', 'hide', 'export'
 
@@ -46,34 +38,34 @@ fendo_definitions
 
 require ./fendo.addon.traverse_pids.fs
 require ./fendo.addon.lioc.fs
+require ./fendo.addon.wild-match.fs
 
 \ **************************************************************
 
-module: fendo.addon.lioc_by_prefix
+module: fendo.addon.lioc_by_wild-match
 
-variable prefix
-: ((lioc_by_prefix))  { D: pid -- }
-  \ Create an element of a list of content
-  \ if the given pid starts with the current prefix.
-  pid prefix $@ string-prefix? 0= ?exit
+: ((lioc_by_wild-match))  { D: pid -- }
+  \ Create an element of a list of content,
+  \ if the given pid (page id) matches the current wild-match string.
+  pid wild-match$ $@ wild-match? 0= ?exit
   pid pid$>data>pid# draft? ?exit
-  pid lioc 
+  pid lioc
   ;
-: (lioc_by_prefix)  ( ca len -- f )
+: (lioc_by_wild-match)  ( ca len -- true )
   \ ca len = pid
-  \ f = continue with the next element?
-  ((lioc_by_prefix)) true
+  \ true = continue with the next element?
+  ((lioc_by_wild-match)) true
   ;
 
 export
 
-: lioc_by_prefix  ( ca len -- )
+: lioc_by_wild-match  ( ca len -- )
   \ Create a list of content
-  \ with pages whose pid starts with the given prefix.
-  \ ca len = prefix
-  prefix $!  ['] (lioc_by_prefix) traverse_pids
+  \ with pages whose pid matches the given wild-match string.
+  wild-match$ $! ['] (lioc_by_wild-match) traverse_pids
   ;
 
 ;module
 
-.( fendo.addon.lioc_by_prefix.fs compiled) cr
+.( fendo.addon.lioc_by_wild-match.fs compiled) cr
+

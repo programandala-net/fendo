@@ -2,7 +2,8 @@
 
 \ This file is part of Fendo.
 
-\ This file is the addon that creates unnumbered content lists.
+\ This file is the addon that creates unnumbered content lists
+\ filtered by a regex.
 
 \ Copyright (C) 2013,2014 Marcos Cruz (programandala.net)
 
@@ -30,9 +31,7 @@
 
 \ **************************************************************
 
-forth_definitions
 require ./fendo.addon.lioc_by_regex.fs
-fendo_definitions
 
 : uloc_by_regex  ( ca len -- )
   \ Create an unnumbered list of content

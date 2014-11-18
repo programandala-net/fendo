@@ -1,4 +1,4 @@
-.( fendo.addon.lioc_by_prefix.fs) cr
+.( fendo.addon.lioc_by_prefix_and_level.fs) cr
 
 \ This file is part of Fendo.
 
@@ -25,13 +25,7 @@
 \ **************************************************************
 \ Change history of this file
 
-\ 2013-11-25: Code extracted from the application Fendo-programandala.
-\ 2013-11-27: Change: several words renamed, after a new uniform notation:
-\   "pid$" and "pid#" for both types of page ids.
-\ 2014-03-02: Rewritten with 'traverse_pids'. Renamed.
-\ 2014-03-03: Draft pages are not included.
-\ 2014-03-12: Improvement: faster, with '?exit' and rearranged
-\ conditions.
+\ 2014-11-18: Created, based on <fendo.addon.lioc_by_prefix.fs>.
 
 \ **************************************************************
 \ Requirements
@@ -49,31 +43,36 @@ require ./fendo.addon.lioc.fs
 
 \ **************************************************************
 
-module: fendo.addon.lioc_by_prefix
+module: fendo.addon.lioc_by_prefix_and_level
 
 variable prefix
-: ((lioc_by_prefix))  { D: pid -- }
+variable level
+: ((lioc_by_prefix_and_level))  { D: pid -- }
   \ Create an element of a list of content
-  \ if the given pid starts with the current prefix.
+  \ if the given pid starts with the current prefix
+  \ and has the current level.
   pid prefix $@ string-prefix? 0= ?exit
+  pid pid$>level level @ <> ?exit
   pid pid$>data>pid# draft? ?exit
   pid lioc 
   ;
-: (lioc_by_prefix)  ( ca len -- f )
+: (lioc_by_prefix_and_level)  ( ca len -- true )
   \ ca len = pid
-  \ f = continue with the next element?
-  ((lioc_by_prefix)) true
+  \ true = continue with the next element?
+  ((lioc_by_prefix_and_level)) true
   ;
 
 export
 
-: lioc_by_prefix  ( ca len -- )
+: lioc_by_prefix_and_level  ( ca len n -- )
   \ Create a list of content
-  \ with pages whose pid starts with the given prefix.
+  \ with pages whose pid starts with the given prefix and level.
   \ ca len = prefix
-  prefix $!  ['] (lioc_by_prefix) traverse_pids
+  \ n = page hierarchical level (0 is the top)
+  level ! prefix $!  ['] (lioc_by_prefix_and_level) traverse_pids
   ;
 
 ;module
 
-.( fendo.addon.lioc_by_prefix.fs compiled) cr
+.( fendo.addon.lioc_by_prefix_and_level.fs compiled) cr
+

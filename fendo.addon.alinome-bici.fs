@@ -31,10 +31,13 @@
 \ Change history of this file
 
 \ 2013-04-28: Start.
+\ 2014-11-16: 'forth_definitions' and 'fendo_definitions'.
 
 \ **************************************************************
 \ Requirements
 
+forth_definitions
 require alinome-bici/alinome-bici.fs  \ old engine
+fendo_definitions
 
 .( fendo.addon.alinome-bici.fs compiled) cr

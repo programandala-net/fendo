@@ -31,7 +31,9 @@
 \ **************************************************************
 
 forth_definitions
+
 require ./fendo.addon.lioc_by_prefix.fs
+
 fendo_definitions
 
 : uloc_by_prefix  ( ca len -- )

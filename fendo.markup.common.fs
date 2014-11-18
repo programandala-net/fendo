@@ -30,6 +30,7 @@
 \ 2014-03-04: Change: 'xhtml?' moved to <fendo.config.fs>.
 \ 2014-03-04: Change: parser vectors moved here from
 \   <fendo.markup.wiki.fs>.
+\ 2014-11-08: New: 'unmarkup' and '(unmarkup)'.
 
 \ **************************************************************
 \ Requirements
@@ -88,31 +89,13 @@ variable forth_code_depth  \ depth level of the parsed Forth code block?
   \ Gforth's 'save-mem' copies a memory block into a newly allocated
   \ region in the heap. It is needed because the region used by 'echoed'
   \ will be restored at the end of 'unmarkup'.
-  \ XXX TODO remove double spaces?
-  \ XXX FIXME this sometimes blanks the 'href=' attribute, why?
-\  ." parameter in (unmarkup) = " 2dup type cr  \ xxx informer
-\  s" href=@" evaluate ." 'href=' (before 'echo>string') = " type cr  \ xxx informer
-  \ XXX FIXME the problem happens when there are markups in the
-  \ parameter string; something goes wrong in the complex 'evaluate_content'.
-  echo>string
-\  ." 'href=' (before 'evaluate_content') = " s" href=@" evaluate type cr  \ xxx informer
-\  ." alternative 'href=' = " s" >attributes< href=@ >attributes<" evaluate type cr  \ xxx informer XXX OLD
-\  ." and 'attributes_set' = " s" attributes_set" evaluate ? cr  \ XXX INFORME
-  evaluate_content
-\  ." 'href=' (after 'evaluate_content') = " s" href=@" evaluate type ." <<< PROBLEM" cr  \ xxx informer
-\  ." alternative 'href=' = " s" >attributes< href=@ >attributes<" evaluate type cr  \ xxx informer XXX OLD
-\  ." and 'attributes_set' = " s" attributes_set" evaluate ? cr  \ XXX INFORMER
-  echoed $@
-  save-mem  \ XXX TODO needed?
-  unhtml
+  \ XXX TODO -- remove double spaces? (with galope/unspace.fs)
+  echo>string evaluate_content echoed $@ save-mem unhtml
   ;
-\ variable (echo>)
-\ variable (echoed)
 : unmarkup  ( ca len -- ca' len' )
   \ Remove the markup of a string; the current status of 'echo' is preserved.
   save_echo (unmarkup) restore_echo
   ;
 
 .( fendo.markup.common.fs compiled) cr
-
 

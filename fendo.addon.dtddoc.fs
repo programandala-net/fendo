@@ -35,8 +35,10 @@
 : dtddoc  ( ca len -- )
   \ Create an element of a definition list for the given pid.
   \ ca len = pid
-\  ." dtddoc " 2dup type cr  \ xxx informer
-  2dup [<dt>] link<pid$ [</dt>]
+\  ." >>>> Parameter in 'dtddoc' = " 2dup type cr  \ xxx informer
+  [<dt>] 
+\  ." 'separate?' in 'dtddoc' after '[<dt>]' = " separate? ? cr  \ xxx informer
+  2dup link<pid$ [</dt>]
 \  ." href= (0) " href=@ type cr  \ xxx informer
   [<dd>]
 \  ." href= (1) " href=@ type cr  \ xxx informer

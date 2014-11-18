@@ -50,14 +50,13 @@ fendo_definitions
 : (html{)  ( ca len -- )
   \ Start an opening HTML tag.
   \ ca len = HTML tag
-\  cr ." separate? in (html{) is " separate? ?  \ XXX INFORMER 2014-08-13
+\  ." Parameter in '(html{)' = " 2dup type  \ XXX INFORMER
+\  ." ; 'separate?' = " separate? ? cr  \ XXX INFORMER
   s" <" _echo echo echo_attributes
   ;
 : (}html)  ( -- )
   \ Common tasks after an empty or opening HTML tag.
-  separate? off
-\  s" About to clear the attributes in '(}html)'" type cr  \ XXX INFORMER
-  -attributes  \ XXX FIXME this is the problem!
+  separate? off  -attributes
   ;
 : {html}  ( ca len -- )
   \ Print an empty HTML tag (e.g. <br/>, <hr/>),
@@ -405,5 +404,8 @@ markup<order
 \ was deleted, because 'unmarkup' uses 'evaluate_content'. The
 \ solution was to save and restore the attributes in
 \ '(evaluate_content)' (defined in <fendo.parser.fs>).
+\
+\ 2014-11-18: Fix: 'separate? on' is added again at the end of
+\ 'html}'.
 
 .( fendo.markup.html.tags.fs compiled) cr

@@ -83,7 +83,7 @@ variable last_traversed_pid
 
 : traversed_pid  ( ca len -- )
   \ ca len = pid
-\  2dup type cr  \ XXX INFORMER
+\  ." Parameter in 'traversed_pid' = " 2dup type cr  \ XXX INFORMER
   2dup last_traversed_pid $!
   (traversed_pid) 0= if  \eof  then
   ;

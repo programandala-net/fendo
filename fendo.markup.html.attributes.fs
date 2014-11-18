@@ -37,15 +37,20 @@
 
 forth_definitions
 
+require string.fs  \ Gforth's dynamic strings
+
+false  dup constant [gforth_strings_for_attributes?]  immediate
+0= [if]
+  \ Forth Foundation Library's str module is used instead of Gforth's
+  \ strings.
+  \ XXX FIXME -- strange things happen in this case
+  require ffl/str.fs
+[then]
+
 require galope/3dup.fs
+require galope/dollar-store-new.fs  \ '$!new'
 require galope/xstack.fs
 require galope/minus-cell-bounds.fs  \ '-cell-bounds'
-
-\ Dynamic strings system used for attributes
-false  dup constant [gforth_strings_for_attributes?]  immediate
-[if]    require string.fs  \ Gforth
-[else]  require ffl/str.fs  \ Forth Foundation Library
-[then]
 
 fendo_definitions
 
@@ -58,7 +63,7 @@ fendo_definitions
   ;
 : attribute!  ( ca len a -- )
   \ a = attribute variable
-  [gforth_strings_for_attributes?] [if]  $!  [else]  @ str-set  [then]
+  [gforth_strings_for_attributes?] [if]  $!new  [else]  @ str-set  [then]
   ;
 
 \ **************************************************************
@@ -284,11 +289,13 @@ create attributes  \ table for the attribute variables
   \ Clear an attribute variable with an empty string.
   \ a = attribute variable
   [gforth_strings_for_attributes?]
-  [if]  s" " rot $!  [else]  @ str-init  [then]
+  [if]  0 swap $!len  [else]  @ str-init  [then]
   ;
 : -attributes  ( -- )
-  \ Clear all HTML attributes with empty strings.
+  \ Clear all HTML attributes, and also the link anchor, with empty
+  \ strings.
   (attributes) bounds ?do  i @ -attribute  cell +loop
+  0 link_anchor $!len
   ;
 : ?hreflang=!  ( a -- )
   \ If the given page has a different language than the current one,
@@ -333,21 +340,24 @@ create attributes  \ table for the attribute variables
 \ Saving and restoring the attributes
 
 \ The URL anchor does not work like an attribute, but it must be saved
-\ and restored with them.
+\ and restored with them, just in case.
 
 \ Create a stack for the attributes plus the link anchor (2 cells per
 \ element, and 4 nesting levels):
 #attributes 1+ 2* 4 * xstack attributes_stack
 
+: mem>x  ( ca len -- )
+  save-mem 2>x
+  ;
 : save_attribute  ( a -- )
   \ Save an attribute.
   \ a = attribute variable
-  attribute@ 2>x
+  attribute@ mem>x
   ;
 : save_attributes  ( -- )
   \ Save the link anchor and all attributes.
   attributes_stack
-  link_anchor $@ 2>x
+  link_anchor $@ mem>x
   (attributes) bounds ?do
     i @ save_attribute
   cell +loop
@@ -363,7 +373,7 @@ create attributes  \ table for the attribute variables
   (attributes) -cell-bounds ?do
     i @ restore_attribute
   [ cell negate ] literal +loop
-  2x> link_anchor $!
+  2x> link_anchor $!new
   ;
 
 \ **************************************************************
@@ -420,6 +430,18 @@ create attributes  \ table for the attribute variables
 \ attributes. Now there's only one set of attributes, and all of them
 \ are saved and restore when needed, using a specific stack. All
 \ related words have been adapted.
+\
+\ 2014-11-16: Change: '-attributes' clears also 'link_anchor'.
+\
+\ 2014-11-17: Fix: 'save_attribute' uses 'save-mem' in order to create
+\ a copy of the string; 'attribute!', when using Gforth's dynamic
+\ strings, removes the current string from memory before updating it.
+\ These changes solve the problem caused by shortcuts created in the
+\ same memory zone than the original href.
+\
+\ 2014-11-18: Changes: 'mem>x' is factored out from 'save_attribute'
+\ and 'save_attributes'; Galope's '$!new' is factored out from
+\ 'attribute!' and used also in 'restore_attributes'.
 
 .( fendo.markup.html.attributes.fs compiled) cr
 

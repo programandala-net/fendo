@@ -1,23 +1,8 @@
 = Fendo to-do list
 
-.2013-06-07:
-
-In <fendo.data.fs>: Calculated data: 'rendered_title',
-'plain_title'...  Also 'description'? Better: filter words.
-
 .2013-06-08:
 
 In <fendo.data.fs>, can 'current_page' be used instead of ''data'?
-
-.2013-06-28:
-
-Make "plain_" data fields optional; they can be
-filled as default data, if empty.
-
-.2013-08-14:
-
-'raw=' is already converted by 'unraw_attributes';
-maybe the 'raw=' fake attribute can be removed.
 
 .2013-08-14:
 
@@ -30,17 +15,26 @@ Choose better names for different meanings of "content":
 defered words at the start (and end?) of tags,
 to let the website application insert hooks.
 
-.2013-11-05:
+.2014-03-03:
 
-bug: when a link text is evaluated with
-'evaluate_content', and it has markup, the attributes set for the
-link are used by the those markups? not sure yet. the attributes set
-must be an array pointed by a counter.
-(2013-11-07 this seems solved after the implementation of anchors?)
+In <fendo.data.fs>:
+
+----
+: pid$>source  ( ca1 len1 -- ca2 len2 )
+  \ Convert a page id to a source filename.
+  \ xxx not used
+  -anchor! +forth_extension +source_dir
+  (* 2014-03-03: This word was tried in '(required_dat<pid$)', but
+  adding the path to the filename makes the pages to be included into
+  the list of included files (shown by '.included') with an absolute
+  path. The solution is: the application has to add 'source_dir' to
+  'fpath'.  *)
+  ;
+----
 
 .2014-03-03:
 
-Lists of rencent changes?
+Write an addon to create a list of rencent changes?
 
 .2014-03-03:
 
@@ -60,11 +54,9 @@ Inform the Gforth list about this:
   ;
 ----
 
-.2014-03-04:
-
-Make sure all Galope and FFL modules are included to the Forth wordlist.
-
 .2014-03-08:
+
+New:
 
 meta markups ~- and ~+ to change the separation of the next item.
 
@@ -84,18 +76,16 @@ finish <fendo.addon.tag_cloud_by_regex.fs>
 
 .2014-03-12:
 
+Improvement:
+
 Implement the automatic use of the alternative-language metadata (title.en,
 description.eo, etc) How? A special metadatum? Defer every metadatum?
 
 Could be done also in 'tune_local_link'.
 
-.2014-03-24:
-
-In order to make unnecessary the "plain" versions of some metadata, an
-'unmark' tool could be written. It could just switch all the markups off and
-leave the rest in a string...
-
 .2014-04-07:
+
+Idea:
 
 Implement author and title for block quotes, like Asciidoctor, e.g.:
 
@@ -108,6 +98,8 @@ That would render a proper footer under the quote block.
 At the end of the block, the variables must be reseted.
 
 .2014-07-13:
+
+Idea:
 
 Update the 'modified' metadatum with the modification time of every
 source code file included into the page. This way, the target
@@ -123,9 +115,10 @@ not very useful.]
 .2014-10-20:
 
 Bug:
+
 In 'highlighted_####-zone' (<fendo.markup.fendo.code.fs>),
-'source_code_finished' must be called at the end, but it's
-defined in <fendo.addon.source.code.fs>.
+'source_code_finished' must be called at the end, but it's defined in
+<fendo.addon.source.code.fs>.
 
 .2014-10-25:
 
@@ -142,6 +135,8 @@ Problem in fendo.data.fs:
 
 .2014-11-01:
 
+Fix:
+
 (Problem since 2014-03.)
 
 Link parsing fails when the link text spans the next line.
@@ -151,6 +146,8 @@ Link parsing fails when "]]" is at the start of a new line!
 Make it possible to split links in severals lines of text.
 
 .2014-11-06:
+
+Idea:
 
 Create an addon to share the URL of the current page. Example:
 
@@ -164,15 +161,28 @@ http://www.blogger.com/blog_this.pyra?t=&u=http%3A%2F%2Fwww.iconarchive.com%2Fsh
 
 .2014-11-07:
 
+Check:
+
 'link_text_as_attribute?' is the condition of an unbalanced '[if]' in <fendo.links.fs>.
 It has been fixed, but it has to be tested.
 
-Remove double spaces in '(unmarkup)'?
+Idea:
 
-.2014-11-11:
+Remove double spaces in '(unmarkup)' (defined in <fendo.markup.common.fs>)?
 
-The anchor system doesn't work fine anymore. Why?
-Now a shortcut href with an anchor crashes 'pid$>data>pid#'.
-I've defered and included '-anchor', as a temporary solution.
+.2014-11-17:
 
-The anchors management has to be explored. Do they better be apart of the href?
+Change:
+
+First, rename 'pid$>pid#'.
+Second, rename 'pid$>data>pid#' to 'pid$>pid#'.
+
+Bug:
+
+When 'lonely_tags_link_to_content' is on, every shortcut than converts
+a virtual tag page to the actual content page has a side effect: it
+increases the count of the correspondent tag!
+
+It will be easier to deactivate this system.
+
+No, the problem is the virtual tag page exists!
