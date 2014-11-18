@@ -6,21 +6,18 @@
 
 \ Copyright (C) 2012,2013,2014 Marcos Cruz (programandala.net)
 
-\ Fendo is free software; you can redistribute
-\ it and/or modify it under the terms of the GNU General
-\ Public License as published by the Free Software
-\ Foundation; either version 2 of the License, or (at your
-\ option) any later version.
-
-\ Fendo is distributed in the hope that it will be useful,
-\ but WITHOUT ANY WARRANTY; without even the implied
-\ warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
-\ PURPOSE.  See the GNU General Public License for more
-\ details.
-
-\ You should have received a copy of the GNU General Public
-\ License along with this program; if not, see
-\ <http://gnu.org/licenses>.
+\ Fendo is free software; you can redistribute it and/or modify it
+\ under the terms of the GNU General Public License as published by
+\ the Free Software Foundation; either version 2 of the License, or
+\ (at your option) any later version.
+\
+\ Fendo is distributed in the hope that it will be useful, but WITHOUT
+\ ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+\ or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
+\ License for more details.
+\
+\ You should have received a copy of the GNU General Public License
+\ along with this program; if not, see <http://gnu.org/licenses>.
 
 \ Fendo is written in Forth
 \   <http://forth.org>
@@ -47,7 +44,7 @@
 \ main ones are: 'unmarkup' is used instead of duplicated plain text
 \ versions of the main data fields; there are not two sets of HTML
 \ attributes anymore (the main one and the alternative one), but just
-\ one set and a stack to save and restore them in nested way.
+\ one set and a stack to save and restore it as needed.
 
 \ **************************************************************
 \ Change history of this file
@@ -289,6 +286,7 @@ defer just_unshortcut  \ defined in <fendo.shortcuts.fs>
 defer dry_unshortcut  \ defined in <fendo.shortcuts.fs>  \ XXX TMP
 defer -anchor  \ defined in <fendo.links.fs>  \ XXX TMP
 defer -anchor!  \ defined in <fendo.links.fs>  \ XXX TMP
+defer -anchor?!  \ defined in <fendo.links.fs>  \ XXX TMP
 $variable link_anchor  \ XXX TMP -- moved from <fendo.links.fs>
 defer link_anchor+  \ defined in <fendo.links.fs>  \ XXX TMP
 include ./fendo.data.fs

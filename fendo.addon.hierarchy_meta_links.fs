@@ -54,8 +54,11 @@
   \ ca2 len2 = rel
 \  cr 2dup type ."  --> " 2over type  \ xxx informer
   rel=!
-  ." Pid parameter in '(hierarchy_meta_link)' = " 2dup type cr  \ xxx informer
+\   ." Pid parameter in '(hierarchy_meta_link)' before 'pid$>data>pid#' = " 2dup type cr  \ xxx informer
+\   ." 'link_anchor' in '(hierarchy_meta_link)' before 'pid$>data>pid#' = " link_anchor $@ type cr  \ xxx informer
   pid$>data>pid#
+\   ." 'href=' in '(hierarchy_meta_link)' after 'pid$>data>pid#' = " href=@ type cr  \ xxx informer
+\   ." 'link_anchor' in '(hierarchy_meta_link)' after 'pid$>data>pid#' = " link_anchor $@ type cr  \ xxx informer
   dup target_file href=!
   dup title unmarkup title=!
   ?hreflang=!
@@ -65,7 +68,7 @@
   \ Create a hierarchy meta link in the HTML header, if needed.
   \ ca1 len1 = rel
   \ ca2 len2 = page id
-  ." Parameter in 'hierarchy_meta_link' = " 2dup type cr  \ xxx informer
+\   ." Parameter in 'hierarchy_meta_link' = " 2dup type cr  \ xxx informer
   unshortcut dup if  2swap (hierarchy_meta_link)  else  2drop 2drop  then
   ;
 : hierarchy_meta_links  ( -- )

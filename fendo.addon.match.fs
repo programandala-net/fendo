@@ -1,10 +1,10 @@
-.( fendo.markup.macros.fs ) cr
+.( fendo.addon.match.fs) cr
 
 \ This file is part of Fendo.
 
-\ This file provides the tools to create the user macros.
+\ This file provides words required to use simple regex matches.
 
-\ Copyright (C) 2014 Marcos Cruz (programandala.net)
+\ Copyright (C) 2013,2014 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute it and/or modify it
 \ under the terms of the GNU General Public License as published by
@@ -16,9 +16,8 @@
 \ or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
 \ License for more details.
 
-\ You should have received a copy of the GNU General Public
-\ License along with this program; if not, see
-\ <http://gnu.org/licenses>.
+\ You should have received a copy of the GNU General Public License
+\ along with this program; if not, see <http://gnu.org/licenses>.
 
 \ Fendo is written in Forth with Gforth
 \ (<http://www.bernd-paysan.de/gforth.html>).
@@ -26,20 +25,22 @@
 \ **************************************************************
 \ Change history of this file
 
-\ 2014-02-05: Start, based on <addons/abbr.fs>.
-\ 2014-11-18: Comment modified.
+\ 2014-11-16: Start.
+
+\ **************************************************************
+\ Requirements
+
+forth_definitions
+
+require string.fs  \ Gforth's dynamic strings
+require galope/match-question.fs  \ 'match?'
+
+fendo_definitions
 
 \ **************************************************************
 
-: macro: ( "name" -- )
-  \ Create an user macro.
-  get-current >r  fendo_markup_macros_wid set-current  :
-  r> set-current
-  ;
-: macro_alias ( "name" -- )
-  \ Create a macro alias of the latest word (that is supposed to be a user macro).
-  get-current  fendo_markup_macros_wid set-current  latestxt alias
-  set-current
-  ;
+variable match$
 
-.( fendo.markup.macros.fs compiled ) cr
+.( fendo.addon.match.fs compiled) cr
+
+

@@ -188,7 +188,9 @@ datum: template  \ HTML template filename in the design subdir
   \ Return a target HTML page filename.
   \ a = page id
   \ ca len = target HTML page file name
+\   ." 'link_anchor' in 'target_file' = " link_anchor $@ type cr  \ xxx informer
   dup >r pid#>pid$ r> target_extension s+ link_anchor+
+\   ." Result in 'target_file' = " 2dup type cr  \ xxx informer
   ;
 : current_target_file  ( -- ca len )
   \ Return the target HTML page filename of the current page.
@@ -239,7 +241,7 @@ datum: template  \ HTML template filename in the design subdir
   /sourcefilename -extension
   ;
 : known_pid$?  ( ca len -- 0 | xt +-1 )
-  fendo_pid_wid search-wordlist
+  -anchor fendo_pid_wid search-wordlist
   ;
 : new_page_data_space  ( -- )
   \ Create and init data space for a new page.
@@ -352,9 +354,10 @@ defer set_default_data  ( -- )
   in_data_header? on
   ;
 : data_already_got?  ( -- 0 | xt +-1 )
-  \ XXX FIXME this check means pids of draft can not be created...
-  \ XXX ...but they are useful to do some checkings, e.g. in
-  \ Fendo-programandala's related_pages.
+  \ XXX FIXME This check means pids of draft can not be created...
+  \ XXX ...but they are useful to do some checkings, e.g. in...
+  \ XXX ...Fendo-programandala's related_pages.
+  \ XXX Already solved?
   current_pid$ known_pid$?
   ;
 : data{  ( "<text><spaces>}data" -- )
@@ -396,8 +399,7 @@ do_content? on
 : required_data  ( ca len -- )
   \ Require a page file in order to get its data.
   \ ca len = filename
-\  ." <<<<<<<< "  \ xxx informer
-\  ." required_data " 2dup type cr  \ xxx informer
+\  ." Parameter in 'required_data' = " 2dup type cr  \ xxx informer
 \  ." related = " current_page related type cr  \ xxx informer
   do_content? @ >r  current_page >r
   (required_data)
@@ -412,31 +414,20 @@ do_content? on
   \ a = page id (address of its data)
   source_file required_data
   ;
-: pid$>source  ( ca1 len1 -- ca2 len2 )
-  \ Convert a page id to a source filename.
-  \ xxx not used
-  +forth_extension +source_dir
-  (* 2014-03-03: This word was tried in '(required_dat<pid$)', but
-  adding the path to the filename makes the pages to be included into
-  the list of included files (shown by '.included') with an absolute
-  path. The solution is: the application has to add 'source_dir' to
-  'fpath'.  *)
-  ;
 : (required_data<pid$)  ( ca len -- )
   \ Require a page file in order to get its data.
   \ ca len = page id
-  ." Parameter in '(required_data<pid$)' = " 2dup type cr  \ xxx informer
-  ." 'link_anchor' in '(required_data<pid$)' = " link_anchor $@ type cr  \ xxx informer
-  +forth_extension required_data
+\   ." Parameter in '(required_data<pid$)' = " 2dup type cr  \ xxx informer
+\   ." 'link_anchor' in '(required_data<pid$)' = " link_anchor $@ type cr  \ xxx informer
+  -anchor?! +forth_extension required_data
   ;
 : required_data<pid$  ( ca len -- )
   \ Require a page file in order to get its data.
   \ ca len = page id
-\  cr ." required_data<pid$ " 2dup type cr  \ xxx informer
+\  ." Parameter in 'required_data<pid$' before 'unshortcut' = " 2dup type cr  \ xxx informer
   unshortcut
-\  cr ." required_data<pid$ " 2dup type cr  \ xxx informer
+\  ." Parameter in 'required_data<pid$' after 'unshortcut' = " 2dup type cr  \ xxx informer
   (required_data<pid$)
-\  cr ." end of required_data<pid$ " .s cr  \ xxx informer
   ;
 : required_data<target  ( ca len -- )
   \ Require a page file in order to get its data.
@@ -455,8 +446,8 @@ do_content? on
   \ and convert its string page id to its number page id.
   \ ca len = page id of an existant page file
   \ a = page id
-  -anchor \ XXX TMP
-  ." 'link_anchor' in '(pid$>data>pid#)' = " link_anchor $@ type cr  \ xxx informer
+\  -anchor \ XXX TMP
+\  ." 'link_anchor' in '(pid$>data>pid#)' = " link_anchor $@ type cr  \ xxx informer
   2dup (required_data<pid$) pid$>pid#
   ;
 : pid$>data>pid#  ( ca len -- a )
@@ -464,14 +455,14 @@ do_content? on
   \ and convert its string page id to its number page id.
   \ ca len = page id
   \ a = page id
-  ." Parameter in 'pid$>data>pid#' = " 2dup type cr  \ xxx informer
+\   ." Parameter in 'pid$>data>pid#'  before 'dry_unshortcut' = " 2dup type cr  \ xxx informer
 \  key drop  \ xxx informer
-\  ." 'href=' in 'pid$>data>pid#' before 'just_unshortcut' = " s" href=@" evaluate type cr  \ xxx informer
-  ." 'link_anchor' in 'pid$>data>pid#' before 'just_unshortcut' = " link_anchor $@ type cr  \ xxx informer
-  just_unshortcut  \ xxx tmp
-\  ." 'href=' in 'pid$>data>pid#' after 'just_unshortcut' = " s" href=@" evaluate type cr  \ xxx informer
-  ." Parameter in 'pid$>data>pid#' after 'just_unshortcut' = " 2dup type cr  \ xxx informer
-  ." 'link_anchor' in 'pid$>data>pid#' after 'just_unshortcut' = " link_anchor $@ type cr  \ xxx informer
+\  ."    'href=' in 'pid$>data>pid#' before 'dry_unshortcut' = " s" href=@" evaluate .s ." = " type cr  \ xxx informer
+\   ." 'link_anchor' in 'pid$>data>pid#' before 'dry_unshortcut' = " link_anchor $@ type cr  \ xxx informer
+  dry_unshortcut  \ xxx tmp
+\  ." >> 'href=' in 'pid$>data>pid#' after 'dry_unshortcut'  = " s" href=@" evaluate .s ." = " type cr  \ xxx informer
+\   ." Parameter in 'pid$>data>pid#' after 'dry_unshortcut' = " 2dup type cr  \ xxx informer
+\   ." 'link_anchor' in 'pid$>data>pid#' after 'dry_unshortcut' = " link_anchor $@ type cr  \ xxx informer
   dup 0= abort" Empty page-id"  \ xxx tmp
   (pid$>data>pid#)
 \  find-name name>int execute  \ xxx second version; no difference, same corruption of the input stream
@@ -482,7 +473,7 @@ do_content? on
   \ if it's different from the current page, require its data.
   \ This word is needed to manage links to the current page
   \ (href attributes that contain just an anchor).
-  ." Parameter in 'pid$>(data>)pid#'  = " 2dup type cr  \ xxx informer
+\   ." Parameter in 'pid$>(data>)pid#'  = " 2dup type cr  \ xxx informer
   dup if  pid$>data>pid#  else  2drop current_page  then
   ;
 : pid$>url  ( ca1 len1 -- ca2 len2 )
@@ -500,7 +491,6 @@ do_content? on
   \ a = page id
   source>pid$ pid$>data>pid#
   ;
-
 : pid$>target  ( ca1 len1 -- ca2 len2 )
   \ Convert a page id to a target filename.
   2dup pid$>data>pid# target_extension s+ +target_dir
@@ -739,10 +729,25 @@ require galope/slash-sides.fs  \ '/sides'
 \ alias is removed.
 \
 \ 2014-11-11: Change: '-anchor' was defered and added to
-\ '(pid$>data>pid#)'. XXX TMP
+\ '(pid$>data>pid#)'.
 \
 \ 2014-11-11: Fix: 'link_anchor+' was missing in 'target_file'.
 \
 \ 2014-11-13: Fix: 'pid$>level'.
+\
+\ 2014-11-14: Change: '-anchor!' instead of '-anchor' in
+\ '(pid$>data>pid#)'; '-anchor!' called also in 'known_pid$?' and
+\ '(required_data<pid$)'. The new approach is to keep the anchors, and
+\ remove them only to when the actual files are required. Shortcuts
+\ need no modification; 'pid$>source' was not used, it is removed.
+\
+\ 2014-11-16: Fix: now 'link_anchor+' is called by 'target_file', not
+\ at upper levels of the code, what caused problems.  Beside,
+\ '(required_data<pid$)' now calls '-anchor?!' instead of '-anchor!',
+\ what ruined the anchor in some cases.
+\
+\ 2014-11-17: Change: now 'pid$>data>pid#' calls 'dry_unshortcut'
+\ instead of 'just_unshortcut'. This fixes the problem href was echoed
+\ in "<dt>", in 'tagged_pages_by_prefix'.
 
 .( fendo.data.fs compiled) cr

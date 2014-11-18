@@ -110,21 +110,28 @@ link_text_already_evaluated? off
   \ Remove the anchor from a href attribute.
   \ ca len = href attribute
   \ ca' len' = href attribute without anchor
-  \ XXX TODO factor out
+\   ." href parameter in '-anchor' = " 2dup type cr  \ xxx informer
   /anchor 2drop
   ; is -anchor  \ defered in <fendo.fs>
 :noname ( ca len -- ca len | ca' len' )
   \ Extract the anchor from a href attribute and store it.
   \ ca len = href attribute
   \ ca' len' = href attribute without anchor
-  \ XXX TODO factor out
+\   ." href parameter in '-anchor!' = " 2dup type cr  \ xxx informer
   /anchor link_anchor $!
   ; is -anchor!  \ defered in <fendo.fs>
+:noname ( ca len -- ca len | ca' len' )
+  \ Extract the anchor from a href attribute and store it, if not empty.
+  \ ca len = href attribute
+  \ ca' len' = href attribute without anchor
+\   ." href parameter in '-anchor?!' = " 2dup type cr  \ xxx informer
+  /anchor dup if  link_anchor $!  else  2drop  then
+  ; is -anchor?!  \ defered in <fendo.fs>
 : +anchor  ( ca1 len1 ca2 len2 -- ca1 len1 | ca3 len3 )
   \ Add a link anchor to a href attribute.
   \ ca1 len1 = href attribute
   \ ca2 len2 = anchor, without "#"
-  ." Anchor parameter in '+anchor' = " 2dup type cr  \ XXX INFORMER
+\   ." Anchor parameter in '+anchor' = " 2dup type cr  \ XXX INFORMER
   dup if  2>r s" #" s+ 2r> s+  else  2drop  then
   ;
 variable link_type
@@ -183,12 +190,15 @@ variable link_type
   ;
 :noname  ( ca len -- )
   \ Restore the link anchor of the local href attribute, if any.
-  link_anchor $@ +anchor
+\   ." Parameter in 'link_anchor+' = " 2dup type cr  \ XXX INFORMER
+  link_anchor $@
+\   ." 'link_anchor' in 'link_anchor+' = " 2dup type cr  \ XXX INFORMER
+  +anchor
   ; is link_anchor+
 : convert_local_link_href  ( ca1 len1 -- ca2 len2 )
   \ Convert a raw local href to a finished href.
-  ." Parameter in 'convert_local_link_href' = " 2dup type cr  \ XXX INFORMER
-  dup if  pid$>data>pid# target_file  then  link_anchor+
+\   ." Parameter in 'convert_local_link_href' = " 2dup type cr  \ XXX INFORMER
+  dup if  pid$>data>pid# target_file  then
   ;
 : -file://  ( ca len -- ca' len' )
   s" file://" -prefix
@@ -220,15 +230,16 @@ variable local_link_to_draft_page?
   \ xxx todo fetch alternative language title and description
 \  ." tune_local_link" cr  \ xxx informer
   href=@
-\  ." 'href=' in 'tune_local_link' (0) = " 2dup type cr  \ xxx informer
+\   ." 'href=' in 'tune_local_link' (0) = " 2dup type cr  \ xxx informer
   pid$>(data>)pid#  >r
+\   ." 'href=' in 'tune_local_link' (1) = " href=@ type cr  \ xxx informer
 \  link_text@ ." link_text in tune_local_link (0) = " type cr  \ xxx informer
 \  r@ title ." title in tune_local_link (1) = " type cr  \ xxx informer
   r@ draft? local_link_to_draft_page? !
   r@ description 
-\  ." 'href=' in 'tune_local_link' (1) = " href=@ type cr  \ xxx informer
+\  ." 'href=' in 'tune_local_link' before 'unmarkup' = " href=@ type cr  \ xxx informer
   unmarkup
-\  ." 'href=' in 'tune_local_link' (2) = " href=@ type cr  \ xxx informer
+\  ." 'href=' in 'tune_local_link' after 'unmarkup' = " href=@ type cr  \ xxx informer
   title=?!
 \  link_text@ ." link_text in tune_local_link (1) = " type cr  \ xxx informer
   r@ title
@@ -241,11 +252,12 @@ variable local_link_to_draft_page?
   ;
 : tune_link  ( -- )  \ xxx todo
   \ Tune the attributes parsed from the link.
+\   ." 'href=' in 'tune_link' = " href=@ type cr  \ xxx informer
   local_link? if  tune_local_link  then
   href=@
-  ." 'href=' in 'tune_link' before 'convert_link_href' = " 2dup type cr  \ xxx informer
+\   ." 'href=' in 'tune_link' before 'convert_link_href' = " 2dup type cr  \ xxx informer
   convert_link_href
-  ." 'href=' in 'tune_link' after 'convert_link_href' = " 2dup type cr  \ xxx informer
+\   ." 'href=' in 'tune_link' after 'convert_link_href' = " 2dup type cr  \ xxx informer
   href=!
   link_text@ empty? if  missing_link_text link_text!  then
   external_link? if  external_class  then
@@ -271,7 +283,7 @@ defer link_suffix
 : reset_link  ( -- )
   \ Reset the link attributes that are not actual HTML attributes,
   \ and are not reseted by the HTML tags layer.
-  s" " link_text!  local_link_to_draft_page? off
+  0 link_anchor $!len  s" " link_text!  local_link_to_draft_page? off
   ;
 : echo_link  ( -- )
   \ Echo a link, if possible.
@@ -279,7 +291,7 @@ defer link_suffix
   \ XXX FIXME link_text@ here returns a string with macros already
   \ parsed! why?
 \  ." In 'echo_link', 'link_text$' = " link_text@ type cr  \ XXX INFORMER
-\  ." In 'echo_link', 'href=' = " href=@ 2dup type ." [".s 2drop ." ]" cr  \ XXX INFORMER
+\  ." 'href='in 'echo_link' = " href=@ 2dup type ." [" .s 2drop ." ]" cr  \ XXX INFORMER
   tune_link  echo_link?
   if  (echo_link)  else  echo_link_text  then  reset_link
   ;
@@ -301,8 +313,8 @@ defer (get_link_href)  ( ca len -- )
   \ Its attributes have to be set previously.
   \ ca1 len1 = page id, URL or shortcut
   \ ca2 len2 = link text
-  ." In 'link' the link text is " 2dup type cr  \ XXX INFORMER
-  ." In 'link' the page id is " 2over type cr  \ XXX INFORMER
+\   ." In 'link' the link text is " 2dup type cr  \ XXX INFORMER
+\   ." In 'link' the page id is " 2over type cr  \ XXX INFORMER
   link_text! (link)
   ;
 : link<pid$  ( ca len -- )
@@ -311,7 +323,6 @@ defer (get_link_href)  ( ca len -- )
   \ If 'link_text' is not set, the page title will be used.
   \ ca len = page id or shortcut to it
   \ xxx todo make it work with anchors!?
-\  ." title_link " 2dup type cr  \ xxx informer
   2dup pid$>data>pid# title link_text?! (link)
   ;
 : link<pid#  ( pid -- )
@@ -358,5 +369,11 @@ defer (get_link_href)  ( ca len -- )
 \ conditions were needed just in case strange things happened.
 \
 \ 2014-11-11: Change: '+anchor' rewritten without locals.
+\
+\ 2014-11-14: Change: 'reset_link' resets also 'link_anchor'.
+\
+\ 2014-11-16: Fix: 'link_anchor+' removed from 'convert_link_href'.
+\ This is done in a lower level, in 'target_file' (defined in
+\ <fendo.data.fs>).
 
 .( fendo.links.fs ) cr

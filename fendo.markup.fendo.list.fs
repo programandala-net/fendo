@@ -25,7 +25,12 @@
 \ **************************************************************
 \ Change history of this file
 
-\ See at the end of the file.
+\ 2014-04-21: Code moved from <fendo.markup.fendo.fs>.
+
+\ **************************************************************
+\ To-do
+
+\ Nested lists.
 
 \ **************************************************************
 \ Tools
@@ -42,13 +47,11 @@ variable numbered_list_items  \ counter
   ;
 : (-)  ( -- )
   \ Bullet list item.
-  bullet_list_items dup @ 0=
-  if  [<ul>]  then  ((-))
+  bullet_list_items dup @ 0= if  [<ul>]  then  ((-))
   ;
 : (#)  ( -- )
   \ Numbered list item.
-  numbered_list_items dup @ 0=
-  if  [<ol>]  then  ((-))
+  numbered_list_items dup @ 0= if  [<ol>]  then  ((-))
   ;
 
 \ **************************************************************
@@ -67,10 +70,5 @@ markup_definitions
   ;
 
 fendo_definitions
-
-\ **************************************************************
-\ Change history of this file
-
-\ 2014-04-21: Code moved from <fendo.markup.fendo.fs>.
 
 .( fendo.markup.fendo.list.fs compiled ) cr

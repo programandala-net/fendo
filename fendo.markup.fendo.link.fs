@@ -55,7 +55,7 @@ variable link_finished?  \ flag, no more link markup to parse?
   ;
 defer parse_link_text  ( "...<spaces>|<spaces>" | "...<spaces>]]<spaces>"  -- )
   \ Parse the link text and store it into 'link_text'.
-  \ Defined in <fendo_parser.fs>.
+  \ Defined in <fendo.parser.fs>.
 : get_link_raw_attributes  ( "...<space>]]<space>"  -- )
   \ Parse and store the link raw attributes.
   s" "
@@ -66,12 +66,11 @@ defer parse_link_text  ( "...<spaces>|<spaces>" | "...<spaces>]]<spaces>"  -- )
   ;
 $variable last_href$  \ xxx new, experimental, to be used by the application
 :noname  ( ca len -- )
-\  ." (get_link_href) 0 " 2dup type cr  \ xxx informer
+\   ." Parameter in '(get_link_href)' = " 2dup type cr  \ xxx informer
   unshortcut
-\  ." (get_link_href) 1 " 2dup type cr  \ xxx informer
+\   ." Parameter in '(get_link_href)' after 'unshortcurt' = " 2dup type cr  \ xxx informer
   2dup set_link_type
-\  local_link? if  -anchor!  then  \ XXX OLD
-\  ." (get_link_href) 2 " 2dup type cr  \ xxx informer
+  local_link? if  -anchor!  then  \ XXX OLD
   2dup last_href$ $! href=!
   ;  is (get_link_href)  \ defered in <fendo.links.fs>
 : get_link_href  ( "href<spaces>" -- )

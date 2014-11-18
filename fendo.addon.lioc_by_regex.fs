@@ -53,15 +53,14 @@ module: fendo.addon.lioc_by_regex
 
 : ((lioc_by_regex))  { D: pid -- }
   \ Create an element of a list of content,
-  \ if the given pid matches the current regex.
-  \ ca len = pid
+  \ if the given pid (page id) matches the current regex.
   pid regex rgx-wcmatch? 0= ?exit
   pid pid$>data>pid# draft? ?exit
   pid lioc 
   ;
-: (lioc_by_regex)  ( ca len -- f )
+: (lioc_by_regex)  ( ca len -- true )
   \ ca len = pid
-  \ f = continue with the next element?
+  \ true = continue with the next element?
   ((lioc_by_regex)) true
   ;
 

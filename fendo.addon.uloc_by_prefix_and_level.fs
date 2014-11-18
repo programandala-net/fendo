@@ -1,10 +1,10 @@
-.( fendo.addon.zx_spectrum_source_code.fs) cr
+.( fendo.addon.uloc_by_prefix_and_level.fs) cr
 
 \ This file is part of Fendo.
 
-\ This file is the ZX Spectrum source code addon.
+\ This file is the addon that creates unnumbered content lists.
 
-\ Copyright (C) 2014 Marcos Cruz (programandala.net)
+\ Copyright (C) 2013,2014 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute it and/or modify it
 \ under the terms of the GNU General Public License as published by
@@ -25,24 +25,23 @@
 \ **************************************************************
 \ Change history of this file
 
-\ See at the end of the file.
-
-\ **************************************************************
-\ Requirements
-
-require ./fendo.addon.source_code.fs
-require ./fendo.addon.zx_spectrum_charset.fs
+\ 2014-11-18: Created, based on <fendo.addon.uloc_by_prefix.fs>.
 
 \ **************************************************************
 
-: zx_spectrum_source_code  ( ca len -- )
-  set_zx_spectrum_source_code_translation source_code
+forth_definitions
+
+require ./fendo.addon.lioc_by_prefix_and_level.fs
+
+fendo_definitions
+
+: uloc_by_prefix_and_level  ( ca len n -- )
+  \ Create an unnumbered list of content
+  \ with pages whose pid starts with the given prefix and level.
+  \ ca len = pid prefix
+  \ n = page hierarchical level (0 is the top)
+  [<ul>] lioc_by_prefix_and_level [</ul>]
   ;
 
-\ **************************************************************
-\ Change history of this file
-
-\ 2014-10-17: Start, with part of the file <fendo.addon.source_code.fs>.
-
-.( fendo.addon.zx_spectrum_source_code.fs compiled) cr
+.( fendo.addon.uloc_by_prefix_and_level.fs compiled) cr
 

@@ -245,12 +245,12 @@ markup_definitions
   ['] <p> ['] </p> opened_[_]? markups  separate? off
   ;
 : --------  ( -- )
-  \ Create a horizontal line.
-  <hr/> separate? off
+  \ Create a horizontal rule.
+  <hr/>
   ;
 : \\  ( -- )
   \ Create a line break.
-  <br/> separate? off
+  <br/>
   ;
 ' echo_cr alias \n
 
@@ -316,19 +316,19 @@ markup_definitions
 
 : ((  ( -- )
   \ Start a generic inline zone.
-  [<span>] separate? off
+  [<span>]
   ;
 : ))  ( -- )
   \ End an generic inline zone.
-  [</span>] separate? on
+  [</span>]
   ;
 : ((((  ( -- )
   \ Start a generic block zone.
-  [<div>] separate? off
+  [<div>]
   ;
 : ))))  ( -- )
   \ End a generic block zone.
-  [</div>] separate? on
+  [</div>]
   ;
 
 require ./fendo.markup.fendo.code.fs
@@ -649,5 +649,8 @@ fendo_definitions
 \ <fendo.markup.fendo.passthrough.fs>,
 \ <fendo.markup.fendo.punctuation.fs>,
 \ <fendo.markup.fendo.table.fs>,
+
+\ 2014-11-17: Change: all unnecessary changes of 'separate?' are
+\ removed.
 
 .( fendo.markup.fendo.fs compiled ) cr
