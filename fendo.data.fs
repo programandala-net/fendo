@@ -189,6 +189,7 @@ datum: template  \ HTML template filename in the design subdir
   \ a = page id
   \ ca len = target HTML page file name
 \   ." 'link_anchor' in 'target_file' = " link_anchor $@ type cr  \ xxx informer
+\ XXX TODO -- 'link_anchor+' should not be here
   dup >r pid#>pid$ r> target_extension s+ link_anchor+
 \   ." Result in 'target_file' = " 2dup type cr  \ xxx informer
   ;
@@ -238,6 +239,7 @@ datum: template  \ HTML template filename in the design subdir
 
 : current_pid$  ( -- ca len )
   \ Return the name of the current page id.
+  \ XXX TODO -- combine with 'current_page_pid$'?
   /sourcefilename -extension
   ;
 : known_pid$?  ( ca len -- 0 | xt +-1 )
@@ -268,6 +270,7 @@ datum: template  \ HTML template filename in the design subdir
 : current_page_pid$  ( -- ca len )
   \ Return the string page id of the current page.
   \ ca len = page id
+  \ XXX TODO -- combine with 'current_pid$'?
   current_page pid#>pid$
   ;
 : descendant?  ( ca1 len1 ca2 len2 -- wf )

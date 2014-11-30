@@ -89,16 +89,25 @@ fendo_definitions
     ( ca1 len1 dfa ) @ attribute!
   ;
 : :attribute?!  ( ca len a -- )
-  \ xxx not used
-  \ Create a word that stores an attribute,
-  \ if it's empty.
+  \ Create a word that stores an attribute, if it's empty.
   \ ca len = name of the attribute variable
   \ a = attribute variable
   \ ca1 len1 = attribute value
   rot rot s" ?!" s+ :create  ,
   does>  ( ca1 len1 -- )
-    ( ca1 len1 dfa ) 
+    ( ca1 len1 dfa )
     @ dup attribute@ empty? if  attribute!  else  drop 2drop  then
+  ;
+: :attribute+!  ( ca len a -- )
+  \ Create a word that adds a string to an attribute.
+  \ ca len = name of the attribute variable
+  \ a = attribute variable
+  \ ca1 len1 = attribute value
+  rot rot s" +!" s+ :create  ,
+  does>  ( ca1 len1 -- )
+    ( ca1 len1 dfa )  @ dup attribute@ dup
+    if    s"  " s+ 2>r rot rot 2r> 2swap s+ rot
+    else  2drop  then  attribute!
   ;
 : :attribute"  ( ca len a -- )
   \ Create a word that parses and stores an attribute.
@@ -122,7 +131,7 @@ fendo_definitions
   ;
 : attribute:  ( "name" -- a )
   \ Create an attribute variable in the markup vocabulary,
-  \ and four words to manage it.
+  \ and all words needed to manage it.
   \ "name" = ca len = name of the attribute variable
   \ a = attribute variable
   get-current fendo>current
@@ -131,6 +140,7 @@ fendo_definitions
   3dup :attribute"
   3dup :attribute!
   3dup :attribute?!
+  3dup :attribute+!
   :attribute@
   set-current  r>
   ;
@@ -442,6 +452,8 @@ create attributes  \ table for the attribute variables
 \ 2014-11-18: Changes: 'mem>x' is factored out from 'save_attribute'
 \ and 'save_attributes'; Galope's '$!new' is factored out from
 \ 'attribute!' and used also in 'restore_attributes'.
+\
+\ 2014-11-30: New: ':attribute+!'.
 
 .( fendo.markup.html.attributes.fs compiled) cr
 
