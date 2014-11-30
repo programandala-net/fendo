@@ -70,7 +70,9 @@ $variable last_href$  \ xxx new, experimental, to be used by the application
   unshortcut
 \   ." Parameter in '(get_link_href)' after 'unshortcurt' = " 2dup type cr  \ xxx informer
   2dup set_link_type
-  local_link? if  -anchor!  then  \ XXX OLD
+  local_link? if
+\   ." In '(get_link_href)' 'local_link?' = true" cr  \ xxx informer
+  -anchor!  then  \ XXX OLD
   2dup last_href$ $! href=!
   ;  is (get_link_href)  \ defered in <fendo.links.fs>
 : get_link_href  ( "href<spaces>" -- )

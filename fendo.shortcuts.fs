@@ -69,6 +69,20 @@ wordlist constant fendo_shortcuts_wid  \ for user's shortcuts
   [then]
   ;
 
+false [if]
+\ XXX OLD
+\ 2014-11-27: Useless try. The approach is wrong.
+: :shortcut  ( ca len -- )
+  \ Create an user's shortcut.
+  nextname shortcut:
+  ;
+s" " :shortcut  ( -- )
+  \ Create the default shortcut to the current page.
+  \ This way links to anchors in the current page are possible.
+  current_pid$ href=!
+  ;
+[then]
+
 0 [if]
 
 \ Usage example of 'shortcut:'

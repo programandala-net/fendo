@@ -1,5 +1,10 @@
 = Fendo to-do list
 
+.2013-06-04:
+
+In <fendo.parser.fs>: Flag the first markup of the current line, in
+order to use '--' both for nested lists and for delete.
+
 .2013-06-08:
 
 In <fendo.data.fs>, can 'current_page' be used instead of ''data'?
@@ -186,3 +191,20 @@ increases the count of the correspondent tag!
 It will be easier to deactivate this system.
 
 No, the problem is the virtual tag page exists!
+
+.2014-11-27:
+
+Fix:
+
+Links to anchors in the same page are not recognized!  See
+<es.programa.sbim.html>.
+
+.2014-11-27:
+
+In 'tune_local_link' (<fendo.links.fs>), fetch alternative language
+title and description.
+
+'link_anchor+' should not be
+in <fendo.data.fs>'s 'target_file',
+but in an upper level.
+

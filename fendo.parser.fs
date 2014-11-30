@@ -28,15 +28,6 @@
 \ See at the end of the file.
 
 \ **************************************************************
-\ Todo
-
-\ 2013-07-20: redirect the parser output to a string. This will
-\ let to parse the link texts that have markups!
-\
-\ 2013-06-04: Flag the first markup of the current line, in
-\   order to use '--' both for nested lists and for delete.
-
-\ **************************************************************
 \ Requirements
 
 forth_definitions
@@ -390,7 +381,8 @@ get-current markup>current
 \  do_content? on  \ default value for the next page  \ XXX OLD
   only fendo>order forth>order
   }content? on
-\ cr .s cr ." end of }content"  \ XXX INFORMER
+\  .s cr ." end of }content" cr  \ XXX INFORMER
+\  ." argc = " argc ? cr  \ XXX INFORMER
   ;
 set-current
 

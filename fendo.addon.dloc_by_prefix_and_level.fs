@@ -1,10 +1,10 @@
-.( fendo.addon.lioc_by_prefix_and_level.fs) cr
+.( fendo.addon.dloc_by_prefix_and_level.fs) cr
 
 \ This file is part of Fendo.
 
 \ This file is the code common to several content lists addons.
 
-\ Copyright (C) 2013,2014 Marcos Cruz (programandala.net)
+\ Copyright (C) 2014 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute it and/or modify it
 \ under the terms of the GNU General Public License as published by
@@ -25,54 +25,50 @@
 \ **************************************************************
 \ Change history of this file
 
-\ 2014-11-18: Created, based on <fendo.addon.lioc_by_prefix.fs>.
+\ 2014-11-26: Adapted from <fendo.addon.dloc_by_prefix.fs>.
 
 \ **************************************************************
 \ Requirements
 
 forth_definitions
 
-require string.fs  \ Gforth's dynamic strings
-
-require galope/module.fs  \ 'module:', ';module', 'hide', 'export'
+require galope/module.fs
 
 fendo_definitions
 
 require ./fendo.addon.traverse_pids.fs
-require ./fendo.addon.lioc.fs
+require ./fendo.addon.dtddoc.fs
 
 \ **************************************************************
 
-module: fendo.addon.lioc_by_prefix_and_level
+module: fendo.addon.dloc_by_prefix_and_level
 
 variable prefix
 variable level
-: ((lioc_by_prefix_and_level))  { D: pid -- }
-  \ Create an element of a list of content
+: ((dloc_by_prefix_and_level))  { D: pid -- }
+  \ Create a description list of content
   \ if the given pid starts with the current prefix
   \ and has the current level.
   pid prefix $@ string-prefix? 0= ?exit
   pid pid$>level level @ <> ?exit
   pid pid$>data>pid# draft? ?exit
-  pid lioc 
+  pid dtddoc
   ;
-: (lioc_by_prefix_and_level)  ( ca len -- true )
+: (dloc_by_prefix_and_level)  ( ca len -- f )
   \ ca len = pid
-  \ true = continue with the next element?
-  ((lioc_by_prefix_and_level)) true
+  \ f = continue with the next element?
+  ((dloc_by_prefix_and_level)) true
   ;
 
 export
 
-: lioc_by_prefix_and_level  ( ca len n -- )
-  \ Create a list of content
+: dloc_by_prefix_and_level  ( ca len n -- )
+  \ Create a description list of content
   \ with pages whose pid has the given prefix and level.
-  \ ca len = prefix
-  \ n = page hierarchical level (0 is the top)
-  level ! prefix $!  ['] (lioc_by_prefix_and_level) traverse_pids
+  level ! prefix $!  [<dl>] ['] (dloc_by_prefix_and_level) traverse_pids [</dl>]
   ;
 
 ;module
 
-.( fendo.addon.lioc_by_prefix_and_level.fs compiled) cr
+.( fendo.addon.dloc_by_prefix_and_level.fs compiled) cr
 

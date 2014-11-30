@@ -99,12 +99,18 @@ link_text_already_evaluated? off
   ;
 
 \ $variable link_anchor  \ XXX OLD -- moved to fendo.markup.html.attributes.fs>
+\ variable to_local_anchor?  \ XXX OLD
 : /anchor ( ca1 len1 -- ca2 len2 ca3 len3 )
   \ Divide a href attribute at its anchor.
   \ ca1 len1 = href attribute
   \ ca2 len2 = href attribute without the anchor
   \ ca3 len3 = anchor without the "#" character
   s" #" sides/ drop
+\ XXX OLD
+\   2 pick 0= over 0<> and
+\  dup if  ~~  then  \ XXX INFORMER
+\  to_local_anchor? !
+\  ." At the end of '/anchor' 'to_local_anchor?' = " to_local_anchor? ? cr  \ XXX INFORMER
   ; 
 :noname ( ca len -- ca len | ca' len' )
   \ Remove the anchor from a href attribute.
@@ -195,10 +201,25 @@ variable link_type
 \   ." 'link_anchor' in 'link_anchor+' = " 2dup type cr  \ XXX INFORMER
   +anchor
   ; is link_anchor+
-: convert_local_link_href  ( ca1 len1 -- ca2 len2 )
-  \ Convert a raw local href to a finished href.
-\   ." Parameter in 'convert_local_link_href' = " 2dup type cr  \ XXX INFORMER
+: local_anchor?  ( ca len -- wf )
+  \ Is the given href an anchor to the current page?
+  dup 0= >r  \ is it empty?
+  current_pid$ str=  r> or  \ or is it the current page?
+  link_anchor $@len 0<> and  \ and a link anchor exists?
+  ;
+: local_anchor_href?  ( -- wf )
+  \ Is the 'href=' attribute an anchor to the current page?
+  href=@ local_anchor?
+  ;
+: (convert_local_link_href)  ( ca1 len1 -- ca2 len2 )
+  \ Convert a raw local href to a finished href, if not empty.
   dup if  pid$>data>pid# target_file  then
+  ;
+: convert_local_link_href  ( ca1 len1 -- ca2 len2 )
+  \ Convert a raw local href to a finished href, if not a local anchor.
+\  ." Parameter in 'convert_local_link_href' = " 2dup type cr  \ XXX INFORMER
+  2dup local_anchor? 0= if  (convert_local_link_href)  then
+\  ." Result in 'convert_local_link_href' = " 2dup type cr  \ XXX INFORMER
   ;
 : -file://  ( ca len -- ca' len' )
   s" file://" -prefix
@@ -226,59 +247,61 @@ variable local_link_to_draft_page?
   \ a = page id of the link destination
   multilingual? if  (tune_local_hreflang)  else  drop  then
   ;
+: ?href>current_pid$  ( ca len -- ca' len' )
+\  ." In '?href>current_pid$' parameter = " 2dup type cr  \ XXX INFORMER
+  dup 0= if  2drop current_pid$  then
+\  ." In '?href>current_pid$' result    = " 2dup type cr  \ XXX INFORMER
+  ;
+: (tune_local_link)  ( ca len -- )
+  ?href>current_pid$ pid$>(data>)pid#  >r
+  r@ draft? local_link_to_draft_page? !
+  local_anchor_href?  0= if
+    r@ description unmarkup title=?!
+    r@ tune_local_hreflang
+    r@ access_key accesskey=?!
+  then
+  r> title link_text?!
+  ;
 : tune_local_link  ( -- )
   \ xxx todo fetch alternative language title and description
-\  ." tune_local_link" cr  \ xxx informer
-  href=@
-\   ." 'href=' in 'tune_local_link' (0) = " 2dup type cr  \ xxx informer
-  pid$>(data>)pid#  >r
-\   ." 'href=' in 'tune_local_link' (1) = " href=@ type cr  \ xxx informer
-\  link_text@ ." link_text in tune_local_link (0) = " type cr  \ xxx informer
-\  r@ title ." title in tune_local_link (1) = " type cr  \ xxx informer
-  r@ draft? local_link_to_draft_page? !
-  r@ description 
-\  ." 'href=' in 'tune_local_link' before 'unmarkup' = " href=@ type cr  \ xxx informer
-  unmarkup
-\  ." 'href=' in 'tune_local_link' after 'unmarkup' = " href=@ type cr  \ xxx informer
-  title=?!
-\  link_text@ ." link_text in tune_local_link (1) = " type cr  \ xxx informer
-  r@ title
-\  ." title in tune_local_link (2) = " 2dup type cr  \ xxx informer
-  link_text?!  \ xxx bug: this call corrupts 'link_text'
-\  link_text@ ." link_text in tune_local_link (2) = " type cr  \ xxx informer
-  r@ tune_local_hreflang
-  r> access_key accesskey=?!
-\  ." end of tune_local_link" cr  \ xxx informer
+  href=@ dup if  (tune_local_link)  else  2drop  then
   ;
 : tune_link  ( -- )  \ xxx todo
   \ Tune the attributes parsed from the link.
 \   ." 'href=' in 'tune_link' = " href=@ type cr  \ xxx informer
   local_link? if  tune_local_link  then
-  href=@
-\   ." 'href=' in 'tune_link' before 'convert_link_href' = " 2dup type cr  \ xxx informer
-  convert_link_href
-\   ." 'href=' in 'tune_link' after 'convert_link_href' = " 2dup type cr  \ xxx informer
-  href=!
+  href=@ convert_link_href href=!
   link_text@ empty? if  missing_link_text link_text!  then
   external_link? if  external_class  then
   ;
 : echo_link_text  ( -- )
   \ Echo just the link text.
-  echo_space evaluate_link_text
+  echo_space  \ XXX FIXME not always required, but how to know?
+  evaluate_link_text separate? on
   ;
 \ Two hooks for the application,
 \ e.g. to add the size of a linked file:
 defer link_text_suffix
 defer link_suffix
 ' noop  dup is link_text_suffix  is link_suffix
+: anchor_only  ( -- )
+  \ Remove the target file from the href attribute,
+  \ leaving only the anchor.
+\  s" #" href=@ /anchor 2swap 2drop s+ href=!  \ XXX OLD
+  s" #" link_anchor $@ s+ href=!
+  ;
 : (echo_link)  ( -- )
   \ Echo the final link.
-\  cr ." In (echo_link) link_text$ is " link_text@ type  \ XXX INFORMER
+\  to_local_anchor? @ if  \ XXX OLD
+  local_anchor_href? 
+\  ." In (echo_link) 'local_anchor_href?' = " dup . cr  \ XXX INFORMER
+  if  anchor_only  then
   [<a>] evaluate_link_text link_text_suffix [</a>] link_suffix
   ;
 : echo_link?  ( -- wf )
   \ Can the current link be echoed?
-  href=@ nip  local_link_to_draft_page? @ 0=  and
+  href=@ nip 0<> link_anchor $@len 0<> or
+  local_link_to_draft_page? @ 0=  and
   ;
 : reset_link  ( -- )
   \ Reset the link attributes that are not actual HTML attributes,
@@ -293,7 +316,7 @@ defer link_suffix
 \  ." In 'echo_link', 'link_text$' = " link_text@ type cr  \ XXX INFORMER
 \  ." 'href='in 'echo_link' = " href=@ 2dup type ." [" .s 2drop ." ]" cr  \ XXX INFORMER
   tune_link  echo_link?
-  if  (echo_link)  else  echo_link_text  then  reset_link
+  if  (echo_link)  else  -attributes echo_link_text  then  reset_link
   ;
 
 defer (get_link_href)  ( ca len -- )
@@ -375,5 +398,23 @@ defer (get_link_href)  ( ca len -- )
 \ 2014-11-16: Fix: 'link_anchor+' removed from 'convert_link_href'.
 \ This is done in a lower level, in 'target_file' (defined in
 \ <fendo.data.fs>).
+\
+\ 2014-11-27: Fix: now 'echo_link' executes '-attributes' when only
+\ the link text is printed; formerly the link attributes were used by
+\ the next HTML tag.
+\
+\ 2014-11-27: Fix: now 'echo_link_text' does 'separate? on' at the
+\ end.
+\
+\ 2014-11-27: New: 'to_local_anchor?' flag, set by '/anchor'.
+\
+\ 2014-11-27: Fix: now 'echo_link?' uses also 'link_anchor'.
+\
+\ 2014-11-28: Fix: The 'to_local_anchor?' flag is removed, because it
+\ was overwritten and ruined several times during the link process.
+\ The word 'local_anchor_href?' and 'local_anchor?' are used instead;
+\ the calculation is done only when required, with the contents of
+\ 'href=' and 'link_anchor'. 'convert_local_link_href' is updated
+\ accordingly.
 
 .( fendo.links.fs ) cr
