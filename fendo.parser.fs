@@ -326,9 +326,6 @@ variable more?  \ flag: keep on parsing more words?; changed by '}content'
 : .sourcefilename  ( -- )
   \ Print the name of the currently parsed file.
   sourcefilename type cr
-\ ."  XXX stack check: " .s  \ XXX INFORMER
-  depth abort" Stack not empty"
-\  depth if  cr ." Stack not empty" cr .s quit  then  \ XXX INFORMER
   ;
 variable }content?  \ flag: was '}content' executed?
 : (content{)  ( -- )
@@ -352,6 +349,11 @@ variable }content?  \ flag: was '}content' executed?
   \eof  \ skip the rest of the file
   do_content? on  \ set default for the next page
   ;
+: empty_stack  ( -- )
+\ ."  XXX stack check: " .s  \ XXX INFORMER
+  depth abort" Stack not empty"
+\  depth if  cr ." Stack not empty" cr .s quit  then  \ XXX INFORMER
+  ;
 : content{  ( "text }content" -- )
   \ Create the page content, if needed.
   \ The end of the content is marked with the '}content' markup.
@@ -360,7 +362,8 @@ variable }content?  \ flag: was '}content' executed?
 \  ~~  \ XXX INFORMER
   do_page?
 \  ~~  \ XXX INFORMER
-  if  .sourcefilename
+  if  
+    empty_stack .sourcefilename
 \    ." content{" cr  \ XXX INFORMER
 \    ~~  \ XXX INFORMER
     (content{)
@@ -506,5 +509,8 @@ set-current
 \
 \ 2014-11-17: Fix: Now '(evaluate_content)' deletes the HTML
 \ attributes after saving them, and preserves 'separate?'.
+\
+\ 2014-12-06: Change: 'empty_stack' is factored out from
+\ '.sourcefilename'.
 
 .( fendo.parser.fs compiled ) cr

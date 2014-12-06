@@ -208,3 +208,17 @@ title and description.
 in <fendo.data.fs>'s 'target_file',
 but in an upper level.
 
+.2014-12-02:
+
+Añadir hreflang a todos los enlaces de Atom.
+
+.2014-12-02:
+
+Idea: bandera para crear versión local. Por ejemplo, para adaptar el
+atributo 'xml:base=' usado en Atom. ¿Sirve de algo? Si 'xml:base=' no
+se usa, ¿son los enlaces locales relativos al lugar del propio Atom?
+
+.2014-12-05:
+
+Change the properties system: make it similar to tags: make properties
+executable; they should trigger a flag.
