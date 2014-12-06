@@ -34,6 +34,7 @@ forth_definitions
 
 \ From Galope
 require galope/char_count.fs  \ 'char_count'
+require galope/slash-ssv.fs  \ '/ssv'
 
 \ From Fourth Foundation Library
 require ffl/str.fs  \ dynamic strings
@@ -128,12 +129,11 @@ datum: first_page
 datum: last_page
 
 datum: keywords  \ list of HTML meta keywords, separated by commas
-datum: tags  \ list of public tags, separated by commas
+datum: tags  \ list of tag ids, separated by spaces
 datum: properties  \ list of properties, separated by commas
 datum: edit_summary  \ description of the latest changes
 
-datum: related  \ list of page ids, xxx separated by commas?
-\ datum: language_versions  \ list of page ids, separated by commas  \ xxx old deprecated
+datum: related  \ list of page ids, separated by commas
 
 datum: filename_extension  \ alternative target filename extension (with dot)
 
@@ -268,10 +268,15 @@ datum: template  \ HTML template filename in the design subdir
   known_pid$? if  execute  else  false  then
   ;
 : current_page_pid$  ( -- ca len )
-  \ Return the string page id of the current page.
-  \ ca len = page id
+  \ Return the string page id of the current page,
   \ XXX TODO -- combine with 'current_pid$'?
   current_page pid#>pid$
+  \ XXX TODO 'current_page' can be zero during debugging tasks,
+  \ for example while using 'echo>screen' to check the
+  \ engine without files. But this alternative creates new
+  \ problems because of the empty pid:
+  \ ca len = page id or empty string
+\  current_page ?dup if  pid#>pid$  else  pad 0  then
   ;
 : descendant?  ( ca1 len1 ca2 len2 -- wf )
   \ Is ca2 len2 a descendant of ca1 len1?
@@ -502,29 +507,21 @@ do_content? on
 \ **************************************************************
 \ Calculated data
 
-require galope/slash-sides.fs  \ '/sides'
-
-: /ssv  ( ca len -- ca#1 len#1 ... ca#u len#u u )
-  \ Divide a space separated values string.
-  \ ca len = string with space separated values
-  \ ca#1 len#1 ... ca#u len#u = one or more strings
-  \ u = number of strings returned
-  \ XXX TMP provisional solution, copied from '/csv'.
-  \ XXX TODO make it simpler: use 'execute-parsing' instead.
-  depth >r
-  begin  s"  " /sides 0=  until  2drop
-  depth r> 2 - - 2/
+: description|title  ( pid -- ca len )
+  \ Description or (if it's empty) title of the given page id.
+  \ This is used as link title when no one has been specified.
+  dup >r description dup if  rdrop  else  2drop r> title  then
   ;
-
 : property?  ( ca len a -- wf )
   \ ca len = property to check
   \ a = page id (address of its data)
   \ wf = is the property in the properties field of the page?
   { D: property page_id }
+  \ XXX TODO change the properties system: make it similar to tags:...
+  \ XXX TODO ...make properties executable; they should trigger a flag.
   page_id properties  false { result }
   /ssv 0 ?do
-    \ XXX TODO remove 'trim' when '/ssv' is rewritten
-    trim property str= result or to result
+    property str= result or to result
   loop  result
   ;
 : draft?  ( a -- wf )
@@ -752,5 +749,12 @@ require galope/slash-sides.fs  \ '/sides'
 \ 2014-11-17: Change: now 'pid$>data>pid#' calls 'dry_unshortcut'
 \ instead of 'just_unshortcut'. This fixes the problem href was echoed
 \ in "<dt>", in 'tagged_pages_by_prefix'.
+\
+\ 2014-12-05: Change: '/ssv' is moved to the Galope library; an
+\ useless 'trim' is removed from 'property?'.
+\
+\ 2014-12-06: New: calcutated datum 'description|title'.
+
+.( fendo.links.fs ) cr
 
 .( fendo.data.fs compiled) cr

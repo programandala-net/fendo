@@ -253,14 +253,16 @@ variable local_link_to_draft_page?
 \  ." In '?href>current_pid$' result    = " 2dup type cr  \ XXX INFORMER
   ;
 : (tune_local_link)  ( ca len -- )
+\  ." 'title=' at the start of '(tune_local_link)' = " title=@ ." «" type ." »" cr  \ XXX INFORMER
   ?href>current_pid$ pid$>(data>)pid#  >r
   r@ draft? local_link_to_draft_page? !
   local_anchor_href?  0= if
-    r@ description unmarkup title=?!
+    r@ description|title unmarkup title=?!
     r@ tune_local_hreflang
     r@ access_key accesskey=?!
   then
   r> title link_text?!
+\  ." 'title=' at the end of '(tune_local_link)' = " title=@ type cr  \ XXX INFORMER
   ;
 : tune_local_link  ( -- )
   \ xxx todo fetch alternative language title and description
@@ -293,8 +295,10 @@ defer link_suffix
 : (echo_link)  ( -- )
   \ Echo the final link.
 \  to_local_anchor? @ if  \ XXX OLD
-  local_anchor_href? 
+\  ." 'title=' in '(echo_link)' before 'local_anchor_href?' = " title=@ type cr  \ XXX INFORMER
+  local_anchor_href?
 \  ." In (echo_link) 'local_anchor_href?' = " dup . cr  \ XXX INFORMER
+\  ." 'title=' in '(echo_link)' after 'local_anchor_href?' = " title=@ type cr  \ XXX INFORMER
   if  anchor_only  then
   [<a>] evaluate_link_text link_text_suffix [</a>] link_suffix
   ;
@@ -314,7 +318,8 @@ defer link_suffix
   \ XXX FIXME link_text@ here returns a string with macros already
   \ parsed! why?
 \  ." In 'echo_link', 'link_text$' = " link_text@ type cr  \ XXX INFORMER
-\  ." 'href='in 'echo_link' = " href=@ 2dup type ." [" .s 2drop ." ]" cr  \ XXX INFORMER
+\  ." 'href=' in 'echo_link' = " href=@ 2dup type ." [" .s 2drop ." ]" cr  \ XXX INFORMER
+\  ." 'href=' in 'echo_link' = " href=@ type cr  \ XXX INFORMER
   tune_link  echo_link?
   if  (echo_link)  else  -attributes echo_link_text  then  reset_link
   ;
@@ -329,6 +334,7 @@ defer (get_link_href)  ( ca len -- )
   \ Create a link.
   \ Its attributes and link text have to be set previously.
   \ ca len = page id, URL or shortcut
+\  ." 'title=' in '(link)' = " title=@ type cr  \ XXX INFORMER
   (get_link_href) echo_link
   ;
 : link  ( ca1 len1 ca2 len2 -- )
@@ -338,6 +344,7 @@ defer (get_link_href)  ( ca len -- )
   \ ca2 len2 = link text
 \   ." In 'link' the link text is " 2dup type cr  \ XXX INFORMER
 \   ." In 'link' the page id is " 2over type cr  \ XXX INFORMER
+\  ." 'title=' in 'link' = " title=@ type cr  \ XXX INFORMER
   link_text! (link)
   ;
 : link<pid$  ( ca len -- )
@@ -416,5 +423,10 @@ defer (get_link_href)  ( ca len -- )
 \ the calculation is done only when required, with the contents of
 \ 'href=' and 'link_anchor'. 'convert_local_link_href' is updated
 \ accordingly.
+\
+\ 2014-12-06: Fix: Now '(tune_local_link)' uses the calcutated datum
+\ 'description|title', just written for the fix (in <fendo.data.fs>),
+\ instead of the datum 'description'. This makes sure links to
+\ description-less pages have a link title.
 
 .( fendo.links.fs ) cr

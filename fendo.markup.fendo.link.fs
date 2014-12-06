@@ -130,7 +130,7 @@ fendo_definitions
 
 \ 2014-04-21: Code moved from <fendo.markup.fendo.fs>.
 \
-\ 2014-07-14: Change: 'domain' is updated; it's not a dinamyc variable
+\ 2014-07-14: Change: 'domain' is updated; it's not a dynamic variable
 \ anymore, after the changes in <fendo.config.fs>.
 \
 \ 2014-08-13: Fix: 'separate?' is saved and restored in 'parse_link',

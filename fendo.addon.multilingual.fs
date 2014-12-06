@@ -35,23 +35,7 @@
 \ **************************************************************
 \ Change history of this file
 
-\ 2013-10-14: Moved from the application Fendo-programandala.
-\ 2013-10-15: Improvement: 'mlsconstant' checks if 'langs' is set.
-\ 2013-11-11: Improvement: 'lang' uses both the "language" metadatum
-\   and the language prefix of the filename.
-\ 2013-11-30: Change: 'mlsconstant' and 'langs' are deprecated; now
-\   the application must define its own words
-\   to store the number of languages and the multilingual strings. \
-\   xxx tmp
-\ 2013-12-01: Change: several renamings.
-\ 2014-02-04: Change: 'current_lang#' returns 0 even if no pid is set;
-\ this is useful for testing the localization strings.
-\ 2014-02-22: Change: all "l10n$" renamed to "l10n-str" in names.
-\ 2014-03-02: Change: all "l10n-str" renamed to "l10n-string" in
-\   names; "-str" is used by Forth Foundation Library's str module.
-\ 2014-03-11: Fix: in certain cases, 'pid#>lang#' needed to make sure
-\   'fendo_wid' is in 'order'.
-\ 2014-03-24: New: 'pid$>lang#'.
+\ See at the end of the file.
 
 \ **************************************************************
 \ Usage
@@ -91,7 +75,7 @@ fendo_definitions
 
 true to multilingual?
 
-0 value langs  \ number of language sections of the website  \ xxx old
+0 value langs  \ number of language sections of the website  \ XXX OLD
 
 : lang_prefix  ( ca1 len1 -- ca2 len2 )
   \ Get the ISO language code from the first part of a source page file.
@@ -108,7 +92,7 @@ true to multilingual?
   ;
 : current_lang$  ( -- ca len )
   \ Return the ISO language code of the current page.
-  \ xxx todo remove tmp result?
+  \ XXX TODO configurable default language
   current_page ?dup if  pid#>lang$  else  s" en"  then
   ;
 : pid#>lang#  ( a -- n )
@@ -128,8 +112,8 @@ true to multilingual?
 : current_lang#  ( -- n )
   \ Return the language number of the current page
   \ (or zero, the first language, if there's no current page yet).
-  \ current_page pid#>lang#  \ xxx old, first version
-  current_page dup if  pid#>lang#  then  \ xxx tmp? for testing
+  \ current_page pid#>lang#  \ XXX OLD, first version
+  current_page dup if  pid#>lang#  then  \ XXX TMP? for testing
   ;
 : +lang  ( a -- a' )
   \ Add the current language number as cells.
@@ -152,16 +136,13 @@ true to multilingual?
   \ ca-n len-n = text in the last language
   \ name = name of the constant
   (*
-  Note:  \ xxx tmp
+  Note:  \ XXX TMP
   Strings must be pushed on the stack in reverse alphabetical order
   of its ISO language code.
   *)
   langs 0= abort" 'langs' is not set; 'l10n-string' can not work."
   create  l10n-string,  (l10n-string)
   ;
-' l10n-string alias mlsconstant  \ old name
-' l10n-string alias l10n$  \ old name
-' l10n-string alias l10n-str  \ old name
 : noname-l10n-string  ( ca-n len-n ... ca1 len1 -- xt )
   \ Unnamed version of 'l10n-string'.
   \ Create a localization string constant.
@@ -169,12 +150,44 @@ true to multilingual?
   \ ca1 len1 = text in the first language
   \ ca-n len-n = text in the last language
   (*
-  Note:  \ xxx tmp
+  Note:  \ XXX TMP
   Strings must be pushed on the stack in reverse alphabetical order
   of its ISO language code.
   *)
   langs 0= abort" 'langs' is not set; 'noname-l10n-string' can not work."
   noname create  l10n-string,  latestxt  (l10n-string)
   ;
+
+\ **************************************************************
+\ Change history of this file
+
+\ 2013-10-14: Moved from the application Fendo-programandala.
+\
+\ 2013-10-15: Improvement: 'mlsconstant' checks if 'langs' is set.
+\
+\ 2013-11-11: Improvement: 'lang' uses both the "language" metadatum
+\ and the language prefix of the filename.
+\
+\ 2013-11-30: Change: 'mlsconstant' and 'langs' are deprecated; now
+\ the application must define its own words to store the number of
+\ languages and the multilingual strings. \ XXX TMP
+\
+\ 2013-12-01: Change: several renamings.
+\
+\ 2014-02-04: Change: 'current_lang#' returns 0 even if no pid is set;
+\ this is useful for testing the localization strings.
+\
+\ 2014-02-22: Change: all "l10n$" renamed to "l10n-str" in names.
+\
+\ 2014-03-02: Change: all "l10n-str" renamed to "l10n-string" in
+\ names; "-str" is used by Forth Foundation Library's str module.
+\
+\ 2014-03-11: Fix: in certain cases, 'pid#>lang#' needed to make sure
+\ 'fendo_wid' is in 'order'.
+\
+\ 2014-03-24: New: 'pid$>lang#'.
+\
+\ 2014-12-06: Change: the deprecated old names of 'l10n-string' are
+\ finally removed.
 
 .( fendo.addon.multilingual.fs compiled) cr

@@ -25,54 +25,46 @@
 \ **************************************************************
 \ Change history of this file
 
-\ 2014-06-05: Start, using the code of the Atom module (last version,
-\ from 2009-10-21) of: ForthCMS ("Forth Calm Maker of Sites") version
-\ B-00-201206 (http://programandala.net/en.program.forthcms.html).
-\
-\ 2014-07-06: First changes. 'echo' and 'echo_line' used instead of
-\ the old ForthCMS words.
-\
-\ 2014-07-08: Site variables converted to Fendo.
-\
-\ 2014-07-10: More changes to make the code compatible with Fendo.
-\
-\ 2014-07-11: More changes to make the code compatible with Fendo.
-\
-\ 2014-11-08: Change: 'unmarkup' (just implemented) is used instead of
-\ hard-coded plain text versions of some data fields.
+\ See at the end of the file.
 
 \ **************************************************************
 \ TODO
 
-\ add hreflang to <link>
-\ add xml:lang to all human readable fields
-\ add <logo> (larger image, twice as wide as it's tall)
-\ hack the description, in order to let the application to provide a
-\ custom string
+\ Add xml:lang to all human readable fields.
+\
+\ Add <logo> (larger image, twice as wide as it's tall).
+\
+\ Hack the description, in order to let the application to provide a
+\ custom string.
 
 \ **************************************************************
 \ Requirements
 
-\ include galope/time&date-to-iso.fs  \ XXX not used
-\ include galope/yyyymmdd-to-iso.fs  \ XXX not used
+require galope/n-to-r.fs  \ 'n>r'
+require galope/n-r-from.fs  \ 'nr<'
 
 \ **************************************************************
 \ Configurable texts
 
 s" Content"
-2constant atom_default_"content"
-defer atom_"content"
-' atom_default_"content" is atom_"content"
+2constant atom_default_content$
+defer atom_content$
+' atom_default_content$ is atom_content$
 
 s" <strong>New page<strong>: "
-2constant atom_default_"new_page"
-defer atom_"new_page"
-' atom_default_"new_page" is atom_"new_page"
+2constant atom_default_new_page$
+defer atom_new_page$
+' atom_default_new_page$ is atom_new_page$
 
 s" <strong>Updated page</strong>: "
-2constant atom_default_"updated_page"
-defer atom_"updated_page"
-' atom_default_"updated_page" is atom_"updated_page"
+2constant atom_default_updated_page$
+defer atom_updated_page$
+' atom_default_updated_page$ is atom_updated_page$
+
+s" <strong>Edit summary</strong>: "
+2constant atom_default_edit_summary$
+defer atom_edit_summary$
+' atom_default_edit_summary$ is atom_edit_summary$
 
 \ **************************************************************
 \ Calculated data
@@ -123,7 +115,7 @@ defer atom_"updated_page"
   rel=! href=! [<link/>]
   ;
 : atom_xhtml_summary{  ( -- )
-  s" xhtml" type=! s" http://www.w3.org/1999/xhtml" xmlns=! <summary>  [<div>]
+  s" xhtml" type=! <summary> s" http://www.w3.org/1999/xhtml" xmlns=! [<div>]
   ;
 : }atom_xhtml_summary  ( -- )
   [</div>] </summary>
@@ -135,18 +127,19 @@ defer atom_"updated_page"
   \ The feed id is the website home page for the current language.
   <id> current_lang$ pid$>url echo </id>
   ;
+defer atom_site_title$  ( -- ca len )
+' site_title is atom_site_title$
 : atom_feed_title  ( -- )
-  [<title>] site_title unmarkup echo [</title>]
+  [<title>] atom_site_title$ unmarkup echo [</title>]
   ;
 : atom_feed_subtitle  ( -- )
   <subtitle> site_subtitle unmarkup echo </subtitle>
   ;
 : atom_feed_alternate_link  ( -- )
-  \ iso_lang hreflang=!  \ XXX TODO convert to Fendo
-  domain_url s" alternate" atom_link
+  current_lang$ 2dup hreflang=! pid$>url s" alternate" atom_link
   ;
 : atom_feed_selflink  ( ca len -- )
-  current_target_file_url s" self" atom_link
+  current_lang$ hreflang=! current_target_file_url s" self" atom_link
   ;
 : atom_feed_links  ( -- )
   atom_feed_alternate_link
@@ -165,8 +158,7 @@ defer atom_"updated_page"
   <generator> generator echo </generator>
   ;
 : atom_feed_icon  ( -- )
-  \ XXX TODO add URL
-  <icon> site_icon echo </icon>
+  <icon> site_icon +domain_url echo </icon>
   ;
 : atom_feed_header  ( -- )
   atom_feed_title
@@ -178,11 +170,14 @@ defer atom_"updated_page"
   atom_feed_id
   atom_feed_generator
   ;
-: (atom{)  ( ca1 len1 ca2 len2 -- )
+: (atom{)  ( -- wf )
   \ Create an Atom file.
-  open_target 
+  \ wf = saved content of 'xhtml?', to be restored by '}atom'
+  xhtml? @  xhtml? on
+  open_target
   s" <?xml version='1.0' encoding='utf-8'?>" echo
-  s" http://www.w3.org/2005/Atom" xmlns=! <feed>
+  current_lang$ xml:lang=!  domain_url xml:base=!
+  s" http://www.w3.org/2005/Atom" xmlns=!  <feed>
   atom_feed_header
   ;
 : atom{  ( -- )
@@ -191,9 +186,10 @@ defer atom_"updated_page"
   \ Only one 'atom{ ... }atom' block is allowed in the page.
   do_page? if  .sourcefilename (atom{)  else  skip_page  then
   ;
-: }atom  ( -- )
+: }atom  ( wf -- )
   \ Finish and close the Atom file.
-  </feed> close_target
+  \ wf = saved 'xhtml?'
+  </feed> close_target  xhtml? !
   ;
 
 \ **************************************************************
@@ -209,7 +205,7 @@ defer atom_"updated_page"
   ;
 : atom_entry_links  ( a -- )
   \ a = page id
-  pid#>url s" alternate" atom_link
+  dup pid#>lang$ hreflang=! pid#>url s" alternate" atom_link
   ;
 : atom_entry_updated  ( a -- )
   \ a = page id
@@ -219,7 +215,10 @@ defer atom_"updated_page"
   \ a = page id
   <published> created echo </published>
   ;
-defer atom_entry_summary
+defer (atom_entry_summary)
+: atom_entry_summary  ( -- )
+  atom_xhtml_summary{ (atom_entry_summary) }atom_xhtml_summary
+  ;
 : atom_entry_default_summary  ( a -- )
   \ a = page id
   <summary> description unmarkup echo </summary>
@@ -228,24 +227,31 @@ defer atom_entry_summary
   \ a = page id
   >r echo_line r>
   ;
-: atom_entry_custom_summary  ( ca1 len1 ca2 len2 -- )
-  \ Create a summary field with a custom content.
-  \ ca1 len1 = page id
-  \ ca2 len2 = custom header to be shown before the actual content
-  atom_xhtml_summary{
-  [<p>] echo_line  description evaluate_content [</p>]
-  }atom_xhtml_summary
-  ;
-: atom_entry_updated_summary  ( ca len -- )
-  \ ca len = page id
-  atom_"updated_page" atom_entry_custom_summary
+: atom_entry_updated_summary  ( a -- )
+  \ a = page id
+  [ false ] [if]
+    \ XXX OLD
+    [<p>] atom_updated_page$ echo_line
+    dup >r description evaluate_content
+    r> edit_summary dup
+    if  echo_space evaluate_content  else  2drop  then
+    [</p>]
+  [else]
+    [<p>]  atom_updated_page$ echo_line
+    dup description evaluate_content  [</p>]
+    edit_summary dup if
+      [<p>] atom_edit_summary$ echo_line
+      echo_space evaluate_content  [</p>]
+    else  2drop  then
+  [then]
   ;
 : atom_entry_new_summary  ( ca len -- )
   \ ca len = page id
-  atom_"new_page" atom_entry_custom_summary
+  [<p>] atom_new_page$ echo_line
+  description evaluate_content [</p>]
   ;
 : set_default_atom_entry_summary  ( -- )
-  ['] atom_entry_default_summary is atom_entry_summary
+  ['] atom_entry_default_summary is (atom_entry_summary)
   ;
 set_default_atom_entry_summary
 : atom_entry  ( ca len -- )
@@ -264,7 +270,7 @@ set_default_atom_entry_summary
   \ Create an Atom entry in the Atom file, with non-default summary.
   \ ca len = page id
   \ xt = type of atom entry summary, new or updated
-  is atom_entry_summary  atom_entry  set_default_atom_entry_summary
+  is (atom_entry_summary)  atom_entry  set_default_atom_entry_summary
   ;
 : atom_updated_entry  ( ca len -- )
   \ Create an Atom entry in the Atom file, about an updated page of the site.
@@ -276,5 +282,50 @@ set_default_atom_entry_summary
   \ ca len = page id
   ['] atom_entry_new_summary (atom_entry)
   ;
+
+\ **************************************************************
+\ Change history of this file
+
+\ 2014-06-05: Start, using the code of the Atom module (last version,
+\ from 2009-10-21) of: ForthCMS ("Forth Calm Maker of Sites") version
+\ B-00-201206 (http://programandala.net/en.program.forthcms.html).
+\
+\ 2014-07-06: First changes. 'echo' and 'echo_line' used instead of
+\ the old ForthCMS words.
+\
+\ 2014-07-08: Site variables converted to Fendo.
+\
+\ 2014-07-10: More changes to make the code compatible with Fendo.
+\
+\ 2014-07-11: More changes to make the code compatible with Fendo.
+\
+\ 2014-11-08: Change: 'unmarkup' (just implemented) is used instead of
+\ hard-coded plain text versions of some data fields.
+\
+\ 2014-12-02: Fix: 'xmlns=' was wrongly set in "<summary>", not in the
+\ inner "<div>", what made the news reader to ignore the summary.
+\
+\ 2014-12-05: Fix: now 'atom_feed_icon' creates a complete URL, not
+\ just the file name.
+\
+\ 2014-12-05: Improvement: '(atom{)' now uses 'xml:base=!' and
+\ 'xml:lang=!' with '<feed>'; 'atom_feed_selflink' and
+\ 'atom_feed_alternate_link' use 'hreflang=!'.
+\
+\ 2014-12-05: Improvement: '(atom{)' saves and sets 'xhtml?', and
+\ '}atom' restores it. This forces some HTML tags and attributes to
+\ get the proper XML flavour, without affecting the content pages.
+\
+\ 2014-12-05: Improvement: 'atom_entry_links' now uses 'hreflang=!'.
+\
+\ 2014-12-06: Change: new convention for the string constants and
+\ variables; quotes ruined the syntax highlighting.
+\
+\ 2014-12-06: Improvement: 'atom_entry_updated_summary' rewritten; it
+\ shows the edit summary metadatum, if not empty.
+\
+\ 2014-12-06: Improvement: now there's Atom-specific site title
+\ ('atom_site_title$') configurable by the application; it defaults to
+\ 'site_title'.
 
 .( fendo.addon.atom.fs compiled) cr
