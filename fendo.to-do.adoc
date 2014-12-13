@@ -222,3 +222,28 @@ se usa, ¿son los enlaces locales relativos al lugar del propio Atom?
 
 Change the properties system: make it similar to tags: make properties
 executable; they should trigger a flag.
+
+.2014-12-07
+
+Habiendo construido todas las páginas de Fendo-programandala, advierto
+que en algunas de ellas los listados de código en Vim no son
+coloreados correctamente.  Pero el fallo se arregla al construir esas
+páginas individualmente...
+
+.2014-12-07
+
+Make the inline code ('##' markup) highlighted by manually setting
+'programming_language$'. This is useful for long pieces of code.
+
+.2014-12-12
+
+Bug?:
+
+'unshortcut' modifies 'href=' even if there's no actual unshortcuting.
+
+This causes problems in Fendo-programandala's 'related_pages' module,
+because, when no list is created, the modified 'href=' is added to the
+next HTML tag in the page. The solution was to clear 'href='.
+
+But the question is: should 'href=' be restored/cleared by
+'unshortcut' and related words when no unshortcuting was done?

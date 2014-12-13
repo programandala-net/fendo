@@ -34,6 +34,10 @@ forth_definitions
 
 require galope/trim.fs  \ 'trim'
 
+fendo_definitions
+
+require fendo/fendo.addon.source_code.common.fs
+
 \ **************************************************************
 \ Tools
 
@@ -41,7 +45,8 @@ fendo_definitions
 
 : (##)  ( "source code ##" -- )
   \ Parse an inline source code region.
-  \ xxx fixme preserve spaces
+  \ XXX FIXME preserve spaces
+  \ XXX TODO highlight
   begin   parse-name dup
     if    2dup s" ##" str=
           dup >r 0= if  escaped_source_code _echo  else  2drop  then  r>
@@ -78,9 +83,7 @@ fendo_definitions
   begin
     ####-line? dup >r
     if  2drop  else  append_source_code_line  then  r>
-  until  source_code@ highlighted echo
-  \ XXX FIXME here, 'source_code_finished' must be called, but it's
-  \ defined in <fendo.addon.source.code.fs>
+  until  source_code@ highlighted echo source_code_finished
   ;
 : highlight_####-zone?  ( -- wf )
   highlight? programming_language@ nip 0<> and
@@ -164,7 +167,16 @@ fendo_definitions
 \ Change history of this file
 
 \ 2014-04-21: Code moved from <fendo.markup.fendo.fs>.
+\
 \ 2014-04-22: Fix: silly bug.
+\
+\ 2014-12-12: Fix: 'source_code_finished' has been added at the end of
+\ 'highlighted_####-zone'. This obscure bug made caused
+\ 'programming_language$' to be preserved after source code blocks, so
+\ overwritting the automatic detection done by the next 'source_code'
+\ addon, in the current or next page. In order to call
+\ 'source_code_finished', <fendo/fendo.addon.source_code.common.fs>
+\ has been modifed and included.
 
 .( fendo.markup.fendo.code.fs compiled ) cr
 

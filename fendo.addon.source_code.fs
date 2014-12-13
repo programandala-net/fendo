@@ -51,48 +51,49 @@ require galope/translated.fs  \ 'translated'
 
 fendo_definitions
 
-require ./fendo.addon.source_code.common.fs  \ xxx tmp
+require ./fendo.addon.source_code.common.fs  \ XXX TMP
 
 module: fendo.addon.source_code
 
 : (filename>filetype)  { D: filename -- ca len }
   \ Convert a filename to a Vim's filetype.
-  \ xxx todo make this configurable by the application
-  filename s" .4th" string-suffix? if s" forth" exit  then
-  filename s" .acef" string-suffix? if s" aceforth" exit  then
-  filename s" .acefs" string-suffix? if s" aceforth" exit  then
-  filename s" .asm" string-suffix? if s" z80" exit  then
-  filename s" .bac" string-suffix? if s" bacon" exit  then
-  filename s" .bas" string-suffix? if s" basic" exit  then
-  filename s" .bb" string-suffix? if s" betabasic" exit  then
-  filename s" .bbas" string-suffix? if s" betabasic" exit  then
-  filename s" .betabas" string-suffix? if s" betabasic" exit  then
-  filename s" .bbim" string-suffix? if s" bbim" exit  then
-  filename s" .fs" string-suffix? if s" gforth" exit  then
-  filename s" .ini" string-suffix? if s" dosini" exit  then
-  filename s" .mb" string-suffix? if s" masterbasic" exit  then
-  filename s" .mbas" string-suffix? if s" masterbasic" exit  then
-  filename s" .masterbas" string-suffix? if s" masterbasic" exit  then
-  filename s" .mbim" string-suffix? if s" mbim" exit  then
-  filename s" .opl" string-suffix? if s" oplplus" exit  then
-  filename s" .opl.txt" string-suffix? if s" oplplus" exit  then
-  filename s" .opp" string-suffix? if s" oplplus" exit  then
-  filename s" .php" string-suffix? if s" php" exit  then
+  \ XXX TODO make all this configurable by the application
+  \ XXX TODO use a data structure instead of conditionals
+  filename s" .4th" string-suffix? if  s" forth" exit  then
+  filename s" .acef" string-suffix? if  s" aceforth" exit  then
+  filename s" .acefs" string-suffix? if  s" aceforth" exit  then
+  filename s" .asm" string-suffix? if  s" z80" exit  then
+  filename s" .bac" string-suffix? if  s" bacon" exit  then
+  filename s" .bas" string-suffix? if  s" basic" exit  then
+  filename s" .bb" string-suffix? if  s" betabasic" exit  then
+  filename s" .bbas" string-suffix? if  s" betabasic" exit  then
+  filename s" .betabas" string-suffix? if  s" betabasic" exit  then
+  filename s" .bbim" string-suffix? if  s" bbim" exit  then
+  filename s" .fs" string-suffix? if  s" gforth" exit  then
+  filename s" .ini" string-suffix? if  s" dosini" exit  then
+  filename s" .mb" string-suffix? if  s" masterbasic" exit  then
+  filename s" .mbas" string-suffix? if  s" masterbasic" exit  then
+  filename s" .masterbas" string-suffix? if  s" masterbasic" exit  then
+  filename s" .mbim" string-suffix? if  s" mbim" exit  then
+  filename s" .opl" string-suffix? if  s" oplplus" exit  then
+  filename s" .opl.txt" string-suffix? if  s" oplplus" exit  then
+  filename s" .opp" string-suffix? if  s" oplplus" exit  then
+  filename s" .php" string-suffix? if  s" php" exit  then
   filename s" .prg" string-suffix? if  s" clipper" exit  then
-  filename s" .sbim" string-suffix? if s" sbim" exit  then
-  filename s" .sdlbas" string-suffix? if s" sdlbasic" exit  then
-  filename s" .seq" string-suffix? if s" forth" exit  then
-  filename s" .sh" string-suffix? if s" sh" exit  then
-  filename s" .vim" string-suffix? if s" vim" exit  then
-  filename s" .vbas" string-suffix? if s" vimclairbasic" exit  then
-  filename s" .xbas" string-suffix? if s" x11basic" exit  then
-  filename s" .yab" string-suffix? if s" yabasic" exit  then
-  filename s" .z80s" string-suffix? if s" z80" exit  then
-  filename s" .zxbas" string-suffix? if s" zxbasic" exit  then
+  filename s" .sbim" string-suffix? if  s" sbim" exit  then
+  filename s" .sdlbas" string-suffix? if  s" sdlbasic" exit  then
+  filename s" .seq" string-suffix? if  s" forth" exit  then
+  filename s" .sh" string-suffix? if  s" sh" exit  then
+  filename s" .vim" string-suffix? if  s" vim" exit  then
+  filename s" .vbas" string-suffix? if  s" vimclairbasic" exit  then
+  filename s" .xbas" string-suffix? if  s" x11basic" exit  then
+  filename s" .yab" string-suffix? if  s" yabasic" exit  then
+  filename s" .z80s" string-suffix? if  s" z80" exit  then
+  filename s" .zxbas" string-suffix? if  s" zxbasic" exit  then
   filename s" _bas" string-suffix? if  s" superbasic" exit  then
   filename s" _sbim" string-suffix? if  s" sbim" exit  then
-\  filename s" _scr" string-suffix? if  s" forth" exit  then  \ xxx  todo
-\  filename s" _cmd" string-suffix? if  s" text" exit  then  \ xxx todo
+\  filename s" _scr" string-suffix? if  s" forth" exit  then  \ XXX TODO
+\  filename s" _cmd" string-suffix? if  s" text" exit  then  \ XXX TODO
   filename s" boot" str=  if  s" superbasic" exit  then
   filename s" ratpoisonrc" str=  if  s" ratpoison" exit  then
   s" text"
@@ -105,25 +106,6 @@ module: fendo.addon.source_code
   programming_language$ $@ dup if  2nip  else  2drop (filename>filetype)  then
 \  2dup type cr cr cr  \ XXX INFORMER
   ;
-
-\ **************************************************************
-\ File encodings
-
-\ xxx todo
-
-0 [if]
-
-UTF-8 and Latin1 file encodings are managed by Vim during conversion
-to XHTML, but special encodings (e.g. BASin markups, Sinclar BASIC
-tokens and QL charset) require special conversions.
-
-[then]
-
-variable fileencoding  \ 0 if no special conversion is needed
-1 enum basin_fileenconding
-  enum sinclair_basic_fileencoding
-  enum ql_fileencoding
-drop
 
 \ **************************************************************
 \ Generic source code
@@ -148,6 +130,8 @@ export
   \ Fake translation table that does nothing.
   0 dup
   ;
+\ XXX TMP -- moved from <fendo.addon.source_code.fs>:
+0 [if]
 defer source_code_pretranslated  ( ca len -- ca' len' )
   \ Translate the source code before the highlighting.
   \ This must be vectored by a specific addon.
@@ -165,6 +149,7 @@ defer source_code_posttranslated  ( ca len -- ca' len' )
   is source_code_pretranslated
   is source_code_posttranslated
   ;
+[then]
 no_source_code_translation
 : source_code_finished  ( -- )
   \ Reset default values about the source code.
@@ -176,6 +161,8 @@ no_source_code_translation
   ;
 : close_source_code  ( -- )
   source_code_fid close-file throw  source_code_finished
+\  [<p>] s" At the end of 'close_source_code' 'programming_language' = " echo   \ XXX INFORMER
+\  s" «" programming_language@ s" »" s+ s+ echo [</p>]  \ XXX INFORMER
   ;
 : >source_code<  ( ca len -- ca' len' )
   \ Translate and highlight a source code.
@@ -188,7 +175,7 @@ no_source_code_translation
   ;
 : (opened_source_code)  ( -- )
   \ Read and echo the content of the opened source code file.
-\  slurp_source_code translate_source_code echo_source_code close_source_code  \ xxx tmp
+\  slurp_source_code translate_source_code echo_source_code close_source_code  \ XXX TMP
   slurp_source_code echo_source_code close_source_code
   ;
 : (source_code)  ( ca len -- )
@@ -210,49 +197,76 @@ no_source_code_translation
 \ Change history of this file
 
 \ 2013-07-21: Start, with noop definitions from
-\   <fendo-programandala.fs>; only the basic 'source_code' works.
+\ <fendo-programandala.fs>; only the basic 'source_code' works.
+\
 \ 2013-07-26: New: BASin and Forth blocks.
+\
 \ 2013-07-26: Fix: now source files are closed at the end.
+\
 \ 2013-07-28: Fix: 'basin_source_code' called 'echo_source_code'
-\   instead of '(echo_source_code)'.
+\ instead of '(echo_source_code)'.
+\
 \ 2013-11-07: Change: Forth blocks are printed apart; empty blocks are
-\   omited; no line number are printed.
-\ 2013-11-08: Change: source code is not echoed by lines
-\   anymore; this is a first step towards syntax highlighting.
+\ omited; no line number are printed.
+\
+\ 2013-11-08: Change: source code is not echoed by lines anymore; this
+\ is a first step towards syntax highlighting.
+\
 \ 2013-11-08: Fix: The rubbish byte at the end of the last block of an
-\   Abersoft Forth blocks file is removed.
-\ 2013-11-09: First working version with syntax highlighting.
-\   Addon moved from Fendo-programandala to Fendo, because part of the
-\   code is required to implement optional syntax highlighting in the
-\   '###' markup.
+\ Abersoft Forth blocks file is removed.
+\
+\ 2013-11-09: First working version with syntax highlighting.  Addon
+\ moved from Fendo-programandala to Fendo, because part of the code is
+\ required to implement optional syntax highlighting in the '###'
+\ markup.
+\
 \ 2013-11-09: The BASin-specific code is moved to its own file.
+\
 \ 2013-11-09: The Forth-blocks-specific code is moved to its own file.
+\
 \ 2013-11-18: 'open_source_code' factored out to 'file>local' (defined
-\   in <fendo_files.fs>.
+\ in <fendo_files.fs>.
+\
 \ 2013-11-18: Change: 'programming_language' renamed to
-\   'programming_language!'.
+\ 'programming_language!'.
+\
 \ 2013-11-18: New: 'programming_language@'.
-\ 2013-11-18: Change: All words related to syntax highlighting
-\   are moved to <addons/source_code_common.fs>, because they are needed
-\   also by the "###" markup.
+\
+\ 2013-11-18: Change: All words related to syntax highlighting are
+\ moved to <addons/source_code_common.fs>, because they are needed
+\ also by the "###" markup.
+\
 \ 2013-12-10: Character set translation implemented with
-\ <galope/translated.fs>: the default noop translation table
-\   must be changed by the specific addons.
-\ 2013-12-11: Character set translation improved: two
-\   translations can be done: one before the highlighting and other after
-\   it; this prevents the highlighting from ruining some
-\   translations. Besides, an xt is used instead of a translation
-\   table created with <galope/translated.fs>;
-\   this way any tool can be used for the task.
-\ 2014-02-06: New: 'source_code_finished' now does all reseting final task.
-\   This fixes some obscure issues too.
+\ <galope/translated.fs>: the default noop translation table must be
+\ changed by the specific addons.
+\
+\ 2013-12-11: Character set translation improved: two translations can
+\ be done: one before the highlighting and other after it; this
+\ prevents the highlighting from ruining some translations. Besides,
+\ an xt is used instead of a translation table created with
+\ <galope/translated.fs>; this way any tool can be used for the task.
+\
+\ 2014-02-06: New: 'source_code_finished' now does all reseting final
+\ task.  This fixes some obscure issues too.
+\
 \ 2014-03-12: Change: module renamed after the filename.
+\
 \ 2014-10-13: New: 'zx_spectrum_source_code'.
+\
 \ 2014-10-17: Change: 'zx_spectrum_source_code' is moved to its own
-\   file <fendo.addon.zx_spectrum_source_code.fs>.
+\ file <fendo.addon.zx_spectrum_source_code.fs>.
+\
 \ 2014-10-17: Improvement: '(filename>filetype)' is updated with
-\   Vimclair BASIC filetype, and alternative extensions for MasterBASIC
-\   and Beta BASIC.
+\ Vimclair BASIC filetype, and alternative extensions for MasterBASIC
+\ and Beta BASIC.
+\
 \ 2014-10-19: New: 'programming_language?!'.
+\
+\ 2014-12-07: Change: 'source_code_finished' and related words have
+\ been moved to <fendo.addon.source_code.common.fs>, in order to use
+\ that word in <fendo.markup.fendo.code.fs>.
+\
+\ 2014-12-07: Change: removed old useless code about specific-platform
+\ encodings.
 
 .( fendo.addon.source_code.fs compiled) cr
