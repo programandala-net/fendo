@@ -40,8 +40,12 @@
 \ **************************************************************
 \ Requirements
 
+forth_definitions
+
 require galope/n-to-r.fs  \ 'n>r'
 require galope/n-r-from.fs  \ 'nr<'
+
+fendo_definitions
 
 \ **************************************************************
 \ Configurable texts
@@ -327,5 +331,8 @@ set_default_atom_entry_summary
 \ 2014-12-06: Improvement: now there's Atom-specific site title
 \ ('atom_site_title$') configurable by the application; it defaults to
 \ 'site_title'.
+\
+\ 2014-12-07: Fix: added 'forth_definitions' and 'fendo_definitions'
+\ for requirements, though no problem was detected.
 
 .( fendo.addon.atom.fs compiled) cr

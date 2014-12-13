@@ -93,13 +93,18 @@ punctuation{: “
 }punctuation: ".
 }punctuation: ":
 }punctuation: ";
+}punctuation: &#39;s
+}punctuation: 's
 }punctuation: )
 }punctuation: ),
 }punctuation: ).
 }punctuation: ):
 }punctuation: );
 }punctuation: ,
+}punctuation: ,"
+}punctuation: ,’
 }punctuation: .
+}punctuation: ."
 }punctuation: ...
 }punctuation: ...),
 }punctuation: ...).
@@ -107,20 +112,28 @@ punctuation{: “
 }punctuation: ...»
 }punctuation: ...».
 }punctuation: ...»;
+}punctuation: .’
+}punctuation: .”
 }punctuation: :
 }punctuation: ;
+}punctuation: ;"
 }punctuation: ?
 }punctuation: ]
 }punctuation: }
 }punctuation: »
+}punctuation: »)
 }punctuation: »),
 }punctuation: »).
 }punctuation: »,
 }punctuation: ».
+}punctuation: »;
 }punctuation: ’
+}punctuation: ’,
+}punctuation: ’”
 }punctuation: ”
-}punctuation: 's
-}punctuation: &#39;s
+}punctuation: ”»
+}punctuation: ”»,
+}punctuation: ”».
 
 
 fendo_definitions
@@ -129,10 +142,15 @@ fendo_definitions
 \ Change history of this file
 
 \ 2014-04-21: Code moved from <fendo.markup.fendo.fs>.
-\ 2014-07-14: New: double quote as ending punctuation. This removes the
-\   ending space in calculated HTML attributes in the template.
+\
+\ 2014-07-14: New: double quote as ending punctuation. This removes
+\ the ending space in calculated HTML attributes in the template.
+\
 \ 2014-10-12: New: "'s", though it's not punctuation.
+\ 
 \ 2014-11-04: New: '&#39;s' (HTML version of "'s"; useful in certain
-\   cases).
+\ cases).
+\
+\ 2014-12-10: Fix: duplicated punctuation removed.
 
 .( fendo.markup.fendo.punctuation.fs compiled ) cr
