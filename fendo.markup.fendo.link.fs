@@ -4,7 +4,7 @@
 
 \ This file defines the Fendo markup for links.
 
-\ Copyright (C) 2013,2014 Marcos Cruz (programandala.net)
+\ Copyright (C) 2013,2014,2015 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute
 \ it and/or modify it under the terms of the GNU General
@@ -116,7 +116,7 @@ $variable last_href$  \ xxx new, experimental, to be used by the application
 
 markup_definitions
 
-: [[  ( "linkmarkup]]" -- )
+: [[  ( "linkmarkup ]]" -- )
   parse_link echo_link
   ;
 : ]]  ( -- )
@@ -144,6 +144,8 @@ fendo_definitions
 \
 \ 2014-11-08: Removed some code that some time ago was moved to
 \ <fendo.links.fs> and commented out.
+\
+\ 2015-01-17: Fix: typo in stack comment.
 
 .( fendo.markup.fendo.link.fs compiled ) cr
 

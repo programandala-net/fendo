@@ -4,7 +4,7 @@
 
 \ This file defines the HTML attributes.
 
-\ Copyright (C) 2013 Marcos Cruz (programandala.net)
+\ Copyright (C) 2013,2014 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute
 \ it and/or modify it under the terms of the GNU General
@@ -28,7 +28,7 @@
 \ See at the end of the file.
 
 \ **************************************************************
-\ Todo
+\ TODO
 
 \ 2013-08-10: Alternative to Gforth's strings: FFL's strings.
 
@@ -117,6 +117,14 @@ fendo_definitions
   does>  ( "text<quote>" -- )
     ( dfa ) [char] " parse  rot @ attribute!
   ;
+: :attribute'  ( ca len a -- )
+  \ Create a word that parses and stores an attribute.
+  \ ca len = name of the attribute variable
+  \ a = attribute variable
+  rot rot s" '" s+ :create  ,
+  does>  ( "text<quote>" -- )
+    ( dfa ) [char] ' parse  rot @ attribute!
+  ;
 : ((attribute:))  ( -- )
   \ Compile and init the dynamic string of an attribute.
   [gforth_strings_for_attributes?]
@@ -129,6 +137,17 @@ fendo_definitions
   \ a = attribute variable
   :create   here >r ((attribute:)) r>
   ;
+: :attribute  ( ca len a -- )
+  \ Create the words to manage an attribute.
+  \ ca len = attribute name
+  \ a = attribute variable
+  3dup :attribute"
+  3dup :attribute'
+  3dup :attribute!
+  3dup :attribute?!
+  3dup :attribute+!
+       :attribute@
+  ;
 : attribute:  ( "name" -- a )
   \ Create an attribute variable in the markup vocabulary,
   \ and all words needed to manage it.
@@ -137,12 +156,7 @@ fendo_definitions
   get-current fendo>current
   parse-name? abort" Missing name after 'attribute:'"
   2dup (attribute:) ( ca len a )  dup >r
-  3dup :attribute"
-  3dup :attribute!
-  3dup :attribute?!
-  3dup :attribute+!
-  :attribute@
-  set-current  r>
+  :attribute  set-current  r>
   ;
 
 \ **************************************************************
@@ -153,16 +167,15 @@ depth [if]
   abort
 [then]
 
-link_text_as_attribute? [if]  \ xxx tmp
+link_text_as_attribute? [if]  \ XXX TMP
   attribute: link_text
 [then]
-\ xxx fixme -- the first attribute is not managed by the attributes loops
 
 \ References:
 \   <http://dev.w3.org/html5/markup/>
 \   <http://dev.w3.org/html5/markup/global-attributes.html>
-\ xxx todo complete
-attribute: accesskey= 
+\ XXX TODO complete
+attribute: accesskey=
 attribute: align=
 attribute: alt=
 attribute: autofocus=
@@ -188,6 +201,7 @@ attribute: http-equiv=
 attribute: id=
 attribute: ismap=
 attribute: lang=
+attribute: language=
 attribute: media=
 attribute: name=
 attribute: onabort=
@@ -323,8 +337,8 @@ create attributes  \ table for the attribute variables
   \ ca1 len1 = attribute value
   \ ca2 len2 = attribute label
   \   (it includes the final "=", e.g. "alt=")
-\  2dup ." label<< " type ." >> " cr  \ xxx informer
-\  2over ." value<< " type ." >> " cr  \ xxx informer
+\  2dup ." label<< " type ." >> " cr  \ XXX INFORMER
+\  2over ." value<< " type ." >> " cr  \ XXX INFORMER
   echo_space echo echo_quote echo echo_quote
   ;
 : (+attribute)  ( a ca len -- )
@@ -336,7 +350,7 @@ create attributes  \ table for the attribute variables
 : echo_attribute  ( a -- )
   \ Echo an attribute, if not empty.
   \ a = attribute variable
-\  ." {{{ " dup >name ?dup if  id.  else  ." ?"  then  ." }}}"  \ xxx informer
+\  ." {{{ " dup >name ?dup if  id.  else  ." ?"  then  ." }}}"  \ XXX INFORMER
   dup attribute@ dup if  (+attribute)  else  2drop drop  then
   ;
 : echo_attributes  ( -- )
@@ -454,6 +468,14 @@ create attributes  \ table for the attribute variables
 \ 'attribute!' and used also in 'restore_attributes'.
 \
 \ 2014-11-30: New: ':attribute+!'.
+\
+\ 2014-12-13: New: 'language=' attribute, required by '<script>'.
+\
+\ 2014-12-22: New: "attribute'" is added to support also single quotes
+\ in HTML attributes. 'unraw_attributes' is updated accordingly in
+\ <fendo.markup.fendo.fs>.
+\
+\ 2014-12-22: Change ':attribute' factored from 'attribute:'.
 
 .( fendo.markup.html.attributes.fs compiled) cr
 

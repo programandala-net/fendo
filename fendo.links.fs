@@ -278,6 +278,7 @@ variable local_link_to_draft_page?
   ;
 : echo_link_text  ( -- )
   \ Echo just the link text.
+\  ." At 'echo_link_text'" cr  \ XXX INFORMER
   echo_space  \ XXX FIXME not always required, but how to know?
   evaluate_link_text separate? on
   ;
@@ -310,7 +311,8 @@ defer link_suffix
 : reset_link  ( -- )
   \ Reset the link attributes that are not actual HTML attributes,
   \ and are not reseted by the HTML tags layer.
-  0 link_anchor $!len  s" " link_text!  local_link_to_draft_page? off
+  0 link_anchor $!len  s" " link_text!
+  local_link_to_draft_page? off
   ;
 : echo_link  ( -- )
   \ Echo a link, if possible.

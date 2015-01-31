@@ -102,11 +102,23 @@ variable target_fid  \ file id of the HTML target page
   if  (echo>string)  else  ['] type (echo)  then
   ;
 variable separate?  \ flag: separate the next item from the current one?
+
+false value compact_html?  \ if true, no carriage return is created
+
+\ XXX FIXME 'compact_html? is an experimental config flag for the
+\ user's application. It makes the HTML a bit smaller, but more
+\ difficult to read. The problem is it could ruin the contents in some
+\ cases.
+
+: (echo_cr)  ( -- )
+  \ Do print a carriage return to the HTML file.
+  echo>string?  if    s\" \n" (echo>string)
+                else  ['] cr (echo)
+                then  separate? off
+  ;
 : echo_cr  ( -- )
   \ Print a carriage return to the HTML file.
-  echo>string?
-  if  s\" \n" (echo>string)  else  ['] cr (echo)  then
-  separate? off
+  compact_html? 0= if  (echo_cr)  then
   ;
 ' echo_cr alias \n
 
@@ -186,6 +198,8 @@ variable separate?  \ flag: separate the next item from the current one?
 \
 \ 2014-11-17: Fix: 'save_echo' and 'restore_echo' didn't activate
 \ 'echo_stack'.
+\
+\ 2014-12-13: New: 'compact_html?' flag (experimental).
 
 .( fendo.echo.fs compiled) cr
 

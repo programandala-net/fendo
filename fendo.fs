@@ -4,7 +4,7 @@
 
 \ This file is the main one; it loads all the modules.
 
-\ Copyright (C) 2012,2013,2014 Marcos Cruz (programandala.net)
+\ Copyright (C) 2012,2013,2014,2015 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute it and/or modify it
 \ under the terms of the GNU General Public License as published by
@@ -37,7 +37,7 @@
 \
 \ 2014-02-15: Start of version A-03. All files are renamed.
 \
-\ 2014-04-20: Start of version A-04. Improved, more homogenous, and
+\ 2014-04-20: Start of version A-04. Improved, more homogeneous, and
 \ more regular markup.
 \
 \ 2014-11-08: Start of version A-05. Many fixes and improvements.  The
@@ -268,7 +268,7 @@ fendo_definitions
 \ **************************************************************
 \ Config
 
-s" A-05-20141206" 2constant fendo_version
+s" A-05-20150130" 2constant fendo_version
 s" Fendo (Forth Engine for Net DOcuments) " fendo_version s+ 2constant generator
 
 false constant link_text_as_attribute?  \ xxx tmp -- experimental
@@ -336,4 +336,5 @@ depth [if] abort [then]  \ xxx debugging
 \
 \ 2014-06-15: Change: 'recognize_macros?' is commented out. The
 \ problem was solved with 'evaluate_the_markup?' in <fendo.parser.fs>.
+
 .( fendo.fs compiled) cr

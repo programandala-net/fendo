@@ -25,51 +25,7 @@
 \ **************************************************************
 \ Change history of this file
 
-\ 2013-11-18: Code extracted from <fendo_source_code.fs>.
-\
-\ 2013-12-11: New: '-b' parameter added to 'syntax+', then renamed to
-\ 'parameters+'.
-\
-\ 2014-01-06: New: 'escaped_source_code'.
-\
-\ 2014-01-06: Fix: 'append_source_code_line' now escapes de the code
-\ with 'escaped_source_code'.
-\
-\ 2014-02-06: Fix: 'highlighted' reseted 'programming_language$'
-\ before exiting, what turned off the highlighting of Forth blocks.
-\
-\ 2014-02-07: Fix: now 'append_source_code_line' calls
-\ 'escaped_source_code' only if 'highlight?' is false, because Vim
-\ will do the task while highlighting; if "<" were already converted
-\ to "&lt;", Vim converted it to "&amp;lt;" and the code was ruined.
-\
-\ 2014-02-07: New: 'escaped_source_code' translates "&" too.
-\
-\ 2014-02-28: Change: 'replaced' is adapted to its new version in
-\ Galope
-\
-\ 2014-03-02: Trivial fix.
-\
-\ 2014-03-09: Fix: 'escaped_source_code' converted ampersands, what
-\ ruined the rest of HTML entities in source code blocks.
-\
-\ 2014-03-12: Change: filename and module renamed.
-\
-\ 2014-06-16: Fix: <source_code.vim> renamed to
-\ <fendo.addon.source_code.vim>.
-\
-\ 2014-10-24: Change: 'escaped_source_code' only works if 'highlight?'
-\ is off; otherwise Vim does its own substitutions.
-\
-\ 2014-11-01: Fix: 'escaped_source_code' converted "&" to HTML
-\ notation, what ruined the HTML entities.
-\
-\ 2014-12-07: Change: 'source_code_finished' and related words have
-\ been moved from <fendo.addon.source_code.fs>, in order to use that
-\ word in <fendo.markup.fendo.code.fs>.
-
-\ **************************************************************
-\ Todo
+\ See at the end of the file.
 
 \ **************************************************************
 \ Requirements
@@ -232,5 +188,52 @@ no_source_code_translation
   s" " programming_language!  no_source_code_translation
   ;
 ;module
+
+\ **************************************************************
+\ Change history of this file
+
+\ 2013-11-18: Code extracted from <fendo_source_code.fs>.
+\
+\ 2013-12-11: New: '-b' parameter added to 'syntax+', then renamed to
+\ 'parameters+'.
+\
+\ 2014-01-06: New: 'escaped_source_code'.
+\
+\ 2014-01-06: Fix: 'append_source_code_line' now escapes de the code
+\ with 'escaped_source_code'.
+\
+\ 2014-02-06: Fix: 'highlighted' reseted 'programming_language$'
+\ before exiting, what turned off the highlighting of Forth blocks.
+\
+\ 2014-02-07: Fix: now 'append_source_code_line' calls
+\ 'escaped_source_code' only if 'highlight?' is false, because Vim
+\ will do the task while highlighting; if "<" were already converted
+\ to "&lt;", Vim converted it to "&amp;lt;" and the code was ruined.
+\
+\ 2014-02-07: New: 'escaped_source_code' translates "&" too.
+\
+\ 2014-02-28: Change: 'replaced' is adapted to its new version in
+\ Galope
+\
+\ 2014-03-02: Trivial fix.
+\
+\ 2014-03-09: Fix: 'escaped_source_code' converted ampersands, what
+\ ruined the rest of HTML entities in source code blocks.
+\
+\ 2014-03-12: Change: filename and module renamed.
+\
+\ 2014-06-16: Fix: <source_code.vim> renamed to
+\ <fendo.addon.source_code.vim>.
+\
+\ 2014-10-24: Change: 'escaped_source_code' only works if 'highlight?'
+\ is off; otherwise Vim does its own substitutions.
+\
+\ 2014-11-01: Fix: 'escaped_source_code' converted "&" to HTML
+\ notation, what ruined the HTML entities.
+\
+\ 2014-12-07: Change: 'source_code_finished' and related words have
+\ been moved from <fendo.addon.source_code.fs>, in order to use that
+\ word in <fendo.markup.fendo.code.fs>.
+
 
 .( fendo.addon.source_code.common.fs compiled) cr
