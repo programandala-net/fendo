@@ -4,7 +4,7 @@
 
 \ This file is the source code addon.
 
-\ Copyright (C) 2013,2014 Marcos Cruz (programandala.net)
+\ Copyright (C) 2013,2014,2015 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute it and/or modify it
 \ under the terms of the GNU General Public License as published by
@@ -83,8 +83,12 @@ module: fendo.addon.source_code
   filename s" .sbim" string-suffix? if  s" sbim" exit  then
   filename s" .sdlbas" string-suffix? if  s" sdlbasic" exit  then
   filename s" .seq" string-suffix? if  s" forth" exit  then
+  filename s" .sinclairbas" string-suffix? if  s" sinclairbasic" exit  then
   filename s" .sh" string-suffix? if  s" sh" exit  then
+  filename s" .unexpanded_llist" string-suffix? if  s" sinclairbasic" exit  then
   filename s" .vim" string-suffix? if  s" vim" exit  then
+  filename s" .vimbas" string-suffix? if  s" vimclairbasic" exit  then
+  filename s" .vimclairbas" string-suffix? if  s" vimclairbasic" exit  then
   filename s" .vbas" string-suffix? if  s" vimclairbasic" exit  then
   filename s" .xbas" string-suffix? if  s" x11basic" exit  then
   filename s" .yab" string-suffix? if  s" yabasic" exit  then
@@ -268,5 +272,10 @@ no_source_code_translation
 \
 \ 2014-12-07: Change: removed old useless code about specific-platform
 \ encodings.
+\
+\ 2015-01-30: New: ".sinclairbas" extension for Sinclair BASIC.
+\
+\ 2015-01-31: New: additional extensions: '.vimbas' and 'vimclairbas'
+\ for Vimclair BASIC; '.unexpanded_llist' for Sinclair BASIC.
 
 .( fendo.addon.source_code.fs compiled) cr

@@ -93,9 +93,9 @@ get-current markup>current
 : <area>  ( -- )  s" area" {html  ;
 : </area>  ( -- )  s" area" html}  ;
 : <article>  ( -- )  s" article" {html  ;
-: </article>  ( -- )  echo_cr s" article" html}  ;
+: </article>  ( -- )  \n s" article" html}  ;
 : <aside>  ( -- )  s" aside" {html  ;
-: </aside>  ( -- )  echo_cr s" aside" html}  ;
+: </aside>  ( -- )  \n s" aside" html}  ;
 : <audio>  ( -- )  s" audio" {html  ;
 : </audio>  ( -- )  s" audio" html}  ;
 : <b>  ( -- )  s" b" {html  ;
@@ -106,78 +106,78 @@ get-current markup>current
 : </bdi>  ( -- )  s" bdi" html}  ;
 : <bdo>  ( -- )  s" bdo" {html  ;
 : </bdo>  ( -- )  s" bdo" html}  ;
-: <blockquote>  ( -- )  echo_cr s" blockquote" {html  ;
-: </blockquote>  ( -- )  echo_cr s" blockquote" html}  ;
-: <body>  ( -- )  echo_cr s" body" {html  ;
-: </body>  ( -- )  echo_cr s" body" html}  ;
+: <blockquote>  ( -- )  \n s" blockquote" {html  ;
+: </blockquote>  ( -- )  \n s" blockquote" html}  ;
+: <body>  ( -- )  \n s" body" {html  ;
+: </body>  ( -- )  \n s" body" html}  ;
 : <br/>  ( -- )  s" br" {html}  ;
 : <button>  ( -- )  s" button" {html  ;
 : </button>  ( -- )  s" button" html}  ;
 : <canvas>  ( -- )  s" canvas" {html  ;
 : </canvas>  ( -- )  s" canvas" html}  ;
-: <caption>  ( -- )  echo_cr s" caption" {html  ;
+: <caption>  ( -- )  \n s" caption" {html  ;
 : </caption>  ( -- )  s" caption" html}  ;
 : <cite>  ( -- )  s" cite" {html  ;
 : </cite>  ( -- )  s" cite" html}  ;
 : <code>  ( -- )  s" code" {html  ;
 : </code>  ( -- )  s" code" html}  ;
-: <col>  ( -- )  echo_cr s" col" {html  ;
-: </col>  ( -- )  echo_cr s" col" html}  ;
-: <colgroup>  ( -- )  echo_cr s" colgroup" {html  ;
-: </colgroup>  ( -- )  echo_cr s" colgroup" html}  ;
-: <dd>  ( -- )  echo_cr s" dd" {html  ;
+: <col>  ( -- )  \n s" col" {html  ;
+: </col>  ( -- )  \n s" col" html}  ;
+: <colgroup>  ( -- )  \n s" colgroup" {html  ;
+: </colgroup>  ( -- )  \n s" colgroup" html}  ;
+: <dd>  ( -- )  \n s" dd" {html  ;
 : </dd>  ( -- )  s" dd" html}  ;
 : <del>  ( -- )  s" del" {html  ;
 : </del>  ( -- )  s" del" html}  ;
 : <dfn>  ( -- )  s" dfn" {html  ;
 : </dfn>  ( -- )  s" dfn" html}  ;
-: <div>  ( -- )  echo_cr s" div" {html  ;
-: </div>  ( -- )  echo_cr s" div" html}  ;
-: <dl>  ( -- )  echo_cr s" dl" {html  ;
-: </dl>  ( -- )  echo_cr s" dl" html}  ;
-: <dt>  ( -- )  echo_cr s" dt" {html  ;
+: <div>  ( -- )  \n s" div" {html  ;
+: </div>  ( -- )  \n s" div" html}  ;
+: <dl>  ( -- )  \n s" dl" {html  ;
+: </dl>  ( -- )  \n s" dl" html}  ;
+: <dt>  ( -- )  \n s" dt" {html  ;
 : </dt>  ( -- )  s" dt" html}  ;
 : <em>  ( -- )  s" em" {html  ;
 : </em>  ( -- )  s" em" html}  ;
-: <embed>  ( -- )  echo_cr s" embed" {html  ;
+: <embed>  ( -- )  \n s" embed" {html  ;
 : </embed>  ( -- )  s" embed" html}  ;
 : <figure>  ( -- )  s" figure" {html  ;
 : </figure>  ( -- )  s" figure" html}  ;
 : <figcaption>  ( -- )  s" figcaption" {html  ;
 : </figcaption>  ( -- )  s" figcaption" html}  ;
-: <fieldset>  ( -- )  echo_cr s" fieldset" {html  ;
+: <fieldset>  ( -- )  \n s" fieldset" {html  ;
 : </fieldset>  ( -- )  s" fieldset" html}  ;
-: <form>  ( -- )  echo_cr s" form" {html  ;
+: <form>  ( -- )  \n s" form" {html  ;
 : </form>  ( -- )  s" form" html}  ;
-: <footer>  ( -- )  echo_cr s" footer" {html  ;
-: </footer>  ( -- )  echo_cr s" footer" html}  ;
-: <h1>  ( -- )  echo_cr s" h1" {html  ;
+: <footer>  ( -- )  \n s" footer" {html  ;
+: </footer>  ( -- )  \n s" footer" html}  ;
+: <h1>  ( -- )  \n s" h1" {html  ;
 : </h1>  ( -- )  s" h1" html} \n  ;
-: <h2>  ( -- )  echo_cr s" h2" {html  ;
+: <h2>  ( -- )  \n s" h2" {html  ;
 : </h2>  ( -- )  s" h2" html} \n  ;
-: <h3>  ( -- )  echo_cr s" h3" {html  ;
+: <h3>  ( -- )  \n s" h3" {html  ;
 : </h3>  ( -- )  s" h3" html} \n  ;
-: <h4>  ( -- )  echo_cr s" h4" {html  ;
+: <h4>  ( -- )  \n s" h4" {html  ;
 : </h4>  ( -- )  s" h4" html} \n  ;
-: <h5>  ( -- )  echo_cr s" h5" {html  ;
+: <h5>  ( -- )  \n s" h5" {html  ;
 : </h5>  ( -- )  s" h5" html} \n  ;
-: <h6>  ( -- )  echo_cr s" h6" {html  ;
+: <h6>  ( -- )  \n s" h6" {html  ;
 : </h6>  ( -- )  s" h6" html} \n  ;
-: <head>  ( -- )  echo_cr s" head" {html  ;
-: </head>  ( -- )  echo_cr s" head" html}  ;
-: <header>  ( -- )  echo_cr s" header" {html  ;
-: </header>  ( -- )  echo_cr s" header" html}  ;
-: <hgroup>  ( -- )  echo_cr s" hgroup" {html  ;
-: </hgroup>  ( -- )  echo_cr s" hgroup" html}  ;
-: <hr/>  ( -- )  echo_cr s" hr" {html}  ;
-: <html>  ( -- )  echo_cr s" html" {html  ;
-: </html>  ( -- )  echo_cr s" html" html}  ;
+: <head>  ( -- )  \n s" head" {html  ;
+: </head>  ( -- )  \n s" head" html}  ;
+: <header>  ( -- )  \n s" header" {html  ;
+: </header>  ( -- )  \n s" header" html}  ;
+: <hgroup>  ( -- )  \n s" hgroup" {html  ;
+: </hgroup>  ( -- )  \n s" hgroup" html}  ;
+: <hr/>  ( -- )  \n s" hr" {html}  ;
+: <html>  ( -- )  \n s" html" {html  ;
+: </html>  ( -- )  \n s" html" html}  ;
 : <i>  ( -- )  s" i" {html  ;
 : </i>  ( -- )  s" i" html}  ;
-: <iframe>  ( -- )  echo_cr s" iframe" {html  ;
-: </iframe>  ( -- )  echo_cr s" iframe" html}  ;
+: <iframe>  ( -- )  \n s" iframe" {html  ;
+: </iframe>  ( -- )  \n s" iframe" html}  ;
 : <img/>  ( -- )  s" img" {html}  ;
-: <input>  ( -- )  echo_cr s" input" {html  ;
+: <input>  ( -- )  \n s" input" {html  ;
 : </input>  ( -- )  s" input" html}  ;
 : <ins>  ( -- )  s" ins" {html  ;
 : </ins>  ( -- )  s" ins" html}  ;
@@ -187,30 +187,30 @@ get-current markup>current
 : </label>  ( -- )  s" label" html}  ;
 : <legend>  ( -- )  s" legend" {html  ;
 : </legend>  ( -- )  s" legend" html}  ;
-: <li>  ( -- )  echo_cr s" li" {html  ;
+: <li>  ( -- )  \n s" li" {html  ;
 : </li>  ( -- )  s" li" html}  ;
-: <link/>  ( -- )  echo_cr s" link" {html}  ;
-: <map>  ( -- )  echo_cr s" map" {html  ;
-: </map>  ( -- )  echo_cr s" map" html}  ;
+: <link/>  ( -- )  \n s" link" {html}  ;
+: <map>  ( -- )  \n s" map" {html  ;
+: </map>  ( -- )  \n s" map" html}  ;
 : <mark>  ( -- )  s" mark" {html  ;
 : </mark>  ( -- )  s" mark" html}  ;
-: <meta>  ( -- )  echo_cr s" meta" {html  ;
+: <meta>  ( -- )  \n s" meta" {html  ;
 : </meta>  ( -- )  s" meta" html}  ;
-: <meta/>  ( -- )  echo_cr s" meta" {html}  ;
-: <nav>  ( -- )  echo_cr s" nav" {html  ;
-: </nav>  ( -- )  echo_cr s" nav" html}  ;
-: <noscript>  ( -- )  echo_cr s" noscript" {html  ;
-: </noscript>  ( -- )  echo_cr s" noscript" html}  ;
-: <object>  ( -- )  echo_cr s" object" {html  ;
-: </object>  ( -- )  echo_cr s" object" html}  ;
-: <ol>  ( -- )  echo_cr s" ol" {html  ;
-: </ol>  ( -- )  echo_cr s" ol" html}  ;
-: <p>  ( -- )  echo_cr s" p" {html  ;
-: </p>  ( -- )  echo_cr s" p" html}  ;
-: <param>  ( -- )  echo_cr s" param" {html  ;
+: <meta/>  ( -- )  \n s" meta" {html}  ;
+: <nav>  ( -- )  \n s" nav" {html  ;
+: </nav>  ( -- )  \n s" nav" html}  ;
+: <noscript>  ( -- )  \n s" noscript" {html  ;
+: </noscript>  ( -- )  \n s" noscript" html}  ;
+: <object>  ( -- )  \n s" object" {html  ;
+: </object>  ( -- )  \n s" object" html}  ;
+: <ol>  ( -- )  \n s" ol" {html  ;
+: </ol>  ( -- )  \n s" ol" html}  ;
+: <p>  ( -- )  \n s" p" {html  ;
+: </p>  ( -- )  \n s" p" html}  ;
+: <param>  ( -- )  \n s" param" {html  ;
 : </param>  ( -- )  s" param" html}  ;
-: <pre>  ( -- )  echo_cr s" pre" {html  ;
-: </pre>  ( -- )  echo_cr s" pre" html}  ;
+: <pre>  ( -- )  \n s" pre" {html  ;
+: </pre>  ( -- )  \n s" pre" html}  ;
 : <q>  ( -- )  s" q" {html  ;
 : </q>  ( -- )  s" q" html}  ;
 : <rp>  ( -- )  s" rp" {html  ;
@@ -223,54 +223,54 @@ get-current markup>current
 : </s>  ( -- )  s" s" html}  ;
 : <samp>  ( -- )  s" samp" {html  ;
 : </samp>  ( -- )  s" samp" html}  ;
-: <script>  ( -- )  echo_cr s" script" {html  ;
-: </script>  ( -- )  echo_cr s" script" html}  ;
-: <section>  ( -- )  echo_cr s" section" {html  ;
-: </section>  ( -- )  echo_cr s" section" html}  ;
-: <select>  ( -- )  echo_cr s" select" {html  ;  \ xxx latest tag copied from http://dev.w3.org/html5/markup/elements-by-function.html
+: <script>  ( -- )  \n s" script" {html  ;
+: </script>  ( -- )  \n s" script" html}  ;
+: <section>  ( -- )  \n s" section" {html  ;
+: </section>  ( -- )  \n s" section" html}  ;
+: <select>  ( -- )  \n s" select" {html  ;  \ xxx latest tag copied from http://dev.w3.org/html5/markup/elements-by-function.html
 : </select>  ( -- )  s" select" html}  ;
 : <small>  ( -- )  s" small" {html  ;
 : </small>  ( -- )  s" small" html}  ;
-: <source>  ( -- )  echo_cr s" source" {html  ;
+: <source>  ( -- )  \n s" source" {html  ;
 : </source>  ( -- )  s" source" html}  ;
 : <span>  ( -- )  s" span" {html  ;
 : </span>  ( -- )  s" span" html}  ;
 : <strong>  ( -- )  s" strong" {html  ;
 : </strong>  ( -- )  s" strong" html}  ;
-: <style>  ( -- )  echo_cr s" style" {html  ;
-: </style>  ( -- )  echo_cr s" style" html}  ;
+: <style>  ( -- )  \n s" style" {html  ;
+: </style>  ( -- )  \n s" style" html}  ;
 : <sub>  ( -- )  s" sub" {html  ;
 : </sub>  ( -- )  s" sub" html}  ;
 : <sup>  ( -- )  s" sup" {html  ;
 : </sup>  ( -- )  s" sup" html}  ;
-: <table>  ( -- )  echo_cr s" table" {html table_started? on  ;
-: </table>  ( -- )  echo_cr s" table" html} table_started? off  ;
-: <tbody>  ( -- )  echo_cr s" tbody" {html  ;
-: </tbody>  ( -- )  echo_cr s" tbody" html}  ;
-: <td>  ( -- )  echo_cr s" td" {html  header_cell? off  ;
+: <table>  ( -- )  \n s" table" {html table_started? on  ;
+: </table>  ( -- )  \n s" table" html} table_started? off  ;
+: <tbody>  ( -- )  \n s" tbody" {html  ;
+: </tbody>  ( -- )  \n s" tbody" html}  ;
+: <td>  ( -- )  \n s" td" {html  header_cell? off  ;
 : </td>  ( -- )  s" td" html}  ;
-: <tfoot>  ( -- )  echo_cr s" tfoot" {html  ;
-: </tfoot>  ( -- )  echo_cr s" tfoot" html}  ;
-: <th>  ( -- )  echo_cr s" th" {html  header_cell? on  ;
+: <tfoot>  ( -- )  \n s" tfoot" {html  ;
+: </tfoot>  ( -- )  \n s" tfoot" html}  ;
+: <th>  ( -- )  \n s" th" {html  header_cell? on  ;
 : </th>  ( -- )  s" th" html}  ;
-: <thead>  ( -- )  echo_cr s" thead" {html  ;
-: </thead>  ( -- )  echo_cr s" thead" html}  ;
+: <thead>  ( -- )  \n s" thead" {html  ;
+: </thead>  ( -- )  \n s" thead" html}  ;
 : <time>  ( -- )  s" time" {html  ;
 : </time>  ( -- )  s" time" html}  ;
-: <title>  ( -- )  echo_cr s" title" {html  ;
+: <title>  ( -- )  \n s" title" {html  ;
 : </title>  ( -- )  s" title" html}  ;
-: <tr>  ( -- )  echo_cr s" tr" {html  ;
+: <tr>  ( -- )  \n s" tr" {html  ;
 : </tr>  ( -- )  s" tr" html} ;
 : <track>  ( -- )  s" track" {html  ;
 : </track>  ( -- )  s" track" html}  ;
 : <u>  ( -- )  s" u" {html  ;
 : </u>  ( -- )  s" u" html}  ;
-: <ul>  ( -- )  echo_cr s" ul" {html  ;
-: </ul>  ( -- )  echo_cr s" ul" html}  ;
+: <ul>  ( -- )  \n s" ul" {html  ;
+: </ul>  ( -- )  \n s" ul" html}  ;
 : <var>  ( -- )  s" var" {html  ;
 : </var>  ( -- )  s" var" html}  ;
-: <video>  ( -- )  echo_cr s" video" {html  ;
-: </video>  ( -- )  echo_cr s" video" html}  ;
+: <video>  ( -- )  \n s" video" {html  ;
+: </video>  ( -- )  \n s" video" html}  ;
 : <!--  ( -- )  s" <!--" echo  ;  \ xxx todo parse the comment, don't evaulate the markups
 : -->  ( -- )  s" -->" echo  ;
 
@@ -290,66 +290,202 @@ set-current
 \ '[markup>order]' and '[markup<order]' are required).
 
 markup>order
-: [<a>]  ( -- )  postpone <a>  ;  immediate
+: [-->]  ( -- )  postpone -->  ;  immediate
+: [<!--]  ( -- )  postpone <!--  ;  immediate
 : [</a>]  ( -- )  postpone </a>  ;  immediate
-: [<abbr>]  ( -- )  postpone <abbr>  ;  immediate
 : [</abbr>]  ( -- )  postpone </abbr>  ;  immediate
-: [<blockquote>]  ( -- )  postpone <blockquote>  ;  immediate
+: [</address>]  ( -- )  postpone </address>  ;  immediate
+: [</area>]  ( -- )  postpone </area>  ;  immediate
+: [</article>]  ( -- )  postpone </article>  ;  immediate
+: [</aside>]  ( -- )  postpone </aside>  ;  immediate
+: [</audio>]  ( -- )  postpone </audio>  ;  immediate
+: [</b>]  ( -- )  postpone </b>  ;  immediate
+: [</base>]  ( -- )  postpone </base>  ;  immediate
+: [</bdi>]  ( -- )  postpone </bdi>  ;  immediate
+: [</bdo>]  ( -- )  postpone </bdo>  ;  immediate
 : [</blockquote>]  ( -- )  postpone </blockquote>  ;  immediate
-: [<br/>]  ( -- )  postpone <br/>  ;  immediate
-: [<caption>]  ( -- )  postpone <caption>  ;  immediate
-: [<code>]  ( -- )  postpone <code>  ;  immediate
+: [</body>]  ( -- )  postpone </body>  ;  immediate
+: [</button>]  ( -- )  postpone </button>  ;  immediate
+: [</canvas>]  ( -- )  postpone </canvas>  ;  immediate
+: [</caption>]  ( -- )  postpone </caption>  ;  immediate
+: [</cite>]  ( -- )  postpone </cite>  ;  immediate
 : [</code>]  ( -- )  postpone </code>  ;  immediate
-: [<dd>]  ( -- )  postpone <dd>  ;  immediate
+: [</col>]  ( -- )  postpone </col>  ;  immediate
+: [</colgroup>]  ( -- )  postpone </colgroup>  ;  immediate
 : [</dd>]  ( -- )  postpone </dd>  ;  immediate
-: [<div>]  ( -- )  postpone <div>  ;  immediate
+: [</del>]  ( -- )  postpone </del>  ;  immediate
+: [</dfn>]  ( -- )  postpone </dfn>  ;  immediate
 : [</div>]  ( -- )  postpone </div>  ;  immediate
-: [<dl>]  ( -- )  postpone <dl>  ;  immediate
 : [</dl>]  ( -- )  postpone </dl>  ;  immediate
-: [<dt>]  ( -- )  postpone <dt>  ;  immediate
 : [</dt>]  ( -- )  postpone </dt>  ;  immediate
-: [<h1>]  ( -- )  postpone <h1>  ;  immediate
+: [</em>]  ( -- )  postpone </em>  ;  immediate
+: [</embed>]  ( -- )  postpone </embed>  ;  immediate
+: [</fieldset>]  ( -- )  postpone </fieldset>  ;  immediate
+: [</figcaption>]  ( -- )  postpone </figcaption>  ;  immediate
+: [</figure>]  ( -- )  postpone </figure>  ;  immediate
+: [</footer>]  ( -- )  postpone </footer>  ;  immediate
+: [</form>]  ( -- )  postpone </form>  ;  immediate
 : [</h1>]  ( -- )  postpone </h1>  ;  immediate
-: [<h2>]  ( -- )  postpone <h2>  ;  immediate
 : [</h2>]  ( -- )  postpone </h2>  ;  immediate
-: [<h3>]  ( -- )  postpone <h3>  ;  immediate
 : [</h3>]  ( -- )  postpone </h3>  ;  immediate
-: [<h4>]  ( -- )  postpone <h4>  ;  immediate
 : [</h4>]  ( -- )  postpone </h4>  ;  immediate
-: [<h5>]  ( -- )  postpone <h5>  ;  immediate
 : [</h5>]  ( -- )  postpone </h5>  ;  immediate
-: [<h6>]  ( -- )  postpone <h6>  ;  immediate
 : [</h6>]  ( -- )  postpone </h6>  ;  immediate
-: [<hr/>]  ( -- )  postpone <hr/>  ;  immediate
-: [<img>]  ( -- )  postpone <img>  ;  immediate
-: [<li>]  ( -- )  postpone <li>  ;  immediate
+: [</head>]  ( -- )  postpone </head>  ;  immediate
+: [</header>]  ( -- )  postpone </header>  ;  immediate
+: [</hgroup>]  ( -- )  postpone </hgroup>  ;  immediate
+: [</html>]  ( -- )  postpone </html>  ;  immediate
+: [</i>]  ( -- )  postpone </i>  ;  immediate
+: [</iframe>]  ( -- )  postpone </iframe>  ;  immediate
+: [</input>]  ( -- )  postpone </input>  ;  immediate
+: [</ins>]  ( -- )  postpone </ins>  ;  immediate
+: [</kbd>]  ( -- )  postpone </kbd>  ;  immediate
+: [</label>]  ( -- )  postpone </label>  ;  immediate
+: [</legend>]  ( -- )  postpone </legend>  ;  immediate
 : [</li>]  ( -- )  postpone </li>  ;  immediate
-: [<link/>]  ( -- )  postpone <link/>  ;  immediate
-: [<ol>]  ( -- )  postpone <ol>  ;  immediate
+: [</map>]  ( -- )  postpone </map>  ;  immediate
+: [</mark>]  ( -- )  postpone </mark>  ;  immediate
+: [</meta>]  ( -- )  postpone </meta>  ;  immediate
+: [</nav>]  ( -- )  postpone </nav>  ;  immediate
+: [</noscript>]  ( -- )  postpone </noscript>  ;  immediate
+: [</object>]  ( -- )  postpone </object>  ;  immediate
 : [</ol>]  ( -- )  postpone </ol>  ;  immediate
-: [<p>]  ( -- )  postpone <p>  ;  immediate
 : [</p>]  ( -- )  postpone </p>  ;  immediate
-: [<pre>]  ( -- )  postpone <pre>  ;  immediate
+: [</param>]  ( -- )  postpone </param>  ;  immediate
 : [</pre>]  ( -- )  postpone </pre>  ;  immediate
-: [<q>]  ( -- )  postpone <q>  ;  immediate
 : [</q>]  ( -- )  postpone </q>  ;  immediate
-: [<span>]  ( -- )  postpone <span>  ;  immediate
+: [</rp>]  ( -- )  postpone </rp>  ;  immediate
+: [</rt>]  ( -- )  postpone </rt>  ;  immediate
+: [</ruby>]  ( -- )  postpone </ruby>  ;  immediate
+: [</s>]  ( -- )  postpone </s>  ;  immediate
+: [</samp>]  ( -- )  postpone </samp>  ;  immediate
+: [</script>]  ( -- )  postpone </script>  ;  immediate
+: [</section>]  ( -- )  postpone </section>  ;  immediate
+: [</select>]  ( -- )  postpone </select>  ;  immediate
+: [</small>]  ( -- )  postpone </small>  ;  immediate
+: [</source>]  ( -- )  postpone </source>  ;  immediate
 : [</span>]  ( -- )  postpone </span>  ;  immediate
-: [<strong>]  ( -- )  postpone <strong>  ;  immediate
 : [</strong>]  ( -- )  postpone </strong>  ;  immediate
-: [<table>]  ( -- )  postpone <table>  ;  immediate
+: [</style>]  ( -- )  postpone </style>  ;  immediate
+: [</sub>]  ( -- )  postpone </sub>  ;  immediate
+: [</sup>]  ( -- )  postpone </sup>  ;  immediate
+: [</table>]  ( -- )  postpone </table>  ;  immediate
+: [</tbody>]  ( -- )  postpone </tbody>  ;  immediate
 : [</td>]  ( -- )  postpone </td>  ;  immediate
+: [</tfoot>]  ( -- )  postpone </tfoot>  ;  immediate
 : [</th>]  ( -- )  postpone </th>  ;  immediate
-: [<title>]  ( -- )  postpone <title>  ;  immediate
+: [</thead>]  ( -- )  postpone </thead>  ;  immediate
+: [</time>]  ( -- )  postpone </time>  ;  immediate
 : [</title>]  ( -- )  postpone </title>  ;  immediate
-: [<tr>]  ( -- )  postpone <tr>  ;  immediate
 : [</tr>]  ( -- )  postpone </tr>  ;  immediate
-: [<ul>]  ( -- )  postpone <ul>  ;  immediate
+: [</track>]  ( -- )  postpone </track>  ;  immediate
+: [</u>]  ( -- )  postpone </u>  ;  immediate
 : [</ul>]  ( -- )  postpone </ul>  ;  immediate
+: [</var>]  ( -- )  postpone </var>  ;  immediate
+: [</video>]  ( -- )  postpone </video>  ;  immediate
+: [<a>]  ( -- )  postpone <a>  ;  immediate
+: [<abbr>]  ( -- )  postpone <abbr>  ;  immediate
+: [<address>]  ( -- )  postpone <address>  ;  immediate
+: [<area>]  ( -- )  postpone <area>  ;  immediate
+: [<article>]  ( -- )  postpone <article>  ;  immediate
+: [<aside>]  ( -- )  postpone <aside>  ;  immediate
+: [<audio>]  ( -- )  postpone <audio>  ;  immediate
+: [<b>]  ( -- )  postpone <b>  ;  immediate
+: [<base>]  ( -- )  postpone <base>  ;  immediate
+: [<bdi>]  ( -- )  postpone <bdi>  ;  immediate
+: [<bdo>]  ( -- )  postpone <bdo>  ;  immediate
+: [<blockquote>]  ( -- )  postpone <blockquote>  ;  immediate
+: [<body>]  ( -- )  postpone <body>  ;  immediate
+: [<br/>]  ( -- )  postpone <br/>  ;  immediate
+: [<br>]  ( -- )  postpone <br>  ;  immediate
+: [<button>]  ( -- )  postpone <button>  ;  immediate
+: [<canvas>]  ( -- )  postpone <canvas>  ;  immediate
+: [<caption>]  ( -- )  postpone <caption>  ;  immediate
+: [<cite>]  ( -- )  postpone <cite>  ;  immediate
+: [<code>]  ( -- )  postpone <code>  ;  immediate
+: [<col>]  ( -- )  postpone <col>  ;  immediate
+: [<colgroup>]  ( -- )  postpone <colgroup>  ;  immediate
+: [<dd>]  ( -- )  postpone <dd>  ;  immediate
+: [<del>]  ( -- )  postpone <del>  ;  immediate
+: [<dfn>]  ( -- )  postpone <dfn>  ;  immediate
+: [<div>]  ( -- )  postpone <div>  ;  immediate
+: [<dl>]  ( -- )  postpone <dl>  ;  immediate
+: [<dt>]  ( -- )  postpone <dt>  ;  immediate
+: [<em>]  ( -- )  postpone <em>  ;  immediate
+: [<embed>]  ( -- )  postpone <embed>  ;  immediate
+: [<fieldset>]  ( -- )  postpone <fieldset>  ;  immediate
+: [<figcaption>]  ( -- )  postpone <figcaption>  ;  immediate
+: [<figure>]  ( -- )  postpone <figure>  ;  immediate
+: [<footer>]  ( -- )  postpone <footer>  ;  immediate
+: [<form>]  ( -- )  postpone <form>  ;  immediate
+: [<h1>]  ( -- )  postpone <h1>  ;  immediate
+: [<h2>]  ( -- )  postpone <h2>  ;  immediate
+: [<h3>]  ( -- )  postpone <h3>  ;  immediate
+: [<h4>]  ( -- )  postpone <h4>  ;  immediate
+: [<h5>]  ( -- )  postpone <h5>  ;  immediate
+: [<h6>]  ( -- )  postpone <h6>  ;  immediate
+: [<head>]  ( -- )  postpone <head>  ;  immediate
+: [<header>]  ( -- )  postpone <header>  ;  immediate
+: [<hgroup>]  ( -- )  postpone <hgroup>  ;  immediate
+: [<hr/>]  ( -- )  postpone <hr/>  ;  immediate
+: [<hr>]  ( -- )  postpone <hr>  ;  immediate
+: [<html>]  ( -- )  postpone <html>  ;  immediate
+: [<i>]  ( -- )  postpone <i>  ;  immediate
+: [<iframe>]  ( -- )  postpone <iframe>  ;  immediate
+: [<img/>]  ( -- )  postpone <img/>  ;  immediate
+: [<img>]  ( -- )  postpone <img>  ;  immediate
+: [<input>]  ( -- )  postpone <input>  ;  immediate
+: [<ins>]  ( -- )  postpone <ins>  ;  immediate
+: [<kbd>]  ( -- )  postpone <kbd>  ;  immediate
+: [<label>]  ( -- )  postpone <label>  ;  immediate
+: [<legend>]  ( -- )  postpone <legend>  ;  immediate
+: [<li>]  ( -- )  postpone <li>  ;  immediate
+: [<link/>]  ( -- )  postpone <link/>  ;  immediate
+: [<map>]  ( -- )  postpone <map>  ;  immediate
+: [<mark>]  ( -- )  postpone <mark>  ;  immediate
+: [<meta/>]  ( -- )  postpone <meta/>  ;  immediate
+: [<meta>]  ( -- )  postpone <meta>  ;  immediate
+: [<nav>]  ( -- )  postpone <nav>  ;  immediate
+: [<noscript>]  ( -- )  postpone <noscript>  ;  immediate
+: [<object>]  ( -- )  postpone <object>  ;  immediate
+: [<ol>]  ( -- )  postpone <ol>  ;  immediate
+: [<p>]  ( -- )  postpone <p>  ;  immediate
+: [<param>]  ( -- )  postpone <param>  ;  immediate
+: [<pre>]  ( -- )  postpone <pre>  ;  immediate
+: [<q>]  ( -- )  postpone <q>  ;  immediate
+: [<rp>]  ( -- )  postpone <rp>  ;  immediate
+: [<rt>]  ( -- )  postpone <rt>  ;  immediate
+: [<ruby>]  ( -- )  postpone <ruby>  ;  immediate
+: [<s>]  ( -- )  postpone <s>  ;  immediate
+: [<samp>]  ( -- )  postpone <samp>  ;  immediate
+: [<script>]  ( -- )  postpone <script>  ;  immediate
+: [<section>]  ( -- )  postpone <section>  ;  immediate
+: [<select>]  ( -- )  postpone <select>  ;  immediate
+: [<small>]  ( -- )  postpone <small>  ;  immediate
+: [<source>]  ( -- )  postpone <source>  ;  immediate
+: [<span>]  ( -- )  postpone <span>  ;  immediate
+: [<strong>]  ( -- )  postpone <strong>  ;  immediate
+: [<style>]  ( -- )  postpone <style>  ;  immediate
+: [<sub>]  ( -- )  postpone <sub>  ;  immediate
+: [<sup>]  ( -- )  postpone <sup>  ;  immediate
+: [<table>]  ( -- )  postpone <table>  ;  immediate
+: [<tbody>]  ( -- )  postpone <tbody>  ;  immediate
+: [<td>]  ( -- )  postpone <td>  ;  immediate
+: [<tfoot>]  ( -- )  postpone <tfoot>  ;  immediate
+: [<th>]  ( -- )  postpone <th>  ;  immediate
+: [<thead>]  ( -- )  postpone <thead>  ;  immediate
+: [<time>]  ( -- )  postpone <time>  ;  immediate
+: [<title>]  ( -- )  postpone <title>  ;  immediate
+: [<tr>]  ( -- )  postpone <tr>  ;  immediate
+: [<track>]  ( -- )  postpone <track>  ;  immediate
+: [<u>]  ( -- )  postpone <u>  ;  immediate
+: [<ul>]  ( -- )  postpone <ul>  ;  immediate
+: [<var>]  ( -- )  postpone <var>  ;  immediate
+: [<video>]  ( -- )  postpone <video>  ;  immediate
 markup<order
 
 \ **************************************************************
-\ Tag shortcuts used by the wiki markup and some addons
+\ Tag shortcuts used by the Fendo markup and some addons
 
 : block_source_code{  ( -- )
   [<pre>] [<code>]
@@ -407,5 +543,8 @@ markup<order
 \
 \ 2014-11-18: Fix: 'separate? on' is added again at the end of
 \ 'html}'.
+\
+\ 2014-12-13: New: All missing immediate versions of the HTML tags.
+\ Now the list is complete.
 
 .( fendo.markup.html.tags.fs compiled) cr

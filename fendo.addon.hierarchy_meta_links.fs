@@ -4,7 +4,7 @@
 
 \ This file is the hierarchy meta links addon.
 
-\ Copyright (C) 2013 Marcos Cruz (programandala.net)
+\ Copyright (C) 2013,2014,2015 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute
 \ it and/or modify it under the terms of the GNU General
@@ -45,8 +45,25 @@
 \
 \ 2014-11-08: Fix: second '2drop' was missing in
 \ 'hierarchy_meta_link'.
+\
+\ 2015-01-17: New: 'proper_hierarchical_link?'.
+\
+\ 2015-01-17: Fix: 'hierarchy_meta_link' uses the new
+\ 'proper_hierarchical_link?' and does not create links to local draft
+\ pages anymore.
 
 \ **************************************************************
+
+: proper_hierarchical_link?  ( ca1 len1 -- ca' len' wf )
+  \ This check is required in order to bypass the default behaviour of
+  \ links: a link to a draft local page simply prints the link text,
+  \ but that is not convenient for the hierarchy meta links.  This
+  \ check can be used also by the application, as part of the user's
+  \ hierarchy navigation bar.
+  \ ca1 len1 = page id
+  \ ca1' len1' = unshortcut page id
+  unshortcut dup if  2dup pid$>data>pid# draft? 0=  else  false  then
+  ;
 
 : (hierarchy_meta_link)  ( ca1 len1 ca2 len2 -- )
   \ Create a hierarchy meta link in the HTML header.
@@ -69,7 +86,7 @@
   \ ca1 len1 = rel
   \ ca2 len2 = page id
 \   ." Parameter in 'hierarchy_meta_link' = " 2dup type cr  \ xxx informer
-  unshortcut dup if  2swap (hierarchy_meta_link)  else  2drop 2drop  then
+  proper_hierarchical_link? if  2swap (hierarchy_meta_link)  else  2drop 2drop  then
   ;
 : hierarchy_meta_links  ( -- )
   \ Create the required hierarchy meta links in the HTML header.

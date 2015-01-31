@@ -4,7 +4,7 @@
 
 \ This file defines the page data tools.
 
-\ Copyright (C) 2013,2014 Marcos Cruz (programandala.net)
+\ Copyright (C) 2013,2014,2015 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute
 \ it and/or modify it under the terms of the GNU General
@@ -115,9 +115,10 @@ datum: title  \ page title; can include markups
 datum: description  \ page description; can include markups?
 
 \ Dates in ISO format:
-datum: created  \ creation date
-datum: modified  \ modification date
+datum: created  \ content creation (publication) date
+datum: modified  \ content modification date
 ' modified alias modifed
+datum: file_modified  \ file modification date; if not specified, 'modified' is used
 
 datum: access_key  \ access key (one char)
 
@@ -507,6 +508,14 @@ do_content? on
 \ **************************************************************
 \ Calculated data
 
+: file_mtime  ( a -- ca len )
+  \ ISO time string used to set the mtime (modification time) of the
+  \ target files. The 'file_modified' datum is the first choice,
+  \ then 'modified'.
+  dup file_modified dup
+  if  rot drop  else  2drop modified  then
+  ;
+
 : description|title  ( pid -- ca len )
   \ Description or (if it's empty) title of the given page id.
   \ This is used as link title when no one has been specified.
@@ -524,10 +533,17 @@ do_content? on
     property str= result or to result
   loop  result
   ;
+
+\ 'ignore_draft_property?' is a flag for the application
+\ that does what its name suggets:
+\ When it's true, the "draft" status will be ignored,
+\ so draft pages will be built as definitive pages.
+false value ignore_draft_property?
+
 : draft?  ( a -- wf )
   \ a = page id (address of its data)
   \ wf = is "draft" in the properties field?
-  s" draft" rot property?
+  s" draft" rot property?  ignore_draft_property? 0= and
   ;
 
 : pid$>hierarchy ( ca len -- u )
@@ -754,7 +770,10 @@ do_content? on
 \ useless 'trim' is removed from 'property?'.
 \
 \ 2014-12-06: New: calcutated datum 'description|title'.
-
-.( fendo.links.fs ) cr
+\
+\ 2015-01-14: New: 'file_modified' datum and 'file_mtime' calculated
+\ datum.
+\
+\ 2015-01-30: New: 'ignore_draft_property?'.
 
 .( fendo.data.fs compiled) cr
