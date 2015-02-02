@@ -37,9 +37,8 @@
 \ works, but something strange happened in certain cases. It seems a
 \ strange bug in uncodepaged (the details are in the code).
 \
-\ 2015-01-31: New: additional modified versions of the wors, required
-\ for unexpanded llistings (created by ZX Spectrum +3 with 'FORMAT
-\ LPRINT "U":LLIST').
+\ 2015-01-31: New: new words for unexpanded llistings (created by ZX
+\ Spectrum +3 with 'FORMAT LPRINT "U":LLIST').
 
 \ **************************************************************
 
@@ -417,7 +416,7 @@ uncodepage: zx_spectrum_charset_for_unexpanded_llist_without_highlighting
   200 s" &gt;="
   201 s" &lt;&gt;"
   202 s"  LINE "
-  203 s"  THEN "
+  203 s"  THEN"
   204 s"  TO "
   205 s"  STEP "
   206 s"  DEF FN "
@@ -470,13 +469,105 @@ uncodepage: zx_spectrum_charset_for_unexpanded_llist_without_highlighting
   253 s"  CLEAR "
   254 s"  RETURN "
   255 s"  COPY "
+
 ;uncodepage
 
 uncodepage: zx_spectrum_charset_for_unexpanded_llist_before_highlighting
 
-  013 s\" \n"   \ end of line: CR -> LF
+\  013 s\" \n"   \ end of line: CR -> LF
   096 s" £"     \ British pound sterling
   127 s" ©"     \ copyright
+  165 s"  RND "
+  166 s"  INKEY$ "
+  167 s"  PI "
+  168 s"  FN "
+  169 s"  POINT "
+  170 s"  SCREEN$ "
+  171 s"  ATTR "
+  172 s"  AT "
+  173 s"  TAB "
+  174 s"  VAL$ "
+  175 s"  CODE "
+  176 s"  VAL "
+  177 s"  LEN "
+  178 s"  SIN "
+  179 s"  COS "
+  180 s"  TAN "
+  181 s"  ASN "
+  182 s"  ACS "
+  183 s"  ATN "
+  184 s"  LN "
+  185 s"  EXP "
+  186 s"  INT "
+  187 s"  SQR "
+  188 s"  SGN "
+  189 s"  ABS "
+  190 s"  PEEK "
+  191 s"  IN "
+  192 s"  USR "
+  193 s"  STR$ "
+  194 s"  CHR$ "
+  195 s"  NOT "
+  196 s"  BIN "
+  197 s"  OR "
+  198 s"  AND "
+  199 s" <"
+  200 s" >"
+  201 s" <>"
+  202 s"  LINE "
+  203 s"  THEN"
+  204 s"  TO "
+  205 s"  STEP "
+  206 s"  DEF FN "
+  207 s"  CAT "
+  208 s"  FORMAT "
+  209 s"  MOVE "
+  210 s"  ERASE "
+  211 s"  OPEN # "
+  212 s"  CLOSE # "
+  213 s"  MERGE "
+  214 s"  VERIFY "
+  215 s"  BEEP "
+  216 s"  CIRCLE "
+  217 s"  INK "
+  218 s"  PAPER "
+  219 s"  FLASH "
+  220 s"  BRIGHT "
+  221 s"  INVERSE "
+  222 s"  OVER "
+  223 s"  OUT "
+  224 s"  LPRINT "
+  225 s"  LLIST "
+  226 s"  STOP "
+  227 s"  READ "
+  228 s"  DATA "
+  229 s"  RESTORE "
+  230 s"  NEW "
+  231 s"  BORDER "
+  232 s"  CONTINUE "
+  233 s"  DIM "
+  234 s"  REM "
+  235 s"  FOR "
+  236 s"  GO TO "
+  237 s"  GO SUB "
+  238 s"  INPUT "
+  239 s"  LOAD "
+  240 s"  LIST "
+  241 s"  LET "
+  242 s"  PAUSE "
+  243 s"  NEXT "
+  244 s"  POKE "
+  245 s"  PRINT "
+  246 s"  PLOT "
+  247 s"  RUN "
+  248 s"  SAVE "
+  249 s"  RANDOMIZE "
+  250 s"  IF "
+  251 s"  CLS "
+  252 s"  DRAW "
+  253 s"  CLEAR "
+  254 s"  RETURN "
+  255 s"  COPY "
  
 ;uncodepage
 
@@ -519,97 +610,6 @@ translations: zx_spectrum_charset_for_unexpanded_llist_after_highlighting
   s" &lt;a2&gt;" s" <span class='ZXSpectrumUDG'>S</span>"
   s" &lt;a3&gt;" s" <span class='ZXSpectrumUDG'>T</span>"
   s" &lt;a4&gt;" s" <span class='ZXSpectrumUDG'>U</span>"
-  s" &lt;a5&gt;" s"  RND "
-  s" &lt;a6&gt;" s"  INKEY$ "
-  s" &lt;a7&gt;" s"  PI "
-  s" &lt;a8&gt;" s"  FN "
-  s" &lt;a9&gt;" s"  POINT "
-  s" &lt;aa&gt;" s"  SCREEN$ "
-  s" &lt;ab&gt;" s"  ATTR "
-  s" &lt;ac&gt;" s"  AT "
-  s" &lt;ad&gt;" s"  TAB "
-  s" &lt;ae&gt;" s"  VAL$ "
-  s" &lt;af&gt;" s"  CODE "
-  s" &lt;b0&gt;" s"  VAL "
-  s" &lt;b1&gt;" s"  LEN "
-  s" &lt;b2&gt;" s"  SIN "
-  s" &lt;b3&gt;" s"  COS "
-  s" &lt;b4&gt;" s"  TAN "
-  s" &lt;b5&gt;" s"  ASN "
-  s" &lt;b6&gt;" s"  ACS "
-  s" &lt;b7&gt;" s"  ATN "
-  s" &lt;b8&gt;" s"  LN "
-  s" &lt;b9&gt;" s"  EXP "
-  s" &lt;ba&gt;" s"  INT "
-  s" &lt;bb&gt;" s"  SQR "
-  s" &lt;bc&gt;" s"  SGN "
-  s" &lt;bd&gt;" s"  ABS "
-  s" &lt;be&gt;" s"  PEEK "
-  s" &lt;bf&gt;" s"  IN "
-  s" &lt;c0&gt;" s"  USR "
-  s" &lt;c1&gt;" s"  STR$ "
-  s" &lt;c2&gt;" s"  CHR$ "
-  s" &lt;c3&gt;" s"  NOT "
-  s" &lt;c4&gt;" s"  BIN "
-  s" &lt;c5&gt;" s"  OR "
-  s" &lt;c6&gt;" s"  AND "
-  s" &lt;c7&gt;" s" &lt;="
-  s" &lt;c8&gt;" s" &gt;="
-  s" &lt;c9&gt;" s" &lt;&gt;"
-  s" &lt;ca&gt;" s"  LINE "
-  s" &lt;cb&gt;" s"  THEN "
-  s" &lt;cc&gt;" s"  TO "
-  s" &lt;cd&gt;" s"  STEP "
-  s" &lt;ce&gt;" s"  DEF FN "
-  s" &lt;cf&gt;" s"  CAT "
-  s" &lt;d0&gt;" s"  FORMAT "
-  s" &lt;d1&gt;" s"  MOVE "
-  s" &lt;d2&gt;" s"  ERASE "
-  s" &lt;d3&gt;" s"  OPEN # "
-  s" &lt;d4&gt;" s"  CLOSE # "
-  s" &lt;d5&gt;" s"  MERGE "
-  s" &lt;d6&gt;" s"  VERIFY "
-  s" &lt;d7&gt;" s"  BEEP "
-  s" &lt;d8&gt;" s"  CIRCLE "
-  s" &lt;d9&gt;" s"  INK "
-  s" &lt;da&gt;" s"  PAPER "
-  s" &lt;db&gt;" s"  FLASH "
-  s" &lt;dc&gt;" s"  BRIGHT "
-  s" &lt;dd&gt;" s"  INVERSE "
-  s" &lt;de&gt;" s"  OVER "
-  s" &lt;df&gt;" s"  OUT "
-  s" &lt;e0&gt;" s"  LPRINT "
-  s" &lt;e1&gt;" s"  LLIST "
-  s" &lt;e2&gt;" s"  STOP "
-  s" &lt;e3&gt;" s"  READ "
-  s" &lt;e4&gt;" s"  DATA "
-  s" &lt;e5&gt;" s"  RESTORE "
-  s" &lt;e6&gt;" s"  NEW "
-  s" &lt;e7&gt;" s"  BORDER "
-  s" &lt;e8&gt;" s"  CONTINUE "
-  s" &lt;e9&gt;" s"  DIM "
-  s" &lt;ea&gt;" s"  REM "
-  s" &lt;eb&gt;" s"  FOR "
-  s" &lt;ec&gt;" s"  GO TO "
-  s" &lt;ed&gt;" s"  GO SUB "
-  s" &lt;ee&gt;" s"  INPUT "
-  s" &lt;ef&gt;" s"  LOAD "
-  s" &lt;f0&gt;" s"  LIST "
-  s" &lt;f1&gt;" s"  LET "
-  s" &lt;f2&gt;" s"  PAUSE "
-  s" &lt;f3&gt;" s"  NEXT "
-  s" &lt;f4&gt;" s"  POKE "
-  s" &lt;f5&gt;" s"  PRINT "
-  s" &lt;f6&gt;" s"  PLOT "
-  s" &lt;f7&gt;" s"  RUN "
-  s" &lt;f8&gt;" s"  SAVE "
-  s" &lt;f9&gt;" s"  RANDOMIZE "
-  s" &lt;fa&gt;" s"  IF "
-  s" &lt;fb&gt;" s"  CLS "
-  s" &lt;fc&gt;" s"  DRAW "
-  s" &lt;fd&gt;" s"  CLEAR "
-  s" &lt;fe&gt;" s"  RETURN "
-  s" &lt;ff&gt;" s"  COPY "
 
 ;translations
 
@@ -657,7 +657,7 @@ translations: zx_spectrum_charset_for_unexpanded_llist_after_highlighting
   \ Convert the content of a ZX Spectrum +3
   \ unexpanded llist file to UTF-8,
   \ before the syntax highlighting.
-  zx_spectrum_charset_below_128 uncodepaged
+  zx_spectrum_charset_for_unexpanded_llist_before_highlighting uncodepaged
   ;
 : zx_spectrum_unexpanded_llist_translated_after_highlighting  ( ca len -- ca' len' )
   \ Convert the content of a ZX Spectrum +3
@@ -672,7 +672,8 @@ translations: zx_spectrum_charset_for_unexpanded_llist_after_highlighting
   ;
 
 : set_zx_spectrum_unexpanded_llist_translation  ( -- )
-  \ Set the proper translation for ZX Spectrum source code files.
+  \ Set the proper translation for ZX Spectrum unexpanded llist files,
+  \ created by ZX Spectrum +3 this way: 'FORMAT LPRINT "U":LLIST".
   highlight? if
     ['] zx_spectrum_unexpanded_llist_translated_before_highlighting
     is source_code_pretranslated

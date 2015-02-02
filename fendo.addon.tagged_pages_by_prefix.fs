@@ -4,7 +4,7 @@
 
 \ This file provides lists of tagged pages.
 
-\ Copyright (C) 2014 Marcos Cruz (programandala.net)
+\ Copyright (C) 2014,2015 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute it and/or modify it
 \ under the terms of the GNU General Public License as published by
@@ -27,6 +27,8 @@
 
 \ 2014-03-07: Start.
 \ 2014-03-12: Improvement: '((tagged_pages_by_prefix))' rearranged, faster.
+\ 2015-02-01: Fix: Now '((tagged_pages_by_prefix))' ignores empty
+\ strings.
 
 \ **************************************************************
 \ Requirements
@@ -49,22 +51,36 @@ variable prefix$
 : flags>or  ( f1 ... fn n -- f )
   1- 0 ?do  or  loop
   ;
+
 : ((tagged_pages_by_prefix))  { D: pid -- }
+
   \ Create a description list of content
   \ if the given pid starts with the current prefix.
+
 \  ." Parameter in '((tagged_pages_by_prefix))' = " pid type cr  \ XXX INFORMER
+
+  \ Do nothing if length is 0.
+  \ XXX FIXME 
+  \ This check seems to be needed, because temporary shortcuts created by the
+  \ application could return an empty string, what would make 'pid$>data>pid#' crash.
+  \ But it's not clear yet.
+\  pid nip 0= ?exit
+
   pid prefix$ $@ string-prefix? 0= ?exit
   pid pid$>data>pid#
 \  ." pid# = " dup . cr  \ XXX INFORMER
-  dup draft?
-  if    drop
-  else  tags
-\        ." 'tags' in '((tagged_pages_by_prefix))' = " 2dup type cr  \ XXX INFORMER
-        evaluate_tags tag_presence @
-\        ." 'tag_presence' in '((tagged_pages_by_prefix))' = " dup . cr  \ XXX INFORMER
-        if  pid dtddoc  tag_presence off  then
-  then
+  
+  \ Do nothing if it's a draft page.
+  dup draft?  if  drop exit  then
+
+  tags
+\  ." 'tags' in '((tagged_pages_by_prefix))' = " 2dup type cr  \ XXX INFORMER
+  evaluate_tags tag_presence @
+\  ." 'tag_presence' in '((tagged_pages_by_prefix))' = " dup . cr  \ XXX INFORMER
+  if  pid dtddoc  tag_presence off  then
+
   ;
+
 : (tagged_pages_by_prefix)  ( ca len -- true )
   \ ca len = pid
   \ true = continue with the next element?

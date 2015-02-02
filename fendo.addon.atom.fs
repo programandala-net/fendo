@@ -4,7 +4,7 @@
 
 \ This file is the Atom addon.
 
-\ Copyright (C) 2009,2014 Marcos Cruz (programandala.net)
+\ Copyright (C) 2009,2014,2015 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute it and/or modify it
 \ under the terms of the GNU General Public License as published by
@@ -177,7 +177,7 @@ defer atom_site_title$  ( -- ca len )
 : (atom{)  ( -- wf )
   \ Create an Atom file.
   \ wf = saved content of 'xhtml?', to be restored by '}atom'
-  xhtml? @  xhtml? on
+  xhtml?  true to xhtml?
   open_target
   s" <?xml version='1.0' encoding='utf-8'?>" echo
   current_lang$ xml:lang=!  domain_url xml:base=!
@@ -193,7 +193,7 @@ defer atom_site_title$  ( -- ca len )
 : }atom  ( wf -- )
   \ Finish and close the Atom file.
   \ wf = saved 'xhtml?'
-  </feed> close_target  xhtml? !
+  </feed> close_target  to xhtml?
   ;
 
 \ **************************************************************
@@ -334,5 +334,7 @@ set_default_atom_entry_summary
 \
 \ 2014-12-07: Fix: added 'forth_definitions' and 'fendo_definitions'
 \ for requirements, though no problem was detected.
+\
+\ 2015-02-01: Change: the 'xhtml?' variable is a value now.
 
 .( fendo.addon.atom.fs compiled) cr

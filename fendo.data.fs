@@ -35,6 +35,8 @@ forth_definitions
 \ From Galope
 require galope/char_count.fs  \ 'char_count'
 require galope/slash-ssv.fs  \ '/ssv'
+require galope/file-mtime.fs
+require galope/file-exists-question.fs  \ 'file-exists?'
 
 \ From Fourth Foundation Library
 require ffl/str.fs  \ dynamic strings
@@ -453,7 +455,7 @@ do_content? on
 : (pid$>data>pid#)  ( ca len -- a )
   \ Require a page file in order to get its data
   \ and convert its string page id to its number page id.
-  \ ca len = page id of an existant page file
+  \ ca len = page id of an existent page file
   \ a = page id
 \  -anchor \ XXX TMP
 \  ." 'link_anchor' in '(pid$>data>pid#)' = " link_anchor $@ type cr  \ xxx informer
@@ -514,6 +516,13 @@ do_content? on
   \ then 'modified'.
   dup file_modified dup
   if  rot drop  else  2drop modified  then
+  ;
+: newer?  ( a -- wf )
+  \ Is given page newer than its target?
+  dup target_path/file 2dup file-exists?
+  if    file-mtime  rot file_mtime  str<
+  else  2drop drop true  then
+\  dup if  ." newer"  else  ." older"  then  cr  \ XXX INFORMER
   ;
 
 : description|title  ( pid -- ca len )

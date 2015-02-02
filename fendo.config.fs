@@ -4,7 +4,7 @@
 
 \ This file setups the default configuration.
 
-\ Copyright (C) 2013 Marcos Cruz (programandala.net)
+\ Copyright (C) 2013,2015 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute
 \ it and/or modify it under the terms of the GNU General
@@ -35,6 +35,7 @@
 \ 2014-07-14: Change: site variables, and 'domain' as well,
 \   are converted to defered words, in order to make them
 \   configurable as multilingual constants.
+\ 2015-02-01: Change: the 'xhtml?' variable is changed to a value.
 
 \ **************************************************************
 \ Requirements
@@ -88,8 +89,7 @@ s" {CONTENT}" content_markup $!
 
 \ Target HTML
 
-\ XXX TODO convert to value
-variable xhtml?  \ flag, XHTML syntax?
+true value xhtml?  \ flag, XHTML syntax?
 
 \ Site constants and variables
 

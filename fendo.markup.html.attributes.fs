@@ -4,7 +4,7 @@
 
 \ This file defines the HTML attributes.
 
-\ Copyright (C) 2013,2014 Marcos Cruz (programandala.net)
+\ Copyright (C) 2013,2014,2015 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute
 \ it and/or modify it under the terms of the GNU General
@@ -282,7 +282,7 @@ depth constant #attributes  \ count of defined attributes
 : (xml:)lang=  ( -- a )
   \ Return the proper language attribute
   \ for the current syntax.
-  xhtml? @ if  xml:lang=  else  lang=  then
+  xhtml? if  xml:lang=  else  lang=  then
   ;
 : (xml:)lang=!  ( ca len -- )
   \ Set the proper language attribute
@@ -476,6 +476,8 @@ create attributes  \ table for the attribute variables
 \ <fendo.markup.fendo.fs>.
 \
 \ 2014-12-22: Change ':attribute' factored from 'attribute:'.
+\
+\ 2015-02-01: Change: the 'xhtml?' variable is a value now.
 
 .( fendo.markup.html.attributes.fs compiled) cr
 

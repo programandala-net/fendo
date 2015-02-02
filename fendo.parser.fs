@@ -331,21 +331,19 @@ variable }content?  \ flag: was '}content' executed?
 : (content{)  ( -- )
   \ Create the top template part of the target page
   \ and parse the page content.
-\  ~~  \ XXX INFORMER
   opened_markups_off
   open_target template{
   }content? off  parse_content
   }content? @ 0= abort" Missing '}content' at the end of the page"
-\  ~~  \ XXX INFORMER
   ;
 : do_page?  ( -- wf )
-\  current_page draft? if  ." DRAFT!" cr  then  \ XXX INFORMER
-  do_content? @  current_page draft? 0=  and
-\  do_content? @   \ XXX TMP
+  false  \ don't do it, by default
+  do_content? @ 0= ?exit
+  current_page draft? ?exit
+  drop current_page newer?
   ;
 : skip_page  ( -- )
   \ No target page must be created; skip the current source page.
-\  ." skip_page" cr  \ XXX INFORMER
   \eof  \ skip the rest of the file
   do_content? on  \ set default for the next page
   ;
