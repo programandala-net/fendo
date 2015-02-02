@@ -4,7 +4,7 @@
 
 \ This file defines the HTML tags.
 
-\ Copyright (C) 2013,2014 Marcos Cruz (programandala.net)
+\ Copyright (C) 2013,2014,2015 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute
 \ it and/or modify it under the terms of the GNU General
@@ -40,7 +40,7 @@ fendo_definitions
 : "/>"  ( -- ca len )
   \ Return the closing of a void HTML tag,
   \ ">" in HTML syntax or "/>" in XHTML syntax.
-  s" />" xhtml? @ 0= if  +/string  then
+  s" />" xhtml? 0= if  +/string  then
   ;
 : (html{})  ( ca len -- )
   \ Start an empty HTML tag.
@@ -546,5 +546,7 @@ markup<order
 \
 \ 2014-12-13: New: All missing immediate versions of the HTML tags.
 \ Now the list is complete.
+\
+\ 2015-02-01: Change: the 'xhtml?' variable is a value now.
 
 .( fendo.markup.html.tags.fs compiled) cr

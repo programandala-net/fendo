@@ -2,7 +2,8 @@
 
 \ This file is part of Fendo.
 
-\ This file provides a word that traverses all pids, required by other addons.
+\ This file provides a word that traverses all pids (page ids),
+\ required by other addons.
 
 \ Copyright (C) 2013,2014 Marcos Cruz (programandala.net)
 

@@ -1,4 +1,8 @@
 = Fendo to-do list
+:author: Marcos Cruz (programandala.net)
+:revdate: 2015-01-17
+
+// This file is in AsciiDoc/Asciidoctor format
 
 .2013-06-04:
 
@@ -7,7 +11,7 @@ order to use '--' both for nested lists and for delete.
 
 .2013-06-08:
 
-In <fendo.data.fs>, can 'current_page' be used instead of ''data'?
+In <fendo.data.fs>: can 'current_page' be used instead of "'data"?
 
 .2013-08-14:
 
@@ -218,6 +222,10 @@ Idea: bandera para crear versión local. Por ejemplo, para adaptar el
 atributo 'xml:base=' usado en Atom. ¿Sirve de algo? Si 'xml:base=' no
 se usa, ¿son los enlaces locales relativos al lugar del propio Atom?
 
+Idea: a flag could be used to build a local version. For example, the
+'xml:base=' attribute used by Atom could be adapted that way. Would it
+be useful? (...)
+
 .2014-12-05:
 
 Change the properties system: make it similar to tags: make properties
@@ -229,11 +237,6 @@ Habiendo construido todas las páginas de Fendo-programandala, advierto
 que en algunas de ellas los listados de código en Vim no son
 coloreados correctamente.  Pero el fallo se arregla al construir esas
 páginas individualmente...
-
-.2014-12-07
-
-Make the inline code ('##' markup) highlighted by manually setting
-'programming_language$'. This is useful for long pieces of code.
 
 .2014-12-12
 
@@ -247,3 +250,35 @@ next HTML tag in the page. The solution was to clear 'href='.
 
 But the question is: should 'href=' be restored/cleared by
 'unshortcut' and related words when no unshortcuting was done?
+
+.2014-12-13
+
+Improvement:
+
+In <fendo.markup.html.tags.fs>, the 'echo_cr' in the tags could be optional, configurable with a flag.
+This way the HTML would be more compact.
+
+.2015-01-30
+
+Idea:
+
+Fake temporary pages. Instead of creating and updating shortcuts for
+pages that does not exist yet, what can create errors, the actual
+document could be created, with its data but without content.  A data
+field or command would make sure the page is recognized as a temporary
+fake.
+
+.2015-01-31
+
+New:
+
+Finish the implementation of new translations in <fendo.addon.zx_spectrum_charset.fs>
+for ZX Spectrum +3 unexpanded listings.
+
+.2015-02-01
+
+Fix:
+
+When a page leaves something on the stack, the problem is detected only when another page is built after it.
+No error happes when the page is the only one to be built.
+
