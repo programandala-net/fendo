@@ -77,16 +77,19 @@ false value [bug_thread] immediate  \ xxx tmp
 
 only forth definitions
 
+\ ------------------------------
 \ From Gforth
 
 require string.fs  \ dynamic strings
 
+\ ------------------------------
 \ From Forth Foundation Library
 
 \ require ffl/str.fs
 \ require ffl/tos.fs
 \ require ffl/xos.fs
 
+\ ------------------------------
 \ From Galope
 
 require galope/3dup.fs
@@ -109,12 +112,17 @@ require galope/slash-sides.fs  \ '/sides'
 require galope/tilde-tilde.fs  \ improved '~~' for debugging
 require galope/trim.fs  \ 'trim'
 
+\ Safer alternatives for words of Gforth's string.fs
+\ (they will not be defined if Gforth >= 0.8):
+
+require galope/dollar-fetch.fs  \ '$@'
+require galope/dollar-fetch-len.fs  \ '$@len'
+
 false [if]
 
-  \ xxx fixme
-  \ 2013-08-10: Without this string buffer, the input stream gets
-  \ corrupted at the end of the template.  I didn't find the bug
-  \ yet. It seems a problem with Gforth's 's+'.
+  \ xxx fixme -- 2013-08-10: Without this string buffer, the input
+  \ stream gets corrupted at the end of the template.  I didn't find
+  \ the bug yet.
 
   require galope/sb.fs  \ string buffer
   1024 100 * heap_sb
@@ -126,18 +134,27 @@ false [if]
 
 [else]
 
-  \ xxx tmp
-
-  \ 2014-02-22: It seems the problem has vanished.  The circular
-  \ string buffer is not necessary anymore.  Two words of it are still
-  \ used in <fendo.markup.wiki.fs>; they are deactivated here:
+  \ xxx tmp -- 2014-02-22: It seems the problem has vanished.  The
+  \ circular string buffer is not necessary anymore.  Two words of it
+  \ are still used in <fendo.markup.wiki.fs>; they are deactivated
+  \ here:
 
   ' noop alias >sb
   ' s+ alias bs&
 
 [then]
 
-anew --fendo--
+\ ------------------------------
+\ Other 
+
+: empty?  ( ca len -- wf )
+  \ Is a string empty?
+  nip 0=
+  ;
+
+\ **************************************************************
+
+anew -fendo
 
 false [if]  \ xxx todo
 
@@ -147,31 +164,6 @@ dup     constant [gforth-strings?]  immediate
 0= dup  constant ffl-strings?
         constant [ffl-strings?]  immediate
 [then]
-
-s" gforth" environment? drop s" 0.8" str< [if]
-
-\ Safer alternatives for words of Gforth's string.fs
-\ Not necessary with Gforth 0.8.
-
-warnings @  warnings off
-: $@len  ( a -- len )
-  \ Return the length of a dynamic string variable,
-  \ even if it's not initialized.
-  @ dup if  @  then
-  ;
-: $@  ( a -- ca len )
-  \ Return the content of a dynamic string variable,
-  \ even if it's not initialized.
-  @ dup if  dup cell+ swap @  else  pad swap  then
-  ;
-warnings !
-
-[then]
-
-: empty?  ( ca len -- wf )
-  \ Is a string empty?
-  nip 0=
-  ;
 
 \ **************************************************************
 \ Wordlists
@@ -336,5 +328,7 @@ depth [if] abort [then]  \ xxx debugging
 \
 \ 2014-06-15: Change: 'recognize_macros?' is commented out. The
 \ problem was solved with 'evaluate_the_markup?' in <fendo.parser.fs>.
+\
+\ 2015-02-11: Change: requirements reorganized and tidied.
 
 .( fendo.fs compiled) cr

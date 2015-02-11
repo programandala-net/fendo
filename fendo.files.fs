@@ -50,13 +50,13 @@
   \ ca1 len1 = filename
   \ ca2 len2 = ISO date
   \ The host operating system shell is used.
-  s" touch --date=" 2swap s+ s"  " s+ 2swap s+
+  s\" touch --date=\"" 2swap s+ s\" \" " s+ 2swap s+
   system $? abort" Error in set_modification_time"
   ;
 false [if]  \ XXX OLD
 : set_modification_time  ( ca len -- )
   \ Set the modification time of the given file
-  \ to the correspondant metadata of the current page.
+  \ to the correspondent metadata of the current page.
   \ The host operating system shell is used.
   2>r s" touch --date=" current_page file_mtime s+ s"  " s+ 2r> s+
   system $? abort" Error in set_modification_time"
@@ -64,13 +64,13 @@ false [if]  \ XXX OLD
 [endif]
 : set_modification_time  ( ca len -- )
   \ Set the modification time of the given file
-  \ to the correspondant metadata of the current page.
+  \ to the correspondent metadata of the current page.
   \ The host operating system shell is used.
   current_page file_mtime set_file_mtime
   ;
 : set_current_target_modification_time  ( -- )
   \ Set the modification time of the current target file
-  \ to the correspondant metadata of the source file.
+  \ to the correspondent metadata of the source file.
   \ The host operating system shell is used.
   current_page target_path/file set_modification_time
   ;
@@ -114,7 +114,7 @@ false [if]  \ XXX OLD
   ;
 : redirected>target  ( ca1 len1 -- ca2 len2 )
   \ Convert an old page id (whose filename does not exist any more)
-  \ to its correspondant target filename.
+  \ to its correspondent target filename.
   \ The default target extension is assumed.
   \ ca1 len1 = page id (old page filename without path and extension)
   \ ca2 len2 = target filename with path
@@ -211,7 +211,7 @@ s" /counted-string" environment? 0=
 \ 2014-07-13: New: 'set_current_target_modification_time'.
 \
 \ 2014-11-04: Improvement: 'redirected' set the file modification time
-\ of the redirected file with the correspondant metadadatum of its
+\ of the redirected file with the correspondent metadadatum of its
 \ goal page. This way server updates will be easier.
 \ 'set_current_target_modification_time ' was factored out.
 \
@@ -230,5 +230,7 @@ s" /counted-string" environment? 0=
 \ '(redirected)'. Although this caused no problem but a warning
 \ message during compilation, for clarity the deeper one has been
 \ renamed to '((redirected))'.
+\
+\ 2015-02-11: Typos.
 
 .( fendo.files.fs compiled ) cr

@@ -68,12 +68,13 @@ variable current_data  \ address of the latest created data
   ;
 variable in_data_header?  \ flag to let the data fields to disguise the context
 variable /datum  \ offset of the current datum; at the end, length of the data
-: :datum>value  ( ca len -- )
-  \ Create a page metadatum that returns its value.
-  \ This is the normal version of the metadatum: if executed in
-  \ the metadata header (between 'data{' and '}data') it will
-  \ parse its datum from the input stream; out of the header it
-  \ will return the datum string.
+: :datum  ( ca len -- )
+  \ Create a page metadatum that parses or returns its value.
+  \ This is the normal version of the metadatum: when executed in the
+  \ metadata header (between 'data{' and '}data'), it will get its
+  \ datum from the input stream, until the end of the line, and will
+  \ store it; when executed out of the metadata header, it will return
+  \ the datum string.
   \ ca len = datum name
   nextname create
     cell /datum dup @ , +!  \ store the offset and increment it
@@ -88,23 +89,22 @@ variable /datum  \ offset of the current datum; at the end, length of the data
     else  ( a1 u ) + $@  then
   ;
 : :datum>address  ( ca len -- )
-  \ Create a page metadatum that returns the address of its data.
+  \ Create a page metadatum word that returns the address of its data.
+  \ The new name will have a tick at the start.
   \ ca len = datum name
   s" '" 2swap s+ nextname
   latestxt  \ of the word previously created by ':datum>value'
   create  ( xt ) >body ,
   does>  ( a1 -- a2 )
     \ a1 = page data address
-    \ a2 = datum address
+    \ a2 = datum address (a dynamic string that can be updated by '$!')
     \ dfa = data field address of the datum word
     \ u = datum offset
-    ( a1 dfa )  @ @
-\    dup ." datum offset = " .  \ xxx informer
-    ( a1 u ) +
+    ( a1 dfa ) @ @ ( a1 u ) +
   ;
 : datum:  ( "name" -- )
   \ Create a page metadatum.
-  parse-name 2dup :datum>value :datum>address
+  parse-name 2dup :datum :datum>address
   ;
 
 \ **************************************************************
@@ -518,7 +518,7 @@ do_content? on
   if  rot drop  else  2drop modified  then
   ;
 : newer?  ( a -- wf )
-  \ Is given page newer than its target?
+  \ Is the given page newer than its target?
   dup target_path/file 2dup file-exists?
   if    file-mtime  rot file_mtime  str<
   else  2drop drop true  then
@@ -550,6 +550,7 @@ do_content? on
 false value ignore_draft_property?
 
 : draft?  ( a -- wf )
+  \ Is the given page a draft?
   \ a = page id (address of its data)
   \ wf = is "draft" in the properties field?
   s" draft" rot property?  ignore_draft_property? 0= and
@@ -570,6 +571,31 @@ false value ignore_draft_property?
   \ Return the hierarchy level of a page (0 is the top level).
   \ a = page id (address of its data)
   pid#>pid$ pid$>hierarchy
+  ;
+
+\ **************************************************************
+\ Data manipulation
+
+
+: (file-mtime>modified)  ( ca len -- )
+  \ If the modification time of the given file is more recent
+  \ than the current page 'modified' datum, update the page datum with
+  \ the file modification time.
+  file-mtime 2dup current_page modified
+  str< if  2drop  else  current_page 'modified $!  then
+  ;
+
+\ Config flag for the application:
+true value included_files_update_the_page_date?
+
+: file-mtime>modified  ( ca len -- )
+  \ If the modification time of the given file is more recent
+  \ than the current page 'modified' datum, update the page datum with
+  \ the file modification time.
+  \ This is used by addons that include contents file into the page,
+  \ in order to update the page 'modified' datum with the date of
+  \ the most recent file used.
+  included_files_update_the_page_date? if  (file-mtime>modified)  else  2drop  then
   ;
 
 \ **************************************************************
@@ -784,5 +810,9 @@ false value ignore_draft_property?
 \ datum.
 \
 \ 2015-01-30: New: 'ignore_draft_property?'.
+\
+\ 2015-02-11: Improvement: more detailed comments in ':datum>address'
+\ and ':datum>value'. Change: ':datum>value' renamed to ':datum'. New:
+\ 'file-mtime>modified' and related words.
 
 .( fendo.data.fs compiled) cr
