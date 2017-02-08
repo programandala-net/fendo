@@ -4,7 +4,7 @@
 
 \ This file defines the Fendo markup.
 
-\ Copyright (C) 2013,2014 Marcos Cruz (programandala.net)
+\ Copyright (C) 2013,2014,2017 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute
 \ it and/or modify it under the terms of the GNU General
@@ -43,6 +43,7 @@
 \ for list and for bold.
 \ 2013-06-19: Compare Creole's markups with txt2tags' markups.
 \ 2014-03-04: Change: parser vectors moved to <fendo.markup.common.fs>.
+\ 2017-02-04: Fix Typo.
 
 \ **************************************************************
 \ Requirements
@@ -76,7 +77,7 @@ require ./fendo.links.fs  \ xxx fixme already loaded by the main file
   2swap dup if  s"  " s+ 2swap s+ exit  then  2drop
   ;
 : ?concatenate  ( ca1 len1 ca2 len2 f -- ca1' len1' )
-  \ Concatenates two string with a joining space.
+  \ Concatenates two strings with a joining space.
   if  concatenate  else  2drop  then
   ;
 : otherwise_concatenate  ( ca1 len1 ca2 len2 f -- ca1' len1' f )
@@ -130,51 +131,55 @@ variable #nothings  \ counter of empty parsings \ xxx tmp moved from <fendo_pars
   then  r> !  execute
   ;
 
-variable opened_[####]?  \ is there an open block code?
-variable opened_[##]?   \ is there an open inline code?
-variable opened_['''']?  \ is there an open block quote?
-variable opened_['']?   \ is there an open inline quote?
+variable opened_[####]?   \ is there an open block code?
+variable opened_[##]?     \ is there an open inline code?
+variable opened_['''']?   \ is there an open block quote?
+variable opened_['']?     \ is there an open inline quote?
 variable opened_[((((]?   \ is there an open '(((('?  \ XXX not used yet
-variable opened_[((]?   \ is there an open '(('?  \ XXX not used yet
-variable opened_[**]?   \ is there an open '**'?
+variable opened_[((]?     \ is there an open '(('?  \ XXX not used yet
+variable opened_[**]?     \ is there an open '**'?
 variable opened_[++++]?   \ is there an open '++++'?
-variable opened_[++]?   \ is there an open '++'?
-variable opened_[,,]?   \ is there an open ',,'?
+variable opened_[++]?     \ is there an open '++'?
+variable opened_[,,]?     \ is there an open ',,'?
 variable opened_[----]?   \ is there an open '----'?
-variable opened_[--]?   \ is there an open '--'?
-variable opened_[//]?   \ is there an open '//'?
-variable opened_[=]?    \ is there an open h1 heading?
-variable opened_[=|=]?  \ is there an open table caption?
-variable opened_[^^]?   \ is there an open '^^'?
-variable opened_[_]?    \ is there an open '_'?
-variable opened_[__]?   \ is there an open '__'?
+variable opened_[--]?     \ is there an open '--'?
+variable opened_[//]?     \ is there an open '//'?
+variable opened_[=]?      \ is there an open h1 heading?
+variable opened_[=|=]?    \ is there an open table caption?
+variable opened_[^^]?     \ is there an open '^^'?
+variable opened_[_]?      \ is there an open '_'?
+variable opened_[__]?     \ is there an open '__'?
 
 variable #heading       \ level of the opened heading  \ xxx not used yet
 
 false [if]
-\ First version, one flag shared by all headings.
-\ This causes the opening and the closing tags become reversed
-\ in some unknown conditions, when several pages are parsed.
-\ Maybe the reason is some flag remains set because a hidden
-\ markup error in certain page.
-\ The new word 'opened_markups_off' solves the problem.
-' opened_[=]?
-dup alias opened_[==]?    \ is there an open h2 heading?
-dup alias opened_[===]?    \ is there an open h3 heading?
-dup alias opened_[====]?    \ is there an open h4 heading?
-dup alias opened_[=====]?    \ is there an open h5 heading?
-alias opened_[======]?    \ is there an open h6 heading?
+
+  \ First version, one flag shared by all headings.  This causes the
+  \ opening and the closing tags become reversed in some unknown
+  \ conditions, when several pages are parsed.  Maybe the reason is
+  \ some flag remains set because a hidden markup error in certain
+  \ page.  The new word 'opened_markups_off' solves the problem.
+
+  ' opened_[=]?
+  dup alias opened_[==]?    \ is there an open h2 heading?
+  dup alias opened_[===]?    \ is there an open h3 heading?
+  dup alias opened_[====]?    \ is there an open h4 heading?
+  dup alias opened_[=====]?    \ is there an open h5 heading?
+  alias opened_[======]?    \ is there an open h6 heading?
+
 [else]
-\ Second version, one flag for every heading; in theory
-\ one common flag would be enough, because headings are
-\ not nested.
-\ Beside, somehow this seems to fix the problem of the first version.
-\ The new word 'opened_markups_off' solves the problem, anyway.
-variable opened_[==]?    \ is there an open h2 heading?
-variable opened_[===]?    \ is there an open h3 heading?
-variable opened_[====]?    \ is there an open h4 heading?
-variable opened_[=====]?    \ is there an open h5 heading?
-variable opened_[======]?    \ is there an open h6 heading?
+
+  \ Second version, one flag for every heading; in theory one common
+  \ flag would be enough, because headings are not nested.  Beside,
+  \ somehow this seems to fix the problem of the first version.  The
+  \ new word 'opened_markups_off' solves the problem, anyway.
+
+  variable opened_[==]?    \ is there an open h2 heading?
+  variable opened_[===]?    \ is there an open h3 heading?
+  variable opened_[====]?    \ is there an open h4 heading?
+  variable opened_[=====]?    \ is there an open h5 heading?
+  variable opened_[======]?    \ is there an open h6 heading?
+
 [then]
 
 : opened_markups_off  ( -- )
@@ -266,15 +271,15 @@ markup_definitions
   ['] <strong> ['] </strong> opened_[**]? markups
   ;
 : __  ( -- )
-  \ Start of finish a <u> region.
+  \ Start or finish a <u> region.
   ['] <u> ['] </u> opened_[__]? markups
   ;
 : ^^  ( -- )
-  \ Start of finish a <sup> region.
+  \ Start or finish a <sup> region.
   ['] <sup> ['] </sup> opened_[^^]? markups
   ;
 : ,,  ( -- )
-  \ Start of finish a <sub> region.
+  \ Start or finish a <sub> region.
   ['] <sub> ['] </sub> opened_[,,]? markups
   ;
 

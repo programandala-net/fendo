@@ -67,20 +67,25 @@ fendo_definitions
 \  ." CLOSED PARAGRAPH " cr  \ XXX INFORMER
   [markup<order]  then
   ;
-: close_pending_table  ( -- )
-  \ Close a pending table, if needed.
-  \ XXX TODO this will be useless with the new format of tables
-  #rows @ if
-    [markup>order] </tr> </table> [markup<order]
-    #rows off  #cells off
-  then
-  ;
+
+\ XXX OLD
+\ : close_pending_table  ( -- )
+\   \ Close a pending table, if needed.
+\   \ XXX TODO this will be useless with the new format of tables
+\   #rows @ if
+\     [markup>order] </tr> </table> [markup<order]
+\     #rows off  #cells off
+\   then
+\   ;
+
 : close_pending  ( -- )
   \ Close the pending markups.
   \ Invoked when an empty line if parsed, and at the end of the
   \ parsing.
 \  ." close_pending because #nothings = " #nothings @ . cr  \ XXX INFORMER
-  close_pending_paragraph close_pending_table close_pending_list
+  close_pending_paragraph
+  \ close_pending_table \ XXX OLD
+  close_pending_list
   echo_cr
   ;
 
@@ -336,11 +341,17 @@ variable }content?  \ flag: was '}content' executed?
   }content? off  parse_content
   }content? @ 0= abort" Missing '}content' at the end of the page"
   ;
+: update_page?  ( -- wf )
+  \ Does the target of the current page have to be updated?
+  current_page newer?  \ source newer than target?
+  dup 0= if  current_target_file type ."  is up to date" cr  then
+  ;
+false value updating?  \ XXX TODO document
 : do_page?  ( -- wf )
   false  \ don't do it, by default
   do_content? @ 0= ?exit
   current_page draft? ?exit
-  drop current_page newer?
+  updating? if  drop update_page?  else  0=  then
   ;
 : skip_page  ( -- )
   \ No target page must be created; skip the current source page.
@@ -361,6 +372,7 @@ variable }content?  \ flag: was '}content' executed?
   do_page?
 \  ~~  \ XXX INFORMER
   if  
+\  ." `argc` in `content{`= " argc ? cr  \ XXX INFORMER
     empty_stack .sourcefilename
 \    ." content{" cr  \ XXX INFORMER
 \    ~~  \ XXX INFORMER
@@ -368,6 +380,7 @@ variable }content?  \ flag: was '}content' executed?
   else
     skip_page
 \    ~~  \ XXX INFORMER
+\  ." `argc` in skipped `content{`= " argc ? cr  \ XXX INFORMER
   then
   ;
 : finish_the_target  ( -- )
@@ -383,7 +396,7 @@ get-current markup>current
   only fendo>order forth>order
   }content? on
 \  .s cr ." end of }content" cr  \ XXX INFORMER
-\  ." argc = " argc ? cr  \ XXX INFORMER
+\  ." `argc` in `}content`= " argc ? cr  \ XXX INFORMER
   ;
 set-current
 
@@ -510,5 +523,13 @@ set-current
 \
 \ 2014-12-06: Change: 'empty_stack' is factored out from
 \ '.sourcefilename'.
+\
+\ 2015-02-01: Improvement: 'do_page?' uses 'newer?'.
+\
+\ 2015-02-02: New: 'update_page?'; improved 'do_page?'.
+\
+\ 2015-09-26: Commented out (not deleted yet, just in case)
+\ `close_pending_table`, because the new table format (from
+\ Asciidoctor) makes it unnecessary.
 
 .( fendo.parser.fs compiled ) cr

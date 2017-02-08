@@ -43,7 +43,7 @@
 forth_definitions
 
 require galope/n-to-r.fs  \ 'n>r'
-require galope/n-r-from.fs  \ 'nr<'
+require galope/n-r-from.fs  \ 'nr>'
 
 fendo_definitions
 
@@ -137,7 +137,9 @@ defer atom_site_title$  ( -- ca len )
   [<title>] atom_site_title$ unmarkup echo [</title>]
   ;
 : atom_feed_subtitle  ( -- )
-  <subtitle> site_subtitle unmarkup echo </subtitle>
+  site_subtitle unmarkup dup
+  if    <subtitle> site_subtitle unmarkup echo </subtitle>
+  else  2drop   then
   ;
 : atom_feed_alternate_link  ( -- )
   current_lang$ 2dup hreflang=! pid$>url s" alternate" atom_link
@@ -336,5 +338,10 @@ set_default_atom_entry_summary
 \ for requirements, though no problem was detected.
 \
 \ 2015-02-01: Change: the 'xhtml?' variable is a value now.
+\
+\ 2015-12-18: Confirmed the `<update>` and `<published>` entry tags
+\ are right. The problem was the order used by the feed
+\ viewer. Fix: the subtitle tag is not created when the subtitle is
+\ empty.
 
 .( fendo.addon.atom.fs compiled) cr

@@ -92,6 +92,7 @@ export
 : tagged_pages_by_prefix  ( ca1 len1 ca2 len2 -- )
   \ ca1 len1 = tag
   \ ca2 len2 = prefix
+\  ." `argc` in `tagged_pages_by_prefix`= " argc ? cr  \ XXX INFORMER
   prefix$ $!  tags_do_presence
   [<dl>] ['] (tagged_pages_by_prefix) traverse_pids [</dl>]
   ;

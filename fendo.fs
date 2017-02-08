@@ -70,7 +70,7 @@ wf        [flag]  well-formed flag (0=false; -1=true)
 \ **************************************************************
 \ Debug
 
-false value [bug_thread] immediate  \ xxx tmp
+false value [bug_thread] immediate  \ XXX TMP
 
 \ **************************************************************
 \ Requirements
@@ -92,7 +92,7 @@ require string.fs  \ dynamic strings
 \ ------------------------------
 \ From Galope
 
-require galope/3dup.fs
+require galope/three-dup.fs
 require galope/anew.fs
 require galope/backslash-end-of-file.fs  \ '\eof'
 require galope/bracket-false.fs  \ '[false]'
@@ -120,7 +120,7 @@ require galope/dollar-fetch-len.fs  \ '$@len'
 
 false [if]
 
-  \ xxx fixme -- 2013-08-10: Without this string buffer, the input
+  \ XXX FIXME -- 2013-08-10: Without this string buffer, the input
   \ stream gets corrupted at the end of the template.  I didn't find
   \ the bug yet.
 
@@ -134,7 +134,7 @@ false [if]
 
 [else]
 
-  \ xxx tmp -- 2014-02-22: It seems the problem has vanished.  The
+  \ XXX TMP -- 2014-02-22: It seems the problem has vanished.  The
   \ circular string buffer is not necessary anymore.  Two words of it
   \ are still used in <fendo.markup.wiki.fs>; they are deactivated
   \ here:
@@ -156,7 +156,7 @@ false [if]
 
 anew -fendo
 
-false [if]  \ xxx todo
+false [if]  \ XXX TODO
 
 false  \ Gforth's dynamic strings instead of FFL's?
 dup     constant gforth-strings?
@@ -263,36 +263,37 @@ fendo_definitions
 s" A-05-20150130" 2constant fendo_version
 s" Fendo (Forth Engine for Net DOcuments) " fendo_version s+ 2constant generator
 
-false constant link_text_as_attribute?  \ xxx tmp -- experimental
+false constant link_text_as_attribute?  \ XXX TMP -- experimental
 
 \ **************************************************************
 \ Modules
 
 false value multilingual?  \ to be changed by <addons/multilingual.fs>
 
-depth [if] abort [then]  \ xxx debugging
+depth [if] abort [then]  \ XXX DEBUGGING
 include ./fendo.config.fs
-depth [if] abort [then]  \ xxx debugging
-defer unshortcut  \ defined in <fendo.shortcuts.fs>
-defer just_unshortcut  \ defined in <fendo.shortcuts.fs>
-defer dry_unshortcut  \ defined in <fendo.shortcuts.fs>  \ XXX TMP
-defer -anchor  \ defined in <fendo.links.fs>  \ XXX TMP
-defer -anchor!  \ defined in <fendo.links.fs>  \ XXX TMP
-defer -anchor?!  \ defined in <fendo.links.fs>  \ XXX TMP
-$variable link_anchor  \ XXX TMP -- moved from <fendo.links.fs>
-defer link_anchor+  \ defined in <fendo.links.fs>  \ XXX TMP
+depth [if] abort [then]  \ XXX DEBUGGING
+defer unshortcut        \ defined in <fendo.shortcuts.fs>
+defer just_unshortcut   \ defined in <fendo.shortcuts.fs>
+defer dry_unshortcut    \ defined in <fendo.shortcuts.fs>  \ XXX TMP
+defer -anchor           \ defined in <fendo.links.fs>  \ XXX TMP
+defer -anchor!          \ defined in <fendo.links.fs>  \ XXX TMP
+defer -anchor?!         \ defined in <fendo.links.fs>  \ XXX TMP
+defer link_anchor       \ dynamic string, defined in <fendo.links.fs>
+defer link_text         \ dynamic string, defined in <fendo.links.fs>
+defer link_anchor+      \ defined in <fendo.links.fs>  \ XXX TMP
 include ./fendo.data.fs
-depth [if] abort [then]  \ xxx debugging
+depth [if] abort [then]  \ XXX DEBUGGING
 include ./fendo.echo.fs
-depth [if] abort [then]  \ xxx debugging
+depth [if] abort [then]  \ XXX DEBUGGING
 include ./fendo.files.fs
-depth [if] abort [then]  \ xxx debugging
+depth [if] abort [then]  \ XXX DEBUGGING
 include ./fendo.links.fs
-depth [if] abort [then]  \ xxx debugging
+depth [if] abort [then]  \ XXX DEBUGGING
 include ./fendo.markup.fs
-depth [if] abort [then]  \ xxx debugging
+depth [if] abort [then]  \ XXX DEBUGGING
 include ./fendo.parser.fs
-depth [if] abort [then]  \ xxx debugging
+depth [if] abort [then]  \ XXX DEBUGGING
 
 \ **************************************************************
 \ Change history of this file
@@ -330,5 +331,8 @@ depth [if] abort [then]  \ xxx debugging
 \ problem was solved with 'evaluate_the_markup?' in <fendo.parser.fs>.
 \
 \ 2015-02-11: Change: requirements reorganized and tidied.
+\
+\ 2015-02-12: Change: 'link_anchor' and 'link_text' are defered here
+\ and defined in <fendo.fs>. Required because of a fix.
 
 .( fendo.fs compiled) cr

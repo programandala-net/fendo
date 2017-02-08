@@ -33,7 +33,7 @@
 forth_definitions
 
 \ From Galope
-require galope/char_count.fs  \ 'char_count'
+require galope/char-count.fs  \ 'char-count'
 require galope/slash-ssv.fs  \ '/ssv'
 require galope/file-mtime.fs
 require galope/file-exists-question.fs  \ 'file-exists?'
@@ -51,7 +51,7 @@ variable data_fields  \ counter
 max_data_fields cells buffer: fields_body_table
 
 : erase_data  ( -- )
-  \ xxx todo
+  \ XXX TODO
   fields_body_table max_data_fields bounds ?do
     -1 i !
   cell +loop
@@ -63,11 +63,14 @@ variable current_data  \ address of the latest created data
   \ u = datum offset
   >r  0 parse  \ parse the rest of the current input line
   trim
-\  dup  if  ." Parsed datum: " 2dup type cr  then  \ xxx informer
+\  dup  if  ." Parsed datum: " 2dup type cr  then  \ XXX INFORMER
   current_data @ r> + $!
   ;
 variable in_data_header?  \ flag to let the data fields to disguise the context
 variable /datum  \ offset of the current datum; at the end, length of the data
+defer get_datum  ( a u -- ca len )
+: (get_datum)  ( a u -- ca len )  + $@  ;
+' (get_datum) is get_datum
 : :datum  ( ca len -- )
   \ Create a page metadatum that parses or returns its value.
   \ This is the normal version of the metadatum: when executed in the
@@ -86,7 +89,7 @@ variable /datum  \ offset of the current datum; at the end, length of the data
     ( a1 dfa | dfa "text<nl>" )
     @  in_data_header? @  ( u wf )
     if    ( u "datum<nl>" ) parse_datum
-    else  ( a1 u ) + $@  then
+    else  ( a1 u )          get_datum  then
   ;
 : :datum>address  ( ca len -- )
   \ Create a page metadatum word that returns the address of its data.
@@ -148,7 +151,7 @@ datum: filename_extension  \ alternative target filename extension (with dot)
 datum: design_subdir  \ target relative path to the design, with final slash
 datum: template  \ HTML template filename in the design subdir
 
-\ .( /datum = ) /datum ? cr key drop  \ xxx informer
+\ .( /datum = ) /datum ? cr key drop  \ XXX INFORMER
 
 \ **************************************************************
 \ File names
@@ -191,10 +194,10 @@ datum: template  \ HTML template filename in the design subdir
   \ Return a target HTML page filename.
   \ a = page id
   \ ca len = target HTML page file name
-\   ." 'link_anchor' in 'target_file' = " link_anchor $@ type cr  \ xxx informer
+\   ." 'link_anchor' in 'target_file' = " link_anchor $@ type cr  \ XXX INFORMER
 \ XXX TODO -- 'link_anchor+' should not be here
   dup >r pid#>pid$ r> target_extension s+ link_anchor+
-\   ." Result in 'target_file' = " 2dup type cr  \ xxx informer
+\   ." Result in 'target_file' = " 2dup type cr  \ XXX INFORMER
   ;
 : current_target_file  ( -- ca len )
   \ Return the target HTML page filename of the current page.
@@ -227,7 +230,7 @@ datum: template  \ HTML template filename in the design subdir
   \ a = page id
   \ ca len = target HTML page file name, with its local path
   target_file +target_dir
-\  2dup type cr  \ xxx informer
+\  2dup type cr  \ XXX INFORMER
   ;
 
 \ **************************************************************
@@ -293,7 +296,7 @@ datum: template  \ HTML template filename in the design subdir
 : pid$>level  ( ca len -- n )
   \ Return the hierarchy level of the given page id.
   \ The top level is 0.
-  [char] . char_count
+  [char] . char-count
   ;
 : pid#>level  ( a -- n )
   \ Return the hierarchy level of the given page id.
@@ -325,44 +328,47 @@ defer set_default_data  ( -- )
   \ Set the default values of the page data.
 : (set_default_data)  ( -- )
   \ Set the default values of the page data.
-  \ xxx todo finish
+  \ XXX TODO finish
   /sourcefilename
-\  2dup ." «" type ." »" \ xxx informer
+\  2dup ." «" type ." »" \ XXX INFORMER
   current_data @ 'source_file $!
   ;
 ' (set_default_data) is set_default_data
 : (}data)  ( -- )
-\  ." }data executed; data before defaults:" cr  \ xxx informer
-\  .current_data  \ xxx informer
+\  ." }data executed; data before defaults:" cr  \ XXX INFORMER
+\  .current_data  \ XXX INFORMER
   set_default_data  in_data_header? off
-\  ." data after defaults:" cr  \ xxx informer
-\  .current_data  \ xxx informer
-\  ." }}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}" cr  \ xxx informer
-\  key drop  \ xxx informer
+\  ." data after defaults:" cr  \ XXX INFORMER
+\  .current_data  \ XXX INFORMER
+\  ." }}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}" cr  \ XXX INFORMER
+\  key drop  \ XXX INFORMER
   ;
 : }data  ( -- )
   \ Mark the end of the page data header and complete it.
   in_data_header? @ if  (}data)  then
+\  ." `argc` in `}data`= " argc ? cr  \ XXX INFORMER
   ;
 : skip_data{  ( xt "<text><space>}data" -- )
   \ Skip the page data.
   \ xt = execution token of the current page id
   execute to current_page
-\  ." skip_data{" cr  \ xxx informer
+\  ." skip_data{" cr  \ XXX INFORMER
   begin   parse-name dup 0=
     if    2drop refill 0= dup abort" Missing '}data'"
     else  s" }data" str=  then
   until   }data
   ;
 : get_data{  ( "<text><space>}data" -- )
+\  ." `argc` in `get-data{` (start)= " argc ? cr  \ XXX INFORMER
   \ Get the page data.
-\  ." {{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{" cr  \ xxx informer
-\  ." get_data{" cr  \ xxx informer
+\  ." {{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{" cr  \ XXX INFORMER
+\  ." get_data{" cr  \ XXX INFORMER
   :pid current_data @
-\  ." current_data copied to current_page =  " dup . cr  \ xxx informer
+\  ." current_data copied to current_page =  " dup . cr  \ XXX INFORMER
   to current_page
-\  .current_data  \ xxx informer
+\  .current_data  \ XXX INFORMER
   in_data_header? on
+\  ." `argc` in `get-data{` (end)= " argc ? cr  \ XXX INFORMER
   ;
 : data_already_got?  ( -- 0 | xt +-1 )
   \ XXX FIXME This check means pids of draft can not be created...
@@ -373,10 +379,12 @@ defer set_default_data  ( -- )
   ;
 : data{  ( "<text><spaces>}data" -- )
   \ Mark the start of the page data.
-  \ xxx todo how to access the page ids in the markup?...
-  \ xxx ...include them in the markup wordlist? create a wordlist?
-\  cr cr ." =========== data{" cr  \ xxx informer
+  \ XXX TODO how to access the page ids in the markup?...
+  \ XXX ...INCLUDE them in the markup wordlist? create a wordlist?
+\  cr cr ." =========== data{" cr  \ XXX INFORMER
+\  ." `argc` in `data{` (start)= " argc ? cr  \ XXX INFORMER
   data_already_got? if  skip_data{  else  get_data{  then
+\  ." `argc` in `data{` (end)= " argc ? cr  \ XXX INFORMER
   ;
 
 variable do_content?  \ flag: do the page content? (otherwise, skip it)
@@ -385,11 +393,11 @@ do_content? on
   \ Complete a source page filename with its path.
   source_dir $@ 2swap s+
   ;
-: +current_dir  ( ca1 len1 -- ca2 len2 )  \ xxx tmp
+: +current_dir  ( ca1 len1 -- ca2 len2 )  \ XXX TMP
   s" ./" 2swap s+
   ;
 : .required_data_error  ( ca len -- )
-\  order cr  \ xxx informer
+\  order cr  \ XXX INFORMER
   cr ." Error requiring the data of the page <" type ." >" cr
   ;
 : required_data_error  ( ca len ior -- )
@@ -398,27 +406,27 @@ do_content? on
 : (required_data)  ( ca len -- )
   \ Require a page file in order to get its data.
   \ ca len = filename
-\  ." (required_data) " 2dup type cr  \ xxx informer
+\  ." (required_data) " 2dup type cr  \ XXX INFORMER
   do_content? off
-\  .included key drop  \ xxx informer
+\  .included key drop  \ XXX INFORMER
   2dup  ['] required catch  ?dup
-\  ." after catch " .s cr  \ xxx informer
+\  ." after catch " .s cr  \ XXX INFORMER
   if    nip nip required_data_error
   else  2drop  then
-\  ." end of (required_data) " .s cr  \ xxx informer
+\  ." end of (required_data) " .s cr  \ XXX INFORMER
   ;
 : required_data  ( ca len -- )
   \ Require a page file in order to get its data.
   \ ca len = filename
-\  ." Parameter in 'required_data' = " 2dup type cr  \ xxx informer
-\  ." related = " current_page related type cr  \ xxx informer
+\  ." Parameter in 'required_data' = " 2dup type cr  \ XXX INFORMER
+\  ." related = " current_page related type cr  \ XXX INFORMER
   do_content? @ >r  current_page >r
   (required_data)
   r> to current_page  r> do_content? !
-\  ." end of required_data " type cr  \ xxx informer
-\  ." related = " current_page related type cr  \ xxx informer
-\  ." >>>>>>>>" cr  \ xxx informer
-\  key drop  \ xxx informer
+\  ." end of required_data " type cr  \ XXX INFORMER
+\  ." related = " current_page related type cr  \ XXX INFORMER
+\  ." >>>>>>>>" cr  \ XXX INFORMER
+\  key drop  \ XXX INFORMER
   ;
 : required_data<pid#  ( a -- )
   \ Require a page file in order to get its data.
@@ -428,22 +436,22 @@ do_content? on
 : (required_data<pid$)  ( ca len -- )
   \ Require a page file in order to get its data.
   \ ca len = page id
-\   ." Parameter in '(required_data<pid$)' = " 2dup type cr  \ xxx informer
-\   ." 'link_anchor' in '(required_data<pid$)' = " link_anchor $@ type cr  \ xxx informer
+\   ." Parameter in '(required_data<pid$)' = " 2dup type cr  \ XXX INFORMER
+\   ." 'link_anchor' in '(required_data<pid$)' = " link_anchor $@ type cr  \ XXX INFORMER
   -anchor?! +forth_extension required_data
   ;
 : required_data<pid$  ( ca len -- )
   \ Require a page file in order to get its data.
   \ ca len = page id
-\  ." Parameter in 'required_data<pid$' before 'unshortcut' = " 2dup type cr  \ xxx informer
+\  ." Parameter in 'required_data<pid$' before 'unshortcut' = " 2dup type cr  \ XXX INFORMER
   unshortcut
-\  ." Parameter in 'required_data<pid$' after 'unshortcut' = " 2dup type cr  \ xxx informer
+\  ." Parameter in 'required_data<pid$' after 'unshortcut' = " 2dup type cr  \ XXX INFORMER
   (required_data<pid$)
   ;
 : required_data<target  ( ca len -- )
   \ Require a page file in order to get its data.
   \ ca len = target file, without path
-\  ." required_data<target " 2dup type cr  \ xxx informer
+\  ." required_data<target " 2dup type cr  \ XXX INFORMER
   -extension required_data<pid$
   ;
 : require_data  ( "name" -- )
@@ -458,7 +466,7 @@ do_content? on
   \ ca len = page id of an existent page file
   \ a = page id
 \  -anchor \ XXX TMP
-\  ." 'link_anchor' in '(pid$>data>pid#)' = " link_anchor $@ type cr  \ xxx informer
+\  ." 'link_anchor' in '(pid$>data>pid#)' = " link_anchor $@ type cr  \ XXX INFORMER
   2dup (required_data<pid$) pid$>pid#
   ;
 : pid$>data>pid#  ( ca len -- a )
@@ -466,25 +474,25 @@ do_content? on
   \ and convert its string page id to its number page id.
   \ ca len = page id
   \ a = page id
-\   ." Parameter in 'pid$>data>pid#'  before 'dry_unshortcut' = " 2dup type cr  \ xxx informer
-\  key drop  \ xxx informer
-\  ."    'href=' in 'pid$>data>pid#' before 'dry_unshortcut' = " s" href=@" evaluate .s ." = " type cr  \ xxx informer
-\   ." 'link_anchor' in 'pid$>data>pid#' before 'dry_unshortcut' = " link_anchor $@ type cr  \ xxx informer
-  dry_unshortcut  \ xxx tmp
-\  ." >> 'href=' in 'pid$>data>pid#' after 'dry_unshortcut'  = " s" href=@" evaluate .s ." = " type cr  \ xxx informer
-\   ." Parameter in 'pid$>data>pid#' after 'dry_unshortcut' = " 2dup type cr  \ xxx informer
-\   ." 'link_anchor' in 'pid$>data>pid#' after 'dry_unshortcut' = " link_anchor $@ type cr  \ xxx informer
-  dup 0= abort" Empty page-id"  \ xxx tmp
+\   ." Parameter in 'pid$>data>pid#'  before 'dry_unshortcut' = " 2dup type cr  \ XXX INFORMER
+\  key drop  \ XXX INFORMER
+\  ."    'href=' in 'pid$>data>pid#' before 'dry_unshortcut' = " s" href=@" evaluate .s ." = " type cr  \ XXX INFORMER
+\   ." 'link_anchor' in 'pid$>data>pid#' before 'dry_unshortcut' = " link_anchor $@ type cr  \ XXX INFORMER
+  dry_unshortcut  \ XXX TMP
+\  ." >> 'href=' in 'pid$>data>pid#' after 'dry_unshortcut'  = " s" href=@" evaluate .s ." = " type cr  \ XXX INFORMER
+\   ." Parameter in 'pid$>data>pid#' after 'dry_unshortcut' = " 2dup type cr  \ XXX INFORMER
+\   ." 'link_anchor' in 'pid$>data>pid#' after 'dry_unshortcut' = " link_anchor $@ type cr  \ XXX INFORMER
+  dup 0= abort" Empty page-id"  \ XXX TMP
   (pid$>data>pid#)
-\  find-name name>int execute  \ xxx second version; no difference, same corruption of the input stream
-\  cr ." end of data<pid$>pid"  \ xxx informer
+\  find-name name>int execute  \ XXX SECOND version; no difference, same corruption of the input stream
+\  cr ." end of data<pid$>pid"  \ XXX INFORMER
   ;
 : pid$>(data>)pid#  ( ca len -- a )
   \ Return a number page id from a string page id;
   \ if it's different from the current page, require its data.
   \ This word is needed to manage links to the current page
   \ (href attributes that contain just an anchor).
-\   ." Parameter in 'pid$>(data>)pid#'  = " 2dup type cr  \ xxx informer
+\   ." Parameter in 'pid$>(data>)pid#'  = " 2dup type cr  \ XXX INFORMER
   dup if  pid$>data>pid#  else  2drop current_page  then
   ;
 : pid$>url  ( ca1 len1 -- ca2 len2 )
@@ -814,5 +822,9 @@ true value included_files_update_the_page_date?
 \ 2015-02-11: Improvement: more detailed comments in ':datum>address'
 \ and ':datum>value'. Change: ':datum>value' renamed to ':datum'. New:
 \ 'file-mtime>modified' and related words.
+\
+\ 2015-02-17: New: 'get_datum' and '(get_datum)', factored out from
+\ ':datum' in order to let the application hack the default datum
+\ fields.
 
 .( fendo.data.fs compiled) cr
