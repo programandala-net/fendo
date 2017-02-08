@@ -85,7 +85,10 @@ variable pages
 : count_tags  ( ca len -- )
   \ Count the tags in the given pid
   \ ca len = pid
-  pid$>data>pid# tags evaluate_tags
+\  cr ." pid$ = " 2dup type  \ XXX INFORMER
+  pid$>data>pid# tags
+\  cr ." tags = " 2dup type  \ XXX INFORMER
+  evaluate_tags
   ;
 variable prefix$  \ module variable; in <fendo.addon.pages_by_prefix.fs> there's another one
 : (count_tags_by_prefix)  { D: pid -- }
@@ -132,8 +135,8 @@ hide
   tag>count @ 
 \  dup ."  count=" . key drop  \ XXX INFORMER
   echo.
-\  s" /" echo pages @ echo.  \ xxx tmp
-\  ." pages " pages @ .  \ xxx xxx informer
+\  s" /" echo pages @ echo.  \ XXX TMP
+\  ." pages " pages @ .  \ XXX INFORMER
   s" )</span>" echo
   ;
 : tag_count  ( tag -- )
@@ -190,7 +193,7 @@ export
 : tag_cloud_by_prefix  ( ca len -- )
   \ Create a tag cloud
   \ with pages whose pid matches the given prefix.
-\  cr ." In tag_cloud_by_prefix the prefix is " 2dup type  \ xxx informer
+\  cr ." In tag_cloud_by_prefix the prefix is " 2dup type key drop  \ XXX INFORMER
   2dup prefix$ $!  pages_by_prefix drop
   ['] count_tags_by_prefix do_tag_cloud ;
 

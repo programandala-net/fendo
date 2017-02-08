@@ -29,6 +29,8 @@
 " 2013-11-07: Start; variables.
 " 2013-11-08: Actual conversion to XHTML; only the code zone is left in the file.
 " 2014-02-15: File header completed. 
+" 2105-08-07: Fixed the search for "<pre>", because Vim 7.4 adds parameters to
+" it.
 
 " **************************************************************
 
@@ -47,7 +49,7 @@ silent! TOhtml
 "execute "silent! /<style /,/style>/write ".s:style_filename
 
 " Delete lines from the top to "<pre>":
-call search('<pre>','wc')
+call search('^<pre','wc')
 normal mm
 call cursor(1,1) " Go to the top of the file.
 silent! normal d'm

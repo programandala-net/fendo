@@ -125,6 +125,7 @@ variable lonely_tags_link_to_content  \ flag
 
 : ((tag_link))  ( tag ca len -- )
   \ ca len = pid
+\  2dup cr type  \ XXX INFORMER
   rot tag>text link
   ;
 : (tag_link_to_tag_page)  ( tag -- )

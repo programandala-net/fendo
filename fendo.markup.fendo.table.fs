@@ -28,6 +28,29 @@
 \ See at the end of the file.
 
 \ **************************************************************
+\ Markup description
+
+\ The tables markup is inspired by Asciidoc/AsciiDoctor, but it's
+\ simpler.
+\
+\ `|===` marks the table block. `|` starts a cell, `|=` starts a
+\ header cell. `=|=` surround the caption and must be the before any
+\ row.  Optional closing `|` is allowed and ignored at the end of the
+\ row.
+\
+\ Example:
+
+\         |===
+\         =|= Code: ## frames0 require decode frames@ d. ## =|=
+\         |= 512-byte buffers |= system frames
+\         | 1                 | 431
+\         | 2                 | 492
+\         | 3                 | 473
+\         | 4                 | 476
+\         | 10                | 491
+\         |===
+
+\ **************************************************************
 \ Tools
 
 fendo_definitions
@@ -35,25 +58,17 @@ fendo_definitions
 variable #rows   \ counter for the current table
 variable #cells  \ counter for the current table
 
-: (>tr<)  ( -- )
+: (new_table_row)  ( -- )
   \ New row in the current table.
   [<tr>]  1 #rows +!  #cells off
   ;
-: >tr<  ( -- )
+: new_table_row  ( -- )
   \ New row in the current table; close the previous row if needed.
-  #rows @ if  [</tr>]  then  (>tr<)
+  #rows @ if  [</tr>]  then  (new_table_row)
   ;
 : close_pending_cell  ( -- )
   \ Close a pending table cell.
   header_cell? @ if  [</th>]  else  [</td>]  then
-  ;
-: ((|))  ( xt -- )
-  \ New data cell in the current table.
-  \ xt = execution cell of the HTML tag (<td> or <th>)
-  #cells @ if  close_pending_cell else  >tr<  then
-  exhausted?
-  if    drop #cells off
-  else  execute  1 #cells +!  then
   ;
 : actual_cell?  ( -- wf )
   \ The parsed cell markup ("|" or "|=") is the first markup parsed
@@ -65,10 +80,10 @@ variable #cells  \ counter for the current table
 : (|)  ( xt -- )
   \ New data cell in the current table.
   \ xt = execution cell of the HTML tag (<td> or <th>)
-  table_started? @ 0= if  [<table>]  then  ((|))
-  ;
-: <table><caption>  ( -- )
-  [<table>] [<caption>]
+  #cells @            if    close_pending_cell    then
+  first_on_the_line?  if    new_table_row         then
+  exhausted?          if    drop #cells off  \ discard the last of the line
+                      else  execute  1 #cells +!  then
   ;
 
 \ **************************************************************
@@ -78,17 +93,23 @@ markup_definitions
 
 : |  ( -- )
   \ Markup used as separator in tables, images and links.
-\ ." | rendered"  \ xxx informer
-  actual_cell? if  ['] <td> (|)  else  s" |" content  then
+  table_started? @ if  ['] <td> (|)  else  s" |" content  then
   ;
 : |=  ( -- )
   \ Mark a table header cell.
-  actual_cell? if  ['] <th> (|)  else  s" |=" content  then
+  table_started? @ if  ['] <th> (|)  else  s" |=" content  then
   ;
 : =|=  ( -- )
-  \ Open or close a table caption; must be the first markup of a table.
-  #rows @ abort" The '=|=' markup must be the first one in a table"
-  ['] <table><caption> ['] </caption> opened_[=|=]? markups
+  \ Open or close a table caption; it must be the first markup inside a table.
+  table_started? @ if
+    #rows @ abort" The '=|=' markup must be the first one in a table"
+    ['] <caption> ['] </caption> opened_[=|=]? markups
+  else  s" =|=" content  then
+  ;
+: |===  ( -- )
+  \ Start or close a table.
+  table_started? @ if  [</table>]  else  [<table>]  then
+  #rows off  #cells off
   ;
 
 
@@ -98,5 +119,8 @@ fendo_definitions
 \ Change history of this file
 
 \ 2014-04-21: Code moved from <fendo.markup.fendo.fs>.
+\
+\ 2015-08-15: Added `|===` after AsciiDoctor. Modified all the code
+\ accordingly. Added the markup description and example.
 
 .( fendo.markup.fendo.table.fs compiled ) cr

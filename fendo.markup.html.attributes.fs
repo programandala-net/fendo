@@ -47,7 +47,7 @@ false  dup constant [gforth_strings_for_attributes?]  immediate
   require ffl/str.fs
 [then]
 
-require galope/3dup.fs
+require galope/three-dup.fs
 require galope/dollar-store-new.fs  \ '$!new'
 require galope/xstack.fs
 require galope/minus-cell-bounds.fs  \ '-cell-bounds'
@@ -316,10 +316,9 @@ create attributes  \ table for the attribute variables
   [if]  0 swap $!len  [else]  @ str-init  [then]
   ;
 : -attributes  ( -- )
-  \ Clear all HTML attributes, and also the link anchor, with empty
-  \ strings.
+  \ Clear all HTML attributes, the link anchor and the link text.
   (attributes) bounds ?do  i @ -attribute  cell +loop
-  0 link_anchor $!len
+  0 link_anchor $!len 
   ;
 : ?hreflang=!  ( a -- )
   \ If the given page has a different language than the current one,

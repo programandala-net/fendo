@@ -66,7 +66,8 @@ require fendo.markup.html.fs
   2dup http://? >r  2dup https://? >r  ftp://? r> or r> or
   ;
 link_text_as_attribute?  0= [if]  \ xxx tmp -- XXX FIXME unbalanced condition
-$variable link_text
+$variable (link_text)
+' (link_text) is link_text  \ defered in <fendo.fs>
 : link_text!  ( ca len -- )
   link_text $!
   ;
@@ -98,7 +99,8 @@ link_text_already_evaluated? off
   \ XXX TMP saving and restoring 'separate?' makes no difference
   ;
 
-\ $variable link_anchor  \ XXX OLD -- moved to fendo.markup.html.attributes.fs>
+$variable (link_anchor)
+' (link_anchor) is link_anchor  \ defered in <fendo.fs>
 \ variable to_local_anchor?  \ XXX OLD
 : /anchor ( ca1 len1 -- ca2 len2 ca3 len3 )
   \ Divide a href attribute at its anchor.
@@ -326,11 +328,12 @@ defer link_suffix
   if  (echo_link)  else  -attributes echo_link_text  then  reset_link
   ;
 
-defer (get_link_href)  ( ca len -- )
-  \ Defined in <fendo.markup.fendo.link.fs>.
-
 \ **************************************************************
-\ Links xxx note: original words of <fendo.tools.fs>
+\ Links
+
+defer (get_link_href)  ( ca len -- )
+  \ ca len = page id, URL or shortcut
+  \ Defined in <fendo.markup.fendo.link.fs>.
 
 : (link)  ( ca len -- )
   \ Create a link.
@@ -430,5 +433,8 @@ defer (get_link_href)  ( ca len -- )
 \ 'description|title', just written for the fix (in <fendo.data.fs>),
 \ instead of the datum 'description'. This makes sure links to
 \ description-less pages have a link title.
+\
+\ 2015-02-12: Change: 'link_anchor' and 'link_text' are defered in
+\ <fendo.fs> and defined here. Required because of a fix.
 
 .( fendo.links.fs ) cr

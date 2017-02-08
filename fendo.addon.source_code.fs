@@ -33,8 +33,6 @@
 \ 2013-12-11: make '(filename>filetype)' configurable by the
 \ application.
 \ 2013-11-09: Syntax highlighting cache!
-\ 2014-02-15: Fix: path of the Fendo addons is converted to relative.
-\ 2014-03-12: Change: "fendo.addon.source_code.common.fs" filename updated.
 
 \ **************************************************************
 \ Requirements
@@ -53,12 +51,16 @@ fendo_definitions
 
 require ./fendo.addon.source_code.common.fs  \ XXX TMP
 
+\ **************************************************************
+
 module: fendo.addon.source_code
 
-: (filename>filetype)  { D: filename -- ca len }
+: (filename>filetype)  ( ca1 len1 -- ca2 len2 )
   \ Convert a filename to a Vim's filetype.
   \ XXX TODO make all this configurable by the application
   \ XXX TODO use a data structure instead of conditionals
+  basename  \ remove the path, because some comparations use the whole filename
+  { D: filename }
   filename s" .4th" string-suffix? if  s" forth" exit  then
   filename s" .acef" string-suffix? if  s" aceforth" exit  then
   filename s" .acefs" string-suffix? if  s" aceforth" exit  then
@@ -100,6 +102,7 @@ module: fendo.addon.source_code
 \  filename s" _cmd" string-suffix? if  s" text" exit  then  \ XXX TODO
   filename s" boot" str=  if  s" superbasic" exit  then
   filename s" ratpoisonrc" str=  if  s" ratpoison" exit  then
+  filename s" Makefile" str=  if  s" make" exit  then
   s" text"
   ;
 : filename>filetype  ( ca1 len1 -- ca2 len2 )
@@ -108,6 +111,7 @@ module: fendo.addon.source_code
   \ to override the default guessing based on the filename.
 \  cr ." In filename>filetype " 2dup type ."  --> "  \ XXX INFORMER
   programming_language$ $@ dup if  2nip  else  2drop (filename>filetype)  then
+  2dup previous_programming_language$ $!
 \  2dup type cr cr cr  \ XXX INFORMER
   ;
 
@@ -155,10 +159,6 @@ defer source_code_posttranslated  ( ca len -- ca' len' )
   ;
 [then]
 no_source_code_translation
-: source_code_finished  ( -- )
-  \ Reset default values about the source code.
-  s" " programming_language!  no_source_code_translation
-  ;
 : open_source_code  ( ca len -- )
   \ ca len = file name
   file>local r/o open-file throw  to source_code_fid
@@ -193,6 +193,87 @@ no_source_code_translation
   \ already set in the 'programming_language$' dynamic string.
   \ ca len = file name
   2dup filename>filetype programming_language!  (source_code)
+  ;
+: unsorted_source_code_files_by_dir_and_regex  ( ca1 len1 ca2 len2 -- )
+  \ Read and echo the content of source code files
+  \ in local target files directory ca1 len1 that match
+  \ regex ca2 len2. The files will be unsorted.
+  \ The Vim filetype is guessed from the filenames, unless
+  \ already set in the 'programming_language$' dynamic string.
+  \ ca1 len1 = path under the target <files> directory,
+  \   with or without ending slash
+  \ ca2 len2 = regex supported by the rgx module
+  \   of the Forth Foundation Library
+  programming_language$ $@ { D: filetype$ }  \ save the current value
+  >regex 2dup { D: directory$ } file>local open-dir throw  ( dirid )
+  begin   dup pad 256 rot read-dir throw  ( dirid len f )
+  while   pad over  ( dirid len ca len ) regex rgx-wcmatch?
+          if    pad swap directory$ s" /" s+ 2swap s+ source_code
+                filetype$ programming_language!  \ restore for the next file
+          else  drop  then
+  repeat  drop close-dir throw
+  ;
+
+
+: (sorted_source_code_files_by_dir_and_regex)  ( ca1 len1 ca2 len2 -- )
+
+  \ Type Forth code that will read and echo the content of source code
+  \ files in local target files directory ca1 len1 that match regex
+  \ ca2 len2. The files will be unsorted. The output is already
+  \ redirected to a temporary file, so this work actually creates a
+  \ Forth source file that will be sorted and interpreted later.
+
+  \ The Vim filetype is guessed from the filenames, unless
+  \ already set in the 'programming_language$' dynamic string.
+  \ ca1 len1 = path under the target <files> directory,
+  \   with or without ending slash
+  \ ca2 len2 = regex supported by the rgx module
+  \   of the Forth Foundation Library
+
+  programming_language$ $@ { D: filetype$ }  \ save the current value
+  >regex 2dup { D: directory$ } file>local open-dir throw  ( dirid )
+  begin   dup pad 256 rot read-dir throw  ( dirid len f )
+  while   pad over  ( dirid len ca len ) regex rgx-wcmatch?
+          if    \ Create a line of code.
+                s\" s\" " type
+                filetype$ type
+                s\" \" programming_language! " type
+                s\" s\" " type
+                directory$ type s" /" type pad swap type [char] " emit
+                s"  source_code" type cr
+          else  drop  then
+  repeat  drop close-dir throw
+  ;
+
+s" /tmp/fendo.source_codes_by_dir_and_regex.txt" 2dup 2constant tmp_raw_file$
+s" .fs" s+ 2constant tmp_sorted_file$
+
+: sorted_source_code_files_by_dir_and_regex  ( ca1 len1 ca2 len2 -- )
+
+  \ Read and echo the content of source code files
+  \ in local target files directory ca1 len1 that match
+  \ regex ca2 len2. The files will be sorted.
+  \
+  \ The Vim filetype is guessed from the filenames, unless
+  \ already set in the 'programming_language$' dynamic string.
+  \
+  \ ca1 len1 = path under the target <files> directory,
+  \   with or without ending slash
+  \ ca2 len2 = regex supported by the rgx module
+  \   of the Forth Foundation Library
+  
+  \ XXX TODO -- use previous_programming_language$
+
+  \ First, create a file with the required commands,
+  \ by executing '(sorted_source_codes_by_dir_and_regex)' with
+  \ the output redirected to the file:
+  ['] (sorted_source_code_files_by_dir_and_regex)
+  tmp_raw_file$ w/o create-file throw  dup >r outfile-execute
+  r> close-file throw
+  \ Second, sort the file, using the OS shell:
+  s" sort " tmp_raw_file$ s+ s"  > " s+ tmp_sorted_file$ s+ system
+  \ Third, interpret the sorted file:
+  tmp_sorted_file$ included
   ;
 
 ;module
@@ -253,7 +334,10 @@ no_source_code_translation
 \ 2014-02-06: New: 'source_code_finished' now does all reseting final
 \ task.  This fixes some obscure issues too.
 \
-\ 2014-03-12: Change: module renamed after the filename.
+\ 2014-02-15: Fix: path of the Fendo addons is converted to relative.
+\
+\ 2014-03-12: Change: module renamed after the filename;
+\ "fendo.addon.source_code.common.fs" filename updated.
 \
 \ 2014-10-13: New: 'zx_spectrum_source_code'.
 \
@@ -277,5 +361,15 @@ no_source_code_translation
 \
 \ 2015-01-31: New: additional extensions: '.vimbas' and 'vimclairbas'
 \ for Vimclair BASIC; '.unexpanded_llist' for Sinclair BASIC.
+\
+\ 2015-02-04: Fix: removed the definition of 'source_code_finished',
+\ already moved to to <fendo.addon.source_code.common.fs>.
+\
+\ 2015-05-02: New: 'unsorted_source_codes_by_dir_and_regex',
+\ "Makefile" support in '(filename>filetype)'.
+\ 'sorted_source_codes_by_dir_and_regex'.
+\
+\ 2015-05-05: Fix: '(filename>filetype)' didn't recognize whole
+\ filenames, only suffixes, because the path was not removed.
 
 .( fendo.addon.source_code.fs compiled) cr

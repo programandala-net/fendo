@@ -31,7 +31,7 @@
 \ Requirements
 
 forth_definitions
-require galope/number-to-string.fs  \ 'n>str'
+require galope/n-to-str.fs  \ 'n>str'
 require galope/xstack.fs
 fendo_definitions
 
@@ -200,6 +200,8 @@ false value compact_html?  \ if true, no carriage return is created
 \ 'echo_stack'.
 \
 \ 2014-12-13: New: 'compact_html?' flag (experimental).
+\
+\ 2015-10-15: Updated the name of the Galope module <n-to-str.fs>.
 
 .( fendo.echo.fs compiled) cr
 

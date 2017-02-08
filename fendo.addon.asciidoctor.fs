@@ -44,6 +44,7 @@ fendo_definitions
 \ Change history of this file
 
 \ 2015-02-11: Start. 'include_asciidoctor' works.
+\ 2015-09-03: Added 'file>local' to 'include_asciidoctor'.
 
 \ **************************************************************
 
@@ -93,16 +94,19 @@ export
 : include_asciidoctor  ( ca len -- )
   \ Include contents in Asciidoctor format from the given file.
   \ The header and footer of the file will be ignored.
-  asciidoctor_command$ s"  " s+ 2swap s+ system
+  file>local asciidoctor_command$ s"  " s+ 2swap s+
+  system
   $? abort" The system asciidoctor command failed"
   <output_file echo
   ;
 
+0 [if]
 : asciidoctor{  ( "ccc<}asciidoctor>" -- )
   \ Start interpreting contents in Asciidoctor format,
   \ until "}asciidoctor" is found.
   \ XXX TODO -- as a macro
   ;
+[then]
 
 ;module
 

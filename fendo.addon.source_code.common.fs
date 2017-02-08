@@ -46,6 +46,7 @@ export
 
 false value highlight?  \ flag to switch the code highlighting on and off
 $variable programming_language$  \ same values than Vim's 'filetype'
+$variable previous_programming_language$  \ copy used by some addons
 : programming_language!  ( ca len -- )
   \ Set the Vim's filetype for syntax highlighting.
   programming_language$ $!
@@ -94,16 +95,19 @@ s" /tmp/fendo_addon.source_code.txt" 2dup 2constant input_file$
 s" .xhtml" s+ 2constant output_file$
 
 export  \ xxx tmp
+
 true [if]
-s" ex -f " 2constant base_highlight_command$
+  s" ex -f " 2constant base_highlight_command$
 [else]  \ xxx tmp
-$variable (base_highlight_command$)
-s" vim -f " (base_highlight_command$) $!
-: base_highlight_command$  ( -- ca len )
-  (base_highlight_command$) $@
-  ;
+  $variable (base_highlight_command$)
+  s" vim -f " (base_highlight_command$) $!
+  : base_highlight_command$  ( -- ca len )
+    (base_highlight_command$) $@
+    ;
 [then]
+
 sourcepath s" fendo.addon.source_code.vim " s+ 2constant vim_program$
+
 hide
 
 : program+  ( ca len -- ca' len' )
@@ -119,19 +123,19 @@ hide
 \  ." programming_language$ in parameters+ is " programming_language$ $@ type cr  \ xxx informer
   s\" -b -c \"set filetype=" s+ programming_language$ $@ s+ s\" \" " s+
   ;
-: file+  ( ca len -- ca' len' )
-  \ Add the input file parameter to the Vim invocation command.
-  input_file$ s+
-  ;
 : highlighting_command$  ( -- ca len )
   \ Return the complete highlighting command,
   \ ready to be executed by the shell.
   \ The command calls Vim in execution mode, this way:
   \   ex -f -b -c "set filetype=PROGRAMMING_LANGUAGE"
   \      -S ~/forth/fendo/fendo.addon.source_code.vim /tmp/fendo_addon.source_code.txt
-  base_highlight_command$ parameters+ program+ file+
+  base_highlight_command$ parameters+ program+ input_file$ s+
 \  ." highlighting_command$ = " 2dup type cr  \ xxx informer
   ;
+
+\ XXX TODO -- There are similar words '>input_file' and '<output_file'
+\ in <fendo.addon.source_code.common.fs>; maybe they can be shared.
+
 : >input_file  ( ca len -- )
   \ Save the given source code to the file that Vim will load as input.
   \ ca len = plain source code
@@ -148,10 +152,8 @@ hide
   \ ca1 len1 = plain source code
   \ ca2 len2 = source code highlighted with <span> XHTML tags
   >input_file
-  highlighting_command$
-\  cr ." In (highlighted) the content of highlighting_command$ is:" cr 2dup type cr cr  \ XXX INFORMER
-  system
-  $? abort" The highlighting command failed"
+  highlighting_command$ system
+  $? abort" The system highlighting command failed"
   <output_file
   ;
 export
