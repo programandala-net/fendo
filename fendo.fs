@@ -4,7 +4,10 @@
 
 \ This file is the main one; it loads all the modules.
 
-\ Copyright (C) 2012,2013,2014,2015 Marcos Cruz (programandala.net)
+\ Last modified 201706201636
+\ See change history at the end of the file.
+
+\ Copyright (C) 2012,2013,2014,2015,2017 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute it and/or modify it
 \ under the terms of the GNU General Public License as published by
@@ -25,31 +28,6 @@
 \   <http://www.gnu.org/software/gforth/>
 \   <http://www.bernd-paysan.de/gforth.html>
 \   <http://www.complang.tuwien.ac.at/forth/gforth/>
-
-\ **************************************************************
-\ Version history of Fendo
-
-\ 2012-06-30: Start of version A-00.
-\
-\ 2013-06-28: Start of version A-01.
-\
-\ 2013-10-22: Start of version A-02.
-\
-\ 2014-02-15: Start of version A-03. All files are renamed.
-\
-\ 2014-04-20: Start of version A-04. Improved, more homogeneous, and
-\ more regular markup.
-\
-\ 2014-11-08: Start of version A-05. Many fixes and improvements.  The
-\ main ones are: 'unmarkup' is used instead of duplicated plain text
-\ versions of the main data fields; there are not two sets of HTML
-\ attributes anymore (the main one and the alternative one), but just
-\ one set and a stack to save and restore it as needed.
-
-\ **************************************************************
-\ Change history of this file
-
-\ See at the end of the file.
 
 \ **************************************************************
 \ Stack notation
@@ -260,7 +238,7 @@ fendo_definitions
 \ **************************************************************
 \ Config
 
-s" A-05-20150130" 2constant fendo_version
+s" 0.6.0-pre.1+201706201630" 2constant fendo_version
 s" Fendo (Forth Engine for Net DOcuments) " fendo_version s+ 2constant generator
 
 false constant link_text_as_attribute?  \ XXX TMP -- experimental
