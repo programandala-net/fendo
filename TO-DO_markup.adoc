@@ -1,6 +1,6 @@
 = Fendo markup to-do
-Marcos Cruz (programandala.net)
-2014-07-13
+:author: Marcos Cruz (programandala.net)
+:revdate: 2017-06-20
 
 ////
 
@@ -13,6 +13,8 @@ Creole and Simplilo. Columns reordered.
 2014-04-21: Added txt2tags. Fixes.
 
 2014-07-13: Updated.
+
+2017-06-20: Rename to <TO-DO_markup.adoc>.
 
 ////
 
