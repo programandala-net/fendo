@@ -6,7 +6,9 @@
 \ contents in Asciidoctor (or AsciiDoc) format, either inline or from
 \ a file.
 
-\ Copyright (C) 2015 Marcos Cruz (programandala.net)
+\ Last modified: 201702101242
+
+\ Copyright (C) 2015,2017 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute it and/or modify it
 \ under the terms of the GNU General Public License as published by
@@ -32,7 +34,7 @@
 \
 \ The original AsciiDoc engine could be used instead, but this file
 \ should be adapted.  Support for AsciidDoc is planned.  See:
-\ <http://asciidoc.org>. 
+\ <http://asciidoc.org>.
 
 forth_definitions
 
@@ -45,6 +47,9 @@ fendo_definitions
 
 \ 2015-02-11: Start. 'include_asciidoctor' works.
 \ 2015-09-03: Added 'file>local' to 'include_asciidoctor'.
+\ 2017-02-10: Factor `(include_asciidoctor)` from
+\ `include_asciidoctor`, to reuse it for README.adoc files, which need
+\ additional operations.
 
 \ **************************************************************
 
@@ -89,15 +94,21 @@ s" --out-file " s+ output_file$ s+
   asciidoctor_base_command$ s"  " s+
   ;
 
-export
-
-: include_asciidoctor  ( ca len -- )
-  \ Include contents in Asciidoctor format from the given file.
+: (include_asciidoctor)  ( ca1 len1 -- ca2 len2 )
+  \ Return the contents _ca2 len2_ converted
+  \ from the Asciidoctor file _ca1 len1_.
   \ The header and footer of the file will be ignored.
   file>local asciidoctor_command$ s"  " s+ 2swap s+
-  system
-  $? abort" The system asciidoctor command failed"
-  <output_file echo
+  system $? abort" The system asciidoctor command failed"
+  <output_file
+  ;
+
+export
+
+: include_asciidoctor  ( ca1 len1 -- )
+  \ Include contents in Asciidoctor format from the given file.
+  \ The header and footer of the file will be ignored.
+  (include_asciidoctor) echo
   ;
 
 0 [if]
