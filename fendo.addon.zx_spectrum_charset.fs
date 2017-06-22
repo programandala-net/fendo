@@ -1,10 +1,14 @@
 .( fendo.addon.zx_spectrum_charset.fs) cr
 
-\ This file is part of Fendo.
+\ This file is part of Fendo
+\ (http://programandala.net/en.program.fendo.html).
 
 \ This file is the ZX Spectrum source code addon.
 
-\ Copyright (C) 2013,2014,2015 Marcos Cruz (programandala.net)
+\ Last modified 20170622.
+\ See change log at the end of the file.
+
+\ Copyright (C) 2013,2014,2015,2017 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute it and/or modify it
 \ under the terms of the GNU General Public License as published by
@@ -19,28 +23,10 @@
 \ You should have received a copy of the GNU General Public License
 \ along with this program; if not, see <http://gnu.org/licenses>.
 
-\ Fendo is written in Forth with Gforth
-\ (<http://www.bernd-paysan.de/gforth.html>).
+\ Fendo is written in Forth (http://forth-standard.org)
+\ with Gforth (http://gnu.org/software/gforth).
 
-\ **************************************************************
-\ Change history of this file
-
-\ 2014-10-12: Start.
-\
-\ 2014-11-05: Fix: charset translation worked only when highlighting
-\ was on. Now, 'set_zx_spectrum_source_code_translation' (factored
-\ from  'zx_spectrum_source_code', defined in
-\ <fendo.addon.zx_spectrum_source_code.fs>) does the proper selection.
-\
-\ 2014-11-05: Change: <galope/uncodepaged.fs> is used instead of
-\ <galope/translated.fs> for one of the translation tables. It finally
-\ works, but something strange happened in certain cases. It seems a
-\ strange bug in uncodepaged (the details are in the code).
-\
-\ 2015-01-31: New: new words for unexpanded llistings (created by ZX
-\ Spectrum +3 with 'FORMAT LPRINT "U":LLIST').
-
-\ **************************************************************
+\ ==============================================================
 
 forth_definitions
 require galope/uncodepaged.fs
@@ -48,20 +34,14 @@ require galope/translated.fs
 fendo_definitions
 
 uncodepage: zx_spectrum_charset_below_128
-  \ These translations can be done with (and before) or without syntax
-  \ highlighting.
-  \ XXX FIXME -- see 'zx_spectrum_source_code_translated_without_highlighting'.
   096 s" £"  \ British pound sterling
   127 s" ©"  \ copyright
 ;uncodepage
+  \ These translations can be done with (and before) or without syntax
+  \ highlighting.
+  \ XXX FIXME -- see 'zx_spectrum_source_code_translated_without_highlighting'.
 
 uncodepage: zx_spectrum_charset_for_source_code_without_highlighting
-
-  \ These translations have to be used when highlighting is off.
-  \
-  \ Note: These translations would be useless before the syntax
-  \ highlighting, because the syntax highlighting would convert the
-  \ HTML markups to explicit characters.
 
   \ XXX FIXME -- see 'zx_spectrum_source_code_translated_without_highlighting'.
   096 s" £"  \ British pound sterling
@@ -196,10 +176,13 @@ uncodepage: zx_spectrum_charset_for_source_code_without_highlighting
   254 s" <span class='ZXSpectrumToken'>RETURN</span>"
   255 s" <span class='ZXSpectrumToken'>COPY</span>"
 ;uncodepage
+  \ These translations have to be used when highlighting is off.
+  \
+  \ Note: These translations would be useless before the syntax
+  \ highlighting, because the syntax highlighting would convert the
+  \ HTML markups to explicit characters.
 
 translations: zx_spectrum_charset_for_source_code_with_highlighting
-
-  \ These translations work after the syntax highlighting.
 
   s" &lt;80&gt;" s" <span class='ZXSpectrumBlockGraph'>&nbsp;</span>"
   s" &lt;81&gt;" s" <span class='ZXSpectrumBlockGraph'>&#x259D;</span>"
@@ -330,13 +313,9 @@ translations: zx_spectrum_charset_for_source_code_with_highlighting
   s" &lt;fe&gt;" s" <span class='ZXSpectrumToken'>RETURN</span>"
   s" &lt;ff&gt;" s" <span class='ZXSpectrumToken'>COPY</span>"
 ;translations
+  \ These translations work after the syntax highlighting.
 
 uncodepage: zx_spectrum_charset_for_unexpanded_llist_without_highlighting
-
-  \ XXX TODO -- 2015-01-31: not used yet
-
-  \ These translations convert a raw unexpanded printer listing
-  \ from ZX Spectrum +3 (using 'FORMAT LPRINT "U":LLIST').
 
   096 s" £"  \ British pound sterling
   127 s" ©"  \ copyright
@@ -471,6 +450,10 @@ uncodepage: zx_spectrum_charset_for_unexpanded_llist_without_highlighting
   255 s"  COPY "
 
 ;uncodepage
+  \ These translations convert a raw unexpanded printer listing
+  \ from ZX Spectrum +3 (using 'FORMAT LPRINT "U":LLIST').
+  \
+  \ XXX TODO -- 2015-01-31: not used yet
 
 uncodepage: zx_spectrum_charset_for_unexpanded_llist_before_highlighting
 
@@ -568,7 +551,7 @@ uncodepage: zx_spectrum_charset_for_unexpanded_llist_before_highlighting
   253 s"  CLEAR "
   254 s"  RETURN "
   255 s"  COPY "
- 
+
 ;uncodepage
 
 translations: zx_spectrum_charset_for_unexpanded_llist_after_highlighting
@@ -613,17 +596,19 @@ translations: zx_spectrum_charset_for_unexpanded_llist_after_highlighting
 
 ;translations
 
-: zx_spectrum_source_code_translated_before_highlighting  ( ca len -- ca' len' )
+: zx_spectrum_source_code_translated_before_highlighting ( ca len -- ca' len' )
+  zx_spectrum_charset_below_128 uncodepaged ;
   \ Convert the content of a ZX Spectrum file to UTF-8,
   \ before the syntax highlighting.
-  zx_spectrum_charset_below_128 uncodepaged
-  ;
-: zx_spectrum_source_code_translated_after_highlighting  ( ca len -- ca' len' )
+
+: zx_spectrum_source_code_translated_after_highlighting ( ca len -- ca' len' )
+  zx_spectrum_charset_for_source_code_with_highlighting translated ;
   \ Convert the content of a ZX Spectrum file to UTF-8,
   \ after the syntax highlighting.
-  zx_spectrum_charset_for_source_code_with_highlighting translated
-  ;
-: zx_spectrum_source_code_translated_without_highlighting  ( ca len -- ca' len' )
+
+: zx_spectrum_source_code_translated_without_highlighting ( ca len -- ca' len' )
+\  zx_spectrum_charset_below_128 uncodepaged  \ XXX FIXME -- old
+  zx_spectrum_charset_for_source_code_without_highlighting uncodepaged ;
   \ Convert the content of a ZX Spectrum file to UTF-8.
   \
   \ XXX FIXME When 'zx_spectrum_charset_below_128' is used here,
@@ -631,17 +616,13 @@ translations: zx_spectrum_charset_for_unexpanded_llist_after_highlighting
   \ 'zx_spectrum_charset_for_source_code_without_highlighting' is ruined
   \ (if the order is changed, it seems to work, but it is not a good
   \ solution, because one of the chars translated is 127).
-  \ That's why all translations are done in 
+  \ That's why all translations are done in
   \ 'zx_spectrum_charset_for_source_code_without_highlighting'.
   \ It seems the bug is in 'uncodepaged':
   \ when two translations are done on a chain way, something
   \ can go wrong.
-  \
-\  zx_spectrum_charset_below_128 uncodepaged  \ XXX FIXME -- old
-  zx_spectrum_charset_for_source_code_without_highlighting uncodepaged
-  ;
-: set_zx_spectrum_source_code_translation  ( -- )
-  \ Set the proper translation for ZX Spectrum source code files.
+
+: set_zx_spectrum_source_code_translation ( -- )
   highlight? if
     ['] zx_spectrum_source_code_translated_before_highlighting
     is source_code_pretranslated
@@ -650,30 +631,27 @@ translations: zx_spectrum_charset_for_unexpanded_llist_after_highlighting
   else
     ['] zx_spectrum_source_code_translated_without_highlighting
     is source_code_pretranslated
-  then
-  ;
+  then ;
+  \ Set the proper translation for ZX Spectrum source code files.
 
-: zx_spectrum_unexpanded_llist_translated_before_highlighting  ( ca len -- ca' len' )
+: zx_spectrum_unexpanded_llist_translated_before_highlighting ( ca len -- ca' len' )
+  zx_spectrum_charset_for_unexpanded_llist_before_highlighting uncodepaged ;
   \ Convert the content of a ZX Spectrum +3
   \ unexpanded llist file to UTF-8,
   \ before the syntax highlighting.
-  zx_spectrum_charset_for_unexpanded_llist_before_highlighting uncodepaged
-  ;
-: zx_spectrum_unexpanded_llist_translated_after_highlighting  ( ca len -- ca' len' )
+
+: zx_spectrum_unexpanded_llist_translated_after_highlighting ( ca len -- ca' len' )
+  zx_spectrum_charset_for_unexpanded_llist_after_highlighting translated ;
   \ Convert the content of a ZX Spectrum +3
   \ unexpanded llist file to UTF-8,
   \ after the syntax highlighting.
-  zx_spectrum_charset_for_unexpanded_llist_after_highlighting translated
-  ;
-: zx_spectrum_unexpanded_llist_translated_without_highlighting  ( ca len -- ca' len' )
+
+: zx_spectrum_unexpanded_llist_translated_without_highlighting ( ca len -- ca' len' )
+  zx_spectrum_charset_for_unexpanded_llist_without_highlighting uncodepaged ;
   \ Convert the content of a ZX Spectrum +3
   \ unexpanded llist file to UTF-8.
-  zx_spectrum_charset_for_unexpanded_llist_without_highlighting uncodepaged
-  ;
 
-: set_zx_spectrum_unexpanded_llist_translation  ( -- )
-  \ Set the proper translation for ZX Spectrum unexpanded llist files,
-  \ created by ZX Spectrum +3 this way: 'FORMAT LPRINT "U":LLIST".
+: set_zx_spectrum_unexpanded_llist_translation ( -- )
   highlight? if
     ['] zx_spectrum_unexpanded_llist_translated_before_highlighting
     is source_code_pretranslated
@@ -682,8 +660,30 @@ translations: zx_spectrum_charset_for_unexpanded_llist_after_highlighting
   else
     ['] zx_spectrum_unexpanded_llist_translated_without_highlighting
     is source_code_pretranslated
-   then
-  ;
+   then ;
+  \ Set the proper translation for ZX Spectrum unexpanded llist files,
+  \ created by ZX Spectrum +3 this way: 'FORMAT LPRINT "U":LLIST".
 
 .( fendo.addon.zx_spectrum_charset.fs compiled) cr
 
+\ ==============================================================
+\ Change log
+
+\ 2014-10-12: Start.
+\
+\ 2014-11-05: Fix: charset translation worked only when highlighting
+\ was on. Now, 'set_zx_spectrum_source_code_translation' (factored
+\ from  'zx_spectrum_source_code', defined in
+\ <fendo.addon.zx_spectrum_source_code.fs>) does the proper selection.
+\
+\ 2014-11-05: Change: <galope/uncodepaged.fs> is used instead of
+\ <galope/translated.fs> for one of the translation tables. It finally
+\ works, but something strange happened in certain cases. It seems a
+\ strange bug in uncodepaged (the details are in the code).
+\
+\ 2015-01-31: New: new words for unexpanded llistings (created by ZX
+\ Spectrum +3 with 'FORMAT LPRINT "U":LLIST').
+\
+\ 2017-06-22: Update source style, layout and header.
+
+\ vim: filetype=gforth

@@ -1,6 +1,7 @@
 .( fendo.addon.multilingual.fs) cr
 
-\ This file is part of Fendo.
+\ This file is part of Fendo
+\ (http://programandala.net/en.program.fendo.html).
 
 \ This file creates some low-level tools to manage multilingual
 \ websites. The language of a page is indicated using the 2-letter or
@@ -11,7 +12,10 @@
 \   es.sección.subsección.html
 \   eo.fako.subfako.html
 
-\ Copyright (C) 2013 Marcos Cruz (programandala.net)
+\ Last modified 20170622.
+\ See change log at the end of the file.
+
+\ Copyright (C) 2013,2017 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute
 \ it and/or modify it under the terms of the GNU General
@@ -29,15 +33,10 @@
 \ License along with this program; if not, see
 \ <http://gnu.org/licenses>.
 
-\ Fendo is written in Forth
-\ with Gforth (<http://www.bernd-paysan.de/gforth.html>).
+\ Fendo is written in Forth (http://forth-standard.org)
+\ with Gforth (http://gnu.org/software/gforth).
 
-\ **************************************************************
-\ Change history of this file
-
-\ See at the end of the file.
-
-\ **************************************************************
+\ ==============================================================
 \ Usage
 
 0 [if]
@@ -60,7 +59,7 @@
 
 [then]
 
-\ **************************************************************
+\ ==============================================================
 \ Requirements
 
 forth_definitions
@@ -71,65 +70,68 @@ require galope/paren-star.fs  \ '(*'
 
 fendo_definitions
 
-\ **************************************************************
+\ ==============================================================
 
 true to multilingual?
 
 0 value langs  \ number of language sections of the website  \ XXX OLD
 
-: lang_prefix  ( ca1 len1 -- ca2 len2 )
+: lang_prefix ( ca1 len1 -- ca2 len2 )
+  [char] . c/string ;
   \ Get the ISO language code from the first part of a source page file.
   \ ca1 len1 = page id
   \ ca2 len2 = ISO language code
-  [char] . c/string
-  ;
-: pid#>lang$  { page_id -- ca len }
+
+: pid#>lang$ { page_id -- ca len }
+  page_id language dup ?exit  2drop
+  page_id source_file lang_prefix ;
   \ Return the ISO language code of the given page.
   \ The "language" metadatum has higher priority than the filename's
   \ prefix.
-  page_id language dup ?exit  2drop
-  page_id source_file lang_prefix
-  ;
-: current_lang$  ( -- ca len )
+
+: current_lang$ ( -- ca len )
+  current_page ?dup if  pid#>lang$  else  s" en"  then ;
   \ Return the ISO language code of the current page.
   \ XXX TODO configurable default language
-  current_page ?dup if  pid#>lang$  else  s" en"  then
-  ;
-: pid#>lang#  ( a -- n )
+
+: pid#>lang# ( a -- n )
+  pid#>lang$ s" _language" s+ fendo>order evaluate fendo<order ;
   \ Return the language number of the given page id.
   \ This number is used as an offset, e.g. for multilingual
   \ texts.
   \ a = page id
-  pid#>lang$ s" _language" s+ fendo>order evaluate fendo<order
-  ;
-: pid$>lang#  ( ca len -- n )
+
+: pid$>lang# ( ca len -- n )
+  pid$>data>pid# pid#>lang#  ;
   \ Return the language number of the given page id.
   \ This number is used as an offset, e.g. for multilingual
   \ texts.
   \ ca len = page id
-  pid$>data>pid# pid#>lang# 
+
+: current_lang# ( -- n )
+  current_page dup if  pid#>lang#  then  \ XXX TMP? for testing
   ;
-: current_lang#  ( -- n )
   \ Return the language number of the current page
   \ (or zero, the first language, if there's no current page yet).
   \ current_page pid#>lang#  \ XXX OLD, first version
-  current_page dup if  pid#>lang#  then  \ XXX TMP? for testing
-  ;
-: +lang  ( a -- a' )
+
+: +lang ( a -- a' )
+  current_lang# cells + ;
   \ Add the current language number as cells.
-  current_lang# cells +
-  ;
-: l10n-string,  ( ca-n len-n ... ca1 len1 -- )
+
+: l10n-string, ( ca-n len-n ... ca1 len1 -- )
+  langs 0 ?do  $!,  loop ;
   \ Compile the language strings.
   \ ca1 len1 = text in the first language
   \ ca-n len-n = text in the last language
-  langs 0 ?do  $!,  loop
-  ;
-: (l10n-string)  ( -- )
+
+: (l10n-string) ( -- )
+  does> ( -- ca len ) ( pfa ) +lang $@ ;
   \ Define what localization strings do.
-  does>   ( -- ca len )  ( pfa ) +lang $@
-  ;
-: l10n-string  ( ca-n len-n ... ca1 len1 "name" -- )
+
+: l10n-string ( ca-n len-n ... ca1 len1 "name" -- )
+  langs 0= abort" 'langs' is not set; 'l10n-string' can not work."
+  create  l10n-string,  (l10n-string) ;
   \ Create a localization string constant.
   \ It will return the string in the language of the current page.
   \ ca1 len1 = text in the first language
@@ -140,33 +142,31 @@ true to multilingual?
   Strings must be pushed on the stack in reverse alphabetical order
   of its ISO language code.
   *)
-  langs 0= abort" 'langs' is not set; 'l10n-string' can not work."
-  create  l10n-string,  (l10n-string)
-  ;
-: noname-l10n-string  ( ca-n len-n ... ca1 len1 -- xt )
+
+: noname-l10n-string ( ca-n len-n ... ca1 len1 -- xt )
+  langs 0= abort" 'langs' is not set; 'noname-l10n-string' can not work."
+  noname create  l10n-string,  latestxt  (l10n-string) ;
   \ Unnamed version of 'l10n-string'.
   \ Create a localization string constant.
   \ It will return the string in the language of the current page.
   \ ca1 len1 = text in the first language
   \ ca-n len-n = text in the last language
-  (*
-  Note:  \ XXX TMP
-  Strings must be pushed on the stack in reverse alphabetical order
-  of its ISO language code.
-  *)
-  langs 0= abort" 'langs' is not set; 'noname-l10n-string' can not work."
-  noname create  l10n-string,  latestxt  (l10n-string)
-  ;
+  \
+  \ XXX TMP -- Note:
+  \ Strings must be pushed on the stack in reverse alphabetical order
+  \ of its ISO language code.
 
-\ **************************************************************
-\ Change history of this file
+.( fendo.addon.multilingual.fs compiled) cr
+
+\ ==============================================================
+\ Change log
 
 \ 2013-10-14: Moved from the application Fendo-programandala.
 \
 \ 2013-10-15: Improvement: 'mlsconstant' checks if 'langs' is set.
 \
 \ 2013-11-11: Improvement: 'lang' uses both the "language" metadatum
-\ and the language prefix of the filename.
+\ and the language prefix of the file.name.
 \
 \ 2013-11-30: Change: 'mlsconstant' and 'langs' are deprecated; now
 \ the application must define its own words to store the number of
@@ -189,5 +189,7 @@ true to multilingual?
 \
 \ 2014-12-06: Change: the deprecated old names of 'l10n-string' are
 \ finally removed.
+\
+\ 2017-06-22: Update source style, layout and header.
 
-.( fendo.addon.multilingual.fs compiled) cr
+\ vim: filetype=gforth

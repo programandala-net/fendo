@@ -1,11 +1,12 @@
 .( fendo.fs ) cr
 
-\ This file is part of Fendo.
+\ This file is part of Fendo
+\ (http://programandala.net/en.program.fendo.html).
 
 \ This file is the main one; it loads all the modules.
 
-\ Last modified 201706201636
-\ See change history at the end of the file.
+\ Last modified 20170622.
+\ See change log at the end of the file.
 
 \ Copyright (C) 2012,2013,2014,2015,2017 Marcos Cruz (programandala.net)
 
@@ -22,35 +23,15 @@
 \ You should have received a copy of the GNU General Public License
 \ along with this program; if not, see <http://gnu.org/licenses>.
 
-\ Fendo is written in Forth
-\   <http://forth.org>
-\ with Gforth
-\   <http://www.gnu.org/software/gforth/>
-\   <http://www.bernd-paysan.de/gforth.html>
-\   <http://www.complang.tuwien.ac.at/forth/gforth/>
+\ Fendo is written in Forth (http://forth-standard.org)
+\ with Gforth (http://www.gnu.org/software/gforth).
 
-\ **************************************************************
-\ Stack notation
-
-0 [if]
-
-Some stack notations used in this program are different from the
-common usage (shown in brackets):
-
-a         [addr]  address
-ca        [c-addr]  character-aligned address
-ca len    [c-addr u]  character string
-f         [flag]  flag (0=false; other=true)
-wf        [flag]  well-formed flag (0=false; -1=true)
-
-[then]
-
-\ **************************************************************
+\ ==============================================================
 \ Debug
 
 false value [bug_thread] immediate  \ XXX TMP
 
-\ **************************************************************
+\ ==============================================================
 \ Requirements
 
 only forth definitions
@@ -125,12 +106,11 @@ false [if]
 \ ------------------------------
 \ Other 
 
-: empty?  ( ca len -- wf )
+: empty? ( ca len -- f )
   \ Is a string empty?
-  nip 0=
-  ;
+  nip 0= ;
 
-\ **************************************************************
+\ ==============================================================
 
 anew -fendo
 
@@ -143,7 +123,7 @@ dup     constant [gforth-strings?]  immediate
         constant [ffl-strings?]  immediate
 [then]
 
-\ **************************************************************
+\ ==============================================================
 \ Wordlists
 
 table constant fendo_markup_html_entities_wid  \ HTML entities
@@ -152,19 +132,19 @@ wordlist constant fendo_markup_wid  \ markup, except HTML entities and user macr
 wordlist constant fendo_wid  \ program, except markup and HTML entities
 wordlist constant fendo_pid_wid  \ page ids
 
-: forth>current  ( -- )
-  forth-wordlist set-current
-  ;
-: markup>current  ( -- )
-  fendo_markup_wid set-current
-  ;
-: entities>current  ( -- )
-  fendo_markup_html_entities_wid set-current
-  ;
+: forth>current ( -- )
+  forth-wordlist set-current ;
+
+: markup>current ( -- )
+  fendo_markup_wid set-current ;
+
+: entities>current ( -- )
+  fendo_markup_html_entities_wid set-current ;
+
 \ XXX OLD
 \ variable recognize_macros?  \ flag, turned off for parsing HTML parameters
 \ recognize_macros? on
-: markup_wids  ( -- wid'1 ... wid'n )
+: markup_wids ( -- wid'1 ... wid'n )
   \ Return the wordlists that contain markup to be recognized.
   \ wid'1 = highest priority wordlist
   \ wid'n = lowest priority wordlist
@@ -173,69 +153,68 @@ wordlist constant fendo_pid_wid  \ page ids
     fendo_markup_macros_wid
 \  then
   fendo_markup_html_entities_wid
-  fendo_markup_wid
-  ;
-: markup_order  ( -- wid'1 ... wid'n n )
+  fendo_markup_wid ;
+
+: markup_order ( -- wid'1 ... wid'n n )
   \ Return the wordlist order required for the markup parsing.
   \ wid'1 = highest priority wordlist
   \ wid'n = lowest priority wordlist
-  depth >r markup_wids depth r> -
-  ;
-: markup>order  ( -- )
-  markup_order 0 ?do  >order  loop
-  ;
-: set_markup_order  ( -- )
-  markup_order set-order
-  ;
-: [markup>order]  ( -- )
-  markup>order
-  ;  immediate
-: markup<order  ( -- )
-  markup_order 0 ?do  drop previous  loop
-  ;
-: [markup<order]  ( -- )
-  markup<order
-  ;  immediate
-: fendo>current  ( -- )
-  fendo_wid set-current
-  ;
-: fendo>order  ( -- )
-  fendo_wid >order
-  ;
-: fendo<order  ( -- )
-  previous
-  ;
-: [fendo>order]  ( -- )
-  fendo>order
-  ;  immediate
-: [fendo<order]  ( -- )
-  fendo<order
-  ;  immediate
-: forth>order  ( -- )
-  forth-wordlist >order
-  ;
-: [forth>order]  ( -- )
-  forth>order
-  ;  immediate
-: set_forth_order  ( -- )
-  only forth>order
-  ;
-: set_fendo_order  ( -- )
-  set_forth_order fendo>order
-  ;
-: markup_definitions  ( -- )
-  set_forth_order markup>order fendo>order markup>current
-  ;
-: fendo_definitions  ( -- )
-  set_fendo_order fendo>current
-  ;
-: forth_definitions  ( -- )
-  set_forth_order forth>current
-  ;
+  depth >r markup_wids depth r> - ;
+
+: markup>order ( -- )
+  markup_order 0 ?do  >order  loop ;
+
+: set_markup_order ( -- )
+  markup_order set-order ;
+
+: [markup>order] ( -- )
+  markup>order ; immediate
+
+: markup<order ( -- )
+  markup_order 0 ?do  drop previous  loop ;
+
+: [markup<order] ( -- )
+  markup<order ; immediate
+
+: fendo>current ( -- )
+  fendo_wid set-current ;
+
+: fendo>order ( -- )
+  fendo_wid >order ;
+
+: fendo<order ( -- )
+  previous ;
+
+: [fendo>order] ( -- )
+  fendo>order ; immediate
+
+: [fendo<order] ( -- )
+  fendo<order ; immediate
+
+: forth>order ( -- )
+  forth-wordlist >order ;
+
+: [forth>order] ( -- )
+  forth>order ; immediate
+
+: set_forth_order ( -- )
+  only forth>order ;
+
+: set_fendo_order ( -- )
+  set_forth_order fendo>order ;
+
+: markup_definitions ( -- )
+  set_forth_order markup>order fendo>order markup>current ;
+
+: fendo_definitions ( -- )
+  set_fendo_order fendo>current ;
+
+: forth_definitions ( -- )
+  set_forth_order forth>current ;
 
 fendo_definitions
 
-\ **************************************************************
+\ ==============================================================
 \ Config
 
 s" 0.6.0-pre.1+201706201630" 2constant fendo_version
@@ -243,7 +222,7 @@ s" Fendo (Forth Engine for Net DOcuments) " fendo_version s+ 2constant generator
 
 false constant link_text_as_attribute?  \ XXX TMP -- experimental
 
-\ **************************************************************
+\ ==============================================================
 \ Modules
 
 false value multilingual?  \ to be changed by <addons/multilingual.fs>
@@ -273,8 +252,10 @@ depth [if] abort [then]  \ XXX DEBUGGING
 include ./fendo.parser.fs
 depth [if] abort [then]  \ XXX DEBUGGING
 
-\ **************************************************************
-\ Change history of this file
+.( fendo.fs compiled) cr
+
+\ ==============================================================
+\ Change log
 
 \ 2012-06-30: Start.
 \ 
@@ -312,5 +293,7 @@ depth [if] abort [then]  \ XXX DEBUGGING
 \
 \ 2015-02-12: Change: 'link_anchor' and 'link_text' are defered here
 \ and defined in <fendo.fs>. Required because of a fix.
+\
+\ 2017-06-22: Update source style, layout and header.
 
-.( fendo.fs compiled) cr
+\ vim: filetype=gforth

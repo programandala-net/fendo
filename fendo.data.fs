@@ -1,10 +1,14 @@
 .( fendo.data.fs ) cr
 
-\ This file is part of Fendo.
+\ This file is part of Fendo
+\ (http://programandala.net/en.program.fendo.html).
 
 \ This file defines the page data tools.
 
-\ Copyright (C) 2013,2014,2015 Marcos Cruz (programandala.net)
+\ Last modified 20170622.
+\ See change log at the end of the file.
+
+\ Copyright (C) 2013,2014,2015,2017 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute
 \ it and/or modify it under the terms of the GNU General
@@ -22,12 +26,7 @@
 \ License along with this program; if not, see
 \ <http://gnu.org/licenses>.
 
-\ **************************************************************
-\ Change history of this file
-
-\ See at the end of the file.
-
-\ **************************************************************
+\ ==============================================================
 \ Requirements
 
 forth_definitions
@@ -43,35 +42,55 @@ require ffl/str.fs  \ dynamic strings
 
 fendo_definitions
 
-\ **************************************************************
+\ ==============================================================
 \ Page data engine
 
 variable data_fields  \ counter
+
 64 constant max_data_fields
+
 max_data_fields cells buffer: fields_body_table
 
-: erase_data  ( -- )
+: erase_data ( -- )
   \ XXX TODO
   fields_body_table max_data_fields bounds ?do
     -1 i !
-  cell +loop
-  ;
+  cell +loop ;
 
 variable current_data  \ address of the latest created data
-: parse_datum  ( u "text<nl>" -- )
-  \ Parse a datum and store it.
-  \ u = datum offset
+
+: parse_datum ( u "text<nl>" -- )
   >r  0 parse  \ parse the rest of the current input line
   trim
 \  dup  if  ." Parsed datum: " 2dup type cr  then  \ XXX INFORMER
-  current_data @ r> + $!
-  ;
-variable in_data_header?  \ flag to let the data fields to disguise the context
-variable /datum  \ offset of the current datum; at the end, length of the data
-defer get_datum  ( a u -- ca len )
-: (get_datum)  ( a u -- ca len )  + $@  ;
+  current_data @ r> + $! ;
+  \ Parse a datum and store it.
+  \ u = datum offset
+
+variable in_data_header?
+  \ flag to let the data fields to disguise the context
+
+variable /datum
+  \ offset of the current datum; at the end, length of the data
+
+defer get_datum ( a u -- ca len )
+
+: (get_datum) ( a u -- ca len )  + $@  ;
+
 ' (get_datum) is get_datum
-: :datum  ( ca len -- )
+
+: :datum ( ca len -- )
+  nextname create
+    cell /datum dup @ , +!  \ store the offset and increment it
+  does> ( a1 | "text<nl>" -- ca len | )
+    \ a1 = page data address
+    \ ca len = datum 
+    \ dfa = data field address of the datum word
+    \ u = datum offset
+    ( a1 dfa | dfa "text<nl>" )
+    @  in_data_header? @ ( u f )
+    if   ( u "datum<nl>" ) parse_datum
+    else ( a1 u )          get_datum  then ;
   \ Create a page metadatum that parses or returns its value.
   \ This is the normal version of the metadatum: when executed in the
   \ metadata header (between 'data{' and '}data'), it will get its
@@ -79,38 +98,26 @@ defer get_datum  ( a u -- ca len )
   \ store it; when executed out of the metadata header, it will return
   \ the datum string.
   \ ca len = datum name
-  nextname create
-    cell /datum dup @ , +!  \ store the offset and increment it
-  does>  ( a1 | "text<nl>" -- ca len | )
-    \ a1 = page data address
-    \ ca len = datum 
-    \ dfa = data field address of the datum word
-    \ u = datum offset
-    ( a1 dfa | dfa "text<nl>" )
-    @  in_data_header? @  ( u wf )
-    if    ( u "datum<nl>" ) parse_datum
-    else  ( a1 u )          get_datum  then
-  ;
-: :datum>address  ( ca len -- )
+
+: :datum>address ( ca len -- )
+  s" '" 2swap s+ nextname
+  latestxt  \ of the word previously created by ':datum>value'
+  create ( xt ) >body ,
+  does> ( a1 -- a2 )
+    ( a1 dfa ) @ @ ( a1 u ) + ;
   \ Create a page metadatum word that returns the address of its data.
   \ The new name will have a tick at the start.
   \ ca len = datum name
-  s" '" 2swap s+ nextname
-  latestxt  \ of the word previously created by ':datum>value'
-  create  ( xt ) >body ,
-  does>  ( a1 -- a2 )
-    \ a1 = page data address
-    \ a2 = datum address (a dynamic string that can be updated by '$!')
-    \ dfa = data field address of the datum word
-    \ u = datum offset
-    ( a1 dfa ) @ @ ( a1 u ) +
-  ;
-: datum:  ( "name" -- )
-  \ Create a page metadatum.
-  parse-name 2dup :datum :datum>address
-  ;
+  \ a1 = page data address
+  \ a2 = datum address (a dynamic string that can be updated by '$!')
+  \ dfa = data field address of the datum word
+  \ u = datum offset
 
-\ **************************************************************
+: datum: ( "name" -- )
+  parse-name 2dup :datum :datum>address ;
+  \ Create a page metadatum.
+
+\ ==============================================================
 \ Page data fields
 
 datum: source_file
@@ -153,87 +160,88 @@ datum: template  \ HTML template filename in the design subdir
 
 \ .( /datum = ) /datum ? cr key drop  \ XXX INFORMER
 
-\ **************************************************************
+\ ==============================================================
 \ File names
 
 0 value current_page  \ page id of the current page
 
-: target_extension  ( pid -- ca len )
-  \ Return the target filename extension.
+: target_extension ( pid -- ca len )
   filename_extension dup 0=
-  if  2drop html_extension $@   then
-  ;
-: current_target_extension  ( -- ca len )
-  current_page target_extension
-  ;
-: -forth_extension  ( ca len -- ca' len' )
+  if  2drop html_extension $@   then ;
+  \ Return the target filename extension.
+
+: current_target_extension ( -- ca len )
+  current_page target_extension ;
+
+: -forth_extension ( ca len -- ca' len' )
+  forth_extension $@ -suffix ;
   \ Remove the Forth extension from a filename.
-  forth_extension $@ -suffix
-  ;
-: +forth_extension  ( ca len -- ca' len' )
+
+: +forth_extension ( ca len -- ca' len' )
+  forth_extension $@ s+ ;
   \ Add the Forth extension to a filename.
-  forth_extension $@ s+
-  ;
-: source>current_target_extension  ( ca1 len1 -- ca2 len2 )
+
+: source>current_target_extension ( ca1 len1 -- ca2 len2 )
+  -forth_extension current_target_extension s+ ;
   \ Change the Forth extension to the current target extension.
   \ ca1 len1 = Forth source page filename
   \ ca2 len2 = target HTML page filename
-  -forth_extension current_target_extension s+
-  ;
-: /sourcefilename  ( -- ca len )
+
+: /sourcefilename ( -- ca len )
+  sourcefilename -path ;
   \ Return the current source filename, without path.
-  sourcefilename -path
-  ;
-: pid#>pid$  ( a -- ca len )
+
+: pid#>pid$ ( a -- ca len )
+  source_file -forth_extension ;
   \ Convert a numerical page id to its string form.
   \ a = page id
   \ ca len = page id
-  source_file -forth_extension
-  ;
-: target_file  ( a -- ca len )
-  \ Return a target HTML page filename.
-  \ a = page id
-  \ ca len = target HTML page file name
+
+: target_file ( a -- ca len )
 \   ." 'link_anchor' in 'target_file' = " link_anchor $@ type cr  \ XXX INFORMER
 \ XXX TODO -- 'link_anchor+' should not be here
   dup >r pid#>pid$ r> target_extension s+ link_anchor+
 \   ." Result in 'target_file' = " 2dup type cr  \ XXX INFORMER
   ;
-: current_target_file  ( -- ca len )
+  \ Return a target HTML page filename.
+  \ a = page id
+  \ ca len = target HTML page file name
+
+: current_target_file ( -- ca len )
+  current_page target_file ;
   \ Return the target HTML page filename of the current page.
   \ ca len = target HTML page file name
-  current_page target_file
-  ;
-: domain&current_target_file  ( -- ca len )
-  domain s" /" s+ current_target_file s+
-  ;
-: domain_url  ( -- ca len )
-  s" http://" domain s+
-  ;
-: current_target_file_url  ( -- ca len )
-  s" http://" domain&current_target_file s+
-  ;
-: +domain_url  ( ca len -- ca' len' )
-  domain_url s" /" s+ 2swap s+
-  ;
-: pid#>url  ( a -- ca len )
-  target_file +domain_url
-  ;
-: +target_dir  ( ca1 len1 -- ca2 len2 )
+
+: domain&current_target_file ( -- ca len )
+  domain s" /" s+ current_target_file s+ ;
+
+: domain_url ( -- ca len )
+  s" http://" domain s+ ;
+
+: current_target_file_url ( -- ca len )
+  s" http://" domain&current_target_file s+ ;
+
+: +domain_url ( ca len -- ca' len' )
+  domain_url s" /" s+ 2swap s+ ;
+
+: pid#>url ( a -- ca len )
+  target_file +domain_url ;
+
+: +target_dir ( ca1 len1 -- ca2 len2 )
+  target_dir $@ 2swap s+ ;
   \ Add the target path to a file name.
   \ ca1 len1 = file name
   \ ca2 len2 = file name, with its target local path
-  target_dir $@ 2swap s+
-  ;
-: target_path/file  ( a -- ca len )
-  \ Return a target HTML page filename, with its local path.
-  \ a = page id
-  \ ca len = target HTML page file name, with its local path
+
+: target_path/file ( a -- ca len )
   target_file +target_dir
 \  2dup type cr  \ XXX INFORMER
   ;
+  \ Return a target HTML page filename, with its local path.
+  \ a = page id
+  \ ca len = target HTML page file name, with its local path
 
-\ **************************************************************
+\ ==============================================================
 \ Page id
 
 \ The first time a page is interpreted, its data is parsed and
@@ -243,71 +251,71 @@ datum: template  \ HTML template filename in the design subdir
 \ or extension. The execution of the page id returns the address of
 \ the page data.
 
-: current_pid$  ( -- ca len )
+: current_pid$ ( -- ca len )
+  /sourcefilename -extension ;
   \ Return the name of the current page id.
   \ XXX TODO -- combine with 'current_page_pid$'?
-  /sourcefilename -extension
-  ;
-: known_pid$?  ( ca len -- 0 | xt +-1 )
-  -anchor fendo_pid_wid search-wordlist
-  ;
-: new_page_data_space  ( -- )
+
+: known_pid$? ( ca len -- 0 | xt +-1 )
+  -anchor fendo_pid_wid search-wordlist ;
+
+: new_page_data_space ( -- )
+  here  dup current_data !  /datum @ dup allot  erase ;
   \ Create and init data space for a new page.
-  here  dup current_data !  /datum @ dup allot  erase
-  ;
-: (:pid)  ( ca len -- )
-  \ Create a new page id and its data space.
+
+: (:pid) ( ca len -- )
   get-current >r  fendo_pid_wid set-current
   :create new_page_data_space
-  r> set-current
-  ;
-: :pid  ( -- )
+  r> set-current ;
+  \ Create a new page id and its data space.
+
+: :pid ( -- )
   \ Create the current page id and its data space, if needed.
   current_pid$ 2dup known_pid$?
-  if  drop 2drop  else  (:pid)  then
-  ;
-: pid$>pid#  ( ca len -- a | false )
+  if  drop 2drop  else  (:pid)  then ;
+
+: pid$>pid# ( ca len -- a | false )
+  known_pid$? if  execute  else  false  then ;
   \ Convert a string page id to its numerical form,
   \ or return false if the page id is unknown.
   \ ca len = page id
   \ a = page id
-  known_pid$? if  execute  else  false  then
+
+: current_page_pid$ ( -- ca len )
+  current_page pid#>pid$
+\  current_page ?dup if  pid#>pid$  else  pad 0  then
   ;
-: current_page_pid$  ( -- ca len )
   \ Return the string page id of the current page,
   \ XXX TODO -- combine with 'current_pid$'?
-  current_page pid#>pid$
   \ XXX TODO 'current_page' can be zero during debugging tasks,
   \ for example while using 'echo>screen' to check the
   \ engine without files. But this alternative creates new
   \ problems because of the empty pid:
   \ ca len = page id or empty string
-\  current_page ?dup if  pid#>pid$  else  pad 0  then
-  ;
-: descendant?  ( ca1 len1 ca2 len2 -- wf )
-  \ Is ca2 len2 a descendant of ca1 len1?
-  \ ca1 len1 = page id
-  \ ca2 len2 = page id
+
+: descendant? ( ca1 len1 ca2 len2 -- f )
   s" ." s+ 2swap s" ." s+  \
   { D: descendant D: ancestor }
 \  descendant ancestor str= ?dup if  0= exit  then  \ XXX OLD
-  descendant ancestor string-prefix?
-  ;
-: pid$>level  ( ca len -- n )
-  \ Return the hierarchy level of the given page id.
-  \ The top level is 0.
-  [char] . char-count
-  ;
-: pid#>level  ( a -- n )
-  \ Return the hierarchy level of the given page id.
-  \ The top level is 0.
-  pid#>pid$ pid$>level
-  ;
+  descendant ancestor string-prefix? ;
+  \ Is ca2 len2 a descendant of ca1 len1?
+  \ ca1 len1 = page id
+  \ ca2 len2 = page id
 
-\ **************************************************************
+: pid$>level ( ca len -- n )
+  [char] . char-count ;
+  \ Return the hierarchy level of the given page id.
+  \ The top level is 0.
+
+: pid#>level ( a -- n )
+  pid#>pid$ pid$>level ;
+  \ Return the hierarchy level of the given page id.
+  \ The top level is 0.
+
+\ ==============================================================
 \ Debugging tools
 
-: .data  { pid -- }
+: .data { pid -- }
   ." data of pid# " pid . cr
   ."   source_file = " pid 'source_file $@ type cr
   ."   title = " pid 'title $@ type cr
@@ -315,26 +323,26 @@ datum: template  \ HTML template filename in the design subdir
 \  ."   project_start = " pid project_start type cr
 \  ."   project_end = " pid project_end type cr
 \  ."   project_completion = " pid project_completion type cr
-  ."   related = " pid 'related $@ type cr
-  ;
-: .current_data  ( -- )
-  current_page .data 
-  ;
+  ."   related = " pid 'related $@ type cr ;
 
-\ **************************************************************
+: .current_data ( -- )
+  current_page .data  ;
+
+\ ==============================================================
 \ Page data header
 
-defer set_default_data  ( -- )
+defer set_default_data ( -- )
   \ Set the default values of the page data.
-: (set_default_data)  ( -- )
-  \ Set the default values of the page data.
-  \ XXX TODO finish
+
+: (set_default_data) ( -- )
   /sourcefilename
 \  2dup ." «" type ." »" \ XXX INFORMER
-  current_data @ 'source_file $!
-  ;
+  current_data @ 'source_file $! ;
+  \ Set the default values of the page data.
+  \ XXX TODO finish
+
 ' (set_default_data) is set_default_data
-: (}data)  ( -- )
+: (}data) ( -- )
 \  ." }data executed; data before defaults:" cr  \ XXX INFORMER
 \  .current_data  \ XXX INFORMER
   set_default_data  in_data_header? off
@@ -343,24 +351,25 @@ defer set_default_data  ( -- )
 \  ." }}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}" cr  \ XXX INFORMER
 \  key drop  \ XXX INFORMER
   ;
-: }data  ( -- )
-  \ Mark the end of the page data header and complete it.
+
+: }data ( -- )
   in_data_header? @ if  (}data)  then
 \  ." `argc` in `}data`= " argc ? cr  \ XXX INFORMER
   ;
-: skip_data{  ( xt "<text><space>}data" -- )
-  \ Skip the page data.
-  \ xt = execution token of the current page id
+  \ Mark the end of the page data header and complete it.
+
+: skip_data{ ( xt "<text><space>}data" -- )
   execute to current_page
 \  ." skip_data{" cr  \ XXX INFORMER
   begin   parse-name dup 0=
     if    2drop refill 0= dup abort" Missing '}data'"
     else  s" }data" str=  then
-  until   }data
-  ;
-: get_data{  ( "<text><space>}data" -- )
+  until   }data ;
+  \ Skip the page data.
+  \ xt = execution token of the current page id
+
+: get_data{ ( "<text><space>}data" -- )
 \  ." `argc` in `get-data{` (start)= " argc ? cr  \ XXX INFORMER
-  \ Get the page data.
 \  ." {{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{" cr  \ XXX INFORMER
 \  ." get_data{" cr  \ XXX INFORMER
   :pid current_data @
@@ -370,42 +379,43 @@ defer set_default_data  ( -- )
   in_data_header? on
 \  ." `argc` in `get-data{` (end)= " argc ? cr  \ XXX INFORMER
   ;
-: data_already_got?  ( -- 0 | xt +-1 )
+  \ Get the page data.
+
+: data_already_got? ( -- 0 | xt +-1 )
+  current_pid$ known_pid$? ;
   \ XXX FIXME This check means pids of draft can not be created...
   \ XXX ...but they are useful to do some checkings, e.g. in...
   \ XXX ...Fendo-programandala's related_pages.
   \ XXX Already solved?
-  current_pid$ known_pid$?
-  ;
-: data{  ( "<text><spaces>}data" -- )
-  \ Mark the start of the page data.
-  \ XXX TODO how to access the page ids in the markup?...
-  \ XXX ...INCLUDE them in the markup wordlist? create a wordlist?
+
+: data{ ( "<text><spaces>}data" -- )
 \  cr cr ." =========== data{" cr  \ XXX INFORMER
 \  ." `argc` in `data{` (start)= " argc ? cr  \ XXX INFORMER
   data_already_got? if  skip_data{  else  get_data{  then
 \  ." `argc` in `data{` (end)= " argc ? cr  \ XXX INFORMER
   ;
+  \ Mark the start of the page data.
+  \ XXX TODO how to access the page ids in the markup?...
+  \ XXX ...INCLUDE them in the markup wordlist? create a wordlist?
 
-variable do_content?  \ flag: do the page content? (otherwise, skip it)
-do_content? on
-: +source_dir  ( ca1 len1 -- ca2 len2 )
+variable do_content?  do_content? on
+  \ flag: do the page content? (otherwise, skip it)
+
+: +source_dir ( ca1 len1 -- ca2 len2 )
+  source_dir $@ 2swap s+ ;
   \ Complete a source page filename with its path.
-  source_dir $@ 2swap s+
-  ;
-: +current_dir  ( ca1 len1 -- ca2 len2 )  \ XXX TMP
-  s" ./" 2swap s+
-  ;
-: .required_data_error  ( ca len -- )
+
+: +current_dir ( ca1 len1 -- ca2 len2 )  \ XXX TMP
+  s" ./" 2swap s+ ;
+
+: .required_data_error ( ca len -- )
 \  order cr  \ XXX INFORMER
-  cr ." Error requiring the data of the page <" type ." >" cr
-  ;
-: required_data_error  ( ca len ior -- )
-  >r .required_data_error r> throw
-  ;
-: (required_data)  ( ca len -- )
-  \ Require a page file in order to get its data.
-  \ ca len = filename
+  cr ." Error requiring the data of the page <" type ." >" cr ;
+
+: required_data_error ( ca len ior -- )
+  >r .required_data_error r> throw ;
+
+: (required_data) ( ca len -- )
 \  ." (required_data) " 2dup type cr  \ XXX INFORMER
   do_content? off
 \  .included key drop  \ XXX INFORMER
@@ -415,9 +425,10 @@ do_content? on
   else  2drop  then
 \  ." end of (required_data) " .s cr  \ XXX INFORMER
   ;
-: required_data  ( ca len -- )
   \ Require a page file in order to get its data.
   \ ca len = filename
+
+: required_data ( ca len -- )
 \  ." Parameter in 'required_data' = " 2dup type cr  \ XXX INFORMER
 \  ." related = " current_page related type cr  \ XXX INFORMER
   do_content? @ >r  current_page >r
@@ -428,52 +439,53 @@ do_content? on
 \  ." >>>>>>>>" cr  \ XXX INFORMER
 \  key drop  \ XXX INFORMER
   ;
-: required_data<pid#  ( a -- )
+  \ Require a page file in order to get its data.
+  \ ca len = filename
+
+: required_data<pid# ( a -- )
+  source_file required_data ;
   \ Require a page file in order to get its data.
   \ a = page id (address of its data)
-  source_file required_data
-  ;
-: (required_data<pid$)  ( ca len -- )
+
+: (required_data<pid$) ( ca len -- )
   \ Require a page file in order to get its data.
   \ ca len = page id
 \   ." Parameter in '(required_data<pid$)' = " 2dup type cr  \ XXX INFORMER
 \   ." 'link_anchor' in '(required_data<pid$)' = " link_anchor $@ type cr  \ XXX INFORMER
-  -anchor?! +forth_extension required_data
-  ;
-: required_data<pid$  ( ca len -- )
+  -anchor?! +forth_extension required_data ;
   \ Require a page file in order to get its data.
   \ ca len = page id
+
+: required_data<pid$ ( ca len -- )
 \  ." Parameter in 'required_data<pid$' before 'unshortcut' = " 2dup type cr  \ XXX INFORMER
   unshortcut
 \  ." Parameter in 'required_data<pid$' after 'unshortcut' = " 2dup type cr  \ XXX INFORMER
-  (required_data<pid$)
-  ;
-: required_data<target  ( ca len -- )
+  (required_data<pid$) ;
+  \ Require a page file in order to get its data.
+  \ ca len = page id
+
+: required_data<target ( ca len -- )
+\  ." required_data<target " 2dup type cr  \ XXX INFORMER
+  -extension required_data<pid$ ;
   \ Require a page file in order to get its data.
   \ ca len = target file, without path
-\  ." required_data<target " 2dup type cr  \ XXX INFORMER
-  -extension required_data<pid$
-  ;
-: require_data  ( "name" -- )
+
+: require_data ( "name" -- )
+  parse-name? abort" File name expected in 'require_data'"
+  required_data ;
   \ Require a page file in order to get its data.
   \ "name" = filename
-  parse-name? abort" File name expected in 'require_data'"
-  required_data
-  ;
-: (pid$>data>pid#)  ( ca len -- a )
+
+: (pid$>data>pid#) ( ca len -- a )
+\  -anchor \ XXX TMP
+\  ." 'link_anchor' in '(pid$>data>pid#)' = " link_anchor $@ type cr  \ XXX INFORMER
+  2dup (required_data<pid$) pid$>pid# ;
   \ Require a page file in order to get its data
   \ and convert its string page id to its number page id.
   \ ca len = page id of an existent page file
   \ a = page id
-\  -anchor \ XXX TMP
-\  ." 'link_anchor' in '(pid$>data>pid#)' = " link_anchor $@ type cr  \ XXX INFORMER
-  2dup (required_data<pid$) pid$>pid#
-  ;
-: pid$>data>pid#  ( ca len -- a )
-  \ Require a page file in order to get its data
-  \ and convert its string page id to its number page id.
-  \ ca len = page id
-  \ a = page id
+
+: pid$>data>pid# ( ca len -- a )
 \   ." Parameter in 'pid$>data>pid#'  before 'dry_unshortcut' = " 2dup type cr  \ XXX INFORMER
 \  key drop  \ XXX INFORMER
 \  ."    'href=' in 'pid$>data>pid#' before 'dry_unshortcut' = " s" href=@" evaluate .s ." = " type cr  \ XXX INFORMER
@@ -487,69 +499,72 @@ do_content? on
 \  find-name name>int execute  \ XXX SECOND version; no difference, same corruption of the input stream
 \  cr ." end of data<pid$>pid"  \ XXX INFORMER
   ;
-: pid$>(data>)pid#  ( ca len -- a )
+  \ Require a page file in order to get its data
+  \ and convert its string page id to its number page id.
+  \ ca len = page id
+  \ a = page id
+
+: pid$>(data>)pid# ( ca len -- a )
+\   ." Parameter in 'pid$>(data>)pid#'  = " 2dup type cr  \ XXX INFORMER
+  dup if  pid$>data>pid#  else  2drop current_page  then ;
   \ Return a number page id from a string page id;
   \ if it's different from the current page, require its data.
   \ This word is needed to manage links to the current page
   \ (href attributes that contain just an anchor).
-\   ." Parameter in 'pid$>(data>)pid#'  = " 2dup type cr  \ XXX INFORMER
-  dup if  pid$>data>pid#  else  2drop current_page  then
-  ;
-: pid$>url  ( ca1 len1 -- ca2 len2 )
-  pid$>data>pid# target_file +domain_url
-  ;
-: source>pid$  ( ca1 len1 -- ca2 len2 )
+
+: pid$>url ( ca1 len1 -- ca2 len2 )
+  pid$>data>pid# target_file +domain_url ;
+
+: source>pid$ ( ca1 len1 -- ca2 len2 )
+  -path -forth_extension ;
   \ Convert a source page to a page id.
   \ ca1 len1 = Forth source page filename with path
   \ ca2 len2 = page id
-  -path -forth_extension
-  ;
-: source>pid#  ( ca len -- a )
+
+: source>pid# ( ca len -- a )
+  source>pid$ pid$>data>pid# ;
   \ Convert a source page to a page id.
   \ ca len = Forth source page filename with path
   \ a = page id
-  source>pid$ pid$>data>pid#
-  ;
-: pid$>target  ( ca1 len1 -- ca2 len2 )
-  \ Convert a page id to a target filename.
-  2dup pid$>data>pid# target_extension s+ +target_dir
-  ;
 
-\ **************************************************************
+: pid$>target ( ca1 len1 -- ca2 len2 )
+  2dup pid$>data>pid# target_extension s+ +target_dir ;
+  \ Convert a page id to a target filename.
+
+\ ==============================================================
 \ Calculated data
 
-: file_mtime  ( a -- ca len )
+: file_mtime ( a -- ca len )
+  dup file_modified dup
+  if  rot drop  else  2drop modified  then ;
   \ ISO time string used to set the mtime (modification time) of the
   \ target files. The 'file_modified' datum is the first choice,
   \ then 'modified'.
-  dup file_modified dup
-  if  rot drop  else  2drop modified  then
-  ;
-: newer?  ( a -- wf )
-  \ Is the given page newer than its target?
+
+: newer? ( a -- f )
   dup target_path/file 2dup file-exists?
   if    file-mtime  rot file_mtime  str<
   else  2drop drop true  then
 \  dup if  ." newer"  else  ." older"  then  cr  \ XXX INFORMER
   ;
+  \ Is the given page newer than its target?
 
-: description|title  ( pid -- ca len )
+: description|title ( pid -- ca len )
+  dup >r description dup if  rdrop  else  2drop r> title  then ;
   \ Description or (if it's empty) title of the given page id.
   \ This is used as link title when no one has been specified.
-  dup >r description dup if  rdrop  else  2drop r> title  then
-  ;
-: property?  ( ca len a -- wf )
-  \ ca len = property to check
-  \ a = page id (address of its data)
-  \ wf = is the property in the properties field of the page?
+
+: property? ( ca len a -- f )
   { D: property page_id }
   \ XXX TODO change the properties system: make it similar to tags:...
   \ XXX TODO ...make properties executable; they should trigger a flag.
   page_id properties  false { result }
   /ssv 0 ?do
     property str= result or to result
-  loop  result
-  ;
+  loop  result ;
+  \ ca len = property to check
+  \ a = page id (address of its data)
+  \ f = is the property in the properties field of the page?
 
 \ 'ignore_draft_property?' is a flag for the application
 \ that does what its name suggets:
@@ -557,57 +572,55 @@ do_content? on
 \ so draft pages will be built as definitive pages.
 false value ignore_draft_property?
 
-: draft?  ( a -- wf )
+: draft? ( a -- f )
+  s" draft" rot property?  ignore_draft_property? 0= and ;
   \ Is the given page a draft?
   \ a = page id (address of its data)
-  \ wf = is "draft" in the properties field?
-  s" draft" rot property?  ignore_draft_property? 0= and
-  ;
+  \ f = is "draft" in the properties field?
 
 : pid$>hierarchy ( ca len -- u )
+  0 rot rot  \ counter
+  bounds ?do  i c@ [char] . = abs +  loop ;
   \ Return the hierarchy level of a page (0 is the top level).
   \ ca len = page id (source page filename without extension)
-  0 rot rot  \ counter
-  bounds ?do  i c@ [char] . = abs +  loop
-  ;
+
 : filename>hierarchy ( ca len -- u )
+  pid$>hierarchy 1- ;
   \ Return the hierarchy level of a page (0 is the top level).
   \ ca len = filename (without path; with extension)
-  pid$>hierarchy 1- 
-  ;
-: pid#>hierarchy  ( a -- u )
+
+: pid#>hierarchy ( a -- u )
+  pid#>pid$ pid$>hierarchy ;
   \ Return the hierarchy level of a page (0 is the top level).
   \ a = page id (address of its data)
-  pid#>pid$ pid$>hierarchy
-  ;
 
-\ **************************************************************
+\ ==============================================================
 \ Data manipulation
 
-
-: (file-mtime>modified)  ( ca len -- )
+: (file-mtime>modified) ( ca len -- )
+  file-mtime 2dup current_page modified
+  str< if  2drop  else  current_page 'modified $!  then ;
   \ If the modification time of the given file is more recent
   \ than the current page 'modified' datum, update the page datum with
   \ the file modification time.
-  file-mtime 2dup current_page modified
-  str< if  2drop  else  current_page 'modified $!  then
-  ;
 
-\ Config flag for the application:
 true value included_files_update_the_page_date?
+  \ Config flag for the application.
 
-: file-mtime>modified  ( ca len -- )
+: file-mtime>modified ( ca len -- )
+  included_files_update_the_page_date?
+  if (file-mtime>modified) else 2drop then ;
   \ If the modification time of the given file is more recent
   \ than the current page 'modified' datum, update the page datum with
   \ the file modification time.
   \ This is used by addons that include contents file into the page,
   \ in order to update the page 'modified' datum with the date of
   \ the most recent file used.
-  included_files_update_the_page_date? if  (file-mtime>modified)  else  2drop  then
-  ;
 
-\ **************************************************************
-\ Change history of this file
+.( fendo.data.fs compiled) cr
+
+\ ==============================================================
+\ Change log
 
 \ 2013-04-28: Start.
 \
@@ -826,5 +839,7 @@ true value included_files_update_the_page_date?
 \ 2015-02-17: New: 'get_datum' and '(get_datum)', factored out from
 \ ':datum' in order to let the application hack the default datum
 \ fields.
+\
+\ 2017-06-22: Update source style, layout and header.
 
-.( fendo.data.fs compiled) cr
+\ vim: filetype=gforth

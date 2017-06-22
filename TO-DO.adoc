@@ -1,8 +1,8 @@
 = Fendo to-do list
 :author: Marcos Cruz (programandala.net)
-:revdate: 2017-02-06
+:revdate: 2017-06-22
 
-// This file is in AsciiDoc/Asciidoctor format
+// This file is in Asciidoctor format
 
 .2013-06-04:
 

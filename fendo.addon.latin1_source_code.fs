@@ -1,10 +1,14 @@
 .( fendo.addon.latin1_source_code.fs) cr
 
-\ This file is part of Fendo.
+\ This file is part of Fendo
+\ (http://programandala.net/en.program.fendo.html).
 
 \ This file is the latin1 source code addon.
 
-\ Copyright (C) 2013 Marcos Cruz (programandala.net)
+\ Last modified 20170622.
+\ See change log at the end of the file.
+
+\ Copyright (C) 2013,2017 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute it and/or modify it
 \ under the terms of the GNU General Public License as published by
@@ -19,16 +23,10 @@
 \ You should have received a copy of the GNU General Public License
 \ along with this program; if not, see <http://gnu.org/licenses>.
 
-\ Fendo is written in Forth with Gforth
-\ (<http://www.bernd-paysan.de/gforth.html>).
+\ Fendo is written in Forth (http://forth-standard.org)
+\ with Gforth (http://gnu.org/software/gforth).
 
-\ **************************************************************
-\ Change history of this file
-
-\ 2013-12-13: Written.
-\ 2014-02-15: Fix: path of the Fendo addons is converted to relative.
-
-\ **************************************************************
+\ ==============================================================
 \ Requirements
 
 forth_definitions
@@ -40,18 +38,26 @@ fendo_definitions
 require ./fendo.addon.source_code.fs
 require ./fendo.addon.latin1_charset.fs
 
-\ **************************************************************
+\ ==============================================================
 \ Source code in latin1 character encoding
 
-: latin1_source_code_translated  ( ca len -- ca' len' )
+: latin1_source_code_translated ( ca len -- ca' len' )
+  latin1_charset_to_utf8 uncodepaged ;
   \ Convert the content of a latin1 file to UTF-8.
-  latin1_charset_to_utf8 uncodepaged
-  ;
-: latin1_source_code  ( ca len -- )
+
+: latin1_source_code ( ca len -- )
+  ['] latin1_source_code_translated is source_code_pretranslated
+  source_code ;
   \ Read the content of a latin1 file and echo it.
   \ ca len = file name
-  ['] latin1_source_code_translated is source_code_pretranslated
-  source_code
-  ;
 
 .( fendo.addon.latin1_source_code.fs compiled) cr
+
+\ ==============================================================
+\ Change log
+
+\ 2013-12-13: Written.
+\ 2014-02-15: Fix: path of the Fendo addons is converted to relative.
+\ 2017-06-22: Update source style, layout and header.
+
+\ vim: filetype=gforth

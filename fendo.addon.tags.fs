@@ -1,10 +1,14 @@
 .( fendo.addon.tags.fs) cr
 
-\ This file is part of Fendo.
+\ This file is part of Fendo
+\ (http://programandala.net/en.program.fendo.html).
 
 \ This file creates the tools needed to use page tags.
 
-\ Copyright (C) 2014 Marcos Cruz (programandala.net)
+\ Last modified 20170622.
+\ See change log at the end of the file.
+
+\ Copyright (C) 2014,2017 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute it and/or modify it
 \ under the terms of the GNU General Public License as published by
@@ -19,21 +23,16 @@
 \ You should have received a copy of the GNU General Public License
 \ along with this program; if not, see <http://gnu.org/licenses>.
 
-\ Fendo is written in Forth with Gforth
-\ (<http://www.bernd-paysan.de/gforth.html>).
+\ Fendo is written in Forth (http://forth-standard.org)
+\ with Gforth (http://gnu.org/software/gforth).
 
-\ **************************************************************
-\ Change history of this file
-
-\ See at the end of the file.
-
-\ **************************************************************
+\ ==============================================================
 \ Stack notation
 
 \ In this file, the stack notation "tag" represents the body (the data
 \ field address) of a tag word. Tag words are created by 'create'.
 
-\ **************************************************************
+\ ==============================================================
 \ Requirements
 
 forth_definitions
@@ -42,32 +41,31 @@ require galope/n-r-from.fs  \ 'nr<'
 require galope/plus-plus.fs  \ '++'
 fendo_definitions
 
-\ **************************************************************
+\ ==============================================================
 \ Tags wordlist
 
 wordlist constant fendo_tags_wid
 
-: tags>order  ( -- )
-  fendo_tags_wid >order
-  ;
-: tags<order  ( -- )
-  previous
-  ;
-: [tags>order]  ( -- )
-  tags>order
-  ;  immediate
-: [tags<order]  ( -- )
-  tags<order
-  ;  immediate
-: tags_order  ( -- wid 1 )
-  \ Return the wordlist order required to parse markup.
-  fendo_tags_wid 1
-  ;
-: set_tags_order  ( -- )
-  tags_order set-order
-  ;
+: tags>order ( -- )
+  fendo_tags_wid >order ;
 
-\ **************************************************************
+: tags<order ( -- )
+  previous ;
+
+: [tags>order] ( -- )
+  tags>order ; immediate
+
+: [tags<order] ( -- )
+  tags<order ; immediate
+
+: tags_order ( -- wid 1 )
+  fendo_tags_wid 1 ;
+  \ Return the wordlist order required to parse markup.
+
+: set_tags_order ( -- )
+  tags_order set-order ;
+
+\ ==============================================================
 \ Tag data
 
 \ The body of a tag word holds three data:
@@ -75,38 +73,39 @@ wordlist constant fendo_tags_wid
 \ +1 cell  = its own name token
 \ +2 cells = counted string of the tag text
 
-: tag>count  ( tag -- a )
+: tag>count ( tag -- a )
+  ; immediate
   \ Syntactic sugar, just in case the data are reorganized.
-  ;  immediate
-: tag>name  ( tag -- ca len )
-  cell+ @ name>string
-  ;
-: tag>text  ( tag -- ca len )
-  3 cells + count
-  ;
-: tag>own_page  ( tag -- a )
-  2 cells +
-  ;
+
+: tag>name ( tag -- ca len )
+  cell+ @ name>string ;
+
+: tag>text ( tag -- ca len )
+  3 cells + count ;
+
+: tag>own_page ( tag -- a )
+  2 cells + ;
 
 \ Counters used to mark the last element of a tag list, in order to
 \ make it easier to manipulate the list with CSS:
+
 variable #tags  \ number of evaluated tags (how many tags were evaluated)
 variable #tag   \ number of the tag that is being evaluated
 
 defer tags_url_section$  \ to be set by the application
 s" tag." 2constant (tags_url_section$)
 ' (tags_url_section$) is tags_url_section$  \ default
-: (tag>pid$)  ( tag -- ca len )
+
+: (tag>pid$) ( tag -- ca len )
+  tags_url_section$ rot tag>name s+ ;
   \ Default conversion from tag to pid.
-  tags_url_section$ rot tag>name s+
-  ;
-defer tag>pid$  ( tag -- ca len )
+
+defer tag>pid$ ( tag -- ca len )
+' (tag>pid$) is tag>pid$
   \ Actual conversion from tag to pid,
   \ to be configured by the application.
-' (tag>pid$) is tag>pid$
 
-
-\ **************************************************************
+\ ==============================================================
 \ Possible behaviours of the tags
 
 variable lonely_tags_link_to_content  \ flag
@@ -123,155 +122,149 @@ variable lonely_tags_link_to_content  \ flag
 \ current code triggered by 'lonely_tags_link_to_content'
 \ is unnecessary.
 
-: ((tag_link))  ( tag ca len -- )
-  \ ca len = pid
+: ((tag_link)) ( tag ca len -- )
 \  2dup cr type  \ XXX INFORMER
-  rot tag>text link
-  ;
-: (tag_link_to_tag_page)  ( tag -- )
-  dup tag>pid$ ((tag_link))
-  ;
-: (tag_link_to_own_page)  ( tag -- )
+  rot tag>text link ;
+  \ ca len = pid
+
+: (tag_link_to_tag_page) ( tag -- )
+  dup tag>pid$ ((tag_link)) ;
+
+: (tag_link_to_own_page) ( tag -- )
   dup tag>own_page $@ 
 \  type cr key drop  \ XXX INFORMER
-  ((tag_link))
-  ;
-: tag_link_to_own_page?  ( tag -- wf )
+  ((tag_link)) ;
+
+: tag_link_to_own_page? ( tag -- f )
   tag>count @
 \  dup cr ." tag>count" . \ XXX INFORMER
   1 =
   lonely_tags_link_to_content @
 \  dup cr ." lonely_tags_link_to_content" . \ XXX INFORMER
-  and
-  ;
-: (tag_link)  ( tag -- )
-  \ Create a link to the given tag.
+  and ;
+
+: (tag_link) ( tag -- )
   dup tag_link_to_own_page?
 \  cr ." In (tag_link) the test is " dup .  \ XXX INFORMER
   if    (tag_link_to_own_page)
-  else  (tag_link_to_tag_page)  then
-  ;
-: tag_link  ( tag -- )
+  else  (tag_link_to_tag_page)  then ;
   \ Create a link to the given tag.
-  >r get-order set_fendo_order  r> (tag_link)  set-order
-  ;
 
-: (tag_does_reset)  ( tag -- )
+: tag_link ( tag -- )
+  >r get-order set_fendo_order  r> (tag_link)  set-order ;
+  \ Create a link to the given tag.
+
+: (tag_does_reset) ( tag -- )
+  tag>count off ;
   \ Reset the given tag.
-  tag>count off
-  ;
-: (tag_does_increase)  ( tag -- )
+
+: (tag_does_increase) ( tag -- )
+  tag>count ++ ;
   \ Increase the count of the given tag.
-  tag>count ++
-  ;
-: (tag_does_increase_and_save_own_page)  ( tag -- )
-  dup (tag_does_increase)  last_traversed_pid $@ rot tag>own_page $!
-  ;
-: (tag_does_total)  ( tag -- +n )
+
+: (tag_does_increase_and_save_own_page) ( tag -- )
+  dup (tag_does_increase)  last_traversed_pid $@ rot tag>own_page $! ;
+
+: (tag_does_total) ( tag -- +n )
+  tag>count @ ;
   \ Count of the given tag.
-  tag>count @
-  ;
-: (tag_does_name)  ( tag -- ca len )
+
+: (tag_does_name) ( tag -- ca len )
+  tag>name ;
   \ Name of the given tag.
-  tag>name
-  ;
-: (tag_does_text)  ( tag -- ca len )
+
+: (tag_does_text) ( tag -- ca len )
+  tag>text ;
   \ Text of the given tag.
-  tag>text
-  ;
-: (tag_does_link)  ( tag -- )
+
+: (tag_does_link) ( tag -- )
+  tag_link ;
   \ Create a link to the page of the given tag.
-  tag_link
-  ;
-: last_listed_link?  ( -- f )
-  1 #tag +!  #tag @ #tags @ =
-  ;
-: (tag_does_list_link)  ( tag -- )
+
+: last_listed_link? ( -- f )
+  1 #tag +!  #tag @ #tags @ = ;
+
+: (tag_does_list_link) ( tag -- )
+  last_listed_link? if  s" last" class=!  then  [<li>] tag_link [</li>] ;
   \ Create a list element with a link to the page of the given tag.
   \ Note: Before creating the link list,
   \ the '#tag' variable must be set to zero, and
   \ the '#tags' variable must be calculated.
   \ See the definition of 'tag_list' in <fendo.addon.tag_list.fs>
   \ as as example how a tag link list is built.
-  last_listed_link? if  s" last" class=!  then  [<li>] tag_link [</li>]
-  ;
+
 variable tag_searched_for$
+
 variable tag_presence  \ counter
-: (tag_does_presence)  ( tag -- )
-  tag>name tag_searched_for$ $@ str= abs tag_presence +!
-  ;
-: (tag_does_count)  ( tag -- )
+
+: (tag_does_presence) ( tag -- )
+  tag>name tag_searched_for$ $@ str= abs tag_presence +! ;
+
+: (tag_does_count) ( tag -- )
+  drop  1 #tags +! ;
   \ Increase the count of evaluated tags.
-  drop  1 #tags +!
-  ;
 
 defer (tag_does)  \ current behaviour of the tags
 
-\ **************************************************************
+\ ==============================================================
 \ Choosing the behaviour of the tags
 
 export
 
-: tags_do_nothing  ( -- )
+: tags_do_nothing ( -- )
+  ['] drop is (tag_does) ;
   \ Set the tags to do nothing.
-  ['] drop is (tag_does)
-  ;
-: tags_do_body  ( -- )
+
+: tags_do_body ( -- )
+  ['] noop is (tag_does) ;
   \ Set the tags to return their body addresses.
-  ['] noop is (tag_does)
-  ;
-: tags_do_reset  ( -- )
+
+: tags_do_reset ( -- )
+  ['] (tag_does_reset) is (tag_does) ;
   \ Set the tags to reset their counts.
-  ['] (tag_does_reset) is (tag_does)
-  ;
-: tags_do_increase  ( -- )
-  \ Set the tags to increase their counts.
+
+: tags_do_increase ( -- )
   lonely_tags_link_to_content @
   if    ['] (tag_does_increase_and_save_own_page)
   else  ['] (tag_does_increase)
-  then  is (tag_does)
-  ;
-: tags_do_total  ( -- )
+  then  is (tag_does) ;
+  \ Set the tags to increase their counts.
+
+: tags_do_total ( -- )
+  ['] (tag_does_total) is (tag_does) ;
   \ Set the tags to return their counts.
-  ['] (tag_does_total) is (tag_does)
-  ;
-: tags_do_text  ( -- )
+
+: tags_do_text ( -- )
+  ['] (tag_does_text) is (tag_does) ;
   \ Set the tags to return their texts.
-  ['] (tag_does_text) is (tag_does)
-  ;
-: tags_do_name  ( -- )
+
+: tags_do_name ( -- )
+  ['] (tag_does_name) is (tag_does) ;
   \ Set the tags to return their names.
-  ['] (tag_does_name) is (tag_does)
-  ;
-: tags_do_link  ( -- )
+
+: tags_do_link ( -- )
+  ['] (tag_does_link) is (tag_does) ;
   \ Set the tags to create links.
-  ['] (tag_does_link) is (tag_does)
-  ;
-: tags_do_list_link  ( -- )
+
+: tags_do_list_link ( -- )
+  ['] (tag_does_list_link) is (tag_does) ;
   \ Set the tags to create listed links.
-  ['] (tag_does_list_link) is (tag_does)
-  ;
-: tags_do_presence  ( ca len -- )
+
+: tags_do_presence ( ca len -- )
+  tag_searched_for$ $!   tag_presence off
+  ['] (tag_does_presence) is (tag_does) ;
   \ Set the tags to check if their name is the given name.
   \ ca len = tag name
-  tag_searched_for$ $!   tag_presence off
-  ['] (tag_does_presence) is (tag_does)
-  ;
-: tags_do_count  ( -- )
+
+: tags_do_count ( -- )
+  #tags off  ['] (tag_does_count) is (tag_does) ;
   \ Set the tags to count how many tags are executed.
   \ Output will be in the '#tags' variable.
-  #tags off  ['] (tag_does_count) is (tag_does)
-  ;
 
-\ **************************************************************
+\ ==============================================================
 \ Create new tags
 
-: tag  ( ca len "name" -- )
-  \ Create a new tag.
-  \ ca len = tag text name, to be used in link text
-  \ "name" = tag word name, to be used in URL
-  \ Example usage:
-  \   s" ZX Spectrum" tag zx_spectrum
+: tag ( ca len "name" -- )
   get-current >r  fendo_tags_wid set-current
   create
     \ The body holds a counter, the name token, the text,
@@ -281,47 +274,55 @@ export
     0 , \ dynamic string variable, pid of the (last) own page
     s,  \ text
   r> set-current
-  does>   ( -- ) ( dfa ) (tag_does)
-  ;
+  does>  ( -- ) ( dfa ) (tag_does) ;
+  \ Create a new tag.
+  \ ca len = tag text name, to be used in link text
+  \ "name" = tag word name, to be used in URL
+  \ Example usage:
+  \   s" ZX Spectrum" tag zx_spectrum
 
-\ **************************************************************
+\ ==============================================================
 \ Traverse the tags
 
 s" /tmp/fendo.tags.fs" 2constant tags_filename$
-: tag_words  ( -- )
+
+: tag_words ( -- )
+  tags>order words tags<order ;
   \ List all tags.
-  tags>order words tags<order
-  ;
-: create_tags_file  ( -- )
-  \ Create a temporary file with the list of all tags.
+
+: create_tags_file ( -- )
   ['] tag_words
   tags_filename$ w/o create-file throw dup >r outfile-execute
-  r> close-file throw
-  ;
-: evaluate_tags  ( ca len -- )
+  r> close-file throw ;
+  \ Create a temporary file with the list of all tags.
+
+: evaluate_tags ( ca len -- )
 \  ." evaluate_tags " 2dup type cr ~~  \ XXX INFORMER
-  get-order n>r set_tags_order  evaluate  nr> set-order
-  ;
-: check_tags  ( ca len -- )
-  ['] (tag_does) defer@ >r  tags_do_nothing evaluate_tags  r> is (tag_does)
-  ;
-: (execute_all_tags)  ( ca len -- )
-  tags>order evaluate  previous
-  ;
-: execute_all_tags  ( -- )
-  \ Execute all tags with their current behaviour.
-\  ." execute_all_tags" cr  \ xxx informer
+  get-order n>r set_tags_order  evaluate  nr> set-order ;
+
+: check_tags ( ca len -- )
+  ['] (tag_does) defer@ >r tags_do_nothing evaluate_tags
+                        r> is (tag_does) ;
+
+: (execute_all_tags) ( ca len -- )
+  tags>order evaluate  previous ;
+
+: execute_all_tags ( -- )
+\  ." execute_all_tags" cr  \ XXX INFORMER
   create_tags_file  tags_filename$ slurp-file
   2dup check_tags (execute_all_tags)
-\  ." execute_all_tags end" cr  \ xxx informer
+\  ." execute_all_tags end" cr  \ XXX INFORMER
   ;
-: traverse_tags  ( xt -- )
-  \ Execute all tags with the given behaviour.
-  is (tag_does)  execute_all_tags
-  ;
+  \ Execute all tags with their current behaviour.
 
-\ **************************************************************
-\ Change history of this file
+: traverse_tags ( xt -- )
+  is (tag_does)  execute_all_tags ;
+  \ Execute all tags with the given behaviour.
+
+.( fendo.addon.tags.fs compiled) cr
+
+\ ==============================================================
+\ Change log
 
 \ 2014-03-02: Start.
 \
@@ -349,5 +350,7 @@ s" /tmp/fendo.tags.fs" 2constant tags_filename$
 \ of a tag link list (what makes some things easier for CSS), new
 \ words are added: '#tags', '#tag', '(tag_does_count)' and
 \ 'tag_do_count'.
+\
+\ 2017-06-22: Update source style, layout and header.
 
-.( fendo.addon.tags.fs compiled) cr
+\ vim: filetype=gforth

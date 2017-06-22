@@ -1,10 +1,14 @@
 .( fendo.markup.fendo.code.fs ) cr
 
-\ This file is part of Fendo.
+\ This file is part of Fendo
+\ (http://programandala.net/en.program.fendo.html).
 
 \ This file defines the Fendo markup for code.
 
-\ Copyright (C) 2013,2014 Marcos Cruz (programandala.net)
+\ Last modified 20170622.
+\ See change log at the end of the file.
+
+\ Copyright (C) 2013,2014,2017 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute
 \ it and/or modify it under the terms of the GNU General
@@ -22,12 +26,7 @@
 \ License along with this program; if not, see
 \ <http://gnu.org/licenses>.
 
-\ **************************************************************
-\ Change history of this file
-
-\ See at the end of the file.
-
-\ **************************************************************
+\ ==============================================================
 \ Requirements
 
 forth_definitions
@@ -38,76 +37,77 @@ fendo_definitions
 
 require fendo/fendo.addon.source_code.common.fs
 
-\ **************************************************************
+\ ==============================================================
 \ Tools
 
 fendo_definitions
 
-: (##)  ( "source code ##" -- )
-  \ Parse an inline source code region.
-  \ XXX FIXME preserve spaces
-  \ XXX TODO highlight
+: (##) ( "source code ##" -- )
   begin   parse-name dup
     if    2dup s" ##" str=
           dup >r 0= if  escaped_source_code _echo  else  2drop  then  r>
     else  2drop refill 0= dup abort" Missing closing '##'"  then
-  until
-  ;
-: ####-line  ( -- ca len )
+  until ;
+  \ Parse an inline source code region.
+  \ XXX FIXME preserve spaces
+  \ XXX TODO highlight
+
+: ####-line ( -- ca len )
   \ Parse a new line from the current source code block.
   read_source_line 0= abort" Missing closing '####'"
-  escaped_source_code
-  ;
-: "####"?  ( ca len -- wf )
+  escaped_source_code ;
+
+: "####"? ( ca len -- f )
   \ Does the given string contains only "####"?
-  trim s" ####" str=
-  ;
-: ####-line?  ( -- ca len wf )
+  trim s" ####" str= ;
+
+: ####-line? ( -- ca len f )
   \ Parse a new line from the current source code block.
   \ ca len = source code line
-  \ wf = is it "####"?
+  \ f = is it "####"?
   ####-line 2dup "####"?
-\  cr ." exit stack in '####-line?' " .s key drop  \ xxx informer
+\  cr ." exit stack in '####-line?' " .s key drop  \ XXX INFORMER
   ;
-: plain_####-zone  ( "source code ####" -- )
-  \ Parse and echo a source code zone "as is".
+
+: plain_####-zone ( "source code ####" -- )
   begin
     ####-line? dup >r
     if  2drop  else  escaped_source_code echo_line  then  r>
   until
-\  cr ." exit stack in 'plain_####-zone' " .s key drop  \ xxx informer
+\  cr ." exit stack in 'plain_####-zone' " .s key drop  \ XXX INFORMER
   ;
-: highlighted_####-zone  ( "source code ####" -- )
-  \ Parse a source code zone, highlight and echo it.
+  \ Parse and echo a source code zone "as is".
+
+: highlighted_####-zone ( "source code ####" -- )
   new_source_code
   begin
     ####-line? dup >r
     if  2drop  else  append_source_code_line  then  r>
-  until  source_code@ highlighted echo source_code_finished
-  ;
-: highlight_####-zone?  ( -- wf )
-  highlight? programming_language@ nip 0<> and
-  ;
-: (####)  ( "source code ####" -- )
-  \ Parse and echo a source code zone.
-  highlight_####-zone? if  highlighted_####-zone  else  plain_####-zone  then
-  ;
+  until  source_code@ highlighted echo source_code_finished ;
+  \ Parse a source code zone, highlight and echo it.
 
-\ **************************************************************
+: highlight_####-zone? ( -- f )
+  highlight? programming_language@ nip 0<> and ;
+
+: (####) ( "source code ####" -- )
+  highlight_####-zone? if   highlighted_####-zone
+                       else plain_####-zone then ;
+  \ Parse and echo a source code zone.
+
+\ ==============================================================
 \ Markup
 
 markup_definitions
 
-: ##  ( -- )
+: ## ( -- )
+  <code> (##) </code> ;
   \ Open and close an inline <code> region.
-  <code> (##) </code>
-  ;
-: ####  ( -- )
-  \ Open and close a block <code> region.
-  block_source_code{ (####) }block_source_code
-  ;
 
-\ **************************************************************
+: #### ( -- )
+  block_source_code{ (####) }block_source_code ;
+  \ Open and close a block <code> region.
+
+\ ==============================================================
 \ Custom code markup
 
 0 [if]
@@ -121,7 +121,6 @@ a valid Vim filetype in the host OS) can be set his way:
   ####
     ... gforth code ...
   ####
-
 
 But there's an easier alternative. First, the website application has
 to define a custom markup this way:
@@ -138,33 +137,34 @@ Then, the following simpler markup can be used instead:
 
 fendo_definitions
 
-: code_inline_markup  ( ca len -- )
+: code_inline_markup ( ca len -- )
+  2dup s" ##" 2swap s+ :create_markup s,
+  does> ( -- )
+    ( dfa ) count programming_language!
+    [markup>order] ## [markup<order] ;
   \ Create inline code markup for a specific Vim filetype.
   \ ca len = Vim filetype (for syntax highlighting)
-  2dup s" ##" 2swap s+ :create_markup s,
-  does>  ( -- )
-    ( dfa )  count programming_language!
-    [markup>order] ## [markup<order]
-  ;
-: code_block_markup  ( ca len -- )
+
+: code_block_markup ( ca len -- )
+  2dup s" ####" 2swap s+ :create_markup s,
+  does> ( -- )
+   ( dfa )  count programming_language!
+    [markup>order] #### [markup<order] ;
   \ Create block code markup for a specific Vim filetype.
   \ ca len = Vim filetype (for syntax highlighting)
-  2dup s" ####" 2swap s+ :create_markup s,
-  does>  ( -- )
-    ( dfa )  count programming_language!
-    [markup>order] #### [markup<order]
-  ;
-: code_markup:  ( "name" -- )
+
+: code_markup: ( "name" -- )
+  parse-name? abort" Expected Vim filetype name"
+  2dup code_inline_markup code_block_markup ;
   \ Create inline and block code markups.
   \ Used by the website application to create all
   \ specific code markups used in the contents.
   \ name = Vim filetype (for syntax highlighting)
-  parse-name? abort" Expected Vim filetype name"
-  2dup code_inline_markup code_block_markup
-  ;
 
-\ **************************************************************
-\ Change history of this file
+.( fendo.markup.fendo.code.fs compiled ) cr
+
+\ ==============================================================
+\ Change log
 
 \ 2014-04-21: Code moved from <fendo.markup.fendo.fs>.
 \
@@ -177,6 +177,6 @@ fendo_definitions
 \ addon, in the current or next page. In order to call
 \ 'source_code_finished', <fendo/fendo.addon.source_code.common.fs>
 \ has been modifed and included.
+\ 2017-06-22: Update source style, layout and header.
 
-.( fendo.markup.fendo.code.fs compiled ) cr
-
+\ vim: filetype=gforth

@@ -1,10 +1,14 @@
 .( fendo.markup.html.attributes.fs ) cr
 
-\ This file is part of Fendo.
+\ This file is part of Fendo
+\ (http://programandala.net/en.program.fendo.html).
 
 \ This file defines the HTML attributes.
 
-\ Copyright (C) 2013,2014,2015 Marcos Cruz (programandala.net)
+\ Last modified 20170622.
+\ See change log at the end of the file.
+
+\ Copyright (C) 2013,2014,2015,2017 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute
 \ it and/or modify it under the terms of the GNU General
@@ -22,17 +26,12 @@
 \ License along with this program; if not, see
 \ <http://gnu.org/licenses>.
 
-\ **************************************************************
-\ Change history of this file
-
-\ See at the end of the file.
-
-\ **************************************************************
+\ ==============================================================
 \ TODO
 
 \ 2013-08-10: Alternative to Gforth's strings: FFL's strings.
 
-\ **************************************************************
+\ ==============================================================
 \ Requirements
 
 forth_definitions
@@ -54,112 +53,109 @@ require galope/minus-cell-bounds.fs  \ '-cell-bounds'
 
 fendo_definitions
 
-\ **************************************************************
+\ ==============================================================
 \ Fetch and store
 
-: attribute@  ( a -- ca len )
+: attribute@ ( a -- ca len )
+  [gforth_strings_for_attributes?] [if]  $@  [else]  @ str-get  [then] ;
   \ a = attribute variable
-  [gforth_strings_for_attributes?] [if]  $@  [else]  @ str-get  [then]
-  ;
-: attribute!  ( ca len a -- )
-  \ a = attribute variable
-  [gforth_strings_for_attributes?] [if]  $!new  [else]  @ str-set  [then]
-  ;
 
-\ **************************************************************
+: attribute! ( ca len a -- )
+  [gforth_strings_for_attributes?] [if]  $!new  [else]  @ str-set  [then] ;
+  \ a = attribute variable
+
+\ ==============================================================
 \ Defining words
 
-: :attribute@  ( ca len a -- )
+: :attribute@ ( ca len a -- )
+  rot rot s" @" s+ :create ,
+  does> ( -- ca1 len1 ) ( dfa ) @ attribute@ ;
   \ Create a word that fetchs an attribute.
   \ ca len = name of the attribute variable
   \ a = attribute variable
   \ ca1 len1 = attribute value
-  rot rot s" @" s+ :create ,
-  does>  ( -- ca1 len1 )
-    ( dfa ) @ attribute@
-  ;
+
 : :attribute!  ( ca len a -- )
+  rot rot s" !" s+ :create  ,
+  does>  ( ca1 len1 -- )
+\    ." Parameter in 'does>' of ':attribute!' = " 2dup type cr  \ XXX INFORMER
+    ( ca1 len1 dfa ) @ attribute! ;
   \ Create a word that stores an attribute.
   \ ca len = name of the attribute variable
   \ a = attribute variable
   \ ca1 len1 = attribute value
-  rot rot s" !" s+ :create  ,
-  does>  ( ca1 len1 -- )
-\    ." Parameter in 'does>' of ':attribute!' = " 2dup type cr  \ XXX INFORMER
-    ( ca1 len1 dfa ) @ attribute!
-  ;
+
 : :attribute?!  ( ca len a -- )
+  rot rot s" ?!" s+ :create  ,
+  does>  ( ca1 len1 -- )
+    ( ca1 len1 dfa )
+    @ dup attribute@ empty? if  attribute!  else  drop 2drop  then ;
   \ Create a word that stores an attribute, if it's empty.
   \ ca len = name of the attribute variable
   \ a = attribute variable
   \ ca1 len1 = attribute value
-  rot rot s" ?!" s+ :create  ,
-  does>  ( ca1 len1 -- )
-    ( ca1 len1 dfa )
-    @ dup attribute@ empty? if  attribute!  else  drop 2drop  then
-  ;
+
 : :attribute+!  ( ca len a -- )
-  \ Create a word that adds a string to an attribute.
-  \ ca len = name of the attribute variable
-  \ a = attribute variable
-  \ ca1 len1 = attribute value
   rot rot s" +!" s+ :create  ,
   does>  ( ca1 len1 -- )
     ( ca1 len1 dfa )  @ dup attribute@ dup
     if    s"  " s+ 2>r rot rot 2r> 2swap s+ rot
-    else  2drop  then  attribute!
-  ;
-: :attribute"  ( ca len a -- )
-  \ Create a word that parses and stores an attribute.
+    else  2drop  then  attribute! ;
+  \ Create a word that adds a string to an attribute.
   \ ca len = name of the attribute variable
   \ a = attribute variable
+  \ ca1 len1 = attribute value
+
+: :attribute"  ( ca len a -- )
   rot rot s\" \"" s+ :create  ,
   does>  ( "text<quote>" -- )
-    ( dfa ) [char] " parse  rot @ attribute!
-  ;
-: :attribute'  ( ca len a -- )
+    ( dfa ) [char] " parse  rot @ attribute! ;
   \ Create a word that parses and stores an attribute.
   \ ca len = name of the attribute variable
   \ a = attribute variable
+
+: :attribute'  ( ca len a -- )
   rot rot s" '" s+ :create  ,
   does>  ( "text<quote>" -- )
-    ( dfa ) [char] ' parse  rot @ attribute!
-  ;
+    ( dfa ) [char] ' parse  rot @ attribute! ;
+  \ Create a word that parses and stores an attribute.
+  \ ca len = name of the attribute variable
+  \ a = attribute variable
+
 : ((attribute:))  ( -- )
-  \ Compile and init the dynamic string of an attribute.
   [gforth_strings_for_attributes?]
   [if]    s" " here 0 , $!
-  [else]  str-new dup , str-init  [then]
-  ;
+  [else]  str-new dup , str-init  [then] ;
+  \ Compile and init the dynamic string of an attribute.
+
 : (attribute:)  ( ca len -- a )
+  :create   here >r ((attribute:)) r> ;
   \ Create an attribute variable.
   \ ca len = name of the attribute variable
   \ a = attribute variable
-  :create   here >r ((attribute:)) r>
-  ;
+
 : :attribute  ( ca len a -- )
-  \ Create the words to manage an attribute.
-  \ ca len = attribute name
-  \ a = attribute variable
   3dup :attribute"
   3dup :attribute'
   3dup :attribute!
   3dup :attribute?!
   3dup :attribute+!
-       :attribute@
-  ;
+       :attribute@ ;
+  \ Create the words to manage an attribute.
+  \ ca len = attribute name
+  \ a = attribute variable
+
 : attribute:  ( "name" -- a )
+  get-current fendo>current
+  parse-name? abort" Missing name after 'attribute:'"
+  2dup (attribute:) ( ca len a )  dup >r
+  :attribute  set-current  r> ;
   \ Create an attribute variable in the markup vocabulary,
   \ and all words needed to manage it.
   \ "name" = ca len = name of the attribute variable
   \ a = attribute variable
-  get-current fendo>current
-  parse-name? abort" Missing name after 'attribute:'"
-  2dup (attribute:) ( ca len a )  dup >r
-  :attribute  set-current  r>
-  ;
 
-\ **************************************************************
+\ ==============================================================
 \ Actual HTML attributes
 
 depth [if]
@@ -276,131 +272,129 @@ attribute: xmlns=
 
 depth constant #attributes  \ count of defined attributes
 
-\ **************************************************************
+\ ==============================================================
 \ Virtual attributes
 
 : (xml:)lang=  ( -- a )
+  xhtml? if  xml:lang=  else  lang=  then ;
   \ Return the proper language attribute
   \ for the current syntax.
-  xhtml? if  xml:lang=  else  lang=  then
-  ;
+
 : (xml:)lang=!  ( ca len -- )
+  (xml:)lang= attribute! ;
   \ Set the proper language attribute
   \ for the current syntax.
-  (xml:)lang= attribute!
-  ;
+
 : (xml:)lang=@  ( ca len -- )
+  (xml:)lang= attribute@ ;
   \ Fetch the proper language attribute
   \ for the current syntax.
-  (xml:)lang= attribute@
-  ;
 
-\ **************************************************************
+\ ==============================================================
 \ Table
 
 create attributes  \ table for the attribute variables
 #attributes 0 [?do]  ,  [loop]  \ fill the table
 
-\ **************************************************************
+\ ==============================================================
 \ Tools
 
 : (attributes)  ( -- a len )
+  attributes #attributes cells ;
   \ Return the start and length of the ''attribute_xt' table.
   \ attributes #attributes 1- cells  \ XXX OLD -- why '1-'?
-  attributes #attributes cells
-  ;
+
 : -attribute  ( a -- )
+  [gforth_strings_for_attributes?]
+  [if]  0 swap $!len  [else]  @ str-init  [then] ;
   \ Clear an attribute variable with an empty string.
   \ a = attribute variable
-  [gforth_strings_for_attributes?]
-  [if]  0 swap $!len  [else]  @ str-init  [then]
-  ;
+
 : -attributes  ( -- )
-  \ Clear all HTML attributes, the link anchor and the link text.
   (attributes) bounds ?do  i @ -attribute  cell +loop
-  0 link_anchor $!len 
-  ;
+  0 link_anchor $!len  ;
+  \ Clear all HTML attributes, the link anchor and the link text.
+
 : ?hreflang=!  ( a -- )
+  language 2dup current_page language compare
+  if  hreflang=!  else  2drop  then ;
   \ If the given page has a different language than the current one,
   \ then update the 'hreflang' attribute.
   \ a = page id
-  language 2dup current_page language compare
-  if  hreflang=!  else  2drop  then
-  ;
 
-\ **************************************************************
+\ ==============================================================
 \ Echo
 
 : ((+attribute))  ( ca1 len1 ca2 len2 -- )
+\  2dup ." label<< " type ." >> " cr  \ XXX INFORMER
+\  2over ." value<< " type ." >> " cr  \ XXX INFORMER
+  echo_space echo echo_quote echo echo_quote ;
   \ Echo an attribute.
   \ ca1 len1 = attribute value
   \ ca2 len2 = attribute label
   \   (it includes the final "=", e.g. "alt=")
-\  2dup ." label<< " type ." >> " cr  \ XXX INFORMER
-\  2over ." value<< " type ." >> " cr  \ XXX INFORMER
-  echo_space echo echo_quote echo echo_quote
-  ;
+
 : (+attribute)  ( a ca len -- )
+  rot body> >name name>string ((+attribute)) ;
   \ Echo an attribute.
   \ a = attribute variable
   \ ca len = attribute value
-  rot body> >name name>string ((+attribute))
-  ;
+
 : echo_attribute  ( a -- )
+\  ." {{{ " dup >name ?dup if  id.  else  ." ?"  then  ." }}}"  \ XXX INFORMER
+  dup attribute@ dup if  (+attribute)  else  2drop drop  then ;
   \ Echo an attribute, if not empty.
   \ a = attribute variable
-\  ." {{{ " dup >name ?dup if  id.  else  ." ?"  then  ." }}}"  \ XXX INFORMER
-  dup attribute@ dup if  (+attribute)  else  2drop drop  then
-  ;
+
 : echo_attributes  ( -- )
   \ Echo all non-empty attributes.
   (attributes) bounds ?do
     i @ echo_attribute
-  cell +loop
-  ;
+  cell +loop ;
 
-\ **************************************************************
+\ ==============================================================
 \ Saving and restoring the attributes
 
 \ The URL anchor does not work like an attribute, but it must be saved
 \ and restored with them, just in case.
 
-\ Create a stack for the attributes plus the link anchor (2 cells per
-\ element, and 4 nesting levels):
 #attributes 1+ 2* 4 * xstack attributes_stack
+  \ Create a stack for the attributes plus the link anchor (2 cells per
+  \ element, and 4 nesting levels).
 
 : mem>x  ( ca len -- )
-  save-mem 2>x
-  ;
+  save-mem 2>x ;
+
 : save_attribute  ( a -- )
+  attribute@ mem>x ;
   \ Save an attribute.
   \ a = attribute variable
-  attribute@ mem>x
-  ;
+
 : save_attributes  ( -- )
-  \ Save the link anchor and all attributes.
   attributes_stack
   link_anchor $@ mem>x
   (attributes) bounds ?do
     i @ save_attribute
-  cell +loop
-  ;
+  cell +loop ;
+  \ Save the link anchor and all attributes.
+
 : restore_attribute  ( a -- )
+  2x> rot attribute! ;
   \ Restore an attribute.
   \ a = attribute variable
-  2x> rot attribute!
-  ;
+
 : restore_attributes  ( -- )
-  \ Restore all attributes, and the link anchor.
   attributes_stack
   (attributes) -cell-bounds ?do
     i @ restore_attribute
   [ cell negate ] literal +loop
-  2x> link_anchor $!new
-  ;
+  2x> link_anchor $!new ;
+  \ Restore all attributes, and the link anchor.
 
-\ **************************************************************
-\ Change history of this file
+.( fendo.markup.html.attributes.fs compiled) cr
+
+\ ==============================================================
+\ Change log
 
 \ 2013-06-10: Start. Factored from <fendo_markup_html.fs>.
 \
@@ -477,6 +471,7 @@ create attributes  \ table for the attribute variables
 \ 2014-12-22: Change ':attribute' factored from 'attribute:'.
 \
 \ 2015-02-01: Change: the 'xhtml?' variable is a value now.
+\
+\ 2017-06-22: Update source style, layout and header.
 
-.( fendo.markup.html.attributes.fs compiled) cr
-
+\ vim: filetype=gforth

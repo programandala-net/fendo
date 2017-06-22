@@ -1,10 +1,14 @@
 .( fendo.markup.html.fs ) cr
 
-\ This file is part of Fendo.
+\ This file is part of Fendo
+\ (http://programandala.net/en.program.fendo.html).
 
 \ This file defines the HTML tags.
 
-\ Copyright (C) 2013 Marcos Cruz (programandala.net)
+\ Last modified 20170622.
+\ See change log at the end of the file.
+
+\ Copyright (C) 2013,2017 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute
 \ it and/or modify it under the terms of the GNU General
@@ -22,8 +26,17 @@
 \ License along with this program; if not, see
 \ <http://gnu.org/licenses>.
 
-\ **************************************************************
-\ Change history of this file
+\ ==============================================================
+\ Modules
+
+require ./fendo.markup.html.attributes.fs
+require ./fendo.markup.html.tags.fs
+require ./fendo.markup.html.entities.fs
+
+.( fendo.markup.html.fs compiled) cr
+
+\ ==============================================================
+\ Change log
 
 \ 2013-06-01: Start.
 \ 2013-06-02: More tags. Start of the attribute management.
@@ -41,12 +54,6 @@
 \   attributes moved to <fendo_markup_html_attributes.fs>
 \   tags moved to <fendo_markup_html_tags.fs>
 \   entities moved to <fendo_markup_html_entities.fs>
+\ 2017-06-22: Update source style, layout and header.
 
-\ **************************************************************
-\ Modules
-
-require ./fendo.markup.html.attributes.fs
-require ./fendo.markup.html.tags.fs
-require ./fendo.markup.html.entities.fs
-
-.( fendo.markup.html.fs compiled) cr
+\ vim: filetype=gforth

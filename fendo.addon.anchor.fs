@@ -1,10 +1,14 @@
 .( fendo.addon.anchor.fs) cr
 
-\ This file is part of Fendo.
+\ This file is part of Fendo
+\ (http://programandala.net/en.program.fendo.html).
 
 \ This file is the anchor addon.
 
-\ Copyright (C) 2013 Marcos Cruz (programandala.net)
+\ Last modified 20170622.
+\ See change log at the end of the file.
+
+\ Copyright (C) 2013,2017 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute
 \ it and/or modify it under the terms of the GNU General
@@ -22,21 +26,23 @@
 \ License along with this program; if not, see
 \ <http://gnu.org/licenses>.
 
-\ Fendo is written in Forth
-\ with Gforth (<http://www.bernd-paysan.de/gforth.html>).
+\ Fendo is written in Forth (http://forth-standard.org)
+\ with Gforth (http://gnu.org/software/gforth).
 
-\ **************************************************************
-\ Change history of this file
+\ ==============================================================
+
+: anchor ( ca len -- )
+  id=! [<a>] [</a>] ;
+
+.( fendo.addon.anchor.fs compiled) cr
+
+\ ==============================================================
+\ Change log
 
 \ 2013-06-23: Start.
 \ 2013-10-14: Moved from the application Fendo-programandala.
 \ 2014-11-13: Change: Simpler, with immediate tags. Fix: stack
 \ notation.
+\ 2017-06-22: Update source style, layout and header.
 
-\ **************************************************************
-
-: anchor ( ca len -- )
-  id=! [<a>] [</a>]
-  ;
-
-.( fendo.addon.anchor.fs compiled) cr
+\ vim: filetype=gforth

@@ -1,10 +1,14 @@
 .( fendo.markup.fendo.language.fs ) cr
 
-\ This file is part of Fendo.
+\ This file is part of Fendo
+\ (http://programandala.net/en.program.fendo.html).
 
 \ This file defines the Fendo markup for languages.
 
-\ Copyright (C) 2013,2014 Marcos Cruz (programandala.net)
+\ Last modified 20170622.
+\ See change log at the end of the file.
+
+\ Copyright (C) 2013,2014,2017 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute
 \ it and/or modify it under the terms of the GNU General
@@ -22,17 +26,12 @@
 \ License along with this program; if not, see
 \ <http://gnu.org/licenses>.
 
-\ **************************************************************
-\ Change history of this file
-
-\ See at the end of the file.
-
-\ **************************************************************
+\ ==============================================================
 \ Custom language markup tools
 
 fendo_definitions
 
-\ xxx todo nested, with depth counter?
+\ XXX TODO nested, with depth counter?
 
 0 [if]
 
@@ -59,46 +58,43 @@ Usage example:
 
 [then]
 
-: language_inline_markup  ( ca len -- )
+: language_inline_markup ( ca len -- )
+  2dup s" ((" s+ :create_markup s,
+  does> ( -- ) ( dfa ) count (xml:)lang=! [<span>] ;
   \ Create a language inline markup.
   \ ca len = ISO code of a language
-  2dup s" ((" s+ :create_markup s,
-  does>  ( -- )
-    ( dfa ) count (xml:)lang=! [<span>]
-  ;
-: language_inline_quote_markup  ( ca len -- )
+
+: language_inline_quote_markup ( ca len -- )
+  2dup s" ''" s+ :create_markup s,
+  does> ( -- ) ( dfa ) count (xml:)lang=! [markup>order] '' [markup<order] ;
   \ Create a language inline quote markup.
   \ ca len = ISO code of a language
-  2dup s" ''" s+ :create_markup s,
-  does>  ( -- )
-    ( dfa ) count (xml:)lang=! [markup>order] '' [markup<order]
-  ;
-: language_block_markup  ( ca len -- )
+
+: language_block_markup ( ca len -- )
+  2dup s" ((((" s+ :create_markup s,
+  does> ( -- ) ( dfa ) count (xml:)lang=! [<div>] ;
   \ Create a language block markup.
   \ ca len = ISO code of a language
-  2dup s" ((((" s+ :create_markup s,
-  does>  ( -- )
-    ( dfa ) count (xml:)lang=! [<div>]
-  ;
-: language_block_quote_markup  ( ca len -- )
+
+: language_block_quote_markup ( ca len -- )
+  2dup s" ''''" s+ :create_markup s,
+  does> ( -- ) ( dfa ) count (xml:)lang=! [markup>order] '''' [markup<order] ;
   \ Create a language block quote markup.
   \ ca len = ISO code of a language
-  2dup s" ''''" s+ :create_markup s,
-  does>  ( -- )
-    ( dfa ) count (xml:)lang=! [markup>order] '''' [markup<order]
-  ;
-: language_markup:  ( "name" -- )
+
+: language_markup: ( "name" -- )
+  parse-name? abort" Expected language code"
+  2dup language_inline_markup  2dup language_inline_quote_markup
+  2dup language_block_markup  language_block_quote_markup ;
   \ Create inline and block language and quote markups.
   \ Used by the website application to create all
   \ language markups used in the contents.
   \ name = ISO code of a language
-  parse-name? abort" Expected language code"
-  2dup language_inline_markup  2dup language_inline_quote_markup
-  2dup language_block_markup  language_block_quote_markup
-  ;
 
-\ **************************************************************
-\ Change history of this file
+.( fendo.markup.fendo.language.fs compiled ) cr
+
+\ ==============================================================
+\ Change log
 
 \ 2014-04-21: Code moved from <fendo.markup.fendo.fs>.
 \
@@ -108,6 +104,7 @@ Usage example:
 \ 2014-07-13: New: inline and block quotes.
 \
 \ 2014-11-09: The usage text is updated.
+\
+\ 2017-06-22: Update source style, layout and header.
 
-.( fendo.markup.fendo.language.fs compiled ) cr
-
+\ vim: filetype=gforth

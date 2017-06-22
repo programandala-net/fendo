@@ -1,11 +1,15 @@
 .( fendo.addon.XXX.fs ) cr
 
-\ This file is part of Fendo.
+\ This file is part of Fendo
+\ (http://programandala.net/en.program.fendo.html).
 
 \ This file is the XXX addon.
 \ It ...
 
-\ Copyright (C) 2015 Marcos Cruz (programandala.net)
+\ Last modified 20170622.
+\ See change log at the end of the file.
+
+\ Copyright (C) 2017 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute
 \ it and/or modify it under the terms of the GNU General
@@ -23,19 +27,17 @@
 \ License along with this program; if not, see
 \ <http://gnu.org/licenses>.
 
-\ **************************************************************
-\ Change history of this file
+\ Fendo is written in Forth (http://forth-standard.org)
+\ with Gforth (http://gnu.org/software/gforth).
 
-\ See at the end of the file.
-
-\ **************************************************************
+\ ==============================================================
 \ Main
-
-
-\ **************************************************************
-\ Change history of this file
-
-\ 2015-xx-xx: 
 
 .( fendo.addon.XXX.fs compiled ) cr
 
+\ ==============================================================
+\ Change log
+
+\ 201x-xx-xx:
+
+\ vim: filetype=gforth
