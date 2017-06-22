@@ -46,16 +46,6 @@ require ./fendo.addon.pages_by_regex.fs
 \ require ./fendo.addon.tag_counts_by_prefix.fs  \ XXX TODO
 
 \ ==============================================================
-\ To-do
-
-\ XXX TODO
-\ move tag_cloud_by_regex to <fendo.addon.tag_cloud_by_regex.fs>
-
-\ move the common code to <fendo.addon.tag_cloud.common.fs>
-
-\ code the font sizes depending on the tag counts
-
-\ ==============================================================
 
 module: fendo.addon.tag_cloud_by_prefix
 

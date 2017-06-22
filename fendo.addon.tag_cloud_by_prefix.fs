@@ -44,13 +44,6 @@ require ./fendo.addon.pages_by_prefix.fs
 \ require ./fendo.addon.tag_counts_by_prefix.fs  \ XXX TODO
 
 \ ==============================================================
-\ To-do
-
-\ XXX TODO
-
-\ move the common code to <fendo.addon.tag_cloud.common.fs>
-
-\ ==============================================================
 
 module: fendo.addon.tag_cloud_by_prefix
 

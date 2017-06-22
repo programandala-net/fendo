@@ -27,11 +27,6 @@
 \ with Gforth (http://gnu.org/software/gforth).
 
 \ ==============================================================
-\ Todo
-
-\ 2013-07-26 Character set conversions.
-
-\ ==============================================================
 \ Requirements
 
 forth_definitions
