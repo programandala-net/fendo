@@ -27,14 +27,6 @@
 \ with Gforth (http://gnu.org/software/gforth).
 
 \ ==============================================================
-\ Todo
-
-\ 2013-12-12: let abersoft forth syntax? a vim syntax file will be
-\ required.
-\ 2013-07-26: Character set conversions.
-\ 2014-02-15: Fix: path of the Fendo addons is converted to relative.
-
-\ ==============================================================
 \ Requirements
 
 forth_definitions

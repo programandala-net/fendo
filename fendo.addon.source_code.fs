@@ -27,13 +27,6 @@
 \ with Gforth (http://gnu.org/software/gforth).
 
 \ ==============================================================
-\ Todo
-
-\ 2013-12-11: make '(filename>filetype)' configurable by the
-\ application.
-\ 2013-11-09: Syntax highlighting cache!
-
-\ ==============================================================
 \ Requirements
 
 forth_definitions

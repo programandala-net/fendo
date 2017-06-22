@@ -442,7 +442,7 @@ fendo_definitions
 \ 2013-08-10: Change: 'parse_forth_code' rewritten, more legible.
 \
 \ 2013-08-10: Bug: sometimes the content of 'href=' gets corrupted at
-\ the end of '([[)'. Gforth issue again?  Todo: Try FFL's dynamic
+\ the end of '([[)'. Gforth issue again?  To do: Try FFL's dynamic
 \ strings for HTML attributes.
 \
 \ 2013-08-12: Fix: '(xml:)lang=' was modifed with '$!', even in when

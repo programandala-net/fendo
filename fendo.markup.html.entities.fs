@@ -27,14 +27,6 @@
 \ <http://gnu.org/licenses>.
 
 \ ==============================================================
-\ Todo
-
-\ 2013-06-10: Entities are case-dependent. A table is required.
-
-\ 2013-06-04: The word '&#' parses a number and echoes the
-\ corresponding HTML entity.
-
-\ ==============================================================
 \ Defining words
 
 : :entity ( ca len -- )

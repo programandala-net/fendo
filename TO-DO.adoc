@@ -9,9 +9,27 @@
 In <fendo.parser.fs>: Flag the first markup of the current line, in
 order to use `--` both for nested lists and for delete.
 
+.2013-06-04
+
+In <fendo.markup.html.entities.fs>: The word `&#` parses a number and
+echoes the corresponding HTML entity.
+
 .2013-06-08:
 
 In <fendo.data.fs>: Can `current_page` be used instead of `'data`?
+
+.2013-06-10
+
+In <fendo.markup.html.entities.fs>: Entities are case-dependent. A
+table is required.
+
+.2013-07-26:
+
+In <fendo.addon.basin_source_code.fs>: Character set conversions.
+
+.2013-07-26:
+
+In <fendo.addon.forth_blocks_source_code.fs>: Character set conversions.
 
 .2013-08-14:
 
@@ -23,6 +41,30 @@ Choose better names for different meanings of "content":
 
 defered words at the start (and end?) of tags,
 to let the website application insert hooks.
+
+.2013-11-09:
+
+In <fendo.addon.source_code.fs>: Syntax highlighting cache.
+
+.2013-11-26:
+
+In <fendo.shortcuts.fs>: Fix: 'unshortcut' sets 'href=', what
+sometimes is inconvenient.
+
+.2013-12-11:
+
+In <fendo.addon.source_code.fs>: Make `(filename>filetype)`
+configurable by the application.
+
+.2013-12-12
+
+In <fendo.addon.forth_blocks_source_code.fs>: Abersoft Forth
+syntax.
+
+.2014-02-15:
+
+In <fendo.addon.forth_blocks_source_code.fs>: Fix: path of the Fendo
+addons is converted to relative.
 
 .2014-03-03:
 
@@ -105,6 +147,11 @@ En un lugar de la Mancha.
 
 That would render a proper footer under the quote block.
 At the end of the block, the variables must be reseted.
+
+.2016-06-03:
+
+In <fendo.markup.fendo.passthrough.fs>: Add '~~' for inline
+passthrough.
 
 .2014-07-13:
 
@@ -363,3 +410,20 @@ use it several times in the data header and avoid long lines.
 .2017-02-06:
 
 Add `)),` as a shortcut of the idiom `)) ,`.
+
+.2017-06-22:
+
+Move the common code from <fendo.addon.tag_cloud_by_prefix.fs> to
+<fendo.addon.tag_cloud.common.fs>
+
+.2017-06-22:
+
+In <fendo.addon.tag_cloud_by_regex.fs>:
+
+- Move `tag_cloud_by_regex` to <fendo.addon.tag_cloud_by_regex.fs>.
+- Move the common code to <fendo.addon.tag_cloud.common.fs>.
+- Code the font sizes depending on the tag counts.
+
+.2017-06-22:
+
+In <fendo.markup.fendo.list.fs>: Nested lists.

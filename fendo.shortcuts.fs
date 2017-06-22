@@ -30,12 +30,6 @@
 \ with Gforth (http://gnu.org/software/gforth).
 
 \ ==============================================================
-\ Todo
-
-\ 2013-11-26: fixme 'unshortcut' sets 'href=', what sometimes is
-\ inconvenient.
-
-\ ==============================================================
 
 wordlist constant fendo_shortcuts_wid  \ for user's shortcuts
 
