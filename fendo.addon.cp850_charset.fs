@@ -1,10 +1,14 @@
 .( fendo.addon.cp850_charset.fs) cr
 
-\ This file is part of Fendo.
+\ This file is part of Fendo
+\ (http://programandala.net/en.program.fendo.html).
 
 \ This file is the CP850 charset addon.
 
-\ Copyright (C) 2013 Marcos Cruz (programandala.net)
+\ Last modified 20170622.
+\ See change log at the end of the file.
+
+\ Copyright (C) 2013,2017 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute it and/or modify it
 \ under the terms of the GNU General Public License as published by
@@ -19,17 +23,10 @@
 \ You should have received a copy of the GNU General Public License
 \ along with this program; if not, see <http://gnu.org/licenses>.
 
-\ Fendo is written in Forth with Gforth
-\ (<http://www.bernd-paysan.de/gforth.html>).
+\ Fendo is written in Forth (http://forth-standard.org)
+\ with Gforth (http://gnu.org/software/gforth).
 
-\ **************************************************************
-\ Change history of this file
-
-\ 2013-12-10 Written with <galope/translated.fs>.
-\ 2013-12-11 Rewritten with <ftrac/ftrac.fs>.
-\ 2013-12-12 Rewritten with <galope/uncodepaged.fs>.
-
-\ **************************************************************
+\ ==============================================================
 
 forth_definitions
 require galope/uncodepaged.fs
@@ -375,3 +372,13 @@ uncodepage: cp850_charset_to_utf8
 ;uncodepage
 
 .( fendo.addon.cp850_charset.fs compiled) cr
+
+\ ==============================================================
+\ Change log
+
+\ 2013-12-10 Written with <galope/translated.fs>.
+\ 2013-12-11 Rewritten with <ftrac/ftrac.fs>.
+\ 2013-12-12 Rewritten with <galope/uncodepaged.fs>.
+\ 2017-06-22: Update source style, layout and header.
+
+\ vim: filetype=gforth

@@ -1,10 +1,14 @@
 .( fendo.markup.fendo.literal.fs ) cr
 
-\ This file is part of Fendo.
+\ This file is part of Fendo
+\ (http://programandala.net/en.program.fendo.html).
 
 \ This file defines the Fendo markup for literal zones.
 
-\ Copyright (C) 2013,2014 Marcos Cruz (programandala.net)
+\ Last modified 20170622.
+\ See change log at the end of the file.
+
+\ Copyright (C) 2013,2014,2017 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute
 \ it and/or modify it under the terms of the GNU General
@@ -22,57 +26,52 @@
 \ License along with this program; if not, see
 \ <http://gnu.org/licenses>.
 
-\ **************************************************************
-\ Change history of this file
-
-\ See at the end of the file.
-
-\ **************************************************************
+\ ==============================================================
 \ Requirements
 
 forth_definitions
 
 require galope/trim.fs  \ 'trim'
 
-\ **************************************************************
+\ ==============================================================
 \ Tools
 
 fendo_definitions
 
-: literal-line  ( -- ca len )
-  \ Parse a new line from the current literal block.
+: literal-line ( -- ca len )
   read_source_line 0= abort" Missing closing '....'"
-  escaped_source_code
-  ;
-: "...."?  ( ca len -- wf )
-  \ Does the given string contains only "...."?
-  trim s" ...." str=
-  ;
-: literal-line?  ( -- ca len true | false )
+  escaped_source_code ;
   \ Parse a new line from the current literal block.
-  literal-line 2dup "...."? 0=
-  ;
-: (....)  ( "literal content ...." -- )
-  \ Parse and echo a literal block.
-  begin  literal-line? dup >r ?echo_line r> 0=  until
-  ;
 
-\ **************************************************************
+: "...."? ( ca len -- f )
+  trim s" ...." str= ;
+  \ Does the given string contains only "...."?
+
+: literal-line? ( -- ca len true | false )
+  literal-line 2dup "...."? 0= ;
+  \ Parse a new line from the current literal block.
+
+: (....) ( "literal content ...." -- )
+  begin  literal-line? dup >r ?echo_line r> 0=  until ;
+  \ Parse and echo a literal block.
+
+\ ==============================================================
 \ Markup
 
 markup_definitions
 
 : .... ( "verbatim content ...." -- )
+  [<pre>] (....) [</pre>] ;
   \ Open, parse and close a literal block.
-  [<pre>] (....) [</pre>]
-  ;
 
 fendo_definitions
 
-\ **************************************************************
-\ Change history of this file
-
-\ 2014-04-21: Code moved from <fendo.markup.fendo.fs>.
-
 .( fendo.markup.fendo.literal.fs compiled ) cr
 
+\ ==============================================================
+\ Change log
+
+\ 2014-04-21: Code moved from <fendo.markup.fendo.fs>.
+\ 2017-06-22: Update source style, layout and header.
+
+\ vim: filetype=gforth

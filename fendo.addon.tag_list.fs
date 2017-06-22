@@ -1,10 +1,14 @@
 .( fendo.addon.tag_list.fs) cr
 
-\ This file is part of Fendo.
+\ This file is part of Fendo
+\ (http://programandala.net/en.program.fendo.html).
 
 \ This file provides tag lists.
 
-\ Copyright (C) 2014 Marcos Cruz (programandala.net)
+\ Last modified 20170622.
+\ See change log at the end of the file.
+
+\ Copyright (C) 2014,2017 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute it and/or modify it
 \ under the terms of the GNU General Public License as published by
@@ -19,38 +23,40 @@
 \ You should have received a copy of the GNU General Public License
 \ along with this program; if not, see <http://gnu.org/licenses>.
 
-\ Fendo is written in Forth with Gforth
-\ (<http://www.bernd-paysan.de/gforth.html>).
+\ Fendo is written in Forth (http://forth-standard.org)
+\ with Gforth (http://gnu.org/software/gforth).
 
-\ **************************************************************
-\ Change history of this file
+\ ==============================================================
+\ Requirements
+
+require ./fendo.addon.tags.fs
+
+\ ==============================================================
+
+: tag_list { pid -- }
+  tags_do_count  pid tags evaluate_tags
+  tags_do_list_link  #tag off pid tags evaluate_tags ;
+  \ Create a tag list of links for the given page id.
+  \ First, update the '#tags' variable.
+  \ Then build the list ('#tag' must be reset, because it will be
+  \ compared with '#tags' during the process).
+
+: tag_ul ( pid -- )
+  [<ul>] tag_list [</ul>] ;
+
+: tag_ol ( pid -- )
+  [<ol>] tag_list [</ol>] ;
+
+.( fendo.addon.tag_list.fs compiled) cr
+
+\ ==============================================================
+\ Change log
 
 \ 2014-03-04: Start.
 \
 \ 2014-11-05: Improvement: 'tag_list' is modified after the
 \ improvements in <fendo.addon.tags.fs> that let the last element of a
 \ tag link list to be marked with a class.
+\ 2017-06-22: Update source style, layout and header.
 
-\ **************************************************************
-\ Requirements
-
-require ./fendo.addon.tags.fs
-
-\ **************************************************************
-
-: tag_list  { pid -- }
-  \ Create a tag list of links for the given page id.
-  \ First, update the '#tags' variable:
-  tags_do_count  pid tags evaluate_tags
-  \ Then build the list ('#tag' must be reset, because it will be
-  \ compared with '#tags' during the process):
-  tags_do_list_link  #tag off pid tags evaluate_tags
-  ;
-: tag_ul  ( pid -- )
-  [<ul>] tag_list [</ul>]
-  ;
-: tag_ol  ( pid -- )
-  [<ol>] tag_list [</ol>]
-  ;
-
-.( fendo.addon.tag_list.fs compiled) cr
+\ vim: filetype=gforth

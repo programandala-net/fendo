@@ -1,8 +1,12 @@
 .( fendo.markup.fendo.fs ) cr
 
-\ This file is part of Fendo.
+\ This file is part of Fendo
+\ (http://programandala.net/en.program.fendo.html).
 
 \ This file defines the Fendo markup.
+
+\ Last modified 20170622.
+\ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2017 Marcos Cruz (programandala.net)
 
@@ -22,13 +26,8 @@
 \ License along with this program; if not, see
 \ <http://gnu.org/licenses>.
 
-\ **************************************************************
-\ Change history of this file
-
-\ See at the end of the file.
-
-\ **************************************************************
-\ TODO
+\ ==============================================================
+\ XXX TODO --
 
 \ 2014-04-21: factor every markup to its own file.
 \ 2014-04-21: Idea: flag to make the headers numbered.
@@ -43,9 +42,8 @@
 \ for list and for bold.
 \ 2013-06-19: Compare Creole's markups with txt2tags' markups.
 \ 2014-03-04: Change: parser vectors moved to <fendo.markup.common.fs>.
-\ 2017-02-04: Fix Typo.
 
-\ **************************************************************
+\ ==============================================================
 \ Requirements
 
 forth_definitions
@@ -54,58 +52,56 @@ require galope/replaced.fs  \ 'replaced'
 
 fendo_definitions
 
-require ./fendo.addon.source_code.common.fs  \ xxx tmp
-require ./fendo.links.fs  \ xxx fixme already loaded by the main file
+require ./fendo.addon.source_code.common.fs  \ XXX TMP
+require ./fendo.links.fs  \ XXX FIXME already loaded by the main file
 
-\ **************************************************************
+\ ==============================================================
 \ Debug tools
 
-: xxxtype  ( ca len -- ca len )
-  2dup ." «" type ." »"
-  ;
-: xxx.  ( x -- x )
-  dup ." «" . ." »"
-  ;
+: xxxtype ( ca len -- ca len )
+  2dup ." «" type ." »" ;
 
-\ **************************************************************
+: XXX. ( x -- x )
+  dup ." «" . ." »" ;
+
+\ ==============================================================
 \ Generic tool words for strings
 
-\ xxx todo move?
+\ XXX TODO -- move?
 
-: concatenate  ( ca1 len1 ca2 len2 -- ca1' len1' )
+: concatenate ( ca1 len1 ca2 len2 -- ca1' len1' )
+  2swap dup if  s"  " s+ 2swap s+ exit  then  2drop ;
   \ Concatenates two string with a joining space.
-  2swap dup if  s"  " s+ 2swap s+ exit  then  2drop
-  ;
-: ?concatenate  ( ca1 len1 ca2 len2 f -- ca1' len1' )
+
+: ?concatenate ( ca1 len1 ca2 len2 f -- ca1' len1' )
+  if  concatenate  else  2drop  then ;
   \ Concatenates two strings with a joining space.
-  if  concatenate  else  2drop  then
-  ;
-: otherwise_concatenate  ( ca1 len1 ca2 len2 f -- ca1' len1' f )
+
+: otherwise_concatenate ( ca1 len1 ca2 len2 f -- ca1' len1' f )
+  dup >r 0= ?concatenate r> ;
   \ Wrapper for '?concatenate'.
   \ If f is false, concatenate ca1 len1 and ca2 len2;
   \ if f is true, drop ca2 len2.
-  dup >r 0= ?concatenate r>
-  ;
 
-\ **************************************************************
+\ ==============================================================
 \ Generic tool words for markup and parsing
 
 \ Counters
-\ xxx used only by the parser; but will be required here too
-\ xxx todo somehow move to the parser
+\ XXX used only by the parser; but will be required here too
+\ XXX TODO -- somehow move to the parser
 variable #markups     \ consecutive markups parsed
 variable #nonmarkups  \ consecutive nonmarkups parsed
 variable #parsed      \ items already parsed in the current line (before the current item)
 variable parsed$      \ latest parsed name
 
-variable #nothings  \ counter of empty parsings \ xxx tmp moved from <fendo_parser.fs>
+variable #nothings  \ counter of empty parsings
+                    \ XXX TMP -- moved from <fendo_parser.fs>
 
-: first_on_the_line?  ( -- wf )
+: first_on_the_line? ( -- f )
+  #parsed @ 0= ;
   \ Is the last parsed name the first one on the current line?
-  #parsed @ 0=
-  ;
-: exhausted?  ( -- wf )
-  \ Is the current source line exhausted?
+
+: exhausted? ( -- f )
   [false] [if]
     \ First version, doesn't work when there are trailing spaces
     \ at the end of the line.
@@ -114,22 +110,21 @@ variable #nothings  \ counter of empty parsings \ xxx tmp moved from <fendo_pars
     \ Second version, works fine when there are trailing spaces
     \ at the end of the line:
     save-input  parse-name empty? >r  restore-input throw  r>
-  [then]
-  ;
+  [then] ;
+  \ Is the current source line exhausted?
 
-: markups  ( xt1 xt2 a -- )
+: markups ( xt1 xt2 a -- )
+  dup >r @
+  if    nip false
+        \ execute_markup? on  preserve_eol? off  \ XXX TMP
+  else  drop true
+  then  r> !  execute ;
   \ Open or close a HTML tag.
   \ This code is based on FML, a Forth-ish Markup Language for RetroWiki.
   \ xt1 = execution token of the opening HTML tag
   \ xt2 = execution token of the closing HTML tag
   \ a = markup flag variable: is the markup already open?
-  \ xxx todo simplify with 'inverted'
-  dup >r @
-  if    nip false
-        \ execute_markup? on  preserve_eol? off  \ xxx tmp
-  else  drop true
-  then  r> !  execute
-  ;
+  \ XXX TODO -- simplify with 'inverted'
 
 variable opened_[####]?   \ is there an open block code?
 variable opened_[##]?     \ is there an open inline code?
@@ -150,7 +145,7 @@ variable opened_[^^]?     \ is there an open '^^'?
 variable opened_[_]?      \ is there an open '_'?
 variable opened_[__]?     \ is there an open '__'?
 
-variable #heading       \ level of the opened heading  \ xxx not used yet
+variable #heading       \ level of the opened heading  \ XXX not used yet
 
 false [if]
 
@@ -182,11 +177,7 @@ false [if]
 
 [then]
 
-: opened_markups_off  ( -- )
-  \ Unset all markup flags.
-  \ This is used in '(content{)' (defined in <fendo_parser.fs>),
-  \ in order to make sure all flags are unset before rendering a new
-  \ page.
+: opened_markups_off ( -- )
   opened_[####]? off
   opened_[##]? off
   opened_['''']? off
@@ -209,33 +200,34 @@ false [if]
   opened_[=|=]? off
   opened_[^^]? off
   opened_[_]? off
-  opened_[__]? off
-  ;
+  opened_[__]? off ;
+  \ Unset all markup flags.
+  \ This is used in '(content{)' (defined in <fendo_parser.fs>),
+  \ in order to make sure all flags are unset before rendering a new
+  \ page.
 
-: or_end_of_section?  ( ca len wf1 -- wf2 )
+: or_end_of_section? ( ca len wf1 -- wf2 )
+  >r  s" |" str=  r> or ;
   \ ca len = latest name parsed in the alt attribute section
   \ Used by links and images markup.
-  >r  s" |" str=  r> or
-  ;
-: unraw_attributes  ( ca len -- )
+
+: unraw_attributes ( ca len -- )
+  s\" =\" " s\" =\"" replaced
+  s" =' " s" ='" replaced
+  >sb  \ XXX TMP
+  evaluate ;
   \ Extract and store the individual attributes from
   \ a string of raw verbatim attributes.
   \ Used by links and images markup.
-  s\" =\" " s\" =\"" replaced
-  s" =' " s" ='" replaced
-  >sb  \ xxx tmp
-  evaluate
-  ;
 
-: :create_markup  ( ca len -- )
+: :create_markup ( ca len -- )
+  get-current >r  markup>current :create  r> set-current ;
   \ Create a 'create' word with the given name in the markup
   \ wordlist.
   \ This is used by defining words that may be invoked by the website
   \ application to create custom markups.
-  get-current >r  markup>current :create  r> set-current
-  ;
 
-\ **************************************************************
+\ ==============================================================
 \ Actual markup
 
 \ The Fendo markup was inspired by Creole (http://wikicreole.org),
@@ -246,96 +238,91 @@ markup_definitions
 
 \ Grouping
 
-: _  ( -- )
+: _ ( -- )
+  ['] <p> ['] </p> opened_[_]? markups  separate? off ;
   \ Open or close a <p> region.
-  ['] <p> ['] </p> opened_[_]? markups  separate? off
-  ;
-: --------  ( -- )
+
+: -------- ( -- )
+  <hr/> ;
   \ Create a horizontal rule.
-  <hr/>
-  ;
-: \\  ( -- )
+
+: \\ ( -- )
+  <br/> ;
   \ Create a line break.
-  <br/>
-  ;
+
 ' echo_cr alias \n
 
 \ Text
 
-: //  ( -- )
+: // ( -- )
+  ['] <em> ['] </em> opened_[//]? markups ;
   \ Open or close a <em> region.
-  ['] <em> ['] </em> opened_[//]? markups
-  ;
-: **  ( -- )
+
+: ** ( -- )
+  ['] <strong> ['] </strong> opened_[**]? markups ;
   \ Open or close a <strong> region.
-  ['] <strong> ['] </strong> opened_[**]? markups
-  ;
-: __  ( -- )
+
+: __ ( -- )
+  ['] <u> ['] </u> opened_[__]? markups ;
   \ Start or finish a <u> region.
-  ['] <u> ['] </u> opened_[__]? markups
-  ;
-: ^^  ( -- )
+
+: ^^ ( -- )
+  ['] <sup> ['] </sup> opened_[^^]? markups ;
   \ Start or finish a <sup> region.
-  ['] <sup> ['] </sup> opened_[^^]? markups
-  ;
-: ,,  ( -- )
+
+: ,, ( -- )
+  ['] <sub> ['] </sub> opened_[,,]? markups ;
   \ Start or finish a <sub> region.
-  ['] <sub> ['] </sub> opened_[,,]? markups
-  ;
 
 \ Quotes
 
-: ''  ( -- )
+: '' ( -- )
+  ['] <q> ['] </q> opened_['']? markups ;
   \ Open or close a <q> region.
-  ['] <q> ['] </q> opened_['']? markups
-  ;
-: ''''  ( -- )
+
+: '''' ( -- )
+  ['] <blockquote> ['] </blockquote> opened_['''']? markups ;
   \ Open or close a <blockquote> region.
-  ['] <blockquote> ['] </blockquote> opened_['''']? markups
-  ;
 
 \ Insertions
 
-: ++  ( -- )
+: ++ ( -- )
+  ['] <ins> ['] </ins> opened_[++]? markups ;
   \ Open or close an <ins> region.
-  ['] <ins> ['] </ins> opened_[++]? markups
-  ;
-: ++++  ( -- )
+
+: ++++ ( -- )
+  ['] <ins> ['] </ins> opened_[++++]? markups ;
   \ Open or close an <ins> block.
   \ XXX TODO add <div>?
-  ['] <ins> ['] </ins> opened_[++++]? markups
-  ;
 
 \ Removals
 
-: --  ( -- )
+: -- ( -- )
+  ['] <del> ['] </del> opened_[--]? markups ;
   \ Open or close a <del> region.
-  ['] <del> ['] </del> opened_[--]? markups
-  ;
-: ----  ( -- )
+
+: ---- ( -- )
+  ['] <del> ['] </del> opened_[----]? markups ;
   \ Open or close a <del> block.
   \ XXX TODO add <div>?
-  ['] <del> ['] </del> opened_[----]? markups
-  ;
 
 \ Generic
 
-: ((  ( -- )
+: (( ( -- )
+  [<span>] ;
   \ Start a generic inline zone.
-  [<span>]
-  ;
-: ))  ( -- )
+
+: )) ( -- )
+  [</span>] ;
   \ End an generic inline zone.
-  [</span>]
-  ;
-: ((((  ( -- )
+
+: (((( ( -- )
+  [<div>] ;
   \ Start a generic block zone.
-  [<div>]
-  ;
-: ))))  ( -- )
+
+: )))) ( -- )
+  [</div>] ;
   \ End a generic block zone.
-  [</div>]
-  ;
 
 require ./fendo.markup.fendo.code.fs
 require ./fendo.markup.fendo.comment.fs
@@ -358,8 +345,10 @@ require ./fendo.markup.fendo.punctuation.fs
 
 fendo_definitions
 
-\ **************************************************************
-\ Change history of this file
+.( fendo.markup.fendo.fs compiled ) cr
+
+\ ==============================================================
+\ Change log
 
 \ 2013-05-18: Start. First HTML tags.
 \
@@ -407,7 +396,7 @@ fendo_definitions
 \ 2013-06-29: New: The image markups are rendered.
 \
 \ 2013-07-02: Change: Spaces found on filenames or URL don't abort any
-\ more, but print a 'xxx fixme' warning in an HTML comment instead.
+\ more, but print a 'XXX FIXME' warning in an HTML comment instead.
 \ These undesired spaces are caused by a wrong rendering of "__" by
 \ Simplil2Fendo, difficult to fix. Thus manual fix will be required in
 \ the final .fs files.
@@ -618,7 +607,7 @@ fendo_definitions
 \ 2014-03-12: Change: "fendo.addon.source_code.common.fs" filename
 \ updated.
 \
-\ 2014-04-20: 
+\ 2014-04-20:
 \
 \ Fix: 'fendo>order definitions' was wrong old code, because fendo
 \ consists of several wordlists. Now: 'fendo>order fendo>current'.
@@ -656,5 +645,9 @@ fendo_definitions
 \
 \ 2014-12-22: Improvement: 'unraw_attributes' supports also single
 \ quotes.
+\
+\ 2017-02-04: Fix typo.
+\
+\ 2017-06-22: Update source style, layout and header.
 
-.( fendo.markup.fendo.fs compiled ) cr
+\ vim: filetype=gforth

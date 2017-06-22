@@ -1,11 +1,15 @@
 .( fendo.addon.pages_by_regex.fs) cr
 
-\ This file is part of Fendo.
+\ This file is part of Fendo
+\ (http://programandala.net/en.program.fendo.html).
 
 \ This file provides a word that counts all pages whose pid matches a
 \ regex.
 
-\ Copyright (C) 2013,2014 Marcos Cruz (programandala.net)
+\ Last modified 20170622.
+\ See change log at the end of the file.
+
+\ Copyright (C) 2013,2014,2017 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute it and/or modify it
 \ under the terms of the GNU General Public License as published by
@@ -20,15 +24,10 @@
 \ You should have received a copy of the GNU General Public License
 \ along with this program; if not, see <http://gnu.org/licenses>.
 
-\ Fendo is written in Forth with Gforth
-\ (<http://www.bernd-paysan.de/gforth.html>).
+\ Fendo is written in Forth (http://forth-standard.org)
+\ with Gforth (http://gnu.org/software/gforth).
 
-\ **************************************************************
-\ Change history of this file
-
-\ 2014-03-09: Written, after <fendo.addon.pages_by_prefix.fs>.
-
-\ **************************************************************
+\ ==============================================================
 \ Requirements
 
 forth_definitions
@@ -41,32 +40,37 @@ fendo_definitions
 require ./fendo.addon.traverse_pids.fs
 require ./fendo.addon.regex.fs
 
-\ **************************************************************
+\ ==============================================================
 
 module: fendo.addon.pages_by_regex
 
 variable pages
-: ((pages_by_regex))  { D: pid -- }
-  \ Increase the number of pages whose pid matches the current regex.
+
+: ((pages_by_regex)) { D: pid -- }
   pid regex rgx-wcmatch? 0= ?exit
-  pid pid$>data>pid# draft? ?exit  1 pages +!
-  ;
-: (pages_by_regex)  ( ca len -- f )
+  pid pid$>data>pid# draft? ?exit  1 pages +! ;
+  \ Increase the number of pages whose pid matches the current regex.
+
+: (pages_by_regex) ( ca len -- f )
+  ((pages_by_regex)) true ;
   \ Increase the number of pages whose pid matches the current regex.
   \ ca len = pid
   \ f = continue with the next element?
-  ((pages_by_regex)) true
-  ;
 
 export
 
-: pages_by_regex  ( ca len -- n )
+: pages_by_regex ( ca len -- n )
+  >regex pages off   ['] (pages_by_regex) traverse_pids  pages @ ;
   \ Number of pages whose pid starts with the given prefix.
-  >regex pages off   ['] (pages_by_regex) traverse_pids  pages @
-  ;
 
 ;module
 
 .( fendo.addon.pages_by_regex.fs compiled) cr
 
+\ ==============================================================
+\ Change log
 
+\ 2014-03-09: Written, after <fendo.addon.pages_by_prefix.fs>.
+\ 2017-06-22: Update source style, layout and header.
+
+\ vim: filetype=gforth

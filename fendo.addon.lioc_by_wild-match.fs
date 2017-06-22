@@ -1,10 +1,14 @@
 .( fendo.addon.lioc_by_wild-match.fs) cr
 
-\ This file is part of Fendo.
+\ This file is part of Fendo
+\ (http://programandala.net/en.program.fendo.html).
 
 \ This file is the code common to several content lists addons.
 
-\ Copyright (C) 2014 Marcos Cruz (programandala.net)
+\ Last modified 20170622.
+\ See change log at the end of the file.
+
+\ Copyright (C) 2014,2017 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute it and/or modify it
 \ under the terms of the GNU General Public License as published by
@@ -19,15 +23,10 @@
 \ You should have received a copy of the GNU General Public License
 \ along with this program; if not, see <http://gnu.org/licenses>.
 
-\ Fendo is written in Forth with Gforth
-\ (<http://www.bernd-paysan.de/gforth.html>).
+\ Fendo is written in Forth (http://forth-standard.org)
+\ with Gforth (http://gnu.org/software/gforth).
 
-\ **************************************************************
-\ Change history of this file
-
-\ 2014-11-16 Start.
-
-\ **************************************************************
+\ ==============================================================
 \ Requirements
 
 forth_definitions
@@ -40,32 +39,37 @@ require ./fendo.addon.traverse_pids.fs
 require ./fendo.addon.lioc.fs
 require ./fendo.addon.wild-match.fs
 
-\ **************************************************************
+\ ==============================================================
 
 module: fendo.addon.lioc_by_wild-match
 
-: ((lioc_by_wild-match))  { D: pid -- }
-  \ Create an element of a list of content,
-  \ if the given pid (page id) matches the current wild-match string.
+: ((lioc_by_wild-match)) { D: pid -- }
   pid wild-match$ $@ wild-match? 0= ?exit
   pid pid$>data>pid# draft? ?exit
-  pid lioc
-  ;
-: (lioc_by_wild-match)  ( ca len -- true )
+  pid lioc ;
+  \ Create an element of a list of content,
+  \ if the given pid (page id) matches the current wild-match string.
+
+: (lioc_by_wild-match) ( ca len -- true )
+  ((lioc_by_wild-match)) true ;
   \ ca len = pid
   \ true = continue with the next element?
-  ((lioc_by_wild-match)) true
-  ;
 
 export
 
-: lioc_by_wild-match  ( ca len -- )
+: lioc_by_wild-match ( ca len -- )
+  wild-match$ $! ['] (lioc_by_wild-match) traverse_pids ;
   \ Create a list of content
   \ with pages whose pid matches the given wild-match string.
-  wild-match$ $! ['] (lioc_by_wild-match) traverse_pids
-  ;
 
 ;module
 
 .( fendo.addon.lioc_by_wild-match.fs compiled) cr
 
+\ ==============================================================
+\ Change log
+
+\ 2014-11-16 Start.
+\ 2017-06-22: Update source style, layout and header.
+
+\ vim: filetype=gforth

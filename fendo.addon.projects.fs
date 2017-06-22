@@ -1,14 +1,17 @@
 .( fendo.addon.projects.fs) cr
 
-\ This file is part of
-\ Fendo
+\ This file is part of Fendo
+\ (http://programandala.net/en.program.fendo.html).
 
 \ This file is the projects addon.  It provides tools to add shared
 \ metadata about software projects to the website pages.
 \
 \ XXX NOT FINISHED
 
-\ Copyright (C) 2015 Marcos Cruz (programandala.net)
+\ Last modified 20170622.
+\ See change log at the end of the file.
+
+\ Copyright (C) 2015,2017 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute it and/or modify it
 \ under the terms of the GNU General Public License as published by
@@ -23,15 +26,10 @@
 \ You should have received a copy of the GNU General Public License
 \ along with this program; if not, see <http://gnu.org/licenses>.
 
-\ Fendo is written in Forth with Gforth
-\ (<http://www.bernd-paysan.de/gforth.html>).
+\ Fendo is written in Forth (http://forth-standard.org)
+\ with Gforth (http://gnu.org/software/gforth).
 
-\ **************************************************************
-\ Change history of this file
-
-\ See at the end of the file.
-
-\ **************************************************************
+\ ==============================================================
 \ Requirements
 
 forth_definitions
@@ -41,7 +39,7 @@ require galope/module.fs  \ 'module:', ';module', 'hide', 'export'
 
 fendo_definitions
 
-\ **************************************************************
+\ ==============================================================
 \
 
 module: fendo.addon.projects
@@ -66,20 +64,18 @@ public
 
 datum: project  \ name of the project the page is associated to
 
-: (project_datum)  ( +n project -- ca len )
-  ;
-: pid>project?  ( pid -- a true | false )
-  
+: (project_datum) ( +n project -- ca len )
   ;
 
-: project_datum:  ( +n "name"  -- )
+: pid>project? ( pid -- a true | false )
+  ;
+
+: project_datum: ( +n "name"  -- )
+  create ,
+  does> ( pid -- ca len ) ( pid pfa )
+  project dup if  (project_datum)  else  then ;
   \ Create a new project datum.
   \ +n = datum offset from the start of the project data.
-  create ,
-  does>  ( pid -- ca len )
-  ( pid pfa )
-  project dup if  (project_datum)  else  then
-  ;
 
 0 >project_status       project_datum: project_status
 0 >project_start        project_datum: project_start
@@ -88,13 +84,11 @@ datum: project  \ name of the project the page is associated to
 
 variable projects  \ counter
 
-: project:  ( "name" -- )
+: project: ( "name" -- )
+  /project allocate throw constant ;
   \ Create a new project.
-  /project allocate throw constant
-  ;
 
 [then]
-
 
 \ ------------------------------
 \ Second approach
@@ -105,79 +99,76 @@ variable projects  \ counter
 
 datum: project_page
 
-: :project_datum>value  ( ca len -- )
+: :project_datum>value ( ca len -- )
+  nextname create
+    cell /datum dup @ , +!  \ store the offset and increment it
+  does> ( a1 | "text<nl>" -- ca1 len1 | ) ( a1 dfa | dfa "text<nl>" )
+    @  in_data_header? @ ( u f )
+    if  ( u "datum<nl>" ) parse_datum
+    else ( a1 u ) + $@  then ;
   \ Create a project page metadatum that returns its value.
   \ This is the normal version of the metadatum: if executed in
   \ the metadata header (between 'data{' and '}data') it will
   \ parse its datum from the input stream; out of the header it
   \ will return the datum string.
   \ ca len = datum name
-  nextname create
-    cell /datum dup @ , +!  \ store the offset and increment it
-  does>  ( a1 | "text<nl>" -- ca len | )
-    \ a1 = page data address
-    \ ca len = datum 
-    \ dfa = data field address of the datum word
-    \ u = datum offset
-    ( a1 dfa | dfa "text<nl>" )
-    @  in_data_header? @  ( u wf )
-    if    ( u "datum<nl>" ) parse_datum
-    else  ( a1 u ) + $@  then
-  ;
-: :project_datum>address  ( ca len -- )
+  \ a1 = page data address
+  \ ca1 len1 = datum 
+  \ dfa = data field address of the datum word
+  \ u = datum offset
+
+: :project_datum>address ( ca len -- )
+  s" '" 2swap s+ nextname
+  latestxt  \ of the word previously created by ':project_datum>value'
+  create ( xt ) >body ,
+  does> ( a1 -- a2 ) ( a1 dfa ) @ @
+\    dup ." datum offset = " .  \ XXX INFORMER
+   ( a1 u ) + ;
   \ Create a project page metadatum word that returns the address of its data.
   \ The new name will have a tick at the start.
   \ ca len = datum name
-  s" '" 2swap s+ nextname
-  latestxt  \ of the word previously created by ':project_datum>value'
-  create  ( xt ) >body ,
-  does>  ( a1 -- a2 )
-    \ a1 = page data address
-    \ a2 = datum address
-    \ dfa = data field address of the datum word
-    \ u = datum offset
-    ( a1 dfa )  @ @
-\    dup ." datum offset = " .  \ xxx informer
-    ( a1 u ) +
-  ;
-: project_datum:  ( "name" -- )
+  \ a1 = page data address
+  \ a2 = datum address
+  \ dfa = data field address of the datum word
+  \ u = datum offset
+
+: project_datum: ( "name" -- )
   \ Create a project page metadatum.
-  parse-name 2dup :datum>value :datum>address
-  ;
+  parse-name 2dup :datum>value :datum>address ;
 
 project_datum: project_status
 project_datum: project_start
 project_datum: project_end
 project_datum: project_completion
 
-
-\ **************************************************************
+\ ==============================================================
 \ Calculated data
 
-: completed_project?  ( pid -- wf )
-  \ Is the project completed?
+: completed_project? ( pid -- f )
   dup project_completion s" 100%" str=
-  swap project_status s" completed" str= or
-  ;
-: ceased_project?  ( pid -- wf )
+  swap project_status s" completed" str= or ;
+  \ Is the project completed?
+
+: ceased_project? ( pid -- f )
+  project_end nip 0<> ;
   \ Is the project completed or abandoned?
-  project_end nip 0<>
-  ;
-: abandoned_project?  ( pid -- wf )
+
+: abandoned_project? ( pid -- f )
+  project_status s" abandoned" str= ;
   \ Is the project abandoned?
-  project_status s" abandoned" str=
-  ;
-: project?  ( pid -- wf )
-  \ Is the given page a project?
+
+: project? ( pid -- f )
   dup >r project_status nip
   r@ project_start nip
-  r> project_completion nip  or or
-  ;
+  r> project_completion nip  or or ;
+  \ Is the given page a project?
 
 ;module
 
-\ **************************************************************
-\ Change history of this file
+.( fendo-programandala.addon.projects.fs compiled) cr
+
+\ ==============================================================
+\ Change log
 
 \ 2015-02-02: Start, partly based on the code of
 \ <fendo-programandala.addon.projects.fs>.
@@ -185,5 +176,7 @@ project_datum: project_completion
 \ 2015-02-06: Start of a new approach.
 \
 \ 2015-02-11: Fix: proper 'definitions' in the requirements.
+\
+\ 2017-06-22: Update source style, layout and header.
 
-.( fendo-programandala.addon.projects.fs compiled) cr
+\ vim: filetype=gforth

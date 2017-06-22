@@ -1,10 +1,14 @@
 .( fendo.config.fs ) cr
 
-\ This file is part of Fendo.
+\ This file is part of Fendo
+\ (http://programandala.net/en.program.fendo.html).
 
 \ This file setups the default configuration.
 
-\ Copyright (C) 2013,2014,2015 Marcos Cruz (programandala.net)
+\ Last modified 20170622.
+\ See change log at the end of the file.
+
+\ Copyright (C) 2013,2014,2015,2017 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute it and/or modify it
 \ under the terms of the GNU General Public License as published by
@@ -19,19 +23,14 @@
 \ You should have received a copy of the GNU General Public License
 \ along with this program; if not, see <http://gnu.org/licenses>.
 
-\ **************************************************************
-\ Change history of this file
-
-\ See at the end of the file.
-
-\ **************************************************************
+\ ==============================================================
 \ Requirements
 
 forth_definitions
 require string.fs  \ Gforth's dynamic strings
 fendo_definitions
 
-\ **************************************************************
+\ ==============================================================
 \ Configurable site data
 
 \ Some site data are stored in ordinary variables, but as dynamic
@@ -98,8 +97,10 @@ defer site_subtitle
 defer site_icon
 defer site_author
 
-\ **************************************************************
-\ Change history of this file
+.( fendo.config.fs compiled) cr
+
+\ ==============================================================
+\ Change log
 
 \ 2013-06-07: Start.
 \
@@ -119,5 +120,7 @@ defer site_author
 \ 2015-02-01: Change: the 'xhtml?' variable is changed to a value.
 \
 \ 2015-02-11: Code reorganized.
+\
+\ 2017-06-22: Update source style, layout and header.
 
-.( fendo.config.fs compiled) cr
+\ vim: filetype=gforth

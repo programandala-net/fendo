@@ -1,10 +1,14 @@
 .( fendo.echo.fs ) cr
 
-\ This file is part of Fendo.
+\ This file is part of Fendo
+\ (http://programandala.net/en.program.fendo.html).
 
 \ This file defines the words that print to the target HTML file.
 
-\ Copyright (C) 2013,2014 Marcos Cruz (programandala.net)
+\ Last modified 20170622.
+\ See change log at the end of the file.
+
+\ Copyright (C) 2013,2014,2017 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute
 \ it and/or modify it under the terms of the GNU General
@@ -22,12 +26,7 @@
 \ License along with this program; if not, see
 \ <http://gnu.org/licenses>.
 
-\ **************************************************************
-\ Change history of this file
-
-\ See at the end of the file.
-
-\ **************************************************************
+\ ==============================================================
 \ Requirements
 
 forth_definitions
@@ -35,7 +34,7 @@ require galope/n-to-str.fs  \ 'n>str'
 require galope/xstack.fs
 fendo_definitions
 
-\ **************************************************************
+\ ==============================================================
 \ Output
 
 variable echo>  \ destination of the output
@@ -48,59 +47,57 @@ variable echoed  \ used as dynamic string
 s" " echoed $!
 
 8 xstack echo_stack  \ create an extra stack
-: save_echo  ( -- )
+
+: save_echo ( -- )
+  echo_stack  echo> @ >x  echoed $@ 2>x ;
   \ Save the echo status into the echo stack.
-  echo_stack  echo> @ >x  echoed $@ 2>x
-  ;
-: restore_echo  ( -- )
+
+: restore_echo ( -- )
+  echo_stack  2x> echoed $!  x> echo> ! ;
   \ Restore the echo status from the echo stack.
-  echo_stack  2x> echoed $!  x> echo> !
-  ;
 
-: echo>string  ( -- )
+: echo>string ( -- )
+  >string echo> !  0 echoed $!len ;
   \ Redirect the output to the dynamic string 'echoed'.
-  >string echo> !  0 echoed $!len
-  ;
-: echo>file  ( -- )
-  \ Redirect the output to the target file.
-  >file echo> !
-  ;
-: echo>screen  ( -- )
-  \ Redirect the output to the screen.
-  >screen echo> !
-  ;
 
-: echo>file?  ( -- wf )
-  echo> @ >file =
-  ;
-: echo>screen?  ( -- wf )
-  echo> @ >screen =
-  ;
-: echo>string?  ( -- wf )
-  echo> @ >string =
-  ;
+: echo>file ( -- )
+  >file echo> ! ;
+  \ Redirect the output to the target file.
+
+: echo>screen ( -- )
+  >screen echo> ! ;
+  \ Redirect the output to the screen.
+
+: echo>file? ( -- f )
+  echo> @ >file = ;
+
+: echo>screen? ( -- f )
+  echo> @ >screen = ;
+
+: echo>string? ( -- f )
+  echo> @ >string = ;
 
 echo>file
 \ echo>screen  \ XXX for debugging
 
-\ **************************************************************
+\ ==============================================================
 \ Echo
 
 variable target_fid  \ file id of the HTML target page
 
-: (echo)  ( xt | ca len xt -- )
+: (echo) ( xt | ca len xt -- )
   echo>screen?
-  if  execute  else  target_fid @ outfile-execute  then
-  ;
-: (echo>string)  ( ca len -- )
+  if  execute  else  target_fid @ outfile-execute  then ;
+
+: (echo>string) ( ca len -- )
+  echoed $+! ;
   \ Add a string to the 'echoed' string.
-  echoed $+!
-  ;
-: echo  ( ca len -- )
-  \ Print a text string to the HTML file.
+
+: echo ( ca len -- )
   echo>string?
-  if  (echo>string)  else  ['] type (echo)  then
-  ;
+  if  (echo>string)  else  ['] type (echo)  then ;
+  \ Print a text string to the HTML file.
+
 variable separate?  \ flag: separate the next item from the current one?
 
 false value compact_html?  \ if true, no carriage return is created
@@ -110,59 +107,60 @@ false value compact_html?  \ if true, no carriage return is created
 \ difficult to read. The problem is it could ruin the contents in some
 \ cases.
 
-: (echo_cr)  ( -- )
-  \ Do print a carriage return to the HTML file.
+: (echo_cr) ( -- )
   echo>string?  if    s\" \n" (echo>string)
                 else  ['] cr (echo)
-                then  separate? off
-  ;
-: echo_cr  ( -- )
+                then  separate? off ;
+  \ Do print a carriage return to the HTML file.
+
+: echo_cr ( -- )
+  compact_html? 0= if  (echo_cr)  then ;
   \ Print a carriage return to the HTML file.
-  compact_html? 0= if  (echo_cr)  then
-  ;
+
 ' echo_cr alias \n
 
-: echo_space  ( -- )
+: echo_space ( -- )
+  s"  " echo ;
   \ Print a space to the HTML file.
-  s"  " echo
-  ;
-: echo_quote  ( -- )
-  \ Print a double quote to the HTML file.
-  s\" \"" echo
-  ;
-: echo_period  ( -- )
-  \ Print a period to the HTML file.
-  s" ." echo
-  ;
-: _separate  ( -- )
-  \ Separate the current tag or word from the previous one, if needed.
-  separate? @ if  echo_space  then  separate? on
-  ;
-: _echo  ( ca len -- )
-  \ Print a text string to the HTML file, with a previous space if needed.
-  _separate echo
-  ;
-: ?_echo  ( ca len f -- )  \ xxx used?
-  if  _echo  else  2drop  then
-  ;
-: echo_line  ( ca len -- )
-  echo echo_cr
-  ;
-: ?echo_line  ( ca len f -- )
-  if  echo_line  else  2drop  then
-  ;
-: echo.  ( n -- )
-  n>str echo
-  ;
-: _echo.  ( n -- )
-  n>str echo_space echo
-  ;
-: +echo  ( ca len -- )
-  separate? @ >r  separate? off echo  r> separate? !
-  ;
 
-\ **************************************************************
-\ Change history of this file
+: echo_quote ( -- )
+  s\" \"" echo ;
+  \ Print a double quote to the HTML file.
+
+: echo_period ( -- )
+  s" ." echo ;
+  \ Print a period to the HTML file.
+
+: _separate ( -- )
+  separate? @ if  echo_space  then  separate? on ;
+  \ Separate the current tag or word from the previous one, if needed.
+
+: _echo ( ca len -- )
+  _separate echo ;
+  \ Print a text string to the HTML file, with a previous space if needed.
+
+: ?_echo ( ca len f -- )  \ XXX used?
+  if  _echo  else  2drop  then ;
+
+: echo_line ( ca len -- )
+  echo echo_cr ;
+
+: ?echo_line ( ca len f -- )
+  if  echo_line  else  2drop  then ;
+
+: echo. ( n -- )
+  n>str echo ;
+
+: _echo. ( n -- )
+  n>str echo_space echo ;
+
+: +echo ( ca len -- )
+  separate? @ >r  separate? off echo  r> separate? ! ;
+
+.( fendo.echo.fs compiled) cr
+
+\ ==============================================================
+\ Change log
 
 \ 2013-06-04: Start.
 \
@@ -202,6 +200,7 @@ false value compact_html?  \ if true, no carriage return is created
 \ 2014-12-13: New: 'compact_html?' flag (experimental).
 \
 \ 2015-10-15: Updated the name of the Galope module <n-to-str.fs>.
+\
+\ 2017-06-22: Update source style, layout and header.
 
-.( fendo.echo.fs compiled) cr
-
+\ vim: filetype=gforth

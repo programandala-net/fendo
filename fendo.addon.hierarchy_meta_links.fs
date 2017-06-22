@@ -1,10 +1,14 @@
 .( fendo.addon.hierarchy_meta_links.fs) cr
 
-\ This file is part of Fendo.
+\ This file is part of Fendo
+\ (http://programandala.net/en.program.fendo.html).
 
 \ This file is the hierarchy meta links addon.
 
-\ Copyright (C) 2013,2014,2015 Marcos Cruz (programandala.net)
+\ Last modified 20170622.
+\ See change log at the end of the file.
+
+\ Copyright (C) 2013,2014,2015,2017 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute it and/or modify it
 \ under the terms of the GNU General Public License as published by
@@ -19,17 +23,13 @@
 \ You should have received a copy of the GNU General Public License
 \ along with this program; if not, see <http://gnu.org/licenses>.
 
-\ Fendo is written in Forth with Gforth
-\ (<http://www.bernd-paysan.de/gforth.html>).
+\ Fendo is written in Forth (http://forth-standard.org)
+\ with Gforth (http://gnu.org/software/gforth).
 
-\ **************************************************************
-\ Change history of this file
+\ ==============================================================
 
-\ See at the end of the file.
-
-\ **************************************************************
-
-: proper_hierarchical_link?  ( ca1 len1 -- ca' len' wf )
+: proper_hierarchical_link? ( ca1 len1 -- ca' len' f )
+  unshortcut dup if  2dup pid$>data>pid# draft? 0=  else  false  then ;
   \ This check is required in order to bypass the default behaviour of
   \ links: a link to a draft local page simply prints the link text,
   \ but that is not convenient for the hierarchy meta links.  This
@@ -37,45 +37,45 @@
   \ hierarchy navigation bar.
   \ ca1 len1 = page id
   \ ca1' len1' = unshortcut page id
-  unshortcut dup if  2dup pid$>data>pid# draft? 0=  else  false  then
-  ;
 
-: (hierarchy_meta_link)  ( ca1 len1 ca2 len2 -- )
-  \ Create a hierarchy meta link in the HTML header.
-  \ ca1 len1 = page id
-  \ ca2 len2 = rel
-\  cr 2dup type ."  --> " 2over type  \ xxx informer
+: (hierarchy_meta_link) ( ca1 len1 ca2 len2 -- )
+\  cr 2dup type ."  --> " 2over type  \ XXX INFORMER
   rel=!
-\   ." Pid parameter in '(hierarchy_meta_link)' before 'pid$>data>pid#' = " 2dup type cr  \ xxx informer
-\   ." 'link_anchor' in '(hierarchy_meta_link)' before 'pid$>data>pid#' = " link_anchor $@ type cr  \ xxx informer
+\   ." Pid parameter in '(hierarchy_meta_link)' before 'pid$>data>pid#' = " 2dup type cr  \ XXX INFORMER
+\   ." 'link_anchor' in '(hierarchy_meta_link)' before 'pid$>data>pid#' = " link_anchor $@ type cr  \ XXX INFORMER
   pid$>data>pid#
-\   ." 'href=' in '(hierarchy_meta_link)' after 'pid$>data>pid#' = " href=@ type cr  \ xxx informer
-\   ." 'link_anchor' in '(hierarchy_meta_link)' after 'pid$>data>pid#' = " link_anchor $@ type cr  \ xxx informer
+\   ." 'href=' in '(hierarchy_meta_link)' after 'pid$>data>pid#' = " href=@ type cr  \ XXX INFORMER
+\   ." 'link_anchor' in '(hierarchy_meta_link)' after 'pid$>data>pid#' = " link_anchor $@ type cr  \ XXX INFORMER
   dup target_file href=!
   dup title unmarkup title=!
   ?hreflang=!  s" text/html" type=!
-  [<link/>]
-  ;
-: hierarchy_meta_link  ( ca1 len1 ca2 len2 -- )
+  [<link/>] ;
+  \ Create a hierarchy meta link in the HTML header.
+  \ ca1 len1 = page id
+  \ ca2 len2 = rel
+
+: hierarchy_meta_link ( ca1 len1 ca2 len2 -- )
+\   ." Parameter in 'hierarchy_meta_link' = " 2dup type cr  \ XXX INFORMER
+  proper_hierarchical_link? if  2swap (hierarchy_meta_link)  else  2drop 2drop  then ;
   \ Create a hierarchy meta link in the HTML header, if needed.
   \ ca1 len1 = rel
   \ ca2 len2 = page id
-\   ." Parameter in 'hierarchy_meta_link' = " 2dup type cr  \ xxx informer
-  proper_hierarchical_link? if  2swap (hierarchy_meta_link)  else  2drop 2drop  then
-  ;
-: hierarchy_meta_links  ( -- )
-  \ Create the required hierarchy meta links in the HTML header.
-  \ XXX TMP 2015-02-26: it seems "up", "first" and "last" are not allowed
-  \ in <link>; I comment them out.
+
+: hierarchy_meta_links ( -- )
 \  s" up" current_page upper_page hierarchy_meta_link
   s" next" current_page next_page hierarchy_meta_link
   s" prev" current_page previous_page hierarchy_meta_link
 \  s" first" current_page first_page hierarchy_meta_link
 \  s" last" current_page last_page hierarchy_meta_link
   ;
+  \ Create the required hierarchy meta links in the HTML header.
+  \ XXX TMP 2015-02-26: it seems "up", "first" and "last" are not allowed
+  \ in <link>; I comment them out.
 
-\ **************************************************************
-\ Change history of this file
+.( fendo.addon.hierarchy_meta_links.fs compiled) cr
+
+\ ==============================================================
+\ Change log
 
 \ 2013-10-14 Moved from the application Fendo-programandala.
 \
@@ -107,6 +107,7 @@
 \
 \ 2015-02-26: Fix: 's" text/html" type=!' was missing in the
 \ hierarchical meta links.
+\
+\ 2017-06-22: Update source style, layout and header.
 
-
-.( fendo.addon.hierarchy_meta_links.fs compiled) cr
+\ vim: filetype=gforth

@@ -1,10 +1,14 @@
 .( fendo.markup.fendo.list.fs ) cr
 
-\ This file is part of Fendo.
+\ This file is part of Fendo
+\ (http://programandala.net/en.program.fendo.html).
 
 \ This file defines the Fendo markup for lists.
 
-\ Copyright (C) 2013,2014 Marcos Cruz (programandala.net)
+\ Last modified 20170622.
+\ See change log at the end of the file.
+
+\ Copyright (C) 2013,2014,2017 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute
 \ it and/or modify it under the terms of the GNU General
@@ -22,17 +26,12 @@
 \ License along with this program; if not, see
 \ <http://gnu.org/licenses>.
 
-\ **************************************************************
-\ Change history of this file
-
-\ 2014-04-21: Code moved from <fendo.markup.fendo.fs>.
-
-\ **************************************************************
+\ ==============================================================
 \ To-do
 
 \ Nested lists.
 
-\ **************************************************************
+\ ==============================================================
 \ Tools
 
 fendo_definitions
@@ -40,35 +39,41 @@ fendo_definitions
 variable bullet_list_items    \ counter
 variable numbered_list_items  \ counter
 
-: ((-))  ( a -- )
+: ((-)) ( a -- )
+  dup @ if  [</li>]  then  [<li>]  1 swap +!  separate? off ;
   \ List element.
   \ a = counter variable
-  dup @ if  [</li>]  then  [<li>]  1 swap +!  separate? off
-  ;
-: (-)  ( -- )
-  \ Bullet list item.
-  bullet_list_items dup @ 0= if  [<ul>]  then  ((-))
-  ;
-: (#)  ( -- )
-  \ Numbered list item.
-  numbered_list_items dup @ 0= if  [<ol>]  then  ((-))
-  ;
 
-\ **************************************************************
+: (-) ( -- )
+  bullet_list_items dup @ 0= if  [<ul>]  then  ((-)) ;
+  \ Bullet list item.
+
+: (#) ( -- )
+  numbered_list_items dup @ 0= if  [<ol>]  then  ((-)) ;
+  \ Numbered list item.
+
+\ ==============================================================
 \ Markup
 
 markup_definitions
 
-: -  ( -- )
+: - ( -- )
+  first_on_the_line? if  (-)  else  s" -" content  then ;
   \ Bullet list item.
-  first_on_the_line? if  (-)  else  s" -" content  then
-  ;
+
 ' - alias *  \ XXX TMP
-: #  ( -- )
+: # ( -- )
+  first_on_the_line? if  (#)  else  s" #" content  then ;
   \ Numbered list item.
-  first_on_the_line? if  (#)  else  s" #" content  then
-  ;
 
 fendo_definitions
 
 .( fendo.markup.fendo.list.fs compiled ) cr
+
+\ ==============================================================
+\ Change log
+
+\ 2014-04-21: Code moved from <fendo.markup.fendo.fs>.
+\ 2017-06-22: Update source style, layout and header.
+
+\ vim: filetype=gforth

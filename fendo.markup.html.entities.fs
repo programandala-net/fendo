@@ -1,10 +1,14 @@
 .( fendo.markup.html.entities.fs ) cr
 
-\ This file is part of Fendo.
+\ This file is part of Fendo
+\ (http://programandala.net/en.program.fendo.html).
 
 \ This file defines the HTML entities.
 
-\ Copyright (C) 2013 Marcos Cruz (programandala.net)
+\ Last modified 20170622.
+\ See change log at the end of the file.
+
+\ Copyright (C) 2013,2017 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute
 \ it and/or modify it under the terms of the GNU General
@@ -22,15 +26,7 @@
 \ License along with this program; if not, see
 \ <http://gnu.org/licenses>.
 
-\ **************************************************************
-\ Change history of this file
-
-\ 2013-06-10: Factored from <fendo_markup_html.fs> and completed.
-
-\ Reference:
-\ https://en.wikipedia.org/wiki/List_of_XML_and_HTML_character_entity_references
-
-\ **************************************************************
+\ ==============================================================
 \ Todo
 
 \ 2013-06-10: Entities are case-dependent. A table is required.
@@ -38,25 +34,24 @@
 \ 2013-06-04: The word '&#' parses a number and echoes the
 \ corresponding HTML entity.
 
-\ **************************************************************
+\ ==============================================================
 \ Defining words
 
-: :entity   ( ca len -- )
-  \ Create a HTML entity word.
-  \ ca len = entity --and name of its entity word
+: :entity ( ca len -- )
   get-current >r entities>current
   :echo_name
-  separate? off  \ xxx why?
-  r> set-current
-  ;
-: entity:   ( "name" -- )
+  separate? off  \ XXX why?
+  r> set-current ;
+  \ Create a HTML entity word.
+  \ ca len = entity --and name of its entity word
+
+: entity: ( "name" -- )
+  parse-name? abort" Parseable name expected in 'entity:'"
+  :entity ;
   \ Create a HTML entity word.
   \ "name" = entity --and name of its entity word
-  parse-name? abort" Parseable name expected in 'entity:'"
-  :entity
-  ;
 
-\ **************************************************************
+\ ==============================================================
 \ HTML entities
 
 \ entity comment: \ Character \ Unicode code point (decimal) \ Standard DTD \ Old ISO subset \ Description
@@ -318,3 +313,13 @@ entity: &diams; \ ♦ \ U+2666 (9830) \ HTML 4.0 \ HTMLsymbol \ ISOpub \ black d
 
 .( fendo.markup.html.entities.fs compiled) cr
 
+\ ==============================================================
+\ Change log
+
+\ 2013-06-10: Factored from <fendo_markup_html.fs> and completed.
+\ Reference:
+\ https://en.wikipedia.org/wiki/List_of_XML_and_HTML_character_entity_references
+\
+\ 2017-06-22: Update source style, layout and header.
+
+\ vim: filetype=gforth
