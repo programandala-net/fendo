@@ -7,7 +7,7 @@
 \ contents in Asciidoctor (or AsciiDoc) format, either inline or from
 \ a file.
 
-\ Last modified 20170622.
+\ Last modified 201706241943.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2015,2017 Marcos Cruz (programandala.net)
@@ -40,7 +40,8 @@
 
 forth_definitions
 
-require galope/module.fs  \ 'module:', ';module', 'hide', 'export'
+require galope/module.fs  \ `module:`, `;module`, `hide`, `export`
+require galope/trim.fs    \ `trim`
 
 fendo_definitions
 
@@ -86,13 +87,29 @@ s" --out-file " s+ output_file$ s+
   asciidoctor_base_command$ s"  " s+ ;
   \ Return the Asciidoctor command without the input file.
 
-: (include_asciidoctor) ( ca1 len1 -- ca2 len2 )
-  file>local asciidoctor_command$ s"  " s+ 2swap s+
+: ((include_asciidoctor)) ( ca1 len1 -- ca2 len2 )
+  asciidoctor_command$ s"  " s+ 2swap s+
   system $? abort" The system asciidoctor command failed"
   <output_file ;
   \ Return the contents _ca2 len2_ converted
   \ from the Asciidoctor file _ca1 len1_.
   \ The header and footer of the file will be ignored.
+
+: (include_asciidoctor) ( ca1 len1 -- ca2 len2 )
+  file>local ((include_asciidoctor)) ;
+  \ Return the contents _ca2 len2_ converted
+  \ from the Asciidoctor file _ca1 len1_, which is converted to local.
+  \ The header and footer of the file will be ignored.
+
+: parse_asciidoctor ( "ccc<}asciidoctor>" -- ca len )
+  s" "
+  begin
+    0 parse dup
+    if    2dup trim s" }asciidoctor" str=
+          if 2drop exit else s+ true then
+    else  2drop s\" \n" s+ refill
+    then  0=
+  until ;
 
 export
 
@@ -101,15 +118,14 @@ export
   \ Include contents in Asciidoctor format from the given file.
   \ The header and footer of the file will be ignored.
 
-0 [if]
+markup>current
 
 : asciidoctor{ ( "ccc<}asciidoctor>" -- )
-  ;
-  \ Start interpreting contents in Asciidoctor format,
-  \ until "}asciidoctor" is found.
-  \ XXX TODO -- as a macro
-
-[then]
+  parse_asciidoctor >input_file
+  input_file$ ((include_asciidoctor)) echo ;
+  \ Parse contents in Asciidoctor format, until "}asciidoctor" is
+  \ found (on its own line). Then save them to a file, convert them to
+  \ HTML and and include them into the current page.
 
 ;module
 
@@ -124,5 +140,6 @@ export
 \ `include_asciidoctor`, to reuse it for README.adoc files, which need
 \ additional operations.
 \ 2017-06-22: Update source style, layout and header.
+\ 2017-06-24: Add `asciidoctor{`.
 
 \ vim: filetype=gforth
