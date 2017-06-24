@@ -108,10 +108,10 @@ true [if]  \ XXX 2013-08-10: second version, more legible
   s"  " s+ ;
 
 : remaining  ( -- )
-\ XXX INFORMER
   >in @ source 2 pick - -rot + swap
   64 min
   cr ." ***> " type ."  <***" cr ;
+  \ XXX INFORMER
 
 : parse_forth_code ( "forthcode ]>" -- ca len )
   s" "
@@ -193,7 +193,7 @@ true [if]  \ XXX first version
 : <[ ( "forthcode ]>" -- )
   1 forth_code_depth +!
   parse_forth_code
-\  cr ." <[ " 2dup type ." ]>" cr  \ XXX INFORMER
+\  cr ." <[ " 2dup type ." ]>" cr key drop \ XXX INFORMER
   evaluate_forth_code ; immediate
   \ Start, parse and interpret a Forth block.
 
