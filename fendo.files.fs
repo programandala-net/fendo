@@ -5,7 +5,7 @@
 
 \ This file defines the file tools.
 
-\ Last modified 20170622.
+\ Last modified 201706241750.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2015,2017 Marcos Cruz (programandala.net)
@@ -27,6 +27,13 @@
 \ <http://gnu.org/licenses>.
 
 \ ==============================================================
+\ Requirements
+
+forth_definitions
+require galope/string-suffix-question.fs
+fendo_definitions
+
+\ ==============================================================
 \ Target file
 
 : (open_target) ( -- )
@@ -45,7 +52,16 @@
   echo>file? if  (open_target)  then ;
   \ Open the target file (HTML or Atom), if needed.
 
+: complete_iso_date ( ca1 len1 -- ca2 len2 )
+  dup case
+    10 of exit          endof
+     7 of s" -01" s+    endof
+     4 of s" -01-01" s+ endof
+     abort" Wrong ISO date format"
+  endcase ;
+
 : set_file_mtime ( ca1 len1 ca2 len2 -- )
+  complete_iso_date
   s\" touch --date=\"" 2swap s+ s\" \" " s+ 2swap s+
   system $? abort" Error in set_modification_time" ;
   \ Set the modification time of the given file.
@@ -112,12 +128,23 @@ false [if]  \ XXX OLD
   s" ?>" r> write-line throw ;
   \ Create the content of a file that redirects to the current page.
 
+: ?+redirected_extension ( ca1 len1 -- ca2 len2 )
+  2dup s" .html" string-suffix? ?exit
+  2dup s" .php" string-suffix? ?exit
+  2dup s" .htm" string-suffix? ?exit
+  html_extension $@ s+ ;
+  \ Make sure _ca1 len1_, which is a page id (old page filename
+  \ without path and extension) or a page filename (with html, htm or
+  \ php extensions), have a filename extension. If not, add the
+  \ default HTML extension.
+
 : redirected>target ( ca1 len1 -- ca2 len2 )
-  html_extension $@ s+ +target_dir ;
+  ?+redirected_extension +target_dir ;
   \ Convert an old page id (whose filename does not exist any more)
   \ to its correspondent target filename.
   \ The default target extension is assumed.
   \ ca1 len1 = page id (old page filename without path and extension)
+  \            or page filename (with html, htm or php extensions)
   \ ca2 len2 = target filename with path
 
 \ The file modification time of a redirected file can be
@@ -148,22 +175,26 @@ created>redirection
   created>redirection ; \ restore the default
   \ Create a file that redirects to the current page.
   \ ca len = page id (old page filename without path and extension)
+  \          or page filename (with html, htm or php extensions)
   \ 2013-10-02 Start, based on code from ForthCMS.
 
 : redirected ( ca len -- )
   current_page draft? if  2drop  else  (redirected)  then ;
   \ Create a file that redirects to the current page, if possible.
   \ ca len = page id (old page filename without path and extension)
+  \          or page filename (with html, htm or php extensions)
 
 : redirect ( "name" -- )
   parse-name redirected ;
   \ Create a file that redirects to the current page, if possible.
   \ "name" = page id (old page filename without path and extension)
+  \          or page filename (with html, htm or php extensions)
 
 : new_redirected ( ca len -- )
   current_page draft? if  2drop  else  (redirected)  then ;
   \ Create a file that redirects to the current page, if possible.
   \ ca len = page id (old page filename without path and extension)
+  \          or page filename (with html, htm or php extensions)
   \ The date of the redirection file will be the modification date
   \ of the current page.
 
@@ -173,6 +204,7 @@ created>redirection
   \ The date of the redirection file will be the modification date
   \ of the current page.
   \ "name" = page id (old page filename without path and extension)
+  \          or page filename (with html, htm or php extensions)
 
 \ ==============================================================
 \ Read source code
@@ -235,5 +267,9 @@ s" /counted-string" environment? 0=
 \ 2015-02-11: Typos.
 \
 \ 2017-06-22: Update source style, layout and header.
+\
+\ 2017-06-24: Improve `redirected>target`: add the HTML filename
+\ extension only when the input string has no recognized extension.
+\ Improve `set_file_mtime`: complete the ISO date if needed.
 
 \ vim: filetype=gforth

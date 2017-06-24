@@ -1,6 +1,6 @@
 = Fendo to-do list
 :author: Marcos Cruz (programandala.net)
-:revdate: 2017-06-22
+:revdate: 2017-06-24
 
 // This file is in Asciidoctor format
 
@@ -427,3 +427,55 @@ In <fendo.addon.tag_cloud_by_regex.fs>:
 .2017-06-22:
 
 In <fendo.markup.fendo.list.fs>: Nested lists.
+
+.2017-06-24:
+
+An old problem: Gforth does not processes all files passed as parameters.
+
+Example command, created by the Makefile of Fendo-programandala:
+
+----
+
+echo gforth pages.source/en.program.solo_forth.fs
+pages.source/en.program.solo_forth.history.2015.06.fs
+pages.source/en.program.solo_forth.history.2015.07.fs
+pages.source/en.program.solo_forth.history.2015.08.fs
+pages.source/en.program.solo_forth.history.2015.09.fs
+pages.source/en.program.solo_forth.history.2015.10.fs
+pages.source/en.program.solo_forth.history.2015.11.fs
+pages.source/en.program.solo_forth.history.2015.12.fs
+pages.source/en.program.solo_forth.history.2016.01.fs
+pages.source/en.program.solo_forth.history.2016.03.fs
+pages.source/en.program.solo_forth.history.2016.04.fs
+pages.source/en.program.solo_forth.history.2016.05.fs
+pages.source/en.program.solo_forth.history.2016.06.fs
+pages.source/en.program.solo_forth.history.2016.10.fs
+pages.source/en.program.solo_forth.history.2016.11.fs
+pages.source/en.program.solo_forth.history.2016.12.fs
+pages.source/en.program.solo_forth.history.fs
+pages.source/en.program.solo_forth.readme.fs
+pages.source/en.program.solo_forth.screenshots.fs
+pages.source/eo.programo.solo_forth.ekranfotoj.fs
+pages.source/eo.programo.solo_forth.fs
+pages.source/es.programa.solo_forth.fs
+pages.source/es.programa.solo_forth.pantallazos.fs -e bye
+----
+
+Result:
+
+....
+pages.source/en.program.solo_forth.fs
+pages.source/en.program.solo_forth.history.2015.06.fs
+pages.source/en.program.solo_forth.history.2015.08.fs
+pages.source/en.program.solo_forth.history.2015.10.fs
+pages.source/en.program.solo_forth.history.2015.12.fs
+pages.source/en.program.solo_forth.history.2016.03.fs
+pages.source/en.program.solo_forth.history.2016.05.fs
+pages.source/en.program.solo_forth.history.2016.10.fs
+pages.source/en.program.solo_forth.history.2016.12.fs
+pages.source/eo.programo.solo_forth.ekranfotoj.fs
+....
+
+Many input files are ignored. I didn't find any pattern yet. No clue
+if the problem is in Gforth or in Fendo.
+
