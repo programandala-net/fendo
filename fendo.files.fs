@@ -5,7 +5,7 @@
 
 \ This file defines the file tools.
 
-\ Last modified 201706241750.
+\ Last modified 201706242013.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2015,2017 Marcos Cruz (programandala.net)
@@ -109,8 +109,8 @@ false [if]  \ XXX OLD
 
 : file>local ( ca1 len1 -- ca2 len2 )
   2>r target_dir $@ files_subdir $@ s+ 2r> s+ ;
-  \ ca1 len1 = file name
-  \ ca2 len2 = file name with local path
+  \ Add local path to filename _ca1 len1_, resulting
+  \ _ca2 len2_.
 
 \ ==============================================================
 \ Redirection
@@ -270,6 +270,7 @@ s" /counted-string" environment? 0=
 \
 \ 2017-06-24: Improve `redirected>target`: add the HTML filename
 \ extension only when the input string has no recognized extension.
-\ Improve `set_file_mtime`: complete the ISO date if needed.
+\ Improve `set_file_mtime`: complete the ISO date if needed.  Improve
+\ comment.
 
 \ vim: filetype=gforth
