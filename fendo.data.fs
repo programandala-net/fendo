@@ -5,7 +5,7 @@
 
 \ This file defines the page data tools.
 
-\ Last modified 20170622.
+\ Last modified 201706251723.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2015,2017 Marcos Cruz (programandala.net)
@@ -425,8 +425,7 @@ variable do_content?  do_content? on
   else  2drop  then
 \  ." end of (required_data) " .s cr  \ XXX INFORMER
   ;
-  \ Require a page file in order to get its data.
-  \ ca len = filename
+  \ Require a page file _ca len_ in order to get its data.
 
 : required_data ( ca len -- )
 \  ." Parameter in 'required_data' = " 2dup type cr  \ XXX INFORMER
@@ -439,8 +438,7 @@ variable do_content?  do_content? on
 \  ." >>>>>>>>" cr  \ XXX INFORMER
 \  key drop  \ XXX INFORMER
   ;
-  \ Require a page file in order to get its data.
-  \ ca len = filename
+  \ Require a page file _ca len_ in order to get its data.
 
 : required_data<pid# ( a -- )
   source_file required_data ;
@@ -574,9 +572,11 @@ false value ignore_draft_property?
 
 : draft? ( a -- f )
   s" draft" rot property?  ignore_draft_property? 0= and ;
-  \ Is the given page a draft?
-  \ a = page id (address of its data)
-  \ f = is "draft" in the properties field?
+  \ Is page id _a_ a draft? I.e., is "draft" in its properties field?
+
+: pid$>draft? ( ca len -- f )
+  pid$>data>pid# draft? ;
+  \ Is page id _ca len_ a draft page?
 
 : pid$>hierarchy ( ca len -- u )
   0 rot rot  \ counter
@@ -841,5 +841,8 @@ true value included_files_update_the_page_date?
 \ fields.
 \
 \ 2017-06-22: Update source style, layout and header.
+\
+\ 2017-06-25: Add `pid$>draft?`, factored from
+\ `proper_hierarchical_link?`.
 
 \ vim: filetype=gforth
