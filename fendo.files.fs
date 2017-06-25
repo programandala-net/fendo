@@ -5,7 +5,7 @@
 
 \ This file defines the file tools.
 
-\ Last modified 201706242013.
+\ Last modified 201706260028.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2015,2017 Marcos Cruz (programandala.net)
@@ -60,14 +60,20 @@ fendo_definitions
      abort" Wrong ISO date format"
   endcase ;
 
-: set_file_mtime ( ca1 len1 ca2 len2 -- )
+: (set_file_mtime) ( ca1 len1 ca2 len2 -- )
   complete_iso_date
+  \ 2dup cr ." Net ISO date = " type \ XXX INFORMER
   s\" touch --date=\"" 2swap s+ s\" \" " s+ 2swap s+
   system $? abort" Error in set_modification_time" ;
-  \ Set the modification time of the given file.
-  \ ca1 len1 = filename
-  \ ca2 len2 = ISO date
-  \ The host operating system shell is used.
+  \ Set the modification time of file _ca1 len1_ to ISO date _ca2
+  \ len2_.  The host operating system shell is used.
+
+: set_file_mtime ( ca1 len1 ca2 len2 -- )
+  \ 2dup cr ." Raw ISO date = " type \ XXX INFORMER
+  dup if (set_file_mtime) else 2drop 2drop then ;
+  \ If _ca2 len2_ is not empty,
+  \ set the modification time of file _ca1 len1_ to ISO date _ca2
+  \ len2_.
 
 false [if]  \ XXX OLD
 
@@ -272,5 +278,8 @@ s" /counted-string" environment? 0=
 \ extension only when the input string has no recognized extension.
 \ Improve `set_file_mtime`: complete the ISO date if needed.  Improve
 \ comment.
+\
+\ 2017-06-25: Improve `set_file_mtime`: do nothing if the date string
+\ is empty.
 
 \ vim: filetype=gforth
