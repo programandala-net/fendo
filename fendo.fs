@@ -5,7 +5,7 @@
 
 \ This file is the main one; it loads all the modules.
 
-\ Last modified 20170622.
+\ Last modified 201706251438.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2012,2013,2014,2015,2017 Marcos Cruz (programandala.net)
@@ -217,8 +217,10 @@ fendo_definitions
 \ ==============================================================
 \ Config
 
-s" 0.6.0-pre.1+201706201630" 2constant fendo_version
-s" Fendo (Forth Engine for Net DOcuments) " fendo_version s+ 2constant generator
+: fendo_version ( -- ca len ) s" 0.6.0-pre.2+201706251438" ;
+
+: generator ( -- ca len )
+  s" Fendo (Forth Engine for Net DOcuments) " fendo_version s+ ;
 
 false constant link_text_as_attribute?  \ XXX TMP -- experimental
 
