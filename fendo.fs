@@ -217,7 +217,7 @@ fendo_definitions
 \ ==============================================================
 \ Config
 
-: fendo_version ( -- ca len ) s" 0.6.0-pre.3+201706251438" ;
+: fendo_version ( -- ca len ) s" 0.6.0-pre.4+201706260129" ;
 
 : generator ( -- ca len )
   s" Fendo (Forth Engine for Net DOcuments) " fendo_version s+ ;

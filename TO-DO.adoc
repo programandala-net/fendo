@@ -1,6 +1,6 @@
 = Fendo to-do list
 :author: Marcos Cruz (programandala.net)
-:revdate: 2017-06-24
+:revdate: 2017-06-26
 
 // This file is in Asciidoctor format
 
@@ -479,3 +479,6 @@ pages.source/eo.programo.solo_forth.ekranfotoj.fs
 Many input files are ignored. I didn't find any pattern yet. No clue
 if the problem is in Gforth or in Fendo.
 
+.2017-06-26:
+
+Factor code common to the Asciidoctor and Markdown addons.
