@@ -5,7 +5,7 @@
 
 \ This file is the hierarchy meta links addon.
 
-\ Last modified 20170622.
+\ Last modified 201706251727.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2015,2017 Marcos Cruz (programandala.net)
@@ -28,15 +28,18 @@
 
 \ ==============================================================
 
-: proper_hierarchical_link? ( ca1 len1 -- ca' len' f )
-  unshortcut dup if  2dup pid$>data>pid# draft? 0=  else  false  then ;
+: proper_hierarchical_link? ( ca len -- ca' len' f )
+  unshortcut dup if 2dup pid$>draft? 0= else false then ;
+  \ If page id _ca len_ is a proper hierarchical link (i.e., not a
+  \ draft page), _f_ is true and _ca' len'_ is its equivalent
+  \ unshortcut page id; otherwise _f_ is false and _ca' len'_ is
+  \ unimportant.
+  \
   \ This check is required in order to bypass the default behaviour of
   \ links: a link to a draft local page simply prints the link text,
   \ but that is not convenient for the hierarchy meta links.  This
   \ check can be used also by the application, as part of the user's
   \ hierarchy navigation bar.
-  \ ca1 len1 = page id
-  \ ca1' len1' = unshortcut page id
 
 : (hierarchy_meta_link) ( ca1 len1 ca2 len2 -- )
 \  cr 2dup type ."  --> " 2over type  \ XXX INFORMER
@@ -101,13 +104,14 @@
 \ 'proper_hierarchical_link?' and does not create links to local draft
 \ pages anymore.
 \
-\ 2015-02-26: Fix: It seems "up", "first" and "last" are not
-\ allowed in <link>; I comment them out in the hierarchical meta
-\ links.
+\ 2015-02-26: Fix: It seems "up", "first" and "last" are not allowed
+\ in <link>; I comment them out in the hierarchical meta links.
 \
 \ 2015-02-26: Fix: 's" text/html" type=!' was missing in the
 \ hierarchical meta links.
 \
 \ 2017-06-22: Update source style, layout and header.
+\
+\ 2017-06-25: Factor `proper_hierarchical_link?` to `pid$>draft?`.
 
 \ vim: filetype=gforth
