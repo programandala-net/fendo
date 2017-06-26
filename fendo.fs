@@ -5,7 +5,7 @@
 
 \ This file is the main one; it loads all the modules.
 
-\ Last modified 201706251727.
+\ Last modified 201706261624.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2012,2013,2014,2015,2017 Marcos Cruz (programandala.net)
@@ -107,8 +107,8 @@ false [if]
 \ Other 
 
 : empty? ( ca len -- f )
-  \ Is a string empty?
   nip 0= ;
+  \ Is a string empty?
 
 \ ==============================================================
 
@@ -217,7 +217,7 @@ fendo_definitions
 \ ==============================================================
 \ Config
 
-: fendo_version ( -- ca len ) s" 0.6.0-pre.4+201706260129" ;
+require VERSION.fs
 
 : generator ( -- ca len )
   s" Fendo (Forth Engine for Net DOcuments) " fendo_version s+ ;

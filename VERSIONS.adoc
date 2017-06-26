@@ -1,22 +1,18 @@
 = Fendo versions
-:revdate: 2017-06-20
+:revdate: 2017-06-26
 
-2012-06-30: Start of version A-00.
-
-2013-06-28: Start of version A-01.
-
-2013-10-22: Start of version A-02.
-
-2014-02-15: Start of version A-03. All files are renamed.
-
-2014-04-20: Start of version A-04. Improved, more homogeneous, and
-more regular markup.
-
-2014-11-08: Start of version A-05. Many fixes and improvements.  The
-main ones are: 'unmarkup' is used instead of duplicated plain text
-versions of the main data fields; there are not two sets of HTML
-attributes anymore (the main one and the alternative one), but just
-one set and a stack to save and restore it as needed.
-
-2017-06-20: Change version numbering after http://semver.org[Semantic
-Versioning]. Start the development of version 0.6.0.
+- 2012-06-30: Start of the development.
+- 2013-06-29: Version A-00.
+- 2013-10-22: Version A-01.
+- 2014-02-15: Version A-02.
+- 2014-04-20: Version A-03. All files are renamed.
+- 2014-11-07: Version A-04. Improved, more homogeneous, and more
+  regular markup.
+- 2017-02-08: Version A-05. Many fixes and improvements.  The main
+  ones are: 'unmarkup' is used instead of duplicated plain text
+  versions of the main data fields; there are not two sets of HTML
+  attributes anymore (the main one and the alternative one), but just
+  one set and a stack to save and restore it as needed.
+- 2017-06-20: Change version numbering after
+  http://semver.org[Semantic Versioning]. Start of the development of
+  version 0.6.0.
