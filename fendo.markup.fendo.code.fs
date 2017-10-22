@@ -5,7 +5,7 @@
 
 \ This file defines the Fendo markup for code.
 
-\ Last modified 20170622.
+\ Last modified 201709182041.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2017 Marcos Cruz (programandala.net)
@@ -117,7 +117,7 @@ The website application can create custom
 The programming language of a source code block (actually, the name of
 a valid Vim filetype in the host OS) can be set his way:
 
-  <: s" gforth" programming_language! :>
+  <[ s" gforth" programming_language! ]>
   ####
     ... gforth code ...
   ####
@@ -177,6 +177,9 @@ fendo_definitions
 \ addon, in the current or next page. In order to call
 \ 'source_code_finished', <fendo/fendo.addon.source_code.common.fs>
 \ has been modifed and included.
+\
 \ 2017-06-22: Update source style, layout and header.
+\
+\ 2017-09-18: Fix documentation.
 
 \ vim: filetype=gforth
