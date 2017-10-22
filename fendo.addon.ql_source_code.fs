@@ -5,7 +5,7 @@
 
 \ This file is the Sinclair QL source code addon.
 
-\ Last modified 20170622.
+\ Last modified 201709182037.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2017 Marcos Cruz (programandala.net)
@@ -47,9 +47,8 @@ require ./fendo.addon.ql_charset.fs
 : ql_source_code ( ca len -- )
   ['] ql_source_code_translated is source_code_pretranslated
   source_code ;
-  \ Read and echo the content of a Sinclair QL source code file.
-  \ The Vim filetype is guessed from the filename.
-  \ ca len = file name
+  \ Read and echo the content of a Sinclair QL source code file _ca
+  \ len_.  The Vim filetype is guessed from the filename.
 
 .( fendo.addon.ql_source_code.fs compiled) cr
 
@@ -63,5 +62,6 @@ require ./fendo.addon.ql_charset.fs
 \ 2013-12-12 Rewritten with <galope/uncodepaged.fs>.
 \ 2014-02-15: Fix: path of the Fendo addons is converted to relative.
 \ 2017-06-22: Update source style, layout and header.
+\ 2017-09-18: Improve documentation.
 
 \ vim: filetype=gforth

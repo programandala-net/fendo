@@ -1,72 +1,72 @@
 = Fendo to-do list
 :author: Marcos Cruz (programandala.net)
-:revdate: 2017-06-26
+:revdate: 2017-10-22
 
 // This file is in Asciidoctor format
 
-.2013-06-04:
+== 2013-06-04
 
 In <fendo.parser.fs>: Flag the first markup of the current line, in
 order to use `--` both for nested lists and for delete.
 
-.2013-06-04
+== 2013-06-04
 
 In <fendo.markup.html.entities.fs>: The word `&#` parses a number and
 echoes the corresponding HTML entity.
 
-.2013-06-08:
+== 2013-06-08
 
 In <fendo.data.fs>: Can `current_page` be used instead of `'data`?
 
-.2013-06-10
+== 2013-06-10
 
 In <fendo.markup.html.entities.fs>: Entities are case-dependent. A
 table is required.
 
-.2013-07-26:
+== 2013-07-26
 
 In <fendo.addon.basin_source_code.fs>: Character set conversions.
 
-.2013-07-26:
+== 2013-07-26
 
 In <fendo.addon.forth_blocks_source_code.fs>: Character set conversions.
 
-.2013-08-14:
+== 2013-08-14
 
 Choose better names for different meanings of "content":
 1) raw content of the page (printable content and markups)
 2) printable content only, not executable markups
 
-.2013-08-15:
+== 2013-08-15
 
 defered words at the start (and end?) of tags,
 to let the website application insert hooks.
 
-.2013-11-09:
+== 2013-11-09
 
 In <fendo.addon.source_code.fs>: Syntax highlighting cache.
 
-.2013-11-26:
+== 2013-11-26
 
 In <fendo.shortcuts.fs>: Fix: 'unshortcut' sets 'href=', what
 sometimes is inconvenient.
 
-.2013-12-11:
+== 2013-12-11
 
 In <fendo.addon.source_code.fs>: Make `(filename>filetype)`
 configurable by the application.
 
-.2013-12-12
+== 2013-12-12
 
 In <fendo.addon.forth_blocks_source_code.fs>: Abersoft Forth
 syntax.
 
-.2014-02-15:
+== 2014-02-15
 
 In <fendo.addon.forth_blocks_source_code.fs>: Fix: path of the Fendo
 addons is converted to relative.
 
-.2014-03-03:
+== 2014-03-03
 
 In <fendo.data.fs>:
 
@@ -83,11 +83,11 @@ In <fendo.data.fs>:
   ;
 ----
 
-.2014-03-03:
+== 2014-03-03
 
 Write an addon to create a list of rencent changes?
 
-.2014-03-03:
+== 2014-03-03
 
 Inform the Gforth list about this:
 
@@ -105,13 +105,13 @@ Inform the Gforth list about this:
   ;
 ----
 
-.2014-03-08:
+== 2014-03-08
 
 New:
 
 meta markups ~- and ~+ to change the separation of the next item.
 
-.2014-03-12:
+== 2014-03-12
 
 Fix:
 
@@ -121,11 +121,11 @@ using the current language: a link to the English tag "X" built in a Spanish
 page will try to link to the missing page "es.etiqueta.X" instead of
 "en.tag.X".
 
-.2014-03-12:
+== 2014-03-12
 
 finish <fendo.addon.tag_cloud_by_regex.fs>
 
-.2014-03-12:
+== 2014-03-12
 
 Improvement:
 
@@ -134,7 +134,7 @@ description.eo, etc) How? A special metadatum? Defer every metadatum?
 
 Could be done also in `tune_local_link`.
 
-.2014-04-07:
+== 2014-04-07
 
 Idea:
 
@@ -148,12 +148,12 @@ En un lugar de la Mancha.
 That would render a proper footer under the quote block.
 At the end of the block, the variables must be reseted.
 
-.2016-06-03:
+== 2016-06-03
 
 In <fendo.markup.fendo.passthrough.fs>: Add '~~' for inline
 passthrough.
 
-.2014-07-13:
+== 2014-07-13
 
 Idea:
 
@@ -168,7 +168,7 @@ For the same reason, update the `modified` metadatum of tag pages with
 the most recent time of any of its tagged pages. [Update, 2014-11-01:
 not very useful.]
 
-.2014-10-20:
+== 2014-10-20
 
 Bug:
 
@@ -176,7 +176,7 @@ In `highlighted_####-zone` (<fendo.markup.fendo.code.fs>),
 `source_code_finished` must be called at the end, but it's defined in
 <fendo.addon.source.code.fs>.
 
-.2014-10-25:
+== 2014-10-25
 
 Problem in fendo.data.fs:
 
@@ -189,7 +189,7 @@ Problem in fendo.data.fs:
   ;
 ----
 
-.2014-11-01:
+== 2014-11-01
 
 Fix:
 
@@ -201,7 +201,7 @@ Link parsing fails when "]]" is at the start of a new line!
 
 Make it possible to split links in severals lines of text.
 
-.2014-11-06:
+== 2014-11-06
 
 Idea:
 
@@ -215,7 +215,7 @@ http://twitter.com/home?status=http%3A%2F%2Fwww.iconarchive.com%2Fshow%2Fwhistle
 https://plus.google.com/share?url=http%3A%2F%2Fwww.iconarchive.com%2Fshow%2Fwhistlepuff-icons-by-firstfear%2Fprograms-icon.html
 http://www.blogger.com/blog_this.pyra?t=&u=http%3A%2F%2Fwww.iconarchive.com%2Fshow%2Fwhistlepuff-icons-by-firstfear%2Fprograms-icon.html&n=Programs+Icon+%7C+Whistlepuff+Iconset+%7C+firstfear
 
-.2014-11-07:
+== 2014-11-07
 
 Check:
 
@@ -226,7 +226,7 @@ Idea:
 
 Remove double spaces in `(unmarkup)` (defined in <fendo.markup.common.fs>)?
 
-.2014-11-17:
+== 2014-11-17
 
 Change:
 
@@ -243,14 +243,14 @@ It will be easier to deactivate this system.
 
 No, the problem is the virtual tag page exists!
 
-.2014-11-27:
+== 2014-11-27
 
 Fix:
 
 Links to anchors in the same page are not recognized!  See
 <es.programa.sbim.html>.
 
-.2014-11-27:
+== 2014-11-27
 
 In `tune_local_link` (<fendo.links.fs>), fetch alternative language
 title and description.
@@ -259,11 +259,11 @@ title and description.
 in <fendo.data.fs>'s `target_file`,
 but in an upper level.
 
-.2014-12-02:
+== 2014-12-02
 
 Añadir hreflang a todos los enlaces de Atom.
 
-.2014-12-02:
+== 2014-12-02
 
 Idea: bandera para crear versión local. Por ejemplo, para adaptar el
 atributo `xml:base=` usado en Atom. ¿Sirve de algo? Si `xml:base=` no
@@ -273,19 +273,19 @@ Idea: a flag could be used to build a local version. For example, the
 `xml:base=` attribute used by Atom could be adapted that way. Would it
 be useful? (...)
 
-.2014-12-05:
+== 2014-12-05
 
 Change the properties system: make it similar to tags: make properties
 executable; they should trigger a flag.
 
-.2014-12-07
+== 2014-12-07
 
 Habiendo construido todas las páginas de Fendo-programandala, advierto
 que en algunas de ellas los listados de código en Vim no son
 coloreados correctamente.  Pero el fallo se arregla al construir esas
 páginas individualmente...
 
-.2014-12-12
+== 2014-12-12
 
 Bug?:
 
@@ -298,14 +298,14 @@ next HTML tag in the page. The solution was to clear `href=`.
 But the question is: should `href=` be restored/cleared by
 `unshortcut` and related words when no unshortcuting was done?
 
-.2014-12-13
+== 2014-12-13
 
 Improvement:
 
 In <fendo.markup.html.tags.fs>, the `echo_cr` in the tags could be optional, configurable with a flag.
 This way the HTML would be more compact.
 
-.2015-01-30
+== 2015-01-30
 
 Idea:
 
@@ -315,32 +315,33 @@ document could be created, with its data but without content.  A data
 field or command would make sure the page is recognized as a temporary
 fake.
 
-.2015-01-31
+== 2015-01-31
 
 New:
 
-Finish the implementation of new translations in <fendo.addon.zx_spectrum_charset.fs>
-for ZX Spectrum +3 unexpanded listings.
+Finish the implementation of new translations in
+<fendo.addon.zx_spectrum_charset.fs> for ZX Spectrum +3 unexpanded
+listings.
 
-.2015-02-01
+== 2015-02-01
 
 Fix:
 
 When a page leaves something on the stack, the problem is detected only when another page is built after it.
 No error happes when the page is the only one to be built.
 
-.2015-02-02
+== 2015-02-02
 
 Change the metadata:
 create `published` to be used as the current `create`,
 and dedicate `created` to its actual meaning, the date the document was created
 (what Fendo-programandala uses `started` for; this must be renamed too).
 
-.2015-02-03
+== 2015-02-03
 
 Improve the new planned <fendo.addon.project.fs> with metadata `relative_dead_line` and `dead_line`...
 
-.2015-02-12
+== 2015-02-12
 
 Remove the paragrap markup?
 
@@ -350,7 +351,7 @@ optional behaviour and see what happens:
 At every empty line, close the previous paragraph, if any, and open a
 new one if needed (if the first word is not a block or list markup)...
 
-.2015-02-12
+== 2015-02-12
 
 Example of user macro that adds language markup to the word `Spectrum`
 in non-English pages:
@@ -385,16 +386,16 @@ The words created by `language_markup:` (defined in
 be resed by `</span>` and `</div>`.  This flag could be used by user
 macros.
 
-.2015-12-10:
+== 2015-12-10
 
 Bug: When a hierarchical metadatum contains a draft page, the current
 page is used instead.
 
-.2015-12-18:
+== 2015-12-18
 
 Use semver versioning.
 
-.2016-02-11:
+== 2016-02-11
 
 Addon to create Tweet links.
 
@@ -402,21 +403,21 @@ Example from <http://blog.markstarkman.com/blog/2011/09/15/mongodb-many-to-many-
 
 https://twitter.com/intent/tweet?original_referer=http%3A%2F%2Fblog.markstarkman.com%2Fblog%2F2011%2F09%2F15%2Fmongodb-many-to-many-relationship-data-modeling%2F&ref_src=twsrc%5Etfw&text=mongoDB%20Many-to-Many%20Relationship%20Data%20Modeling%20-%20Mark%20Starkman&tw_p=tweetbutton&url=http%3A%2F%2Fblog.markstarkman.com%2Fblog%2F2011%2F09%2F15%2Fmongodb-many-to-many-relationship-data-modeling%2F&via=MarkStarkman
 
-.2017-02-06:
+== 2017-02-06
 
 Improve the `related` field: add its content to the field, in order to
 use it several times in the data header and avoid long lines.
 
-.2017-02-06:
+== 2017-02-06
 
 Add `)),` as a shortcut of the idiom `)) ,`.
 
-.2017-06-22:
+== 2017-06-22
 
 Move the common code from <fendo.addon.tag_cloud_by_prefix.fs> to
 <fendo.addon.tag_cloud.common.fs>
 
-.2017-06-22:
+== 2017-06-22
 
 In <fendo.addon.tag_cloud_by_regex.fs>:
 
@@ -424,11 +425,11 @@ In <fendo.addon.tag_cloud_by_regex.fs>:
 - Move the common code to <fendo.addon.tag_cloud.common.fs>.
 - Code the font sizes depending on the tag counts.
 
-.2017-06-22:
+== 2017-06-22
 
 In <fendo.markup.fendo.list.fs>: Nested lists.
 
-.2017-06-24:
+== 2017-06-24
 
 An old problem: Gforth does not processes all files passed as parameters.
 
@@ -479,6 +480,11 @@ pages.source/eo.programo.solo_forth.ekranfotoj.fs
 Many input files are ignored. I didn't find any pattern yet. No clue
 if the problem is in Gforth or in Fendo.
 
-.2017-06-26:
+== 2017-06-26
 
 Factor code common to the Asciidoctor and Markdown addons.
+
+== 2017-10-04
+
+In <fendo.markup.fendo.list.fs>, the alias "*" still is temporary.
+
