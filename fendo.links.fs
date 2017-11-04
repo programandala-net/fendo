@@ -6,7 +6,7 @@
 \ This file provides the words needed to create links,
 \ by the markup words or by the user application.
 
-\ Last modified 20170622.
+\ Last modified 201711041742.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2017 Marcos Cruz (programandala.net)
@@ -195,7 +195,7 @@ variable link_type
   href=@ ;
 
 : missing_file_link_text ( -- ca len )
-  href=@ -path ;
+  href=@ basename ;
 
 : missing_link_text ( -- ca len )
   local_link?  if  missing_local_link_text exit  then
@@ -459,5 +459,8 @@ defer (get_link_href) ( ca len -- )
 \ <fendo.fs> and defined here. Required because of a fix.
 \
 \ 2017-06-22: Update source style, layout and header.
+\
+\ 2017-11-04: Update to Galope 0.103.0: Replace `-path` with Gforth's
+\ `basename`.
 
 \ vim: filetype=gforth

@@ -5,7 +5,7 @@
 
 \ This file defines the page data tools.
 
-\ Last modified 201706251723.
+\ Last modified 201711041741.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2015,2017 Marcos Cruz (programandala.net)
@@ -188,7 +188,7 @@ datum: template  \ HTML template filename in the design subdir
   \ ca2 len2 = target HTML page filename
 
 : /sourcefilename ( -- ca len )
-  sourcefilename -path ;
+  sourcefilename basename ;
   \ Return the current source filename, without path.
 
 : pid#>pid$ ( a -- ca len )
@@ -514,7 +514,7 @@ variable do_content?  do_content? on
   pid$>data>pid# target_file +domain_url ;
 
 : source>pid$ ( ca1 len1 -- ca2 len2 )
-  -path -forth_extension ;
+  basename -forth_extension ;
   \ Convert a source page to a page id.
   \ ca1 len1 = Forth source page filename with path
   \ ca2 len2 = page id
@@ -844,5 +844,8 @@ true value included_files_update_the_page_date?
 \
 \ 2017-06-25: Add `pid$>draft?`, factored from
 \ `proper_hierarchical_link?`.
+\
+\ 2017-11-04: Update to Galope 0.103.0: Replace `-path` with Gforth's
+\ `basename`.
 
 \ vim: filetype=gforth

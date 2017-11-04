@@ -5,7 +5,7 @@
 
 \ This file is the main one; it loads all the modules.
 
-\ Last modified 201706261624.
+\ Last modified 201711041743.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2012,2013,2014,2015,2017 Marcos Cruz (programandala.net)
@@ -62,11 +62,11 @@ require galope/dollar-variable.fs  \ '$variable'
 require galope/enum.fs  \ 'enum'
 require galope/minus-extension.fs  \ '-extension'
 require galope/minus-leading.fs  \ '-leading'
-require galope/minus-path.fs  \ '-path'
 require galope/minus-suffix.fs  \ '-suffix'
 require galope/parse-name-question.fs  \ 'parse-name?'
 require galope/paren-star.fs  \ '(*'
 require galope/sconstant.fs  \ 'sconstant'
+require galope/sides-slash.fs  \ 'sides/'
 require galope/slash-sides.fs  \ '/sides'
 require galope/tilde-tilde.fs  \ improved '~~' for debugging
 require galope/trim.fs  \ 'trim'
@@ -297,5 +297,8 @@ depth [if] abort [then]  \ XXX DEBUGGING
 \ and defined in <fendo.fs>. Required because of a fix.
 \
 \ 2017-06-22: Update source style, layout and header.
+\
+\ 2017-11-04: Update to Galope 0.103.0: Remove <galope/minus-path.fs>
+\ and use Gforth's `basename` instead.
 
 \ vim: filetype=gforth
