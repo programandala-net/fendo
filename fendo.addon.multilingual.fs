@@ -12,7 +12,7 @@
 \   es.sección.subsección.html
 \   eo.fako.subfako.html
 
-\ Last modified 20170622.
+\ Last modified 201710301630.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2017 Marcos Cruz (programandala.net)
@@ -64,9 +64,9 @@
 
 forth_definitions
 
-require galope/dollar-store-comma.fs  \ '$!,'
+require galope/dollar-comma.fs    \ '$,'
 require galope/c-slash-string.fs  \ 'c/string'
-require galope/paren-star.fs  \ '(*'
+require galope/paren-star.fs      \ '(*'
 
 fendo_definitions
 
@@ -120,7 +120,7 @@ true to multilingual?
   \ Add the current language number as cells.
 
 : l10n-string, ( ca-n len-n ... ca1 len1 -- )
-  langs 0 ?do  $!,  loop ;
+  langs 0 ?do $, loop ;
   \ Compile the language strings.
   \ ca1 len1 = text in the first language
   \ ca-n len-n = text in the last language
@@ -191,5 +191,7 @@ true to multilingual?
 \ finally removed.
 \
 \ 2017-06-22: Update source style, layout and header.
+\
+\ 2017-10-30: Update Galope `$!,` to `$,`.
 
 \ vim: filetype=gforth
