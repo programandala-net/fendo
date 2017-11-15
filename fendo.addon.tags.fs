@@ -5,7 +5,7 @@
 
 \ This file creates the tools needed to use page tags.
 
-\ Last modified 20170622.
+\ Last modified 201711152043.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2014,2017 Marcos Cruz (programandala.net)
@@ -38,7 +38,7 @@
 forth_definitions
 require galope/n-to-r.fs  \ 'n>r'
 require galope/n-r-from.fs  \ 'nr<'
-require galope/plus-plus.fs  \ '++'
+require galope/one-plus-store.fs  \ '1+!'
 fendo_definitions
 
 \ ==============================================================
@@ -159,7 +159,7 @@ variable lonely_tags_link_to_content  \ flag
   \ Reset the given tag.
 
 : (tag_does_increase) ( tag -- )
-  tag>count ++ ;
+  tag>count 1+! ;
   \ Increase the count of the given tag.
 
 : (tag_does_increase_and_save_own_page) ( tag -- )
@@ -352,5 +352,7 @@ s" /tmp/fendo.tags.fs" 2constant tags_filename$
 \ 'tag_do_count'.
 \
 \ 2017-06-22: Update source style, layout and header.
+\
+\ 2017-11-15: Update `++` to `1+!`.
 
 \ vim: filetype=gforth
