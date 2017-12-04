@@ -5,7 +5,7 @@
 
 \ This file is the ZX Spectrum source code addon.
 
-\ Last modified 20170622.
+\ Last modified 201712042300.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2015,2017 Marcos Cruz (programandala.net)
@@ -182,7 +182,7 @@ uncodepage: zx_spectrum_charset_for_source_code_without_highlighting
   \ highlighting, because the syntax highlighting would convert the
   \ HTML markups to explicit characters.
 
-translations: zx_spectrum_charset_for_source_code_with_highlighting
+translations zx_spectrum_charset_for_source_code_with_highlighting
 
   s" &lt;80&gt;" s" <span class='ZXSpectrumBlockGraph'>&nbsp;</span>"
   s" &lt;81&gt;" s" <span class='ZXSpectrumBlockGraph'>&#x259D;</span>"
@@ -312,7 +312,7 @@ translations: zx_spectrum_charset_for_source_code_with_highlighting
   s" &lt;fd&gt;" s" <span class='ZXSpectrumToken'>CLEAR</span>"
   s" &lt;fe&gt;" s" <span class='ZXSpectrumToken'>RETURN</span>"
   s" &lt;ff&gt;" s" <span class='ZXSpectrumToken'>COPY</span>"
-;translations
+end-translations drop
   \ These translations work after the syntax highlighting.
 
 uncodepage: zx_spectrum_charset_for_unexpanded_llist_without_highlighting
@@ -554,7 +554,7 @@ uncodepage: zx_spectrum_charset_for_unexpanded_llist_before_highlighting
 
 ;uncodepage
 
-translations: zx_spectrum_charset_for_unexpanded_llist_after_highlighting
+translations zx_spectrum_charset_for_unexpanded_llist_after_highlighting
 
   s" &lt;80&gt;" s" <span class='ZXSpectrumBlockGraph'>&nbsp;</span>"
   s" &lt;81&gt;" s" <span class='ZXSpectrumBlockGraph'>&#x259D;</span>"
@@ -594,7 +594,7 @@ translations: zx_spectrum_charset_for_unexpanded_llist_after_highlighting
   s" &lt;a3&gt;" s" <span class='ZXSpectrumUDG'>T</span>"
   s" &lt;a4&gt;" s" <span class='ZXSpectrumUDG'>U</span>"
 
-;translations
+end-translations drop
 
 : zx_spectrum_source_code_translated_before_highlighting ( ca len -- ca' len' )
   zx_spectrum_charset_below_128 uncodepaged ;
@@ -685,5 +685,7 @@ translations: zx_spectrum_charset_for_unexpanded_llist_after_highlighting
 \ Spectrum +3 with 'FORMAT LPRINT "U":LLIST').
 \
 \ 2017-06-22: Update source style, layout and header.
+\
+\ 2017-12-04: Update to Galope 0.161.0.
 
 \ vim: filetype=gforth
