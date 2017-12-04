@@ -5,7 +5,7 @@
 
 \ This file is the source code addon.
 
-\ Last modified 20170622.
+\ Last modified 201712042304.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2015,2017 Marcos Cruz (programandala.net)
@@ -33,11 +33,10 @@ forth_definitions
 
 require string.fs  \ Gforth's dynamic strings
 
-require galope/dollar-variable.fs  \ '$variable'
-require galope/module.fs  \ 'module:', ';module', 'hide', 'export'
-require galope/minus-leading.fs  \ '-leading'
-require galope/string-suffix-question.fs  \ 'string-suffix?'
-require galope/translated.fs  \ 'translated'
+require galope/dollar-variable.fs        \ '$variable'
+require galope/minus-leading.fs          \ '-leading'
+require galope/module.fs                 \ 'module:'
+require galope/string-suffix-question.fs \ 'string-suffix?'
 
 fendo_definitions
 
@@ -368,5 +367,7 @@ s" .fs" s+ 2constant tmp_sorted_file$
 \ filenames, only suffixes, because the path was not removed.
 \
 \ 2017-06-22: Update source style, layout and header.
+\
+\ 2017-12-04: Update requirements.
 
 \ vim: filetype=gforth

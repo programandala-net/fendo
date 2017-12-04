@@ -5,7 +5,7 @@
 
 \ This file is the Sinclair QL source code addon.
 
-\ Last modified 20170622.
+\ Last modified 201712042300.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2017 Marcos Cruz (programandala.net)
@@ -32,7 +32,7 @@ forth_definitions
 require galope/translated.fs
 fendo_definitions
 
-translations: basin_charset
+translations basin_charset
 \  s" \`" s" &pound;"
   s" \`" s" £"
   s" \@" s" @"
@@ -166,7 +166,7 @@ translations: basin_charset
   s" \#253" s" <span class='ZXSpectrumToken'>CLEAR</span>"
   s" \#254" s" <span class='ZXSpectrumToken'>RETURN</span>"
   s" \#255" s" <span class='ZXSpectrumToken'>COPY</span>"
-;translations
+end-translations drop
 
 .( fendo.addon.basin_charset.fs compiled) cr
 
@@ -174,6 +174,9 @@ translations: basin_charset
 \ Change log
 
 \ 2013-12-11: Start.
+\
 \ 2017-06-22: Update source style, layout and header.
+\
+\ 2017-12-04: Update to Galope 0.161.0.
 
 \ vim: filetype=gforth
