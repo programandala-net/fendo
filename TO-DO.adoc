@@ -1,6 +1,6 @@
-= Fendo to-do list
+= Fendo TO-DO
 :author: Marcos Cruz (programandala.net)
-:revdate: 2017-10-22
+:revdate: 2018-08-20
 
 // This file is in Asciidoctor format
 
@@ -488,3 +488,8 @@ Factor code common to the Asciidoctor and Markdown addons.
 
 In <fendo.markup.fendo.list.fs>, the alias "*" still is temporary.
 
+== 2018-08-20
+
+Asciidoctor 1.5.7.1 throws error because the "--compact" option is not
+accepted. But it's still in the documentation. The option has been
+commented out from <fendo.addon.asciidoctor.fs>.
