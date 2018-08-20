@@ -7,7 +7,7 @@
 \ contents in Asciidoctor (or AsciiDoc) format, either inline or from
 \ a file.
 
-\ Last modified 201706241943.
+\ Last modified 201808201358.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2015,2017 Marcos Cruz (programandala.net)
@@ -79,9 +79,12 @@ s" --backend html5 " s+     \ default
 s" --doctype article " s+   \ default
 s" --no-header-footer " s+  \ supress the document header and footer
                             \ in the output
-s" --compact " s+           \ remove blank lines in the output
+\ s" --compact " s+           \ remove blank lines in the output
 s" --out-file " s+ output_file$ s+
 2constant asciidoctor_base_command$
+
+\ XXX FIXME -- 2018-08-20: Asciidoctor 1.5.7.1 throws error
+\ "--compact" is not accepted. But it's still in the documentation.
 
 : asciidoctor_command$ ( -- ca len )
   asciidoctor_base_command$ s"  " s+ ;
@@ -141,5 +144,6 @@ markup>current
 \ additional operations.
 \ 2017-06-22: Update source style, layout and header.
 \ 2017-06-24: Add `asciidoctor{`.
+\ 2018-08-20: Deactivate the Asciidoctor option "--compact".
 
 \ vim: filetype=gforth
