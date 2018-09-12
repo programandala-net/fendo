@@ -5,7 +5,7 @@
 
 \ This file is the hierarchy meta links addon.
 
-\ Last modified 201706251727.
+\ Last modified 201809121500.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2015,2017 Marcos Cruz (programandala.net)
@@ -29,7 +29,19 @@
 \ ==============================================================
 
 : proper_hierarchical_link? ( ca len -- ca' len' f )
-  unshortcut dup if 2dup pid$>draft? 0= else false then ;
+\   ." Stack before `unshortcut` in `proper_hierarchical_link? : " .s cr \ XXX INFORMER
+\   ." Parameter of `proper_hierarchical_link? : " 2dup type cr \ XXX INFORMER
+\   key drop \ XXX INFORMER
+  unshortcut
+\   ." Stack after `unshortcut` in `proper_hierarchical_link? : " .s cr key drop \ XXX INFORMER
+  dup
+  if 2dup pid$>draft?
+\   ." Stack after `pid$>draft?` in `proper_hierarchical_link? : " .s cr \ XXX INFORMER
+
+    0= else false then
+\   ." Stack at the end of `proper_hierarchical_link? : " .s cr \ XXX INFORMER
+\   key drop \ XXX INFORMER
+    ;
   \ If page id _ca len_ is a proper hierarchical link (i.e., not a
   \ draft page), _f_ is true and _ca' len'_ is its equivalent
   \ unshortcut page id; otherwise _f_ is false and _ca' len'_ is
@@ -58,8 +70,13 @@
   \ ca2 len2 = rel
 
 : hierarchy_meta_link ( ca1 len1 ca2 len2 -- )
+\   ." Stack in 'hierarchy_meta_link' : " .s cr  \ XXX INFORMER
 \   ." Parameter in 'hierarchy_meta_link' = " 2dup type cr  \ XXX INFORMER
-  proper_hierarchical_link? if  2swap (hierarchy_meta_link)  else  2drop 2drop  then ;
+\   key drop \ XXX INFORMER
+  proper_hierarchical_link?
+\   ." Stack in 'hierarchy_meta_link' after `proper_hierarchical_link?` : " .s cr  \ XXX INFORMER
+\   key drop \ XXX INFORMER
+  if  2swap (hierarchy_meta_link)  else  2drop 2drop  then ;
   \ Create a hierarchy meta link in the HTML header, if needed.
   \ ca1 len1 = rel
   \ ca2 len2 = page id
@@ -113,5 +130,8 @@
 \ 2017-06-22: Update source style, layout and header.
 \
 \ 2017-06-25: Factor `proper_hierarchical_link?` to `pid$>draft?`.
+\
+\ 2018-09-12: Add debugging code to explore the problem detected in
+\ `(required_data)` (see change log of <fendo.data.fs>).
 
 \ vim: filetype=gforth
