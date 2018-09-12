@@ -5,10 +5,10 @@
 
 \ This file defines the page data tools.
 
-\ Last modified 201711041741.
+\ Last modified 201809121504.
 \ See change log at the end of the file.
 
-\ Copyright (C) 2013,2014,2015,2017 Marcos Cruz (programandala.net)
+\ Copyright (C) 2013,2014,2015,2017,2018 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute
 \ it and/or modify it under the terms of the GNU General
@@ -416,11 +416,12 @@ variable do_content?  do_content? on
   >r .required_data_error r> throw ;
 
 : (required_data) ( ca len -- )
-\  ." (required_data) " 2dup type cr  \ XXX INFORMER
+\  ." (required_data) " .s cr 2dup type cr key drop  \ XXX INFORMER
   do_content? off
 \  .included key drop  \ XXX INFORMER
+\  cr ." before catch " .s cr  key drop \ XXX INFORMER
   2dup  ['] required catch  ?dup
-\  ." after catch " .s cr  \ XXX INFORMER
+\  cr ." after catch " .s cr key drop \ XXX INFORMER
   if    nip nip required_data_error
   else  2drop  then
 \  ." end of (required_data) " .s cr  \ XXX INFORMER
@@ -428,15 +429,15 @@ variable do_content?  do_content? on
   \ Require a page file _ca len_ in order to get its data.
 
 : required_data ( ca len -- )
-\  ." Parameter in 'required_data' = " 2dup type cr  \ XXX INFORMER
-\  ." related = " current_page related type cr  \ XXX INFORMER
+\   ." Parameter in 'required_data' = " 2dup type cr  \ XXX INFORMER
+\   ." related = " current_page related type cr  \ XXX INFORMER
   do_content? @ >r  current_page >r
   (required_data)
   r> to current_page  r> do_content? !
-\  ." end of required_data " type cr  \ XXX INFORMER
-\  ." related = " current_page related type cr  \ XXX INFORMER
+\   ." end of required_data " 2dup type cr  \ XXX INFORMER
+\   ." related = " current_page related type cr  \ XXX INFORMER
 \  ." >>>>>>>>" cr  \ XXX INFORMER
-\  key drop  \ XXX INFORMER
+\   key drop  \ XXX INFORMER
   ;
   \ Require a page file _ca len_ in order to get its data.
 
@@ -446,11 +447,15 @@ variable do_content?  do_content? on
   \ a = page id (address of its data)
 
 : (required_data<pid$) ( ca len -- )
-  \ Require a page file in order to get its data.
-  \ ca len = page id
-\   ." Parameter in '(required_data<pid$)' = " 2dup type cr  \ XXX INFORMER
+\   ." Stack at the start of `(required_data<pid$)` : " .s cr key drop \ XXX INFORMER
+\   ." Parameter in '(required_data<pid$)' = " 2dup type cr key drop  \ XXX INFORMER
 \   ." 'link_anchor' in '(required_data<pid$)' = " link_anchor $@ type cr  \ XXX INFORMER
-  -anchor?! +forth_extension required_data ;
+  -anchor?! +forth_extension
+\   ." Stack before `required_data` in `(required_data<pid$)` : " .s cr key drop \ XXX INFORMER
+  required_data
+\   ." Stack after `required_data` in `(required_data<pid$)` : " .s cr key drop \ XXX INFORMER
+\   ." Stack at the end of `(required_data<pid$)` : " .s cr key drop \ XXX INFORMER
+  ;
   \ Require a page file in order to get its data.
   \ ca len = page id
 
@@ -475,9 +480,12 @@ variable do_content?  do_content? on
   \ "name" = filename
 
 : (pid$>data>pid#) ( ca len -- a )
+\   ." Stack at the start of `(pid$>data>pid#` : " .s cr key drop \ XXX INFORMER
 \  -anchor \ XXX TMP
 \  ." 'link_anchor' in '(pid$>data>pid#)' = " link_anchor $@ type cr  \ XXX INFORMER
-  2dup (required_data<pid$) pid$>pid# ;
+  2dup (required_data<pid$) pid$>pid#
+\   ." Stack at the end of `(pid$>data>pid#` : " .s cr key drop \ XXX INFORMER
+  ;
   \ Require a page file in order to get its data
   \ and convert its string page id to its number page id.
   \ ca len = page id of an existent page file
@@ -575,7 +583,10 @@ false value ignore_draft_property?
   \ Is page id _a_ a draft? I.e., is "draft" in its properties field?
 
 : pid$>draft? ( ca len -- f )
-  pid$>data>pid# draft? ;
+\   ." Stack at the start of `pid$>draft?` : " .s cr key drop \ XXX INFORMER
+  pid$>data>pid# draft?
+\   ." Stack at the end of `pid$>draft?` : " .s cr key drop \ XXX INFORMER
+  ;
   \ Is page id _ca len_ a draft page?
 
 : pid$>hierarchy ( ca len -- u )
@@ -847,5 +858,15 @@ true value included_files_update_the_page_date?
 \
 \ 2017-11-04: Update to Galope 0.103.0: Replace `-path` with Gforth's
 \ `basename`.
+\
+\ 2018-09-12: Fix the debugging code of `required_data`, which
+\ corrupted the stack!  Besides, there is a long-time strange problem
+\ in `(required_data)` when running of Gforth 0.7.9: after `[']
+\ require catch`, the stack contains three -13 ior codes. No problem
+\ on Gforth 0.7.3.  Maybe it has to do (but not only) with the paths
+\ of required files.  The problem was temporarily dodged in the
+\ Fendo-programandala app by ignoring <fendo-programandala.fs> when
+\ `fendo-programandala_version` has been defined already, in order to
+\ prevent the file from been included more than once by `require`.
 
 \ vim: filetype=gforth
