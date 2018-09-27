@@ -5,10 +5,10 @@
 
 \ This file defines the Fendo markup.
 
-\ Last modified 20170622.
+\ Last modified 201809121629.
 \ See change log at the end of the file.
 
-\ Copyright (C) 2013,2014,2017 Marcos Cruz (programandala.net)
+\ Copyright (C) 2013,2014,2017,2018 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute
 \ it and/or modify it under the terms of the GNU General
@@ -339,7 +339,7 @@ require ./fendo.markup.fendo.table.fs
 \ XXX WARNING: Punctuation must be the last markup file required, and
 \ no markup must be defined after the punctuation, because it creates
 \ markup words with the name of Forth words (e.g. '!').
-\ XXX FIXME Solvi this by changing the _order_ set by 'markup_definitions'?
+\ XXX FIXME Solve this by changing the _order_ set by 'markup_definitions'?
 
 require ./fendo.markup.fendo.punctuation.fs
 
@@ -649,5 +649,7 @@ fendo_definitions
 \ 2017-02-04: Fix typo.
 \
 \ 2017-06-22: Update source style, layout and header.
+\
+\ 2018-09-12: Fix typo in comment.
 
 \ vim: filetype=gforth
