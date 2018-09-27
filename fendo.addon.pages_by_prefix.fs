@@ -6,7 +6,7 @@
 \ This file provides a word that counts all pages whose pid matches a
 \ prefix.
 
-\ Last modified 20170622.
+\ Last modified 201809271539.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2017 Marcos Cruz (programandala.net)
@@ -32,7 +32,7 @@
 
 forth_definitions
 
-require galope/module.fs
+require galope/package.fs \ `package`, `private`, `public`, `end-package`
 
 fendo_definitions
 
@@ -40,7 +40,7 @@ require ./fendo.addon.traverse_pids.fs
 
 \ ==============================================================
 
-module: fendo.addon.pages_by_prefix
+package fendo.addon.pages_by_prefix
 
 variable prefix$
   \ module variable;
@@ -59,7 +59,7 @@ variable pages
   \ ca len = pid
   \ f = continue with the next element?
 
-export
+public
 
 : pages_by_prefix ( ca len -- n )
 \  cr ." In pages_by_prefix the prefix is " 2dup type  \ XXX INFORMER
@@ -69,7 +69,7 @@ export
   \ Number of pages whose pid starts with the given prefix.
   \ Update 'prefix' and 'pages'.
 
-;module
+end-package
 
 .( fendo.addon.pages_by_prefix.fs compiled) cr
 
@@ -78,5 +78,6 @@ export
 
 \ 2014-03-07: Start. First working version.
 \ 2017-06-22: Update source style, layout and header.
+\ 2018-09-27: Use `package` instead of `module:`.
 
 \ vim: filetype=gforth

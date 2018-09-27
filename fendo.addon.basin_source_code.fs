@@ -5,7 +5,7 @@
 
 \ This file is the BASin source code addon.
 
-\ Last modified 20170622.
+\ Last modified 201809271539.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2017 Marcos Cruz (programandala.net)
@@ -31,8 +31,9 @@
 
 forth_definitions
 
-require galope/module.fs  \ 'module:', ';module', 'hide', 'export'
 require ffl/chr.fs  \ 'chr-digit'
+
+require galope/package.fs \ `package`, `private`, `public`, `end-package`
 
 fendo_definitions
 
@@ -43,7 +44,7 @@ require ./fendo.addon.latin1_source_code.fs
 \ ==============================================================
 \ BASIC source code in BASin format
 
-module: fendo.addon.basin_source_code
+package fendo.addon.basin_source_code
 
 : not_basin_header? ( ca len -- f )
   \ ca len = source code line
@@ -61,7 +62,7 @@ module: fendo.addon.basin_source_code
   \ XXX FIXME -- When the file does not have a header, the result is
   \ empty.
 
-export
+public
 
 : basin_source_code_translated ( ca len -- ca' len' )
   basin_charset translated ;
@@ -85,7 +86,7 @@ export
   \ written with Latin1 encoding, and echo it.
   \ ca len = file name
 
-;module
+end-package
 
 .( fendo.addon.basin_source_code.fs compiled) cr
 
@@ -101,5 +102,6 @@ export
 \ 2014-02-15: Fix: path of the Fendo addons is converted to relative.
 \ 2014-03-12: Change: module renamed after the filename.
 \ 2017-06-22: Update source style, layout and header.
+\ 2018-09-27: Use `package` instead of `module:`.
 
 \ vim: filetype=gforth

@@ -5,7 +5,7 @@
 
 \ This file provides two words to compile a temporary regex.
 
-\ Last modified 20170622.
+\ Last modified 201809271539.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2017 Marcos Cruz (programandala.net)
@@ -35,24 +35,24 @@ forth_definitions
 require ffl/rgx.fs  \ regular expressions
 
 \ From Galope
-require galope/module.fs  \ 'module:', ';module', 'hide', 'export'
+require galope/package.fs \ `package`, `private`, `public`, `end-package`
 
 fendo_definitions
 
 \ ==============================================================
 
-module: fendo.addon.regex
+package fendo.addon.regex
 
 : regex_error ( ca len n -- )
   ." Bad regular expression at position " . ." :" cr type abort ;
 
-export
+public
 
 rgx-create regex
 : >regex ( ca len -- )
   2dup regex rgx-compile if  2drop  else  regex_error  then ;
 
-;module
+end-package
 
 .( fendo.addon.regex.fs compiled) cr
 
@@ -62,5 +62,6 @@ rgx-create regex
 \ 2013-11-26: Start.
 \ 2014-03-02: Simplified. Renamed. Generalized.
 \ 2017-06-22: Update source style, layout and header.
+\ 2018-09-27: Use `package` instead of `module:`.
 
 \ vim: filetype=gforth

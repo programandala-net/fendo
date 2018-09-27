@@ -7,7 +7,7 @@
 
 \ This file provides tag clouds by a page-id prefix.
 
-\ Last modified 20170622.
+\ Last modified 201809271539.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2014,2017 Marcos Cruz (programandala.net)
@@ -34,7 +34,7 @@
 forth_definitions
 
 require galope/max-n.fs  \ 'max-n'
-require galope/module.fs  \ 'module:', ';module', 'hide', 'export'
+require galope/package.fs \ `package`, `private`, `public`, `end-package`
 require galope/rgx-wcmatch-question.fs  \ 'rgx-wcmatch?'
 
 fendo_definitions
@@ -47,7 +47,7 @@ require ./fendo.addon.pages_by_regex.fs
 
 \ ==============================================================
 
-module: fendo.addon.tag_cloud_by_prefix
+package fendo.addon.tag_cloud_by_prefix
 
 variable tag_min_count
 variable tag_max_count
@@ -99,7 +99,7 @@ variable prefix$
   tags_do_min_max ;
   \ xt = parameter for 'traverse_pids'
 
-export
+public
 
 variable tag_cloud_with_counts  \ flag
 variable tag_cloud_with_sizes  \ flag
@@ -114,7 +114,7 @@ tag_cloud_counts_sized off
 090 tag_min_size !
 400 tag_max_size !
 
-hide
+private
 
 : (tag_count) ( tag -- )
   s\" &nbsp;<span class=\"tagCount\">(" echo
@@ -169,7 +169,7 @@ hide
   ;
   \ xt = parameter for 'init_tags'
 
-export
+public
 
 0 [if]  \ XXX TODO
 
@@ -189,7 +189,7 @@ export
   \ Create a tag cloud
   \ with pages whose pid matches the given prefix.
 
-;module
+end-package
 
 .( fendo.addon.tag_cloud_by_regex.fs compiled) cr
 
@@ -199,5 +199,6 @@ export
 \ 2014-03-09: Start, with the code of
 \ <fendo.addon.tag_cloud_by_prefix.fs>
 \ 2017-06-22: Update source style, layout and header.
+\ 2018-09-27: Use `package` instead of `module:`.
 
 \ vim: filetype=gforth

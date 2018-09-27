@@ -5,7 +5,7 @@
 
 \ This file is the code common to several content lists addons.
 
-\ Last modified 20170622.
+\ Last modified 201809271539.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2017 Marcos Cruz (programandala.net)
@@ -31,7 +31,7 @@
 
 forth_definitions
 
-require galope/module.fs
+require galope/package.fs \ `package`, `private`, `public`, `end-package`
 
 fendo_definitions
 
@@ -39,7 +39,7 @@ require ./fendo.addon.traverse_pids.fs
 
 \ ==============================================================
 
-module: fendo.addon.tag_counts_by_prefix
+package fendo.addon.tag_counts_by_prefix
 
 variable prefix
 
@@ -58,7 +58,7 @@ variable prefix
 : (tag_counts_by_prefix) ( -- +n_1 ... +n_n n )
   tags_do_total  ['] ((tag_counts_by_prefix)) traverse_pids  ;
 
-export
+public
 
 : tag_counts_by_prefix ( ca len -- +n_1 ... +n_n n )
   prefix $!  depth >r  (tag_counts_by_prefix)  depth r> - ;
@@ -66,7 +66,7 @@ export
   \ present in pages whose pids start with the given prefix.
   \ XXX TODO -- reset tags; increase them by prefix
 
-;module
+end-package
 
 .( fendo.addon.tag_counts_by_prefix.fs compiled) cr
 
@@ -75,5 +75,6 @@ export
 
 \ 2014-03-07: Start.
 \ 2017-06-22: Update source style, layout and header.
+\ 2018-09-27: Use `package` instead of `module:`.
 
 \ vim: filetype=gforth

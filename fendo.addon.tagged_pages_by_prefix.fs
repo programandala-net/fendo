@@ -5,7 +5,7 @@
 
 \ This file provides lists of tagged pages.
 
-\ Last modified 20170622.
+\ Last modified 201809271539.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2014,2015,2017 Marcos Cruz (programandala.net)
@@ -31,7 +31,7 @@
 
 forth_definitions
 
-require galope/module.fs
+require galope/package.fs \ `package`, `private`, `public`, `end-package`
 
 fendo_definitions
 
@@ -41,7 +41,7 @@ require ./fendo.addon.dtddoc.fs
 
 \ ==============================================================
 
-module: fendo.addon.tagged_pages_by_prefix
+package fendo.addon.tagged_pages_by_prefix
 
 variable prefix$
 : flags>or ( f1 ... fn n -- f )
@@ -79,7 +79,7 @@ variable prefix$
   \ ca len = pid
   \ true = continue with the next element?
 
-export
+public
 
 : tagged_pages_by_prefix ( ca1 len1 ca2 len2 -- )
 \  ." `argc` in `tagged_pages_by_prefix`= " argc ? cr  \ XXX INFORMER
@@ -88,7 +88,7 @@ export
   \ ca1 len1 = tag
   \ ca2 len2 = prefix
 
-;module
+end-package
 
 .( fendo.addon.tagged_pages_by_prefix.fs compiled) cr
 
@@ -100,5 +100,6 @@ export
 \ 2015-02-01: Fix: Now '((tagged_pages_by_prefix))' ignores empty
 \ strings.
 \ 2017-06-22: Update source style, layout and header.
+\ 2018-09-27: Use `package` instead of `module:`.
 
 \ vim: filetype=gforth

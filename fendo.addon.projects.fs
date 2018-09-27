@@ -8,7 +8,7 @@
 \
 \ XXX NOT FINISHED
 
-\ Last modified 20170622.
+\ Last modified 201809271539.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2015,2017 Marcos Cruz (programandala.net)
@@ -34,15 +34,14 @@
 
 forth_definitions
 
-\ From Galope
-require galope/module.fs  \ 'module:', ';module', 'hide', 'export'
+require galope/package.fs \ `package`, `private`, `public`, `end-package`
 
 fendo_definitions
 
 \ ==============================================================
 \
 
-module: fendo.addon.projects
+package fendo.addon.projects
 
 \ ------------------------------
 \ First approach, abandoned
@@ -163,7 +162,7 @@ project_datum: project_completion
   r> project_completion nip  or or ;
   \ Is the given page a project?
 
-;module
+end-package
 
 .( fendo-programandala.addon.projects.fs compiled) cr
 
@@ -178,5 +177,6 @@ project_datum: project_completion
 \ 2015-02-11: Fix: proper 'definitions' in the requirements.
 \
 \ 2017-06-22: Update source style, layout and header.
+\ 2018-09-27: Use `package` instead of `module:`.
 
 \ vim: filetype=gforth

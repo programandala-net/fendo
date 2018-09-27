@@ -5,7 +5,7 @@
 
 \ This file provides tag clouds by a page-id prefix.
 
-\ Last modified 20170622.
+\ Last modified 201809271539.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2014,2017 Marcos Cruz (programandala.net)
@@ -31,9 +31,9 @@
 
 forth_definitions
 
-require galope/max-n.fs  \ 'max-n'
-require galope/module.fs  \ 'module:', ';module', 'hide', 'export'
-require galope/rgx-wcmatch-question.fs  \ 'rgx-wcmatch?'
+require galope/max-n.fs \ 'max-n'
+require galope/package.fs \ `package`, `private`, `public`, `end-package`
+require galope/rgx-wcmatch-question.fs \ 'rgx-wcmatch?'
 
 fendo_definitions
 
@@ -45,7 +45,7 @@ require ./fendo.addon.pages_by_prefix.fs
 
 \ ==============================================================
 
-module: fendo.addon.tag_cloud_by_prefix
+package fendo.addon.tag_cloud_by_prefix
 
 variable tag_min_count
 variable tag_max_count
@@ -92,7 +92,7 @@ variable prefix$  \ module variable; in <fendo.addon.pages_by_prefix.fs> there's
   tags_do_min_max ;
   \ xt = parameter for 'traverse_pids'
 
-export
+public
 
 variable tag_cloud_with_counts  \ flag
 variable tag_cloud_with_sizes  \ flag
@@ -108,7 +108,7 @@ lonely_tags_link_to_content on
 090 tag_min_size !
 400 tag_max_size !
 
-hide
+private
 
 : (tag_count) ( tag -- )
   s\" &nbsp;<span class=\"tagCount\">(" echo
@@ -168,7 +168,7 @@ hide
 \  ." do_tag_cloud end" cr  \ XXX INFORMER
   ;
 
-export
+public
 
 : tag_cloud_by_prefix ( ca len -- )
 \  cr ." In tag_cloud_by_prefix the prefix is " 2dup type key drop  \ XXX INFORMER
@@ -177,7 +177,7 @@ export
   \ Create a tag cloud
   \ with pages whose pid matches the given prefix.
 
-;module
+end-package
 
 .( fendo.addon.tag_cloud_by_prefix.fs compiled) cr
 
@@ -197,5 +197,6 @@ export
 \ 2014-10-12: Fix: now 'tag_cloud_by_prefix' also sets the 'prefix$'
 \   variable, because 'pages_by_prefix' sets a homonymous module variable.
 \ 2017-06-22: Update source style, layout and header.
+\ 2018-09-27: Use `package` instead of `module:`.
 
 \ vim: filetype=gforth

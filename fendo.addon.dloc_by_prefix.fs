@@ -5,7 +5,7 @@
 
 \ This file is the code common to several content lists addons.
 
-\ Last modified 20170622.
+\ Last modified 201809271539.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2017 Marcos Cruz (programandala.net)
@@ -31,7 +31,7 @@
 
 forth_definitions
 
-require galope/module.fs
+require galope/package.fs \ `package`, `private`, `public`, `end-package`
 
 fendo_definitions
 
@@ -40,7 +40,7 @@ require ./fendo.addon.dtddoc.fs
 
 \ ==============================================================
 
-module: fendo.addon.dloc_by_prefix
+package fendo.addon.dloc_by_prefix
 
 variable prefix
 : ((dloc_by_prefix)) { D: pid -- }
@@ -55,14 +55,14 @@ variable prefix
   \ ca len = pid
   \ f = continue with the next element?
 
-export
+public
 
 : dloc_by_prefix ( ca len -- )
   prefix $!  [<dl>] ['] (dloc_by_prefix) traverse_pids [</dl>] ;
   \ Create a description list of content
   \ with pages whose pid starts with the given prefix.
 
-;module
+end-package
 
 .( fendo.addon.dloc_by_prefix.fs compiled) cr
 
@@ -76,5 +76,6 @@ export
 \ 2014-03-10: Improvement: faster, with '?exit' and rearranged
 \ conditions.
 \ 2017-06-22: Update source style, layout and header.
+\ 2018-09-27: Use `package` instead of `module:`.
 
 \ vim: filetype=gforth

@@ -5,7 +5,7 @@
 
 \ This file creates the tools needed to use page tags.
 
-\ Last modified 201711152043.
+\ Last modified 201809271547.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2014,2017 Marcos Cruz (programandala.net)
@@ -209,8 +209,6 @@ defer (tag_does)  \ current behaviour of the tags
 \ ==============================================================
 \ Choosing the behaviour of the tags
 
-export
-
 : tags_do_nothing ( -- )
   ['] drop is (tag_does) ;
   \ Set the tags to do nothing.
@@ -354,5 +352,8 @@ s" /tmp/fendo.tags.fs" 2constant tags_filename$
 \ 2017-06-22: Update source style, layout and header.
 \
 \ 2017-11-15: Update `++` to `1+!`.
+\
+\ 2018-09-27: Remove useless forgotten `export`, part of Galope's
+\ module `module`, which is not used anymore by Fendo.
 
 \ vim: filetype=gforth

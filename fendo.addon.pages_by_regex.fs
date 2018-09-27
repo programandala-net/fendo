@@ -6,7 +6,7 @@
 \ This file provides a word that counts all pages whose pid matches a
 \ regex.
 
-\ Last modified 20170622.
+\ Last modified 201809271539.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2017 Marcos Cruz (programandala.net)
@@ -32,7 +32,7 @@
 
 forth_definitions
 
-require galope/module.fs  \ 'module:', ';module', 'hide', 'export'
+require galope/package.fs \ `package`, `private`, `public`, `end-package`
 require galope/rgx-wcmatch-question.fs  \ 'rgx-wcmatch?'
 
 fendo_definitions
@@ -42,7 +42,7 @@ require ./fendo.addon.regex.fs
 
 \ ==============================================================
 
-module: fendo.addon.pages_by_regex
+package fendo.addon.pages_by_regex
 
 variable pages
 
@@ -57,13 +57,13 @@ variable pages
   \ ca len = pid
   \ f = continue with the next element?
 
-export
+public
 
 : pages_by_regex ( ca len -- n )
   >regex pages off   ['] (pages_by_regex) traverse_pids  pages @ ;
   \ Number of pages whose pid starts with the given prefix.
 
-;module
+end-package
 
 .( fendo.addon.pages_by_regex.fs compiled) cr
 
@@ -72,5 +72,6 @@ export
 
 \ 2014-03-09: Written, after <fendo.addon.pages_by_prefix.fs>.
 \ 2017-06-22: Update source style, layout and header.
+\ 2018-09-27: Use `package` instead of `module:`.
 
 \ vim: filetype=gforth

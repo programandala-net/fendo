@@ -6,7 +6,7 @@
 \ This file is the Markdown addon. It provides words to include
 \ contents in Markdown, either inline or from a file.
 
-\ Last modified 201706252334.
+\ Last modified 201809271539.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2015,2017 Marcos Cruz (programandala.net)
@@ -35,16 +35,14 @@
 
 forth_definitions
 
-require galope/module.fs  \ `module:`, `;module`, `hide`, `export`
+require galope/package.fs \ `package`, `private`, `public`, `end-package`
 require galope/trim.fs    \ `trim`
 
 fendo_definitions
 
 \ ==============================================================
 
-module: fendo.addon.markdown
-
-hide
+package fendo.addon.markdown
 
 s" /tmp/fendo_addon.markdown.adoc" 2dup 2constant input_file$
 s" .html" s+ 2constant output_file$
@@ -63,7 +61,7 @@ s" .html" s+ 2constant output_file$
   \ Get the content of the file that Markdown created as output.
   \ ca len = contents in HTML format
 
-export
+public
 
 : (pandoc_markdown_base_command)$ ( -- ca len )
   s" pandoc -f markdown -t html -o " output_file$ s+ ;
@@ -79,7 +77,7 @@ defer markdown_base_command$ ( -- ca len )
 
 ' (markdown_base_command)$ is markdown_base_command$
 
-hide
+private
 
 : markdown_command$ ( -- ca len )
   markdown_base_command$ s"  " s+ ;
@@ -109,7 +107,7 @@ hide
     then  0=
   until ;
 
-export
+public
 
 : include_markdown ( ca1 len1 -- )
   (include_markdown) echo ;
@@ -125,7 +123,7 @@ markup>current
   \ found (on its own line). Then save them to a file, convert them to
   \ HTML and and include them into the current page.
 
-;module
+end-package
 
 .( fendo.addon.markdown.fs compiled) cr
 
@@ -133,5 +131,6 @@ markup>current
 \ Change log
 
 \ 2017-06-25: Start.
+\ 2018-09-27: Use `package` instead of `module:`.
 
 \ vim: filetype=gforth
