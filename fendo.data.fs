@@ -5,7 +5,7 @@
 
 \ This file defines the page data tools.
 
-\ Last modified 201809121504.
+\ Last modified 201809271744.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2015,2017,2018 Marcos Cruz (programandala.net)
@@ -33,6 +33,7 @@ forth_definitions
 
 \ From Galope
 require galope/char-count.fs  \ 'char-count'
+require galope/minus-common-prefix.fs  \ `-common-prefix`
 require galope/slash-ssv.fs  \ '/ssv'
 require galope/file-mtime.fs
 require galope/file-exists-question.fs  \ 'file-exists?'
@@ -298,9 +299,8 @@ datum: template  \ HTML template filename in the design subdir
   { D: descendant D: ancestor }
 \  descendant ancestor str= ?dup if  0= exit  then  \ XXX OLD
   descendant ancestor string-prefix? ;
-  \ Is ca2 len2 a descendant of ca1 len1?
-  \ ca1 len1 = page id
-  \ ca2 len2 = page id
+  \ Is the page whose id is _ca2 len2_ a descendant of the page whose
+  \ id is _ca1 len1_?
 
 : pid$>level ( ca len -- n )
   [char] . char-count ;
@@ -311,6 +311,12 @@ datum: template  \ HTML template filename in the design subdir
   pid#>pid$ pid$>level ;
   \ Return the hierarchy level of the given page id.
   \ The top level is 0.
+
+: brother_pages? ( ca1 len1 ca2 len2 -- f )
+  -common-prefix pid$>level -rot pid$>level or 0= ;
+  \ Are the pages whose ids are _ca1 len1_ and _ca2 len2_ brothers,
+  \ i.e. do the last part (level) of their ids is preceded by a common
+  \ ancestor (hierarchy)?
 
 \ ==============================================================
 \ Debugging tools
@@ -868,5 +874,7 @@ true value included_files_update_the_page_date?
 \ Fendo-programandala app by ignoring <fendo-programandala.fs> when
 \ `fendo-programandala_version` has been defined already, in order to
 \ prevent the file from been included more than once by `require`.
+\
+\ 2018-09-27: Add `brother_pages?`.
 
 \ vim: filetype=gforth
