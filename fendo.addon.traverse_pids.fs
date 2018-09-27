@@ -6,10 +6,10 @@
 \ This file provides a word that traverses all pids (page ids),
 \ required by other addons.
 
-\ Last modified 201809271539.
+\ Last modified 201809271801.
 \ See change log at the end of the file.
 
-\ Copyright (C) 2013,2014,2017 Marcos Cruz (programandala.net)
+\ Copyright (C) 2013,2014,2017,2018 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute it and/or modify it
 \ under the terms of the GNU General Public License as published by
@@ -79,11 +79,7 @@ variable last_traversed_pid
 
 : traverse_pids ( xt -- )
   is (traversed_pid)  create_pids_file
-  \ pid_file$ included  \ XXX FIXME this causes problems:
-  \   *** glibc detected *** gforth: free(): invalid pointer: 0xb69fb7f0 ***
-  \   Aborted.
-  pids_file$ slurp-file evaluate  \ XXX this works
-  ;
+  pids_file$ included ;
 
 end-package
 
@@ -94,19 +90,30 @@ end-package
 
 \ 2013-11-25: Code extracted from
 \ <addons/list_of_content_by_prefix.fs>.
+\
 \ 2013-11-26: Change: several words renamed, after a new uniform
-\   notation: "pid$" and "pid#" for both types of page ids.
+\ notation: "pid$" and "pid#" for both types of page ids.
+\
 \ 2013-11-27: Change: all words and the addon itself renamed.
+\
 \ 2013-11-27: New: the list doesn't include file paths.
+\
 \ 2013-11-27: Change: '(pid$_list@)' factored out from 'pid$_list@'.
+\
 \ 2013-11-27: New: 'pid$_list@' rewritten: now it skips draft pages.
+\
 \ 2014-03-02: Everything renamed. Rewritten. Simplified. The pid list
-\   is Forth source, not a simple list anymore.
+\ is Forth source, not a simple list anymore.
+\
 \ 2014-03-03: Fix: removed a redundant definition.
+\
 \ 2014-03-11: Fix: '--key=2,2' added to 'sort$'.
+\
 \ 2014-05-28: New: 'last_traversed_pid', required to improve the tag
-\   cloud.
+\ cloud.
+\
 \ 2017-06-22: Update source style, layout and header.
-\ 2018-09-27: Use `package` instead of `module:`.
+\
+\ 2018-09-27: Use `package` instead of `module:`. Simplify `traverse_pids`.
 
 \ vim: filetype=gforth
