@@ -5,10 +5,10 @@
 
 \ This file is the code common to several content lists addons.
 
-\ Last modified 201809271539.
+\ Last modified 201809271749.
 \ See change log at the end of the file.
 
-\ Copyright (C) 2014,2017 Marcos Cruz (programandala.net)
+\ Copyright (C) 2014,2017,2018 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute it and/or modify it
 \ under the terms of the GNU General Public License as published by
@@ -46,14 +46,13 @@ variable prefix
 
 variable level
 
-: ((dloc_by_prefix_and_level))  { D: pid -- }
-  pid prefix $@ string-prefix? 0= ?exit
-  pid pid$>level level @ <> ?exit
-  pid pid$>data>pid# draft? ?exit
-  pid dtddoc ;
-  \ Create a description list of content
-  \ if the given pid starts with the current prefix
-  \ and has the current level.
+: ((dloc_by_prefix_and_level))  { D: pid$ -- }
+  pid$ prefix $@ string-prefix? 0= ?exit
+  pid$ pid$>level level @ <>       ?exit
+  pid$ pid$>data>pid# draft?       ?exit
+  pid$ dtddoc ;
+  \ Create a description list of content if the given pid starts with
+  \ the current prefix and has the current level.
 
 : (dloc_by_prefix_and_level) ( ca len -- f )
   ((dloc_by_prefix_and_level)) true ;
@@ -65,8 +64,8 @@ public
 : dloc_by_prefix_and_level ( ca len n -- )
   level ! prefix $!
   [<dl>] ['] (dloc_by_prefix_and_level) traverse_pids [</dl>] ;
-  \ Create a description list of content
-  \ with pages whose pid has the given prefix and level.
+  \ Create a description list of content with pages whose pid has
+  \ prefix _ca len_ and level _n_
 
 end-package
 
@@ -76,7 +75,10 @@ end-package
 \ Change log
 
 \ 2014-11-26: Adapted from <fendo.addon.dloc_by_prefix.fs>.
+\
 \ 2017-06-22: Update source style, layout and header.
-\ 2018-09-27: Use `package` instead of `module:`.
+\
+\ 2018-09-27: Use `package` instead of `module:`. Improve local
+\ variable name and documentation.
 
 \ vim: filetype=gforth
