@@ -3,7 +3,7 @@
 \ This file is part of Fendo
 \ (http://programandala.net/en.program.fendo.html).
 
-: fendo_version ( -- ca len ) s" 0.6.0-pre.14+201809271750" ;
+: fendo_version ( -- ca len ) s" 0.6.0-pre.15+201809271801" ;
 
 \ vim: filetype=gforth
 
