@@ -5,7 +5,7 @@
 
 \ This file is the Forth blocks source code addon.
 
-\ Last modified 20170622.
+\ Last modified 201809271539.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2017 Marcos Cruz (programandala.net)
@@ -31,7 +31,7 @@
 
 forth_definitions
 
-require galope/module.fs  \ 'module:', ';module', 'hide', 'export'
+require galope/package.fs \ `package`, `private`, `public`, `end-package`
 
 fendo_definitions
 
@@ -40,17 +40,17 @@ require ./fendo.addon.source_code.fs
 \ ==============================================================
 \ Forth source code in blocks format
 
-module: fendo.addon.forth_blocks_source_code
+package fendo.addon.forth_blocks_source_code
 
 64 value /forth_block_line  \ chars per line
 variable forth_block  \ counter
 variable forth_block_lenght
-export
+public
 16 value /forth_block  \ lines per block
 variable forth_block_line  \ counter
 variable highlight_forth_block_0?  \ flag
 defer forth_block$  \ "Block" in the current language
-hide
+private
 s" Block" 2constant (default_forth_block$)
 ' (default_forth_block$) is forth_block$
 (*
@@ -98,14 +98,14 @@ s" Block" 2constant (default_forth_block$)
   \ Note: 'source_line' is a buffer defined in
   \ <fendo/fendo_markup_wiki.fs>.
 
-export
+public
 
 : default_tidy_forth_block_line ( ca len -- )
   2drop ;
 
 defer tidy_forth_block_line ( ca len -- )
 
-hide
+private
 
 ' default_tidy_forth_block_line is tidy_forth_block_line
 
@@ -115,7 +115,7 @@ hide
   append_source_code_line
   forth_block_line++ 0= if  echo_forth_block  then ;
 
-export
+public
 : (forth_blocks_source_code) ( -- )
   s" forth" programming_language?!  \ set it if unset
   0 forth_block !
@@ -132,7 +132,7 @@ export
   \ Read the content of a Forth blocks file and echo it.
   \ ca len = file name
 
-;module
+end-package
 
 .( fendo.addon.forth_blocks_source_code.fs compiled) cr
 
@@ -158,5 +158,6 @@ export
 \   Forth if it's not empty; this allows other flavours of Forth to be
 \   used, e.g. ZX Spectrum's Abersoft Forth or QL's SuperForth.
 \ 2017-06-22: Update source style, layout and header.
+\ 2018-09-27: Use `package` instead of `module:`.
 
 \ vim: filetype=gforth

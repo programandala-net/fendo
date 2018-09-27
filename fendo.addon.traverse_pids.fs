@@ -6,7 +6,7 @@
 \ This file provides a word that traverses all pids (page ids),
 \ required by other addons.
 
-\ Last modified 20170622.
+\ Last modified 201809271539.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2017 Marcos Cruz (programandala.net)
@@ -31,12 +31,12 @@
 
 forth_definitions
 
-require galope/module.fs  \ 'module:', ';module', 'hide', 'export'
 require galope/backslash-end-of-file.fs  \ '\eof'
+require galope/package.fs \ `package`, `private`, `public`, `end-package`
 
 fendo_definitions
 
-module: fendo.addon.traverse_pids
+package fendo.addon.traverse_pids
 
 s" /tmp/fendo.traverse_pids.fs" 2constant pids_file$
 : ls$ ( -- ca len )
@@ -67,7 +67,7 @@ defer (traversed_pid) ( ca len -- f )
 
 is (traversed_pid)
 
-export
+public
 
 variable last_traversed_pid
 
@@ -85,7 +85,7 @@ variable last_traversed_pid
   pids_file$ slurp-file evaluate  \ XXX this works
   ;
 
-;module
+end-package
 
 .( fendo.addon.traverse_pids.fs compiled) cr
 
@@ -107,5 +107,6 @@ variable last_traversed_pid
 \ 2014-05-28: New: 'last_traversed_pid', required to improve the tag
 \   cloud.
 \ 2017-06-22: Update source style, layout and header.
+\ 2018-09-27: Use `package` instead of `module:`.
 
 \ vim: filetype=gforth

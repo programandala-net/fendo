@@ -5,7 +5,7 @@
 
 \ This file is the code common to several content lists addons.
 
-\ Last modified 20170622.
+\ Last modified 201809271539.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2014,2017 Marcos Cruz (programandala.net)
@@ -31,7 +31,7 @@
 
 forth_definitions
 
-require galope/module.fs  \ 'module:', ';module', 'hide', 'export'
+require galope/package.fs \ `package`, `private`, `public`, `end-package`
 
 fendo_definitions
 
@@ -41,7 +41,7 @@ require ./fendo.addon.wild-match.fs
 
 \ ==============================================================
 
-module: fendo.addon.lioc_by_wild-match
+package fendo.addon.lioc_by_wild-match
 
 : ((lioc_by_wild-match)) { D: pid -- }
   pid wild-match$ $@ wild-match? 0= ?exit
@@ -55,14 +55,14 @@ module: fendo.addon.lioc_by_wild-match
   \ ca len = pid
   \ true = continue with the next element?
 
-export
+public
 
 : lioc_by_wild-match ( ca len -- )
   wild-match$ $! ['] (lioc_by_wild-match) traverse_pids ;
   \ Create a list of content
   \ with pages whose pid matches the given wild-match string.
 
-;module
+end-package
 
 .( fendo.addon.lioc_by_wild-match.fs compiled) cr
 
@@ -71,5 +71,6 @@ export
 
 \ 2014-11-16 Start.
 \ 2017-06-22: Update source style, layout and header.
+\ 2018-09-27: Use `package` instead of `module:`.
 
 \ vim: filetype=gforth

@@ -7,7 +7,7 @@
 \ contents in Asciidoctor (or AsciiDoc) format, either inline or from
 \ a file.
 
-\ Last modified 201808201358.
+\ Last modified 201809271539.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2015,2017 Marcos Cruz (programandala.net)
@@ -40,16 +40,14 @@
 
 forth_definitions
 
-require galope/module.fs  \ `module:`, `;module`, `hide`, `export`
+require galope/package.fs \ `package`, `private`, `public`, `end-package`
 require galope/trim.fs    \ `trim`
 
 fendo_definitions
 
 \ ==============================================================
 
-module: fendo.addon.asciidoctor
-
-hide
+package fendo.addon.asciidoctor
 
 s" /tmp/fendo_addon.asciidoctor.adoc" 2dup 2constant input_file$
 s" .html" s+ 2constant output_file$
@@ -114,7 +112,7 @@ s" --out-file " s+ output_file$ s+
     then  0=
   until ;
 
-export
+public
 
 : include_asciidoctor ( ca1 len1 -- )
   (include_asciidoctor) echo ;
@@ -130,7 +128,7 @@ markup>current
   \ found (on its own line). Then save them to a file, convert them to
   \ HTML and and include them into the current page.
 
-;module
+end-package
 
 .( fendo.addon.asciidoctor.fs compiled) cr
 
@@ -145,5 +143,6 @@ markup>current
 \ 2017-06-22: Update source style, layout and header.
 \ 2017-06-24: Add `asciidoctor{`.
 \ 2018-08-20: Deactivate the Asciidoctor option "--compact".
+\ 2018-09-27: Use `package` instead of `module:`.
 
 \ vim: filetype=gforth

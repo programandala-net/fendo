@@ -5,7 +5,7 @@
 
 \ This file is the code common to several content lists addons.
 
-\ Last modified 20170622.
+\ Last modified 201809271539.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2017 Marcos Cruz (programandala.net)
@@ -31,7 +31,7 @@
 
 forth_definitions
 
-require galope/module.fs  \ 'module:', ';module', 'hide', 'export'
+require galope/package.fs \ `package`, `private`, `public`, `end-package`
 require galope/rgx-wcmatch-question.fs  \ 'rgx-wcmatch?'
 
 fendo_definitions
@@ -42,7 +42,7 @@ require ./fendo.addon.dtddoc.fs
 
 \ ==============================================================
 
-module: fendo.addon.dloc_by_regex
+package fendo.addon.dloc_by_regex
 
 : ((dloc_by_regex)) { D: pid -- }
   pid regex rgx-wcmatch? 0= ?exit
@@ -56,14 +56,14 @@ module: fendo.addon.dloc_by_regex
   \ ca len = pid
   \ f = continue with the next element?
 
-export
+public
 
 : dloc_by_regex ( ca len -- )
   >regex  [<dl>] ['] (dloc_by_regex) traverse_pids [</dl>] ;
   \ Create a description list of content
   \ with pages whose pid matchs the given regex.
 
-;module
+end-package
 
 .( fendo.addon.dloc_by_regex.fs compiled) cr
 
@@ -79,5 +79,6 @@ export
 \ conditions.
 \ 2014-03-10: Fix: double local.
 \ 2017-06-22: Update source style, layout and header.
+\ 2018-09-27: Use `package` instead of `module:`.
 
 \ vim: filetype=gforth

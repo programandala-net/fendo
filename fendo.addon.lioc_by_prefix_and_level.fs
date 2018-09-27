@@ -5,7 +5,7 @@
 
 \ This file is the code common to several content lists addons.
 
-\ Last modified 20170622.
+\ Last modified 201809271539.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2017 Marcos Cruz (programandala.net)
@@ -33,7 +33,7 @@ forth_definitions
 
 require string.fs  \ Gforth's dynamic strings
 
-require galope/module.fs  \ 'module:', ';module', 'hide', 'export'
+require galope/package.fs \ `package`, `private`, `public`, `end-package`
 
 fendo_definitions
 
@@ -42,7 +42,7 @@ require ./fendo.addon.lioc.fs
 
 \ ==============================================================
 
-module: fendo.addon.lioc_by_prefix_and_level
+package fendo.addon.lioc_by_prefix_and_level
 
 variable prefix
 
@@ -62,7 +62,7 @@ variable level
   \ ca len = pid
   \ true = continue with the next element?
 
-export
+public
 
 : lioc_by_prefix_and_level ( ca len n -- )
   level ! prefix $!  ['] (lioc_by_prefix_and_level) traverse_pids ;
@@ -71,7 +71,7 @@ export
   \ ca len = prefix
   \ n = page hierarchical level (0 is the top)
 
-;module
+end-package
 
 .( fendo.addon.lioc_by_prefix_and_level.fs compiled) cr
 
@@ -80,5 +80,6 @@ export
 
 \ 2014-11-18: Created, based on <fendo.addon.lioc_by_prefix.fs>.
 \ 2017-06-22: Update source style, layout and header.
+\ 2018-09-27: Use `package` instead of `module:`.
 
 \ vim: filetype=gforth

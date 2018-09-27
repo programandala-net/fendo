@@ -5,7 +5,7 @@
 
 \ This file is the Forth blocks source code addon.
 
-\ Last modified 20170622.
+\ Last modified 201809271539.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2017 Marcos Cruz (programandala.net)
@@ -31,7 +31,7 @@
 
 forth_definitions
 
-require galope/module.fs  \ 'module:', ';module', 'hide', 'export'
+require galope/package.fs \ `package`, `private`, `public`, `end-package`
 
 fendo_definitions
 
@@ -40,7 +40,7 @@ require ./fendo.addon.zx_spectrum_charset.fs
 
 \ ==============================================================
 
-module: fendo.addon.abersoft_forth_blocks_source_code
+package fendo.addon.abersoft_forth_blocks_source_code
 
 : skip_tap_header ( -- )
   24 s>d source_code_fid reposition-file throw ;
@@ -64,7 +64,7 @@ module: fendo.addon.abersoft_forth_blocks_source_code
   \ position before saving the blocks to tape.
   \ ca len = Forth block line
 
-export
+public
 
 : abersoft_forth_blocks_source_code ( ca len -- )
   s" abersoft_forth" programming_language!
@@ -79,7 +79,7 @@ export
   \ Abersoft Forth blocks TAP file and echo it.
   \ ca len = file name
 
-;module
+end-package
 
 .( fendo.addon.abersoft_forth_blocks_source_code.fs compiled) cr
 
@@ -93,5 +93,6 @@ export
 \ 2014-10-19: Improvement: The code is highlighted with a specific Vim
 \   syntax file, created for Abersoft Forth.
 \ 2017-06-22: Update source style, layout and header.
+\ 2018-09-27: Use `package` instead of `module:`.
 
 \ vim: filetype=gforth

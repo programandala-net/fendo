@@ -5,7 +5,7 @@
 
 \ This file is the code common to several source code addons.
 
-\ Last modified 20170622.
+\ Last modified 201809271539.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2017 Marcos Cruz (programandala.net)
@@ -31,17 +31,17 @@
 
 forth_definitions
 
-require galope/sourcepath.fs  \ 'sourcepath'
-require galope/module.fs  \ 'module:', ';module', 'hide', 'export'
+require galope/package.fs \ `package`, `private`, `public`, `end-package`
 require galope/replaced.fs  \ 'replaced'
+require galope/sourcepath.fs  \ 'sourcepath'
 
 fendo_definitions
 
 \ ==============================================================
 
-module: fendo.addon.source_code.common
+package fendo.addon.source_code.common
 
-export
+public
 
 false value highlight?
   \ flag to switch the code highlighting on and off
@@ -90,7 +90,7 @@ $variable source_code$
 
 \ XXX FIXME remove spaces and use 's&' instead of 's+'.
 
-hide
+private
 
 s" ./cache/addons/source_code/" 2constant cache_dir$  \ XXX TODO unused
 
@@ -98,7 +98,7 @@ s" /tmp/fendo_addon.source_code.txt" 2dup 2constant input_file$
 
 s" .xhtml" s+ 2constant output_file$
 
-export  \ XXX TMP
+public  \ XXX TMP
 
 true [if]
   s" ex -f " 2constant base_highlight_command$
@@ -112,7 +112,7 @@ true [if]
 
 sourcepath s" fendo.addon.source_code.vim " s+ 2constant vim_program$
 
-hide
+private
 
 : program+ ( ca len -- ca' len' )
   s" -S " s+ vim_program$ s+ ;
@@ -160,7 +160,7 @@ hide
   \ ca1 len1 = plain source code
   \ ca2 len2 = source code highlighted with <span> XHTML tags
 
-export
+public
 : highlighted ( ca1 len1 -- ca1 len1 | ca2 len2 )
 \  ." programming_language$ in highlighted is " programming_language$ $@ type cr cr cr  \ XXX INFORMER
 \  ." plain source code in highlighted" cr 2dup type key drop  \ XXX INFORMER
@@ -196,7 +196,7 @@ no_source_code_translation
   s" " programming_language!  no_source_code_translation ;
   \ Reset default values about the source code.
 
-;module
+end-package
 
 .( fendo.addon.source_code.common.fs compiled) cr
 
@@ -247,5 +247,6 @@ no_source_code_translation
 \ word in <fendo.markup.fendo.code.fs>.
 \
 \ 2017-06-22: Update source style, layout and header.
+\ 2018-09-27: Use `package` instead of `module:`.
 
 \ vim: filetype=gforth

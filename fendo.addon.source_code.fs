@@ -5,7 +5,7 @@
 
 \ This file is the source code addon.
 
-\ Last modified 201712042304.
+\ Last modified 201809271539.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2015,2017 Marcos Cruz (programandala.net)
@@ -33,9 +33,9 @@ forth_definitions
 
 require string.fs  \ Gforth's dynamic strings
 
-require galope/dollar-variable.fs        \ '$variable'
-require galope/minus-leading.fs          \ '-leading'
-require galope/module.fs                 \ 'module:'
+require galope/dollar-variable.fs \ '$variable'
+require galope/minus-leading.fs \ '-leading'
+require galope/package.fs \ `package`, `private`, `public`, `end-package`
 require galope/string-suffix-question.fs \ 'string-suffix?'
 
 fendo_definitions
@@ -44,7 +44,7 @@ require ./fendo.addon.source_code.common.fs  \ XXX TMP
 
 \ ==============================================================
 
-module: fendo.addon.source_code
+package fendo.addon.source_code
 
 : (filename>filetype) ( ca1 len1 -- ca2 len2 )
   basename  \ remove the path, because some comparations use the whole filename
@@ -109,7 +109,7 @@ module: fendo.addon.source_code
 \ ==============================================================
 \ Generic source code
 
-export
+public
 0 value source_code_fid
 : read_source_code_line ( -- ca len f )
   source_code_fid read_fid_line ;
@@ -268,7 +268,7 @@ s" .fs" s+ 2constant tmp_sorted_file$
   \
   \ XXX TODO -- use previous_programming_language$
 
-;module
+end-package
 
 .( fendo.addon.source_code.fs compiled) cr
 
@@ -369,5 +369,6 @@ s" .fs" s+ 2constant tmp_sorted_file$
 \ 2017-06-22: Update source style, layout and header.
 \
 \ 2017-12-04: Update requirements.
+\ 2018-09-27: Use `package` instead of `module:`.
 
 \ vim: filetype=gforth
