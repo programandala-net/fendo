@@ -1,5 +1,5 @@
 = Fendo versions
-:revdate: 2017-06-26
+:revdate: 2018-09-28
 
 - 2012-06-30: Start of the development.
 - 2013-06-29: Version A-00.
@@ -14,5 +14,5 @@
   attributes anymore (the main one and the alternative one), but just
   one set and a stack to save and restore it as needed.
 - 2017-06-20: Change version numbering after
-  http://semver.org[Semantic Versioning]. Start of the development of
+  http://semver.org[Semantic Versioning]. Start the development of
   version 0.6.0.
