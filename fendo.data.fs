@@ -5,7 +5,7 @@
 
 \ This file defines the page data tools.
 
-\ Last modified 201809271744.
+\ Last modified 201809281050.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2015,2017,2018 Marcos Cruz (programandala.net)
@@ -30,6 +30,8 @@
 \ Requirements
 
 forth_definitions
+
+require ./fendo.addon.traverse_pids.fs
 
 \ From Galope
 require galope/char-count.fs  \ 'char-count'
@@ -611,6 +613,66 @@ false value ignore_draft_property?
   \ Return the hierarchy level of a page (0 is the top level).
   \ a = page id (address of its data)
 
+variable this_page \ dynamic string
+
+variable a_previous_page \ dynamic string
+
+: (pid$>previous) ( ca1 len1 -- true | ca2 len2 false )
+  {: D: pid$ :}
+  pid$ pid$>data>pid# draft?          ?dup ?exit
+  pid$ this_page $@ brother_pages? 0= ?dup ?exit
+  pid$ this_page $@ str=
+  if        a_previous_page $@ false
+  else pid$ a_previous_page $! true
+  then ;
+  \ Is page id _ca1 len1_ (local _pid$_) contained in the dynamic string
+  \ _this_page_?  If so, return the page id _ca2 len2_ of its previous brother
+  \ page in the hierarchy (page id which was saved in the previous execution)
+  \ and _false_ (to stop the traversing); otherwise return just _true_ (to
+  \ continue the traversing).
+
+: pid$>previous ( ca1 len1 -- ca2 len2 )
+  a_previous_page off
+  this_page $!
+  ['] (pid$>previous) traverse_pids ;
+  \ Return the previous brother page id _ca2 len2_ of page id _ca1 len1_.
+  \ If no previous page exists, _ca2 len2_ is an empty string.
+
+: ?previous_page ( pid -- ca len )
+  dup previous_page dup if   rot drop
+                        else pid#>pid$ pid$>previous
+                        then ;
+  \ If page _pid_ has a previous page id defined in its field `previous_page`,
+  \ return it as string _ca len_; otherwise calculate it.
+
+variable a_next_page \ flag
+
+: (pid$>next) ( ca1 len1 -- true | ca1 len1 false )
+  {: D: pid$ :}
+  pid$ pid$>data>pid# draft?          ?dup ?exit
+  this_page $@ pid$ brother_pages? 0= ?dup ?exit
+  this_page $@ pid$ -common-prefix str<
+  if a_next_page on pid$ false else true then ;
+  \ Is _ca1 len1_ (local _pid$_) the next brother page of the page
+  \ whose page id is contained in the dynamic string _this_page_?
+  \ If so, return _ca1 len1_ and _false_ (to stop the traversing);
+  \ otherwise return just _true_ (to continue the traversion).
+
+: pid$>next ( ca1 len1 -- ca2 len2 )
+  a_next_page off
+  this_page $!
+  ['] (pid$>next) traverse_pids
+  a_next_page @ 0= if 0 0 then ;
+  \ Return the next brother page id _ca2 len2_ of page id _ca1 len1_.
+  \ If no next page exists, _ca2 len2_ is an empty string.
+
+: ?next_page ( pid -- ca len )
+  dup next_page dup if   rot drop
+                    else pid#>pid$ pid$>next
+                    then ;
+  \ If page _pid_ has a next page id defined in its field `next_page`,
+  \ return it as string _ca len_; otherwise calculate it.
+
 \ ==============================================================
 \ Data manipulation
 
@@ -875,6 +937,9 @@ true value included_files_update_the_page_date?
 \ `fendo-programandala_version` has been defined already, in order to
 \ prevent the file from been included more than once by `require`.
 \
-\ 2018-09-27: Add `brother_pages?`.
+\ 2018-09-27: Add `brother_pages?`, `pid$>previous`, `?previous_page`,
+\ `pid$>next`, `?next_page`.
+\
+\ 2018-09-28: Fix `pid$>next` with the `a_next_page` flag.
 
 \ vim: filetype=gforth
