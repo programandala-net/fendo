@@ -5,7 +5,7 @@
 
 \ This file is the hierarchy navigation links addon.
 
-\ Last modified 201809281517.
+\ Last modified 201809281539.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2017,2018 Marcos Cruz (programandala.net)
@@ -57,7 +57,7 @@ defer last$ ( -- ca len )
   first$ current_page first_page hierarchy_navigation_link ;
 
 : hierarchy_upper_navigation_link  ( -- )
-  up$ current_page upper_page hierarchy_navigation_link ;
+  up$ current_page ?upper_page hierarchy_navigation_link ;
 
 : hierarchy_previous_navigation_link  ( -- )
   previous$ current_page ?previous_page hierarchy_navigation_link ;
@@ -93,6 +93,7 @@ defer last$ ( -- ca len )
 \ it with Fendo-VEB.
 \
 \ 2018-09-28: Replace `previous_page` with `?previous_page`.  Replace
-\ `next_page` with `?next_page`.
+\ `next_page` with `?next_page`.  Replace `upper_page` with
+\ `?upper_page`.
 
 \ vim: filetype=gforth

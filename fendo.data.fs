@@ -34,14 +34,15 @@ forth_definitions
 require ./fendo.addon.traverse_pids.fs
 
 \ From Galope
-require galope/char-count.fs  \ 'char-count'
-require galope/minus-common-prefix.fs  \ `-common-prefix`
-require galope/slash-ssv.fs  \ '/ssv'
-require galope/file-mtime.fs
-require galope/file-exists-question.fs  \ 'file-exists?'
+require galope/char-count.fs \ `char-count`
+require galope/minus-common-prefix.fs \ `-common-prefix`
+require galope/minus-extension.fs \ `-extension`
+require galope/slash-ssv.fs \ `/ssv`
+require galope/file-mtime.fs \ `file-mtime`
+require galope/file-exists-question.fs \ `file-exists?`
 
 \ From Fourth Foundation Library
-require ffl/str.fs  \ dynamic strings
+require ffl/str.fs \ dynamic strings
 
 fendo_definitions
 
@@ -673,6 +674,18 @@ variable a_next_page \ flag
   \ If page _pid_ has a next page id defined in its field `next_page`,
   \ return it as string _ca len_; otherwise calculate it.
 
+: pid$>upper ( ca1 len1 -- ca2 len2 )
+  -extension ;
+  \ Return the upper page id _ca2 len2_ of page id _ca1 len1_.
+  \ If no upper page exists, _ca2 len2_ is an empty string.
+
+: ?upper_page ( pid -- ca len )
+  dup upper_page dup if   rot drop
+                     else 2drop pid#>pid$ pid$>upper
+                     then ;
+  \ If page _pid_ has an upper page id defined in its field `upper_page`,
+  \ return it as string _ca len_; otherwise calculate it.
+
 \ ==============================================================
 \ Data manipulation
 
@@ -941,6 +954,6 @@ true value included_files_update_the_page_date?
 \ `pid$>next`, `?next_page`.
 \
 \ 2018-09-28: Fix `pid$>next` with the `a_next_page` flag. Fix
-\ `?previous_page` and `?next_page`.
+\ `?previous_page` and `?next_page`. Add `?upper_page`.
 
 \ vim: filetype=gforth

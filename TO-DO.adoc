@@ -230,8 +230,8 @@ Remove double spaces in `(unmarkup)` (defined in <fendo.markup.common.fs>)?
 
 Change:
 
-First, rename `pid$>pid#`.
-Second, rename `pid$>data>pid#` to `pid$>pid#`.
+- First, rename `pid$>pid#`.
+- Second, rename `pid$>data>pid#` to `pid$>pid#`.
 
 Bug:
 
@@ -556,3 +556,5 @@ Backtrace:
 - Improve `?previous_page` and `?next_page`: Use a conventional mark to make
   the field calculated. This will make empty fields possible.
 - Add also `?upper_page`, `?first_page` and `?last_page`.
+- Confirm why "up", "first" and "last" are not allowed in `<link>`. Add them to
+  `hierarchy_meta_links`.
