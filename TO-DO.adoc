@@ -551,3 +551,8 @@ Backtrace:
 
 ....
 
+== 2018-09-28
+
+- Improve `?previous_page` and `?next_page`: Use a conventional mark to make
+  the field calculated. This will make empty fields possible.
+- Add also `?upper_page`, `?first_page` and `?last_page`.
