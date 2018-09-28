@@ -5,7 +5,7 @@
 
 \ This file defines the page data tools.
 
-\ Last modified 201809281050.
+\ Last modified 201809281438.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2015,2017,2018 Marcos Cruz (programandala.net)
@@ -640,7 +640,7 @@ variable a_previous_page \ dynamic string
 
 : ?previous_page ( pid -- ca len )
   dup previous_page dup if   rot drop
-                        else pid#>pid$ pid$>previous
+                        else 2drop pid#>pid$ pid$>previous
                         then ;
   \ If page _pid_ has a previous page id defined in its field `previous_page`,
   \ return it as string _ca len_; otherwise calculate it.
@@ -668,7 +668,7 @@ variable a_next_page \ flag
 
 : ?next_page ( pid -- ca len )
   dup next_page dup if   rot drop
-                    else pid#>pid$ pid$>next
+                    else 2drop pid#>pid$ pid$>next
                     then ;
   \ If page _pid_ has a next page id defined in its field `next_page`,
   \ return it as string _ca len_; otherwise calculate it.
@@ -940,6 +940,7 @@ true value included_files_update_the_page_date?
 \ 2018-09-27: Add `brother_pages?`, `pid$>previous`, `?previous_page`,
 \ `pid$>next`, `?next_page`.
 \
-\ 2018-09-28: Fix `pid$>next` with the `a_next_page` flag.
+\ 2018-09-28: Fix `pid$>next` with the `a_next_page` flag. Fix
+\ `?previous_page` and `?next_page`.
 
 \ vim: filetype=gforth

@@ -5,10 +5,10 @@
 
 \ This file is the hierarchy meta links addon.
 
-\ Last modified 201809121500.
+\ Last modified 201809281517.
 \ See change log at the end of the file.
 
-\ Copyright (C) 2013,2014,2015,2017 Marcos Cruz (programandala.net)
+\ Copyright (C) 2013,2014,2015,2017,2018 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute it and/or modify it
 \ under the terms of the GNU General Public License as published by
@@ -83,8 +83,8 @@
 
 : hierarchy_meta_links ( -- )
 \  s" up" current_page upper_page hierarchy_meta_link
-  s" next" current_page next_page hierarchy_meta_link
-  s" prev" current_page previous_page hierarchy_meta_link
+  s" next" current_page ?next_page hierarchy_meta_link
+  s" prev" current_page ?previous_page hierarchy_meta_link
 \  s" first" current_page first_page hierarchy_meta_link
 \  s" last" current_page last_page hierarchy_meta_link
   ;
@@ -133,5 +133,8 @@
 \
 \ 2018-09-12: Add debugging code to explore the problem detected in
 \ `(required_data)` (see change log of <fendo.data.fs>).
+\
+\ 2018-09-28: Replace `previous_page` with `?previous_page`.  Replace
+\ `next_page` with `?next_page`.
 
 \ vim: filetype=gforth
