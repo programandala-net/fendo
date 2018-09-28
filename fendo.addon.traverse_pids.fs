@@ -6,7 +6,7 @@
 \ This file provides a word that traverses all pids (page ids),
 \ required by other addons.
 
-\ Last modified 201809271801.
+\ Last modified 201809281633.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2017,2018 Marcos Cruz (programandala.net)
@@ -39,19 +39,30 @@ fendo_definitions
 package fendo.addon.traverse_pids
 
 s" /tmp/fendo.traverse_pids.fs" 2constant pids_file$
+
 : ls$ ( -- ca len )
   s" ls -1 " source_dir $@ s+ s" *" s+ forth_extension $@ s+ ;
+  \ Return the shell command _ca len_ used to list the page source files.
 
 : sed$ ( -- ca len )
-  s" | sed -e 's#.\+/\(.\+\)" forth_extension $@ s+ s" $" s+
+  s" sed -e 's#.\+/\(.\+\)" forth_extension $@ s+ s" $" s+
   s\" #s\" \\1\" traversed_pid#'" s+ ;
+  \ Return the shell command _ca len_ used to convert the list of
+  \ page source files into a list of Forth commands to traverse
+  \ their corresponding page ids.
 
 : sort$ ( -- ca len )
-  s" | sort --key 2,2" ;
-  \ Sort only by the string content.
+  s" sort --key 2,2" ;
+  \ Return the shell command _ca len_ used to sort the list of page ids.
+  \
+  \ Option `--key 2,2` makes the second field the only sorting key, which is
+  \ required in order to ignore rest of the line.  By default, `sort` separete
+  \ fields by non-blank to blank transition, which is fine in this case.
 
 : command$ ( -- ca len )
-  ls$ sed$ s+ sort$ s+ ;
+  ls$ s" |" s+ sed$ s+ s" |" s+ sort$ s+ ;
+  \ Return the shell command _ca len_ used to create the Forth source
+  \ that traverses all of the page ids.
 
 : create_pids_file ( -- )
   command$ s"  > " s+ pids_file$ s+ system ;
@@ -74,7 +85,7 @@ variable last_traversed_pid
 : traversed_pid ( ca len -- )
 \  ." Parameter in 'traversed_pid' = " 2dup type cr  \ XXX INFORMER
   2dup last_traversed_pid $!
-  (traversed_pid) 0= if  \eof  then ;
+  (traversed_pid) 0= if \eof then ;
   \ ca len = pid
 
 : traverse_pids ( xt -- )
@@ -115,5 +126,7 @@ end-package
 \ 2017-06-22: Update source style, layout and header.
 \
 \ 2018-09-27: Use `package` instead of `module:`. Simplify `traverse_pids`.
+\
+\ 2018-09-28: Update source style. Improve documentation.
 
 \ vim: filetype=gforth
