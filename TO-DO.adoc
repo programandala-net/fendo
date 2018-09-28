@@ -1,6 +1,6 @@
 = Fendo TO-DO
 :author: Marcos Cruz (programandala.net)
-:revdate: 2018-08-20
+:revdate: 2018-08-28
 
 // This file is in Asciidoctor format
 
@@ -493,3 +493,61 @@ In <fendo.markup.fendo.list.fs>, the alias "*" still is temporary.
 Asciidoctor 1.5.7.1 throws error because the "--compact" option is not
 accepted. But it's still in the documentation. The option has been
 commented out from <fendo.addon.asciidoctor.fs>.
+
+== 2018-09-28
+
+The first execution of `pid$>next` includes <fendo-programandala.fs>! Why? See:
+
+....
+Gforth 0.7.9_20171005, Copyright (C) 1995-2016 Free Software Foundation, Inc.
+Gforth comes with ABSOLUTELY NO WARRANTY; for details type `license'
+Type `help' for basic help
+see pid$>next
+: pid$>next
+  a_next_page off this_page $! ['] (pid$>next) traverse_pids a_next_page @ 0=
+  IF     0 0
+  THEN ; ok
+  ok
+s" eo" pid$>next fendo-programandala.fs
+fendo-programandala.fs compiled
+ ok
+.s <2> 35646472 2  ok
+type es ok
+....
+
+Breaking an _ad hoc_ `key drop` at the start of <fendo-programandala.fs> reveals
+the problem is the search order has changed:
+
+First:
+
+....
+include fendo-programandala.fs fendo-programandala.fs
+
+About to load fendo-programandala
+Order:Forth Forth Root     Forth
+Press any key or break
+....
+
+But then:
+
+....
+s" eo" pid$>next fendo-programandala.fs
+
+About to load fendo-programandala
+Order:fendo_wid Forth Root Root     fendo_wid
+Press any key or break
+Error requiring the data of the page <en.fs>
+
+in file included from *the terminal*:2
+in file included from /tmp/fendo.traverse_pids.fs:1
+in file included from ~/forth/fendo-programandala/pages.source/en.fs:5
+~/forth/fendo-programandala/fendo-programandala.fs:48: error: User interrupt
+cr .( Press any key or break) key drop
+Backtrace:
+                                         0 $76694E24 (key-file)
+/usr/local/share/gforth/0.7.9_20171005/ekey.fs:168:9  1 $766B7FA8 (key)
+                                         2 $76695064
+                                         3 $76695100 key-ior
+
+....
+
