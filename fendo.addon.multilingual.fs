@@ -4,18 +4,19 @@
 \ (http://programandala.net/en.program.fendo.html).
 
 \ This file creates some low-level tools to manage multilingual
-\ websites. The language of a page is indicated using the 2-letter or
-\ 3-letter ISO language code as first part of the page's file name,
-\ e.g.:
+\ websites. The language identifier can be any string, usually its
+\ correspondent ISO 639-1 (2-letter) code, ISO 639-2 (3-letter)
+\ code, or the name of the language. The identifier is used as the
+\ first part (prefix) of the page's filename, e.g.:
 
 \   en.section.subsection.html
 \   es.sección.subsección.html
 \   eo.fako.subfako.html
 
-\ Last modified 201710301630.
+\ Last modified 201812061853.
 \ See change log at the end of the file.
 
-\ Copyright (C) 2013,2017 Marcos Cruz (programandala.net)
+\ Copyright (C) 2013,2017,2018 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute
 \ it and/or modify it under the terms of the GNU General
@@ -193,5 +194,7 @@ true to multilingual?
 \ 2017-06-22: Update source style, layout and header.
 \
 \ 2017-10-30: Update Galope `$!,` to `$,`.
+\
+\ 2018-12-06: Improve documentation.
 
 \ vim: filetype=gforth

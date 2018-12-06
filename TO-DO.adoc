@@ -6,8 +6,8 @@
 
 == 2013-06-04
 
-In <fendo.parser.fs>: Flag the first markup of the current line, in
-order to use `--` both for nested lists and for delete.
+In <fendo.parser.fs>: Flag the first markup of the current line, in order to
+use `--` both for nested lists and for delete.
 
 == 2013-06-04
 
@@ -34,8 +34,9 @@ In <fendo.addon.forth_blocks_source_code.fs>: Character set conversions.
 == 2013-08-14
 
 Choose better names for different meanings of "content":
-1) raw content of the page (printable content and markups)
-2) printable content only, not executable markups
+
+1. raw content of the page (printable content and markups)
+2. printable content only, not executable markups
 
 == 2013-08-15
 
@@ -150,7 +151,7 @@ At the end of the block, the variables must be reseted.
 
 == 2016-06-03
 
-In <fendo.markup.fendo.passthrough.fs>: Add '~~' for inline
+In <fendo.markup.fendo.passthrough.fs>: Add `~~` for inline
 passthrough.
 
 == 2014-07-13
@@ -302,8 +303,8 @@ But the question is: should `href=` be restored/cleared by
 
 Improvement:
 
-In <fendo.markup.html.tags.fs>, the `echo_cr` in the tags could be optional, configurable with a flag.
-This way the HTML would be more compact.
+In <fendo.markup.html.tags.fs>, the `echo_cr` in the tags could be optional,
+configurable with a flag.  This way the HTML would be more compact.
 
 == 2015-01-30
 
@@ -320,26 +321,26 @@ fake.
 New:
 
 Finish the implementation of new translations in
-<fendo.addon.zx_spectrum_charset.fs> for ZX Spectrum +3 unexpanded
-listings.
+<fendo.addon.zx_spectrum_charset.fs> for ZX Spectrum +3 unexpanded listings.
 
 == 2015-02-01
 
 Fix:
 
-When a page leaves something on the stack, the problem is detected only when another page is built after it.
-No error happes when the page is the only one to be built.
+When a page leaves something on the stack, the problem is detected only when
+another page is built after it.  No error happes when the page is the only one
+to be built.
 
 == 2015-02-02
 
-Change the metadata:
-create `published` to be used as the current `create`,
+Change the metadata: create `published` to be used as the current `created`,
 and dedicate `created` to its actual meaning, the date the document was created
 (what Fendo-programandala uses `started` for; this must be renamed too).
 
 == 2015-02-03
 
-Improve the new planned <fendo.addon.project.fs> with metadata `relative_dead_line` and `dead_line`...
+Improve the new planned <fendo.addon.project.fs> with metadata
+`relative_dead_line` and `dead_line`...
 
 == 2015-02-12
 
@@ -383,17 +384,13 @@ there's a possible solution:
 
 The words created by `language_markup:` (defined in
 <fendo.markup.fendo.language.fs>) could set a flag.  The flag should
-be resed by `</span>` and `</div>`.  This flag could be used by user
+be reset by `</span>` and `</div>`.  This flag could be used by user
 macros.
 
 == 2015-12-10
 
 Bug: When a hierarchical metadatum contains a draft page, the current
 page is used instead.
-
-== 2015-12-18
-
-Use semver versioning.
 
 == 2016-02-11
 
@@ -403,10 +400,12 @@ Example from <http://blog.markstarkman.com/blog/2011/09/15/mongodb-many-to-many-
 
 https://twitter.com/intent/tweet?original_referer=http%3A%2F%2Fblog.markstarkman.com%2Fblog%2F2011%2F09%2F15%2Fmongodb-many-to-many-relationship-data-modeling%2F&ref_src=twsrc%5Etfw&text=mongoDB%20Many-to-Many%20Relationship%20Data%20Modeling%20-%20Mark%20Starkman&tw_p=tweetbutton&url=http%3A%2F%2Fblog.markstarkman.com%2Fblog%2F2011%2F09%2F15%2Fmongodb-many-to-many-relationship-data-modeling%2F&via=MarkStarkman
 
-== 2017-02-06
+== 2017-02-06, 2018-09-28
 
-Improve the `related` field: add its content to the field, in order to
-use it several times in the data header and avoid long lines.
+Improve the `related` field: add its content to the field, in order to use it
+several times in the data header and avoid long lines.
+
+Better yet: make `datum:` create a `fieldname+` variant to do that.
 
 == 2017-02-06
 

@@ -5,10 +5,10 @@
 
 \ This file creates the parser.
 
-\ Last modified 20170622.
+\ Last modified 201812061925.
 \ See change log at the end of the file.
 
-\ Copyright (C) 2013,2017 Marcos Cruz (programandala.net)
+\ Copyright (C) 2013,2017,2018 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute
 \ it and/or modify it under the terms of the GNU General
@@ -208,10 +208,12 @@ variable more?  \ flag: keep on parsing more words?; changed by '}content'
   \ of the source.
 
 : (evaluate_content) ( ca len -- )
-\  cr cr ." (evaluate_content) >> " 2dup type key drop  \ XXX INFORMER
+\  ." parameter of `(evaluate_content)`: " 2dup type cr key drop  \ XXX INFORMER
   save_attributes -attributes  separate? @ >r
   ['] parse_content execute-parsing  #nothings off
-  r> separate? !  restore_attributes ;
+  r> separate? !  restore_attributes
+\  ." end of `(evaluate_content)`" cr key drop  \ XXX INFORMER
+  ;
   \ Evaluate a string as page content.
 
 ' (evaluate_content) is evaluate_content
@@ -313,16 +315,28 @@ variable more?  \ flag: keep on parsing more words?; changed by '}content'
   \ ca2 len2 = bottom half of the template content
 
 : get_template ( -- ca len )
-  template_file slurp-file ;
+  template_file
+\  ." template in `get_template`:" 2dup type cr key drop \ XXX INFORMER
+  slurp-file ;
   \ Return the template content.
 
 : template{ ( -- )
-  get_template template_top evaluate_content ;
+  get_template
+\  ." in `template{` after `get_template`" cr key drop \ XXX INFORMER
+  template_top
+\  ." in `template{` after `template_top`" cr key drop \ XXX INFORMER
+  evaluate_content
+\  ." end of `template{`" cr key drop \ XXX INFORMER
+  ;
   \ Echo the top half of the current template,
   \ above the page content.
 
 : }template ( -- )
-  get_template template_bottom evaluate_content ;
+\  ." in `}template`" cr key drop \ XXX INFORMER
+  get_template template_bottom
+  evaluate_content
+\  ." end of `}template`" cr key drop \ XXX INFORMER
+  ;
   \ Echo the bottom half of the current template,
   \ below the page content.
 
@@ -337,7 +351,10 @@ variable }content?  \ flag: was '}content' executed?
 
 : (content{) ( -- )
   opened_markups_off
-  open_target template{
+  open_target
+\  ." in `(content{)` after `open_target`" cr key drop \ XXX INFORMER
+  template{
+\  ." in `(content{)` after `template{`" cr key drop \ XXX INFORMER
   }content? off  parse_content
   }content? @ 0= abort" Missing '}content' at the end of the page" ;
   \ Create the top template part of the target page
@@ -368,21 +385,24 @@ false value updating?  \ XXX TODO document
   ;
 
 : content{ ( "text }content" -- )
-\  ." content{" cr  \ XXX INFORMER
+\  ." start of `content{`" cr  \ XXX INFORMER
 \  ~~  \ XXX INFORMER
   do_page?
 \  ~~  \ XXX INFORMER
   if
+\    ." yes do `content{`" cr key drop  \ XXX INFORMER
 \  ." `argc` in `content{`= " argc ? cr  \ XXX INFORMER
     empty_stack .sourcefilename
-\    ." content{" cr  \ XXX INFORMER
 \    ~~  \ XXX INFORMER
     (content{)
   else
+\    ." don't do `content{`" cr key drop  \ XXX INFORMER
     skip_page
 \    ~~  \ XXX INFORMER
 \  ." `argc` in skipped `content{`= " argc ? cr  \ XXX INFORMER
-  then ;
+  then
+\  ." end of `content{`" cr key drop \ XXX INFORMER
+  ;
   \ Create the page content, if needed.
   \ The end of the content is marked with the '}content' markup.
   \ Only one 'content{ ... }content' block is allowed in the page.
@@ -540,5 +560,7 @@ set-current
 \ Asciidoctor) makes it unnecessary.
 \
 \ 2017-06-22: Update source style, layout and header.
+\
+\ 2018-12-06: Add some debugging code.
 
 \ vim: filetype=gforth
