@@ -5,7 +5,7 @@
 
 \ This file defines the Fendo markup for languages.
 
-\ Last modified 20170622.
+\ Last modified 201812062302.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2017 Marcos Cruz (programandala.net)
@@ -44,10 +44,10 @@ fendo_definitions
 
 For every language, the following markups are created:
 
-- 'lang((' for inline zones
-- 'lang((((' for block zones
-- 'lang''' for inline quotes
-- 'lang''''' for block quotes
+- `lang((` for inline zones
+- `lang((((` for block zones
+- `lang''` for inline quotes
+- `lang''''` for block quotes
 
 Usage example:
 
@@ -106,5 +106,7 @@ Usage example:
 \ 2014-11-09: The usage text is updated.
 \
 \ 2017-06-22: Update source style, layout and header.
+\
+\ 2018-12-06: Improve documentation.
 
 \ vim: filetype=gforth

@@ -8,10 +8,10 @@
 \
 \ XXX NOT FINISHED
 
-\ Last modified 201809271539.
+\ Last modified 201812062345.
 \ See change log at the end of the file.
 
-\ Copyright (C) 2015,2017 Marcos Cruz (programandala.net)
+\ Copyright (C) 2015,2017,2018 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute it and/or modify it
 \ under the terms of the GNU General Public License as published by
@@ -164,7 +164,7 @@ project_datum: project_completion
 
 end-package
 
-.( fendo-programandala.addon.projects.fs compiled) cr
+.( fendo.addon.projects.fs compiled) cr
 
 \ ==============================================================
 \ Change log
@@ -177,6 +177,9 @@ end-package
 \ 2015-02-11: Fix: proper 'definitions' in the requirements.
 \
 \ 2017-06-22: Update source style, layout and header.
+\
 \ 2018-09-27: Use `package` instead of `module:`.
+\
+\ 2018-12-06: Fix typo.
 
 \ vim: filetype=gforth

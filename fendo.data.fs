@@ -5,7 +5,7 @@
 
 \ This file defines the page data tools.
 
-\ Last modified 201809281552.
+\ Last modified 201812061928.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2015,2017,2018 Marcos Cruz (programandala.net)
@@ -79,7 +79,9 @@ variable /datum
 
 defer get_datum ( a u -- ca len )
 
-: (get_datum) ( a u -- ca len )  + $@  ;
+: (get_datum) ( a u -- ca len )  + $@
+\  ." Output of `(get_datum)` :" 2dup type cr XXX INFORMER
+  ;
 
 ' (get_datum) is get_datum
 
@@ -88,7 +90,7 @@ defer get_datum ( a u -- ca len )
     cell /datum dup @ , +!  \ store the offset and increment it
   does> ( a1 | "text<nl>" -- ca len | )
     \ a1 = page data address
-    \ ca len = datum 
+    \ ca len = datum
     \ dfa = data field address of the datum word
     \ u = datum offset
     ( a1 dfa | dfa "text<nl>" )
@@ -128,7 +130,7 @@ datum: source_file
 
 datum: language  \ ISO code of the page's language
 datum: title  \ page title; can include markups
-datum: description  \ page description; can include markups?
+datum: description  \ page description; XXX TODO -- can include markups?
 
 \ Dates in ISO format:
 datum: created  \ content creation (publication) date
@@ -363,6 +365,7 @@ defer set_default_data ( -- )
 
 : }data ( -- )
   in_data_header? @ if  (}data)  then
+\  cr cr ." =========== }data" cr key drop  \ XXX INFORMER
 \  ." `argc` in `}data`= " argc ? cr  \ XXX INFORMER
   ;
   \ Mark the end of the page data header and complete it.
@@ -398,7 +401,8 @@ defer set_default_data ( -- )
   \ XXX Already solved?
 
 : data{ ( "<text><spaces>}data" -- )
-\  cr cr ." =========== data{" cr  \ XXX INFORMER
+\  cr cr ." =========== data{" cr key drop  \ XXX INFORMER
+\  cr cr ." ===========" current_target_file type s" data{" cr key drop  \ XXX INFORMER
 \  ." `argc` in `data{` (start)= " argc ? cr  \ XXX INFORMER
   data_already_got? if  skip_data{  else  get_data{  then
 \  ." `argc` in `data{` (end)= " argc ? cr  \ XXX INFORMER
@@ -425,7 +429,7 @@ variable do_content?  do_content? on
   >r .required_data_error r> throw ;
 
 : (required_data) ( ca len -- )
-\  ." (required_data) " .s cr 2dup type cr key drop  \ XXX INFORMER
+\  ." parameter in `(required_data)` = " 2dup type cr key drop  \ XXX INFORMER
   do_content? off
 \  .included key drop  \ XXX INFORMER
 \  cr ." before catch " .s cr  key drop \ XXX INFORMER
@@ -438,15 +442,15 @@ variable do_content?  do_content? on
   \ Require a page file _ca len_ in order to get its data.
 
 : required_data ( ca len -- )
-\   ." Parameter in 'required_data' = " 2dup type cr  \ XXX INFORMER
+\   ." parameter in 'required_data' = " 2dup type cr  \ XXX INFORMER
 \   ." related = " current_page related type cr  \ XXX INFORMER
   do_content? @ >r  current_page >r
   (required_data)
   r> to current_page  r> do_content? !
-\   ." end of required_data " 2dup type cr  \ XXX INFORMER
+\   ." end of `required_data`" cr \ XXX INFORMER
 \   ." related = " current_page related type cr  \ XXX INFORMER
 \  ." >>>>>>>>" cr  \ XXX INFORMER
-\   key drop  \ XXX INFORMER
+\  key drop  \ XXX INFORMER
   ;
   \ Require a page file _ca len_ in order to get its data.
 
@@ -489,7 +493,8 @@ variable do_content?  do_content? on
   \ "name" = filename
 
 : (pid$>data>pid#) ( ca len -- a )
-\   ." Stack at the start of `(pid$>data>pid#` : " .s cr key drop \ XXX INFORMER
+\  ." Parameter of `(pid$>data>pid#)` : " 2dup type cr key drop \ XXX INFORMER
+\   ." Stack at the start of `(pid$>data>pid#)` : " .s cr key drop \ XXX INFORMER
 \  -anchor \ XXX TMP
 \  ." 'link_anchor' in '(pid$>data>pid#)' = " link_anchor $@ type cr  \ XXX INFORMER
   2dup (required_data<pid$) pid$>pid#
@@ -655,8 +660,9 @@ variable a_previous_page \ dynamic string
   if   2drop pid#>pid$ pid$>previous
   else rot drop
   then ;
-  \ If page _pid_ has a previous page id defined in its field `previous_page`,
-  \ return it as string _ca len_; otherwise calculate it.
+  \ If field `previous_page` of page _pid_ is calculated, calculate it
+  \ and return the result in string _ca len_; otherwise return the
+  \ field contents.
 
 variable a_next_page \ flag
 
@@ -684,8 +690,9 @@ variable a_next_page \ flag
   if   2drop pid#>pid$ pid$>next
   else rot drop
   then ;
-  \ If page _pid_ has a next page id defined in its field `next_page`,
-  \ return it as string _ca len_; otherwise calculate it.
+  \ If field `next_page` of page _pid_ is calculated, calculate it
+  \ and return the result in string _ca len_; otherwise return the
+  \ field contents.
 
 : pid$>upper ( ca1 len1 -- ca2 len2 )
   -extension ;
@@ -697,8 +704,35 @@ variable a_next_page \ flag
   if   2drop pid#>pid$ pid$>upper
   else rot drop
   then ;
-  \ If page _pid_ has an upper page id defined in its field `upper_page`,
-  \ return it as string _ca len_; otherwise calculate it.
+  \ If field `upper_page` of page _pid_ is calculated, calculate it
+  \ and return the result in string _ca len_; otherwise return the
+  \ field contents.
+
+: (pid$>first) ( ca1 len1 -- true | ca2 len2 false )
+  {: D: pid$ :}
+  pid$ pid$>data>pid# draft?          ?dup ?exit
+  pid$ this_page $@ brother_pages? 0= ?dup ?exit
+  pid$ false ;
+  \ Is page id _ca1 len1_ (local _pid$_) contained in the dynamic string
+  \ _this_page_?  If so, return the page id _ca2 len2_ of its first brother
+  \ page in the hierarchy (page id which was saved in the first execution)
+  \ and _false_ (to stop the traversing); otherwise return just _true_ (to
+  \ continue the traversing).
+
+: pid$>first ( ca1 len1 -- ca2 len2 )
+  this_page $!
+  ['] (pid$>first) traverse_pids ;
+  \ Return the first brother page id _ca2 len2_ of page id _ca1 len1_.
+  \ If no first page exists, _ca2 len2_ is an empty string.
+
+: ?first_page ( pid -- ca len )
+  dup first_page 2dup calculated_field?
+  if   2drop pid#>pid$ pid$>first
+  else rot drop
+  then ;
+  \ If field `first_page` of page _pid_ is calculated, calculate it
+  \ and return the result in string _ca len_; otherwise return the
+  \ field contents.
 
 \ ==============================================================
 \ Data manipulation
@@ -897,7 +931,7 @@ true value included_files_update_the_page_date?
 \ 'source>target_extension' renamed to
 \ 'source>current_target_extension'.  Fix: 'target_file' added the
 \ current target extension, not the target extension for the given
-\ page id. 
+\ page id.
 \
 \ 2014-11-08: Change: the 'plain_title' and 'plain_description' data
 \ fields are removed because 'unmarkup' (just implemented) makes them
@@ -969,6 +1003,9 @@ true value included_files_update_the_page_date?
 \
 \ 2018-09-28: Fix `pid$>next` with the `a_next_page` flag. Fix
 \ `?previous_page` and `?next_page`. Add `?upper_page`. Add
-\ `calculated_field?` and `default_calculated_field?`.
+\ `calculated_field?` and `default_calculated_field?`. Add
+\ `?first_page`. Improve documentation.
+\
+\ 2018-12-06: Add some debugging code.
 
 \ vim: filetype=gforth
