@@ -5,7 +5,7 @@
 
 \ This file creates the parser.
 
-\ Last modified 201812071537.
+\ Last modified 201812071612.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2017,2018 Marcos Cruz (programandala.net)
@@ -32,7 +32,9 @@
 forth_definitions
 
 require galope/minus-cell-bounds.fs   \ `-cell-bounds`
+require galope/n-temp-from.fs         \ 'ntemp>'
 require galope/n-to-r.fs              \ 'n>r'
+require galope/n-to-temp.fs           \ 'n>temp'
 require galope/n-r-from.fs            \ 'nr>'
 require galope/tilde-tilde.fs         \ '~~'
 
@@ -283,9 +285,9 @@ variable more?  \ flag: keep on parsing more words?; changed by '}content'
 
 true value whole_template?
   \ Can the whole template be interpreted as Forth code, without
-  \ previous splitting? This is experimental.
+  \ previous splitting? This is the new method.
   \
-  \ XXX UNDER DEVELOPMENT
+  \ XXX TMP -- Until the new method is fully tested.
 
 : template_file ( -- ca len )
   target_dir $@
@@ -306,7 +308,6 @@ true value whole_template?
 whole_template? [if]
 
   \ XXX NEW method
-  \ XXX UNDER DEVELOPMENT
   \
   \ Instead of dividing the template at the `{CONTENT}` string before
   \ evaluating each part (top and bottom), simply interpret it as Forth code
@@ -374,23 +375,6 @@ s" {CONTENT}" content_markup $!
 whole_template? [if]
 
   \ XXX NEW method
-  \ XXX UNDER DEVELOPMENT
-
-: n>tmp ( x[n] ... x[1] n -- a )
-  dup 1+ dup cells allocate throw dup >r
-  swap cells bounds ?do i ! cell +loop r> ;
-  \ Remove _n+1_ items from the  data stack and store them at _a_, which is the
-  \ address of a contiguous data space reserved by `allocate`. The address
-  \ pointed by _a_ contains _n_, the next cell contains _x[1]_ and so on.
-  \
-  \ The items can be retrieved later by `tmp>n`, which also frees the data space.
-
-: ntmp> ( a -- x[n] ... x[1] n )
-  dup >r
-  dup @ 1+ cells -cell-bounds ?do i @ [ cell negate ] literal +loop
-      r> free throw ;
-  \ Retrieved _n_ items stored at _a_, which were stored by `n>tmp`,  and also
-  \ free the data space pointed by _a_.
 
 variable }content?  \ flag: was '}content' executed?
 
@@ -399,7 +383,7 @@ variable page_input
   \ is saved.
 
 : (contents) ( -- )
-  page_input @ ntmp> restore-input
+  page_input @ ntemp> restore-input
   abort" The page input source could not be restored"
     \ restore the page input source, set by `(content{)`
   }content? off  parse_content
@@ -426,7 +410,7 @@ set-current
 : (content{) ( -- )
   opened_markups_off
   open_target
-  save-input n>tmp page_input !
+  save-input n>temp page_input !
   get_template evaluate_content 
   finish_the_target ;
   \ Evaluate the template.
@@ -684,8 +668,9 @@ set-current
 \
 \ 2018-12-06: Add some debugging code.
 \
-\ 2018-12-07: Add `whole_template?` as a compilation flag, and write the
-\ corresponding alternative method for templates. Write `n>tmp` and `ntmp>`,
-\ needed to preserve the output of `save-input`.
+\ 2018-12-07: Write the new method for templates: the template is interpreted
+\ and the new command `contents` inserts the page contents. The old method
+\ (splitting the template at the `{CONTENT}` string) can still be selected with
+\ `whole_template?`, but it will be removed eventually.
 
 \ vim: filetype=gforth
