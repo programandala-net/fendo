@@ -5,7 +5,7 @@
 
 \ This file creates the parser.
 
-\ Last modified 201812061925.
+\ Last modified 201812071537.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2017,2018 Marcos Cruz (programandala.net)
@@ -31,9 +31,10 @@
 
 forth_definitions
 
-require galope/n-to-r.fs  \ 'n>r'
-require galope/n-r-from.fs  \ 'nr>'
-require galope/tilde-tilde.fs  \ '~~'
+require galope/minus-cell-bounds.fs   \ `-cell-bounds`
+require galope/n-to-r.fs              \ 'n>r'
+require galope/n-r-from.fs            \ 'nr>'
+require galope/tilde-tilde.fs         \ '~~'
 
 fendo_definitions
 
@@ -280,9 +281,11 @@ variable more?  \ flag: keep on parsing more words?; changed by '}content'
 \ ==============================================================
 \ Design template
 
-\ XXX TODO An alternative method: instead of dividing the template by
-\ the '{CONTENT}' markup, it would be simpler to parse it and create a
-\ '{CONTENT}' word.
+true value whole_template?
+  \ Can the whole template be interpreted as Forth code, without
+  \ previous splitting? This is experimental.
+  \
+  \ XXX UNDER DEVELOPMENT
 
 : template_file ( -- ca len )
   target_dir $@
@@ -293,6 +296,31 @@ variable more?  \ flag: keep on parsing more words?; changed by '}content'
 \  ." template_file = " 2dup type cr  \ XXX INFORMER
   ;
   \ Return the full path to the template file.
+
+: get_template ( -- ca len )
+  template_file
+\  ." template in `get_template`:" 2dup type cr key drop \ XXX INFORMER
+  slurp-file ;
+  \ Return the template content.
+
+whole_template? [if]
+
+  \ XXX NEW method
+  \ XXX UNDER DEVELOPMENT
+  \
+  \ Instead of dividing the template at the `{CONTENT}` string before
+  \ evaluating each part (top and bottom), simply interpret it as Forth code
+  \ and create a `contents` word for providing the page contents.
+
+[else]
+
+  \ XXX OLD (current) method
+  \
+  \ The template is divided at the `{CONTENT}` string, and both parts (top and
+  \ bottom of the template) are evaluated apart, before and after the content.
+
+variable content_markup  \ markup that represents the page content in the template
+s" {CONTENT}" content_markup $!
 
 : template_halves ( ca1 len1 -- ca2 len2 ca3 len3 )
   content_markup $@ /sides 0=
@@ -314,12 +342,6 @@ variable more?  \ flag: keep on parsing more words?; changed by '}content'
   \ ca1 len1 = template content
   \ ca2 len2 = bottom half of the template content
 
-: get_template ( -- ca len )
-  template_file
-\  ." template in `get_template`:" 2dup type cr key drop \ XXX INFORMER
-  slurp-file ;
-  \ Return the template content.
-
 : template{ ( -- )
   get_template
 \  ." in `template{` after `get_template`" cr key drop \ XXX INFORMER
@@ -340,12 +362,118 @@ variable more?  \ flag: keep on parsing more words?; changed by '}content'
   \ Echo the bottom half of the current template,
   \ below the page content.
 
+[then]
+
 \ ==============================================================
 \ Markup
 
 : .sourcefilename ( -- )
   sourcefilename type cr ;
   \ Print the name of the currently parsed file.
+
+whole_template? [if]
+
+  \ XXX NEW method
+  \ XXX UNDER DEVELOPMENT
+
+: n>tmp ( x[n] ... x[1] n -- a )
+  dup 1+ dup cells allocate throw dup >r
+  swap cells bounds ?do i ! cell +loop r> ;
+  \ Remove _n+1_ items from the  data stack and store them at _a_, which is the
+  \ address of a contiguous data space reserved by `allocate`. The address
+  \ pointed by _a_ contains _n_, the next cell contains _x[1]_ and so on.
+  \
+  \ The items can be retrieved later by `tmp>n`, which also frees the data space.
+
+: ntmp> ( a -- x[n] ... x[1] n )
+  dup >r
+  dup @ 1+ cells -cell-bounds ?do i @ [ cell negate ] literal +loop
+      r> free throw ;
+  \ Retrieved _n_ items stored at _a_, which were stored by `n>tmp`,  and also
+  \ free the data space pointed by _a_.
+
+variable }content?  \ flag: was '}content' executed?
+
+variable page_input
+  \ Address in temporary data space where the output of `save-input`
+  \ is saved.
+
+: (contents) ( -- )
+  page_input @ ntmp> restore-input
+  abort" The page input source could not be restored"
+    \ restore the page input source, set by `(content{)`
+  }content? off  parse_content
+  }content? @ 0= abort" Missing '}content' at the end of the page" ;
+
+: contents ( -- )
+  save-input (contents) restore-input
+  abort" The template input source could not be restored" ;
+  \ Insert the page contents into the template, which is being interpreted.
+
+get-current markup>current
+
+: {CONTENT} ( -- ) contents ;
+  \ Mimic the old `{CONTENT}` markup.
+  \ XXX OLD 
+  \ XXX TODO -- deprecate
+
+set-current
+
+: finish_the_target ( -- )
+  close_pending close_target  more? off
+  only fendo>order forth>order ;
+
+: (content{) ( -- )
+  opened_markups_off
+  open_target
+  save-input n>tmp page_input !
+  get_template evaluate_content 
+  finish_the_target ;
+  \ Evaluate the template.
+
+: update_page? ( -- f )
+  current_page newer?  \ source newer than target?
+  dup 0= if  current_target_file type ."  is up to date" cr  then ;
+  \ Does the target of the current page have to be updated?
+
+false value updating?  \ XXX TODO document
+
+: do_page? ( -- f )
+  false  \ don't do it, by default
+  do_content? @ 0= ?exit
+  current_page draft? ?exit
+  updating? if  drop update_page?  else  0=  then ;
+
+: skip_page ( -- )
+  \eof do_content? on ;
+  \ No target page must be created: Skip the current source page and
+  \ restore the default value of `do_content?` for the next page.
+
+: empty_stack ( -- )
+  depth abort" Stack not empty" ;
+
+: content{ ( "text }content" -- )
+  do_page? if   empty_stack .sourcefilename (content{)
+           else skip_page then ;
+  \ Parse and store the the page content, if needed,
+  \ for later usage by `{CONTENT}`.
+
+get-current markup>current
+
+: }content ( -- )
+\ cr .s cr ." start of }content " \ XXX INFORMER
+\  do_content? on  \ default value for the next page  \ XXX OLD
+  }content? on
+\  .s cr ." end of }content" cr  \ XXX INFORMER
+\  ." `argc` in `}content`= " argc ? cr  \ XXX INFORMER
+  ;
+  \ Finish the page content.
+
+set-current
+
+[else]
+
+  \ XXX OLD method
 
 variable }content?  \ flag: was '}content' executed?
 
@@ -425,6 +553,8 @@ get-current markup>current
 
 set-current
 
+[then]
+
 .( fendo.parser.fs compiled ) cr
 
 \ ==============================================================
@@ -434,25 +564,22 @@ set-current
 \
 \ 2013-05-18: New: parser; 'skip_content{'.
 \
-\ 2013-06-01: New: parser rewritten from scratch. Management of empty
-\ names and empty lines.
+\ 2013-06-01: New: parser rewritten from scratch. Management of empty names and
+\ empty lines.
 \
-\ 2013-06-02: New: counters for both types of elements (markups and
-\ printable words); required in order to separate words.
+\ 2013-06-02: New: counters for both types of elements (markups and printable
+\ words); required in order to separate words.
 \
 \ 2013-06-04: Fix: lists were not properly closed by an empty space.
 \
-\ 2013-06-05: Fix: 'markup' now uses a name token; this was required
-\ in order to define '~', a markup that parses the next name is the
-\ source.
+\ 2013-06-05: Fix: 'markup' now uses a name token; this was required in order
+\ to define '~', a markup that parses the next name is the source.
 \
-\ 2013-06-05: New: '#parsed', required for implementing the table
-\ markup.
+\ 2013-06-05: New: '#parsed', required for implementing the table markup.
 \
 \ 2013-06-05: Change: clearer code for closing the pending markups.
 \
-\ 2013-06-06: Change: renamed from "fendo_content.fs" to
-\ "fendo_parser.fs".
+\ 2013-06-06: Change: renamed from "fendo_content.fs" to "fendo_parser.fs".
 \
 \ 2013-06-06: New: template implemented.
 \
@@ -462,105 +589,103 @@ set-current
 \
 \ 2013-06-08: New: first implementation of target directories.
 \
-\ 2013-06-11: Fix: the target file is opened and closed depending on
-\ the 'dry?' config variable.
+\ 2013-06-11: Fix: the target file is opened and closed depending on the 'dry?'
+\ config variable.
 \
 \ 2013-06-11: Fix: typo in comment of 'template_halves'.
 \
-\ 2013-06-16: Change: The parser has been rewritten; now
-\ 'search-wordlist' is used instead of 'parse-name' and 'find-name';
-\ this was needed to avoid matches in the Root wordlist.
+\ 2013-06-16: Change: The parser has been rewritten; now 'search-wordlist' is
+\ used instead of 'parse-name' and 'find-name'; this was needed to avoid
+\ matches in the Root wordlist.
 \
-\ 2013-06-16: Fix: Now '}content' toggles the parsing off and sets the
-\ normal wordlist order.
+\ 2013-06-16: Fix: Now '}content' toggles the parsing off and sets the normal
+\ wordlist order.
 \
-\ 2013-06-23: Change: design and template variables are renamed after
-\ the changes in the config module.
+\ 2013-06-23: Change: design and template variables are renamed after the
+\ changes in the config module.
 \
-\ 2013-06-28: Change: '$@' is no longer required by metadata fields,
-\ after Fendo A-01.
+\ 2013-06-28: Change: '$@' is no longer required by metadata fields, after
+\ Fendo A-01.
 \
-\ 2013-07-03: Change: 'dry?' renamed to 'echo>screen?', after the
-\ changes in the echo module.
+\ 2013-07-03: Change: 'dry?' renamed to 'echo>screen?', after the changes in
+\ the echo module.
 \
-\ 2013-07-03: Change: words that check the current echo have been
-\ renamed, after the  changes in the echo module.
+\ 2013-07-03: Change: words that check the current echo have been renamed,
+\ after the  changes in the echo module.
 \
-\ 2013-07-28: New: 'parse_link_text' moved here from
-\ <fendo_markup_wiki.fs>.
+\ 2013-07-28: New: 'parse_link_text' moved here from <fendo_markup_wiki.fs>.
 \
-\ 2013-07-28: Fix: old '[previous]' changed to '[markup<order]'; this
-\ was the reason the so many wordlists remained in the search order.
+\ 2013-07-28: Fix: old '[previous]' changed to '[markup<order]'; this was the
+\ reason the so many wordlists remained in the search order.
 \
-\ 2013-08-10: Fix: wrong exit flags in 'parsed_link_text' caused only
-\ the first word was parsed.
+\ 2013-08-10: Fix: wrong exit flags in 'parsed_link_text' caused only the first
+\ word was parsed.
 \
 \ 2013-08-10: Fix: the alternative attributes set was needed in
-\ 'parsed_link_text', to preserve the current attributes already used
-\ for the <a> tag.
+\ 'parsed_link_text', to preserve the current attributes already used for the
+\ <a> tag.
 \
 \ 2013-08-10: Change: 'parse_string' renamed to 'evaluate_content'.
 \
 \ 2013-08-14: Fix: '#nothings off' was needed at the end of
-\ '(evaluate_content)'. Otherwise '#nothings' activated
-\ 'close_pending' before expected, e.g. this happened when a link was
-\ at the end of a line.
+\ '(evaluate_content)'. Otherwise '#nothings' activated 'close_pending' before
+\ expected, e.g. this happened when a link was at the end of a line.
 \
 \ 2013-09-06: New: 'do_page?'.
 \
-\ 2013-09-06: Fix: 'content{' doesn't call 'skip_content' anymore but
-\ '\eof'; the reason is 'skip_content' parsed until "}content" was
-\ found, what was wrong when this word was mentioned in the content
-\ itself! That happened in one page and was hard to solve. It's
-\ simpler to ignore the whole file. 'skip_content' has been removed.
+\ 2013-09-06: Fix: 'content{' doesn't call 'skip_content' anymore but '\eof';
+\ the reason is 'skip_content' parsed until "}content" was found, what was
+\ wrong when this word was mentioned in the content itself! That happened in
+\ one page and was hard to solve. It's simpler to ignore the whole file.
+\ 'skip_content' has been removed.
 \
 \ 2013-09-29: New: '}content?' flag is used to check if '}content' was
 \ executed; this way some markup errors can be detected.
 \
 \ 2013-12-06: New: 'opened_markups_off' in '(content{)'.
 \
-\ 2014-03-09: New: 'parsed$' keeps the string in 'something'; required
-\ by the new way the heading wiki markups work.
+\ 2014-03-09: New: 'parsed$' keeps the string in 'something'; required by the
+\ new way the heading wiki markups work.
 \
-\ 2014-06-04: Change: 'close_pending_list' restored. It was commented
-\ out, but it's necessary.
+\ 2014-06-04: Change: 'close_pending_list' restored. It was commented out, but
+\ it's necessary.
 \
-\ 2014-06-15: Fix: The new flag 'evaluate_the_markup?' (temporarily
-\ turned off in 'parsed_link_text) fixes the following problem: link
-\ texts were rendered twice: during parsing and during echoing. For
-\ example, this caused an abbr macro was recognized and executed
-\ during parsing, and then another abbr macro inside the title
-\ attribute of the first abbr was recognized and executed as well,
-\ what ruined the HTML.  But the fix causes a new problem: images
-\ inside link texts crash. The solution was to make the evaluation
-\ optional at the higher level, in <fendo.links.fs>, as follows:
+\ 2014-06-15: Fix: The new flag 'evaluate_the_markup?' (temporarily turned off
+\ in 'parsed_link_text) fixes the following problem: link texts were rendered
+\ twice: during parsing and during echoing. For example, this caused an abbr
+\ macro was recognized and executed during parsing, and then another abbr macro
+\ inside the title attribute of the first abbr was recognized and executed as
+\ well, what ruined the HTML.  But the fix causes a new problem: images inside
+\ link texts crash. The solution was to make the evaluation optional at the
+\ higher level, in <fendo.links.fs>, as follows:
 \
-\ 2014-06-15: Fix: repeated evaluation of link texts is solved with
-\ the new 'link_text_already_evaluated?' flag, defined and checked in
-\ <fendo.links.fs>.
+\ 2014-06-15: Fix: repeated evaluation of link texts is solved with the new
+\ 'link_text_already_evaluated?' flag, defined and checked in <fendo.links.fs>.
 \
-\ 2014-11-09: Old code that was not used or commented out has been
-\ removed.
+\ 2014-11-09: Old code that was not used or commented out has been removed.
 \
-\ 2014-11-09: Fix: Now '(evaluate_content)' saves and restores the
-\ HTML attributes.
+\ 2014-11-09: Fix: Now '(evaluate_content)' saves and restores the HTML
+\ attributes.
 \
-\ 2014-11-17: Fix: Now '(evaluate_content)' deletes the HTML
-\ attributes after saving them, and preserves 'separate?'.
+\ 2014-11-17: Fix: Now '(evaluate_content)' deletes the HTML attributes after
+\ saving them, and preserves 'separate?'.
 \
-\ 2014-12-06: Change: 'empty_stack' is factored out from
-\ '.sourcefilename'.
+\ 2014-12-06: Change: 'empty_stack' is factored out from '.sourcefilename'.
 \
 \ 2015-02-01: Improvement: 'do_page?' uses 'newer?'.
 \
 \ 2015-02-02: New: 'update_page?'; improved 'do_page?'.
 \
 \ 2015-09-26: Commented out (not deleted yet, just in case)
-\ `close_pending_table`, because the new table format (from
-\ Asciidoctor) makes it unnecessary.
+\ `close_pending_table`, because the new table format (from Asciidoctor) makes
+\ it unnecessary.
 \
 \ 2017-06-22: Update source style, layout and header.
 \
 \ 2018-12-06: Add some debugging code.
+\
+\ 2018-12-07: Add `whole_template?` as a compilation flag, and write the
+\ corresponding alternative method for templates. Write `n>tmp` and `ntmp>`,
+\ needed to preserve the output of `save-input`.
 
 \ vim: filetype=gforth
