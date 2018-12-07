@@ -33,7 +33,7 @@
 \ simpler.
 \
 \ `|===` marks the table block. `|` starts a cell, `|=` starts a
-\ header cell. `=|=` surround the caption and must be the before any
+\ header cell. `=|=` surrounds the caption and must be the before any
 \ row.  Optional closing `|` is allowed and ignored at the end of the
 \ row.
 \
@@ -122,5 +122,7 @@ fendo_definitions
 \ accordingly. Added the markup description and example.
 \
 \ 2017-06-22: Update source style, layout and header.
+\
+\ 2018-12-07: Fix typo.
 
 \ vim: filetype=gforth

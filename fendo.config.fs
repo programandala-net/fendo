@@ -5,10 +5,10 @@
 
 \ This file setups the default configuration.
 
-\ Last modified 20170622.
+\ Last modified 201812071303.
 \ See change log at the end of the file.
 
-\ Copyright (C) 2013,2014,2015,2017 Marcos Cruz (programandala.net)
+\ Copyright (C) 2013,2014,2015,2017,2018 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute it and/or modify it
 \ under the terms of the GNU General Public License as published by
@@ -74,9 +74,6 @@ s" designs/basic_minimal/" website_design_subdir $!
 variable website_template  \ filename of the default HTML template
 s" index.html" website_template $!
 
-variable content_markup  \ markup that represents the page content in the template
-s" {CONTENT}" content_markup $!
-
 \ ------------------------------
 \ Target HTML
 
@@ -122,5 +119,8 @@ defer site_author
 \ 2015-02-11: Code reorganized.
 \
 \ 2017-06-22: Update source style, layout and header.
+\
+\ 2018-12-07: Move `{CONTENT}` to <fendo.parser.fs> in order to
+\ prepare the alternative method for templates.
 
 \ vim: filetype=gforth

@@ -509,5 +509,6 @@ commented out from <fendo.addon.asciidoctor.fs>.
 
 == 2018-12-07
 
-- Write the alternative method for templates. See `whole_template?` in
-  <fendo.parser.fs>.
+- Deprecate the old `{CONTENT}` markup (defined in <fendo.parser.fs>) and
+  replace it with `<[ contents ]>`, after the new method has been fully tested.
+
