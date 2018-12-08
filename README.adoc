@@ -5,6 +5,10 @@
 // This file is part of Fendo
 // http://programandala.net/en.program.fendo.html
 
+// Last modified 201812071651
+
+// tag::description[]
+
 == Description
 
 Fendo is a website engine under development, designed to build static
@@ -17,7 +21,11 @@ Home page: http://programandala.net/en.program.fendo.html
 
 Documentation is still missing.
 
-== Motivation, history and current status
+// end::description[]
+
+// tag::history[]
+
+== Motivation and history
 
 The development of Fendo started in 2012, in order to replace two
 previous similar applications written by the author (one of them
@@ -31,5 +39,13 @@ On 2017-02-08, a local Git repository was created from development
 backups, in order to resume the development and prepare the first
 public release.
 
+// end::history[]
+
+// tag::status[]
+
+== Current status
+
 Fendo is very stable and is regulary improved, after the requirements
 of the website.
+
+// end::status[]
