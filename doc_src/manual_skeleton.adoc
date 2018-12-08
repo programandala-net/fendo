@@ -1,0 +1,26 @@
+= Fendo %VERSION%
+:author: Marcos Cruz (programandala.net)
+:revdate: 2018-12-07
+:toc:
+:toclevels: 1
+:toc-placement!:
+:linkattrs:
+
+// Last modified 201812071657
+
+toc::[]
+
+// =============================================================
+
+include::../README.adoc[tags=description]
+include::../README.adoc[tags=history]
+include::../README.adoc[tags=status]
+
+// XXX TODO --
+// include::../README.adoc[tags=name]
+
+// =============================================================
+
+== Glossary
+
+
