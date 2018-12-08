@@ -5,10 +5,10 @@
 
 \ This file is the addon that creates numbered content lists.
 
-\ Last modified 20170622.
+\ Last modified 201812081823.
 \ See change log at the end of the file.
 
-\ Copyright (C) 2013,2014,2017 Marcos Cruz (programandala.net)
+\ Copyright (C) 2013,2014,2017,2018 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute it and/or modify it
 \ under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@ require ./fendo.addon.lioc_by_regex.fs
 : oloc_by_regex ( ca len -- )
   [<ol>] lioc_by_regex [</ol>] ;
   \ Create an ordered (numbered) list of content
-  \ with pages whose pid matches the given regex.
+  \ with pages whose page ID matches the given regex.
 
 .( fendo.addon.oloc_by_regex.fs compiled) cr
 
@@ -41,7 +41,11 @@ require ./fendo.addon.lioc_by_regex.fs
 \ Change log
 
 \ 2013-11-26: Start.
+\
 \ 2014-03-02: Renamed and modified after the other related addons.
+\
 \ 2017-06-22: Update source style, layout and header.
+\
+\ 2018-12-08: Update notation of page IDs in comments and strings.
 
 \ vim: filetype=gforth

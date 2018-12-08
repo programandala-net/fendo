@@ -5,10 +5,10 @@
 
 \ This file provides two words to compile a temporary regex.
 
-\ Last modified 201809271539.
+\ Last modified 201812081823.
 \ See change log at the end of the file.
 
-\ Copyright (C) 2013,2014,2017 Marcos Cruz (programandala.net)
+\ Copyright (C) 2013,2014,2017,2018 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute it and/or modify it
 \ under the terms of the GNU General Public License as published by
@@ -60,8 +60,13 @@ end-package
 \ Change log
 
 \ 2013-11-26: Start.
+\
 \ 2014-03-02: Simplified. Renamed. Generalized.
+\
 \ 2017-06-22: Update source style, layout and header.
+\
 \ 2018-09-27: Use `package` instead of `module:`.
+\
+\ 2018-12-08: Update notation of page IDs in comments and strings.
 
 \ vim: filetype=gforth

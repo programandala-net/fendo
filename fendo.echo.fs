@@ -5,10 +5,10 @@
 
 \ This file defines the words that print to the target HTML file.
 
-\ Last modified 201812080157.
+\ Last modified 201812081823.
 \ See change log at the end of the file.
 
-\ Copyright (C) 2013,2014,2017 Marcos Cruz (programandala.net)
+\ Copyright (C) 2013,2014,2017,2018 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute
 \ it and/or modify it under the terms of the GNU General
@@ -83,7 +83,7 @@ echo>file
 \ ==============================================================
 \ Echo
 
-variable target_fid  \ file id of the HTML target page
+variable target_fid  \ file ID of the HTML target page
 
 : (echo) ( xt | ca len xt -- )
   echo>screen?
@@ -204,5 +204,7 @@ false value compact_html?  \ if true, no carriage return is created
 \ 2017-06-22: Update source style, layout and header.
 \
 \ 2018-12-08: Update notation of Forth words in comments and strings.
+\
+\ 2018-12-08: Update notation of page IDs in comments and strings.
 
 \ vim: filetype=gforth

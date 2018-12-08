@@ -5,7 +5,7 @@
 
 \ This file provides the tools to create the user macros.
 
-\ Last modified 20170622.
+\ Last modified 201812081839.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2014,2017 Marcos Cruz (programandala.net)
@@ -46,7 +46,9 @@
 \ Change log
 
 \ 2014-02-05: Start, based on <addons/abbr.fs>.
+\
 \ 2014-11-18: Comment modified.
+\
 \ 2017-06-22: Update source style, layout and header.
 
 \ vim: filetype=gforth

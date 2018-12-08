@@ -7,10 +7,10 @@
 
 \ This file provides tag clouds by a page-id prefix.
 
-\ Last modified 201812080157.
+\ Last modified 201812081823.
 \ See change log at the end of the file.
 
-\ Copyright (C) 2014,2017 Marcos Cruz (programandala.net)
+\ Copyright (C) 2014,2017,2018 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute it and/or modify it
 \ under the terms of the GNU General Public License as published by
@@ -68,15 +68,15 @@ variable pages
 : count_tags ( ca len -- )
 \  ." count_tags " 2dup type cr  \ XXX INFORMER
   pid$>data>pid# tags evaluate_tags ;
-  \ ca len = pid
+  \ ca len = page ID
 
 0 [if]  \ XXX TODO
 
 : count_tags_by_regex ( ca len -- f )
   2dup regex rgx-wcmatch? ?count_tags true ;
-  \ Increas the count of tags that are in pages whose pid
+  \ Increas the count of tags that are in pages whose page ID
   \ matches the current regex. 
-  \ ca len = pid
+  \ ca len = page ID
   \ f = continue with the next element?
 
 [then]
@@ -86,12 +86,12 @@ variable prefix$
 \  ." count_tags_by_prefix " 2dup type cr  \ XXX INFORMER
   pid pid$>data>pid# draft? ?exit
   pid prefix$ $@ string-prefix? if  pid count_tags  then ;
-  \ Increase the count of tags that are in pages whose pid
+  \ Increase the count of tags that are in pages whose page ID
   \ matches the current regex. 
 
 : count_tags_by_prefix ( ca len -- f )
   (count_tags_by_prefix) true ;
-  \ ca len = pid
+  \ ca len = page ID
 
 : init_tags ( xt -- min max)
 \  ." init_tags" cr  \ XXX INFORMER
@@ -176,7 +176,7 @@ public
 : tag_cloud_by_regex ( ca len -- )
   >regex  ['] count_tags_by_regex do_tag_cloud ;
   \ Create a tag cloud
-  \ with pages whose pid matches the given regex.
+  \ with pages whose page ID matches the given regex.
 
 [then]
 
@@ -187,7 +187,7 @@ public
   pages !  prefix$ $!
   ['] count_tags_by_prefix do_tag_cloud ;
   \ Create a tag cloud
-  \ with pages whose pid matches the given prefix.
+  \ with pages whose page ID matches the given prefix.
 
 end-package
 
@@ -204,5 +204,7 @@ end-package
 \ 2018-09-27: Use `package` instead of `module:`.
 \
 \ 2018-12-08: Update notation of Forth words in comments and strings.
+\
+\ 2018-12-08: Update notation of page IDs in comments and strings.
 
 \ vim: filetype=gforth

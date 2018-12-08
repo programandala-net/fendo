@@ -5,10 +5,10 @@
 
 \ This file is the addon that creates unnumbered content lists.
 
-\ Last modified 20170622.
+\ Last modified 201812081823.
 \ See change log at the end of the file.
 
-\ Copyright (C) 2013,2014,2017 Marcos Cruz (programandala.net)
+\ Copyright (C) 2013,2014,2017,2018 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute it and/or modify it
 \ under the terms of the GNU General Public License as published by
@@ -37,8 +37,8 @@ fendo_definitions
 : uloc_by_prefix_and_level ( ca len n -- )
   [<ul>] lioc_by_prefix_and_level [</ul>] ;
   \ Create an unnumbered list of content
-  \ with pages whose pid starts with the given prefix and level.
-  \ ca len = pid prefix
+  \ with pages whose page ID starts with the given prefix and level.
+  \ ca len = page ID prefix
   \ n = page hierarchical level (0 is the top)
 
 .( fendo.addon.uloc_by_prefix_and_level.fs compiled) cr
@@ -47,6 +47,9 @@ fendo_definitions
 \ Change log
 
 \ 2014-11-18: Created, based on <fendo.addon.uloc_by_prefix.fs>.
+\
 \ 2017-06-22: Update source style, layout and header.
+\
+\ 2018-12-08: Update notation of page IDs in comments and strings.
 
 \ vim: filetype=gforth

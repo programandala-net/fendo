@@ -5,10 +5,10 @@
 
 \ This file provides a word that is needed by other addons.
 
-\ Last modified 201812080157.
+\ Last modified 201812081823.
 \ See change log at the end of the file.
 
-\ Copyright (C) 2013,2014,2017 Marcos Cruz (programandala.net)
+\ Copyright (C) 2013,2014,2017,2018 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute it and/or modify it
 \ under the terms of the GNU General Public License as published by
@@ -42,13 +42,13 @@
 \  ." href= (3) " href=@ type cr  \ XXX INFORMER
 \  ." content to evaluate = " 2dup type cr key drop  \ XXX INFORMER
   evaluate_content [</dd>] ;
-  \ Create an element of a definition list for the given pid.
-  \ ca len = pid
+  \ Create an element of a definition list for the given page ID.
+  \ ca len = page ID
 
 : ?dtddoc ( ca len f -- )
   if  dtddoc  else  2drop  then ;
-  \ Create an element of a definition list for the given pid, if needed.
-  \ ca len = pid
+  \ Create an element of a definition list for the given page ID, if needed.
+  \ ca len = page ID
 
 .( fendo.addon.dtddoc.fs compiled) cr
 
@@ -65,5 +65,7 @@
 \ 2017-06-22: Update source style, layout and header.
 \
 \ 2018-12-08: Update notation of Forth words in comments and strings.
+\
+\ 2018-12-08: Update notation of page IDs in comments and strings.
 
 \ vim: filetype=gforth

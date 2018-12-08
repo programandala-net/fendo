@@ -5,7 +5,7 @@
 
 \ This file is the code common to several content lists addons.
 
-\ Last modified 201809271749.
+\ Last modified 201812081823.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2014,2017,2018 Marcos Cruz (programandala.net)
@@ -51,12 +51,12 @@ variable level
   pid$ pid$>level level @ <>       ?exit
   pid$ pid$>data>pid# draft?       ?exit
   pid$ dtddoc ;
-  \ Create a description list of content if the given pid starts with
+  \ Create a description list of content if the given page ID starts with
   \ the current prefix and has the current level.
 
 : (dloc_by_prefix_and_level) ( ca len -- f )
   ((dloc_by_prefix_and_level)) true ;
-  \ ca len = pid
+  \ ca len = page ID
   \ f = continue with the next element?
 
 public
@@ -64,7 +64,7 @@ public
 : dloc_by_prefix_and_level ( ca len n -- )
   level ! prefix $!
   [<dl>] ['] (dloc_by_prefix_and_level) traverse_pids [</dl>] ;
-  \ Create a description list of content with pages whose pid has
+  \ Create a description list of content with pages whose page ID has
   \ prefix _ca len_ and level _n_
 
 end-package
@@ -80,5 +80,7 @@ end-package
 \
 \ 2018-09-27: Use `package` instead of `module:`. Improve local
 \ variable name and documentation.
+\
+\ 2018-12-08: Update notation of page IDs in comments and strings.
 
 \ vim: filetype=gforth

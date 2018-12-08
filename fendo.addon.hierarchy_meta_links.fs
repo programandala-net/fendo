@@ -5,7 +5,7 @@
 
 \ This file is the hierarchy meta links addon.
 
-\ Last modified 201812080157.
+\ Last modified 201812081823.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2015,2017,2018 Marcos Cruz (programandala.net)
@@ -42,9 +42,9 @@
 \   ." Stack at the end of `proper_hierarchical_link? : " .s cr \ XXX INFORMER
 \   key drop \ XXX INFORMER
     ;
-  \ If page id _ca len_ is a proper hierarchical link (i.e., not a
+  \ If page ID _ca len_ is a proper hierarchical link (i.e., not a
   \ draft page), _f_ is true and _ca' len'_ is its equivalent
-  \ unshortcut page id; otherwise _f_ is false and _ca' len'_ is
+  \ unshortcut page ID; otherwise _f_ is false and _ca' len'_ is
   \ unimportant.
   \
   \ This check is required in order to bypass the default behaviour of
@@ -66,7 +66,7 @@
   ?hreflang=!  s" text/html" type=!
   [<link/>] ;
   \ Create a hierarchy meta link in the HTML header.
-  \ ca1 len1 = page id
+  \ ca1 len1 = page ID
   \ ca2 len2 = rel
 
 : hierarchy_meta_link ( ca1 len1 ca2 len2 -- )
@@ -79,7 +79,7 @@
   if  2swap (hierarchy_meta_link)  else  2drop 2drop  then ;
   \ Create a hierarchy meta link in the HTML header, if needed.
   \ ca1 len1 = rel
-  \ ca2 len2 = page id
+  \ ca2 len2 = page ID
 
 : hierarchy_meta_links ( -- )
 \  s" up" current_page upper_page hierarchy_meta_link
@@ -102,7 +102,7 @@
 \ 2013-10-27 Change: `hierarchy_meta_link` simplified.
 \
 \ 2013-11-26 Change: several words renamed, after a new uniform
-\ notation: "pid$" and "pid#" for both types of page ids.
+\ notation: "pid$" and "pid#" for both types of page IDs.
 \
 \ 2014-11-08: Change: `unmarkup` (just implemented) is used instead of
 \ hard-coded plain text versions of some data fields.
@@ -138,5 +138,7 @@
 \ `next_page` with `?next_page`.
 \
 \ 2018-12-08: Update notation of Forth words in comments and strings.
+\
+\ 2018-12-08: Update notation of page IDs in comments and strings.
 
 \ vim: filetype=gforth

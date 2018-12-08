@@ -13,7 +13,7 @@
 \   es.sección.subsección.html
 \   eo.fako.subfako.html
 
-\ Last modified 201812080157.
+\ Last modified 201812081823.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2017,2018 Marcos Cruz (programandala.net)
@@ -80,7 +80,7 @@ true to multilingual?
 : lang_prefix ( ca1 len1 -- ca2 len2 )
   [char] . c/string ;
   \ Get the ISO language code from the first part of a source page file.
-  \ ca1 len1 = page id
+  \ ca1 len1 = page ID
   \ ca2 len2 = ISO language code
 
 : pid#>lang$ { page_id -- ca len }
@@ -97,17 +97,17 @@ true to multilingual?
 
 : pid#>lang# ( a -- n )
   pid#>lang$ s" _language" s+ fendo>order evaluate fendo<order ;
-  \ Return the language number of the given page id.
+  \ Return the language number of the given page ID.
   \ This number is used as an offset, e.g. for multilingual
   \ texts.
-  \ a = page id
+  \ a = page ID
 
 : pid$>lang# ( ca len -- n )
   pid$>data>pid# pid#>lang#  ;
-  \ Return the language number of the given page id.
+  \ Return the language number of the given page ID.
   \ This number is used as an offset, e.g. for multilingual
   \ texts.
-  \ ca len = page id
+  \ ca len = page ID
 
 : current_lang# ( -- n )
   current_page dup if  pid#>lang#  then  \ XXX TMP? for testing
@@ -175,7 +175,7 @@ true to multilingual?
 \
 \ 2013-12-01: Change: several renamings.
 \
-\ 2014-02-04: Change: `current_lang#` returns 0 even if no pid is set;
+\ 2014-02-04: Change: `current_lang#` returns 0 even if no page ID is set;
 \ this is useful for testing the localization strings.
 \
 \ 2014-02-22: Change: all "l10n$" renamed to "l10n-str" in names.
@@ -198,5 +198,7 @@ true to multilingual?
 \ 2018-12-06: Improve documentation.
 \
 \ 2018-12-08: Update notation of Forth words in comments and strings.
+\
+\ 2018-12-08: Update notation of page IDs in comments and strings.
 
 \ vim: filetype=gforth

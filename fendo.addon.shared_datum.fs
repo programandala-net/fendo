@@ -9,10 +9,10 @@
 \ XXX NOT FINISHED -- Even not started! -- This could be a general
 \ layer below <fendo.addon.project.fs>.
 
-\ Last modified 20170622.
+\ Last modified 201812081823.
 \ See change log at the end of the file.
 
-\ Copyright (C) 2015,2017 Marcos Cruz (programandala.net)
+\ Copyright (C) 2015,2017,2018 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute it and/or modify it
 \ under the terms of the GNU General Public License as published by
@@ -41,6 +41,9 @@
 \ Change log
 
 \ 2015-02-02 Start.
+\
 \ 2017-06-22: Update source style, layout and header.
+\
+\ 2018-12-08: Update notation of page IDs in comments and strings.
 
 \ vim: filetype=gforth

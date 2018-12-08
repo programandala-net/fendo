@@ -5,10 +5,10 @@
 
 \ This file is the main one; it loads all the modules.
 
-\ Last modified 201812080157.
+\ Last modified 201812081823.
 \ See change log at the end of the file.
 
-\ Copyright (C) 2012,2013,2014,2015,2017 Marcos Cruz (programandala.net)
+\ Copyright (C) 2012,2013,2014,2015,2017,2018 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute it and/or modify it
 \ under the terms of the GNU General Public License as published by
@@ -130,7 +130,7 @@ table constant fendo_markup_html_entities_wid  \ HTML entities
 table constant fendo_markup_macros_wid  \ user macros
 wordlist constant fendo_markup_wid  \ markup, except HTML entities and user macros
 wordlist constant fendo_wid  \ program, except markup and HTML entities
-wordlist constant fendo_pid_wid  \ page ids
+wordlist constant fendo_pid_wid  \ page IDs
 
 : forth>current ( -- )
   forth-wordlist set-current ;
@@ -302,5 +302,9 @@ depth [if] abort [then]  \ XXX DEBUGGING
 \ and use Gforth's `basename` instead.
 \
 \ 2018-12-08: Update notation of Forth words in comments and strings.
+\
+\ 2018-12-08: Update notation of page IDs in comments and strings.
+\
+\ 2018-12-08: Update notation of page IDs in comments and strings.
 
 \ vim: filetype=gforth

@@ -5,7 +5,7 @@
 
 \ This file defines the page data tools.
 
-\ Last modified 201812080157.
+\ Last modified 201812081823.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2015,2017,2018 Marcos Cruz (programandala.net)
@@ -140,7 +140,7 @@ datum: file_modified  \ file modification date; if not specified, `modified` is 
 
 datum: access_key  \ access key (one char)
 
-\ Hierarchy data, indicated with a page id (a page name):
+\ Hierarchy data, indicated with a page ID (a page name):
 datum: upper_page
 datum: previous_page
 datum: next_page
@@ -148,11 +148,11 @@ datum: first_page
 datum: last_page
 
 datum: keywords  \ list of HTML meta keywords, separated by commas
-datum: tags  \ list of tag ids, separated by spaces
+datum: tags  \ list of tag IDs, separated by spaces
 datum: properties  \ list of properties, separated by commas
 datum: edit_summary  \ description of the latest changes
 
-datum: related  \ list of page ids, separated by commas
+datum: related  \ list of page IDs, separated by commas
 
 datum: filename_extension  \ alternative target filename extension (with dot)
 
@@ -169,7 +169,7 @@ datum: template  \ HTML template filename in the design subdir
 \ ==============================================================
 \ File names
 
-0 value current_page  \ page id of the current page
+0 value current_page  \ page ID of the current page
 
 : target_extension ( pid -- ca len )
   filename_extension dup 0=
@@ -199,9 +199,9 @@ datum: template  \ HTML template filename in the design subdir
 
 : pid#>pid$ ( a -- ca len )
   source_file -forth_extension ;
-  \ Convert a numerical page id to its string form.
-  \ a = page id
-  \ ca len = page id
+  \ Convert a numerical page ID to its string form.
+  \ a = page ID
+  \ ca len = page ID
 
 : target_file ( a -- ca len )
 \   ." `link_anchor` in `target_file` = " link_anchor $@ type cr  \ XXX INFORMER
@@ -210,7 +210,7 @@ datum: template  \ HTML template filename in the design subdir
 \   ." Result in `target_file` = " 2dup type cr  \ XXX INFORMER
   ;
   \ Return a target HTML page filename.
-  \ a = page id
+  \ a = page ID
   \ ca len = target HTML page file name
 
 : current_target_file ( -- ca len )
@@ -244,22 +244,22 @@ datum: template  \ HTML template filename in the design subdir
 \  2dup type cr  \ XXX INFORMER
   ;
   \ Return a target HTML page filename, with its local path.
-  \ a = page id
+  \ a = page ID
   \ ca len = target HTML page file name, with its local path
 
 \ ==============================================================
-\ Page id
+\ Page ID
 
 \ The first time a page is interpreted, its data is parsed and
 \ created (even if the content doesn't has to be parsered, e.g.
 \ when the data has been required by other page).  Then a
-\ page id is created: it's the source filename without path
-\ or extension. The execution of the page id returns the address of
+\ page ID is created: it's the source filename without path
+\ or extension. The execution of the page ID returns the address of
 \ the page data.
 
 : current_pid$ ( -- ca len )
   /sourcefilename -extension ;
-  \ Return the name of the current page id.
+  \ Return the name of the current page ID.
   \ XXX TODO -- combine with `current_page_pid$`?
 
 : known_pid$? ( ca len -- 0 | xt +-1 )
@@ -273,54 +273,54 @@ datum: template  \ HTML template filename in the design subdir
   get-current >r  fendo_pid_wid set-current
   :create new_page_data_space
   r> set-current ;
-  \ Create a new page id and its data space.
+  \ Create a new page ID and its data space.
 
 : :pid ( -- )
-  \ Create the current page id and its data space, if needed.
+  \ Create the current page ID and its data space, if needed.
   current_pid$ 2dup known_pid$?
   if  drop 2drop  else  (:pid)  then ;
 
 : pid$>pid# ( ca len -- a | false )
   known_pid$? if  execute  else  false  then ;
-  \ Convert a string page id to its numerical form,
-  \ or return false if the page id is unknown.
-  \ ca len = page id
-  \ a = page id
+  \ Convert a string page ID to its numerical form,
+  \ or return false if the page ID is unknown.
+  \ ca len = page ID
+  \ a = page ID
 
 : current_page_pid$ ( -- ca len )
   current_page pid#>pid$
 \  current_page ?dup if  pid#>pid$  else  pad 0  then
   ;
-  \ Return the string page id of the current page,
+  \ Return the string page ID of the current page,
   \ XXX TODO -- combine with `current_pid$`?
   \ XXX TODO `current_page` can be zero during debugging tasks,
   \ for example while using `echo>screen` to check the
   \ engine without files. But this alternative creates new
-  \ problems because of the empty pid:
-  \ ca len = page id or empty string
+  \ problems because of the empty page ID:
+  \ ca len = page ID or empty string
 
 : descendant? ( ca1 len1 ca2 len2 -- f )
   s" ." s+ 2swap s" ." s+  \
   { D: descendant D: ancestor }
 \  descendant ancestor str= ?dup if  0= exit  then  \ XXX OLD
   descendant ancestor string-prefix? ;
-  \ Is the page whose id is _ca2 len2_ a descendant of the page whose
-  \ id is _ca1 len1_?
+  \ Is the page whose ID is _ca2 len2_ a descendant of the page whose
+  \ ID is _ca1 len1_?
 
 : pid$>level ( ca len -- n )
   [char] . char-count ;
-  \ Return the hierarchy level of the given page id.
+  \ Return the hierarchy level of the given page ID.
   \ The top level is 0.
 
 : pid#>level ( a -- n )
   pid#>pid$ pid$>level ;
-  \ Return the hierarchy level of the given page id.
+  \ Return the hierarchy level of the given page ID.
   \ The top level is 0.
 
 : brother_pages? ( ca1 len1 ca2 len2 -- f )
   -common-prefix pid$>level -rot pid$>level or 0= ;
-  \ Are the pages whose ids are _ca1 len1_ and _ca2 len2_ brothers,
-  \ i.e. do the last part (level) of their ids is preceded by a common
+  \ Are the pages whose IDs are _ca1 len1_ and _ca2 len2_ brothers,
+  \ i.e. do the last part (level) of their IDs is preceded by a common
   \ ancestor (hierarchy)?
 
 \ ==============================================================
@@ -378,7 +378,7 @@ defer set_default_data ( -- )
     else  s" }data" str=  then
   until   }data ;
   \ Skip the page data.
-  \ xt = execution token of the current page id
+  \ xt = execution token of the current page ID
 
 : get_data{ ( "<text><space>}data" -- )
 \  ." `argc` in `get-data{` (start)= " argc ? cr  \ XXX INFORMER
@@ -408,7 +408,7 @@ defer set_default_data ( -- )
 \  ." `argc` in `data{` (end)= " argc ? cr  \ XXX INFORMER
   ;
   \ Mark the start of the page data.
-  \ XXX TODO how to access the page ids in the markup?...
+  \ XXX TODO how to access the page IDs in the markup?...
   \ XXX ...INCLUDE them in the markup wordlist? create a wordlist?
 
 variable do_content?  do_content? on
@@ -457,7 +457,7 @@ variable do_content?  do_content? on
 : required_data<pid# ( a -- )
   source_file required_data ;
   \ Require a page file in order to get its data.
-  \ a = page id (address of its data)
+  \ a = page ID (address of its data)
 
 : (required_data<pid$) ( ca len -- )
 \   ." Stack at the start of `(required_data<pid$)` : " .s cr key drop \ XXX INFORMER
@@ -470,7 +470,7 @@ variable do_content?  do_content? on
 \   ." Stack at the end of `(required_data<pid$)` : " .s cr key drop \ XXX INFORMER
   ;
   \ Require a page file in order to get its data.
-  \ ca len = page id
+  \ ca len = page ID
 
 : required_data<pid$ ( ca len -- )
 \  ." Parameter in `required_data<pid$` before `unshortcut` = " 2dup type cr  \ XXX INFORMER
@@ -478,7 +478,7 @@ variable do_content?  do_content? on
 \  ." Parameter in `required_data<pid$` after `unshortcut` = " 2dup type cr  \ XXX INFORMER
   (required_data<pid$) ;
   \ Require a page file in order to get its data.
-  \ ca len = page id
+  \ ca len = page ID
 
 : required_data<target ( ca len -- )
 \  ." required_data<target " 2dup type cr  \ XXX INFORMER
@@ -501,9 +501,9 @@ variable do_content?  do_content? on
 \   ." Stack at the end of `(pid$>data>pid#` : " .s cr key drop \ XXX INFORMER
   ;
   \ Require a page file in order to get its data
-  \ and convert its string page id to its number page id.
-  \ ca len = page id of an existent page file
-  \ a = page id
+  \ and convert its string page ID to its number page ID.
+  \ ca len = page ID of an existent page file
+  \ a = page ID
 
 : pid$>data>pid# ( ca len -- a )
 \   ." Parameter in `pid$>data>pid#`  before `dry_unshortcut` = " 2dup type cr  \ XXX INFORMER
@@ -520,14 +520,14 @@ variable do_content?  do_content? on
 \  cr ." end of data<pid$>pid"  \ XXX INFORMER
   ;
   \ Require a page file in order to get its data
-  \ and convert its string page id to its number page id.
-  \ ca len = page id
-  \ a = page id
+  \ and convert its string page ID to its number page ID.
+  \ ca len = page ID
+  \ a = page ID
 
 : pid$>(data>)pid# ( ca len -- a )
 \   ." Parameter in `pid$>(data>)pid#`  = " 2dup type cr  \ XXX INFORMER
   dup if  pid$>data>pid#  else  2drop current_page  then ;
-  \ Return a number page id from a string page id;
+  \ Return a number page ID from a string page ID;
   \ if it's different from the current page, require its data.
   \ This word is needed to manage links to the current page
   \ (href attributes that contain just an anchor).
@@ -537,19 +537,19 @@ variable do_content?  do_content? on
 
 : source>pid$ ( ca1 len1 -- ca2 len2 )
   basename -forth_extension ;
-  \ Convert a source page to a page id.
+  \ Convert a source page to a page ID.
   \ ca1 len1 = Forth source page filename with path
-  \ ca2 len2 = page id
+  \ ca2 len2 = page ID
 
 : source>pid# ( ca len -- a )
   source>pid$ pid$>data>pid# ;
-  \ Convert a source page to a page id.
+  \ Convert a source page to a page ID.
   \ ca len = Forth source page filename with path
-  \ a = page id
+  \ a = page ID
 
 : pid$>target ( ca1 len1 -- ca2 len2 )
   2dup pid$>data>pid# target_extension s+ +target_dir ;
-  \ Convert a page id to a target filename.
+  \ Convert a page ID to a target filename.
 
 \ ==============================================================
 \ Calculated data
@@ -571,7 +571,7 @@ variable do_content?  do_content? on
 
 : description|title ( pid -- ca len )
   dup >r description dup if  rdrop  else  2drop r> title  then ;
-  \ Description or (if it's empty) title of the given page id.
+  \ Description or (if it's empty) title of the given page ID.
   \ This is used as link title when no one has been specified.
 
 : property? ( ca len a -- f )
@@ -583,7 +583,7 @@ variable do_content?  do_content? on
     property str= result or to result
   loop  result ;
   \ ca len = property to check
-  \ a = page id (address of its data)
+  \ a = page ID (address of its data)
   \ f = is the property in the properties field of the page?
 
 \ `ignore_draft_property?` is a flag for the application
@@ -594,20 +594,20 @@ false value ignore_draft_property?
 
 : draft? ( a -- f )
   s" draft" rot property?  ignore_draft_property? 0= and ;
-  \ Is page id _a_ a draft? I.e., is "draft" in its properties field?
+  \ Is page ID _a_ a draft? I.e., is "draft" in its properties field?
 
 : pid$>draft? ( ca len -- f )
 \   ." Stack at the start of `pid$>draft?` : " .s cr key drop \ XXX INFORMER
   pid$>data>pid# draft?
 \   ." Stack at the end of `pid$>draft?` : " .s cr key drop \ XXX INFORMER
   ;
-  \ Is page id _ca len_ a draft page?
+  \ Is page ID _ca len_ a draft page?
 
 : pid$>hierarchy ( ca len -- u )
   0 rot rot  \ counter
   bounds ?do  i c@ [char] . = abs +  loop ;
   \ Return the hierarchy level of a page (0 is the top level).
-  \ ca len = page id (source page filename without extension)
+  \ ca len = page ID (source page filename without extension)
 
 : filename>hierarchy ( ca len -- u )
   pid$>hierarchy 1- ;
@@ -617,7 +617,7 @@ false value ignore_draft_property?
 : pid#>hierarchy ( a -- u )
   pid#>pid$ pid$>hierarchy ;
   \ Return the hierarchy level of a page (0 is the top level).
-  \ a = page id (address of its data)
+  \ a = page ID (address of its data)
 
 defer calculated_field? ( ca len -- f )
   \ Is _ca len_ the contents of a calculated field?
@@ -642,9 +642,9 @@ variable a_previous_page \ dynamic string
   if        a_previous_page $@ false
   else pid$ a_previous_page $! true
   then ;
-  \ Is page id _ca1 len1_ (local _pid$_) contained in the dynamic string
-  \ _this_page_?  If so, return the page id _ca2 len2_ of its previous brother
-  \ page in the hierarchy (page id which was saved in the previous execution)
+  \ Is page ID _ca1 len1_ (local _pid$_) contained in the dynamic string
+  \ _this_page_?  If so, return the page ID _ca2 len2_ of its previous brother
+  \ page in the hierarchy (page ID which was saved in the previous execution)
   \ and _false_ (to stop the traversing); otherwise return just _true_ (to
   \ continue the traversing).
 
@@ -652,7 +652,7 @@ variable a_previous_page \ dynamic string
   a_previous_page off
   this_page $!
   ['] (pid$>previous) traverse_pids ;
-  \ Return the previous brother page id _ca2 len2_ of page id _ca1 len1_.
+  \ Return the previous brother page ID _ca2 len2_ of page ID _ca1 len1_.
   \ If no previous page exists, _ca2 len2_ is an empty string.
 
 : ?previous_page ( pid -- ca len )
@@ -673,7 +673,7 @@ variable a_next_page \ flag
   this_page $@ pid$ -common-prefix str<
   if a_next_page on pid$ false else true then ;
   \ Is _ca1 len1_ (local _pid$_) the next brother page of the page
-  \ whose page id is contained in the dynamic string _this_page_?
+  \ whose page ID is contained in the dynamic string _this_page_?
   \ If so, return _ca1 len1_ and _false_ (to stop the traversing);
   \ otherwise return just _true_ (to continue the traversion).
 
@@ -682,7 +682,7 @@ variable a_next_page \ flag
   this_page $!
   ['] (pid$>next) traverse_pids
   a_next_page @ 0= if 0 0 then ;
-  \ Return the next brother page id _ca2 len2_ of page id _ca1 len1_.
+  \ Return the next brother page ID _ca2 len2_ of page ID _ca1 len1_.
   \ If no next page exists, _ca2 len2_ is an empty string.
 
 : ?next_page ( pid -- ca len )
@@ -696,7 +696,7 @@ variable a_next_page \ flag
 
 : pid$>upper ( ca1 len1 -- ca2 len2 )
   -extension ;
-  \ Return the upper page id _ca2 len2_ of page id _ca1 len1_.
+  \ Return the upper page ID _ca2 len2_ of page ID _ca1 len1_.
   \ If no upper page exists, _ca2 len2_ is an empty string.
 
 : ?upper_page ( pid -- ca len )
@@ -713,16 +713,16 @@ variable a_next_page \ flag
   pid$ pid$>data>pid# draft?          ?dup ?exit
   pid$ this_page $@ brother_pages? 0= ?dup ?exit
   pid$ false ;
-  \ Is page id _ca1 len1_ (local _pid$_) contained in the dynamic string
-  \ _this_page_?  If so, return the page id _ca2 len2_ of its first brother
-  \ page in the hierarchy (page id which was saved in the first execution)
+  \ Is page ID _ca1 len1_ (local _pid$_) contained in the dynamic string
+  \ _this_page_?  If so, return the page ID _ca2 len2_ of its first brother
+  \ page in the hierarchy (page ID which was saved in the first execution)
   \ and _false_ (to stop the traversing); otherwise return just _true_ (to
   \ continue the traversing).
 
 : pid$>first ( ca1 len1 -- ca2 len2 )
   this_page $!
   ['] (pid$>first) traverse_pids ;
-  \ Return the first brother page id _ca2 len2_ of page id _ca1 len1_.
+  \ Return the first brother page ID _ca2 len2_ of page ID _ca1 len1_.
   \ If no first page exists, _ca2 len2_ is an empty string.
 
 : ?first_page ( pid -- ca len )
@@ -856,9 +856,9 @@ true value included_files_update_the_page_date?
 \ 2013-11-25: New: `source>id$`, `source>id`.
 \
 \ 2013-11-26: Change: several words renamed, after a new uniform
-\ notation: "pid$" and "pid#" for both types of page ids.
+\ notation: "pid$" and "pid#" for both types of page IDs.
 \
-\ 2013-11-26: New: `pid$>pid#`; page ids are created in a specific
+\ 2013-11-26: New: `pid$>pid#`; page IDs are created in a specific
 \ wordlist.
 \
 \ 2013-11-27: New: `(pid$>data>pid#)` factored out from
@@ -931,7 +931,7 @@ true value included_files_update_the_page_date?
 \ `source>target_extension` renamed to
 \ `source>current_target_extension`.  Fix: `target_file` added the
 \ current target extension, not the target extension for the given
-\ page id.
+\ page ID.
 \
 \ 2014-11-08: Change: the `plain_title` and `plain_description` data
 \ fields are removed because `unmarkup` (just implemented) makes them
@@ -1009,5 +1009,7 @@ true value included_files_update_the_page_date?
 \ 2018-12-06: Add some debugging code.
 \
 \ 2018-12-08: Update notation of Forth words in comments and strings.
+\
+\ 2018-12-08: Update notation of page IDs in comments and strings.
 
 \ vim: filetype=gforth

@@ -5,10 +5,10 @@
 
 \ This file is the code common to several content lists addons.
 
-\ Last modified 201809271539.
+\ Last modified 201812081823.
 \ See change log at the end of the file.
 
-\ Copyright (C) 2013,2014,2017 Marcos Cruz (programandala.net)
+\ Copyright (C) 2013,2014,2017,2018 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute it and/or modify it
 \ under the terms of the GNU General Public License as published by
@@ -54,12 +54,12 @@ variable level
   pid pid$>data>pid# draft? ?exit
   pid lioc ;
   \ Create an element of a list of content
-  \ if the given pid starts with the current prefix
+  \ if the given page ID starts with the current prefix
   \ and has the current level.
 
 : (lioc_by_prefix_and_level) ( ca len -- true )
   ((lioc_by_prefix_and_level)) true ;
-  \ ca len = pid
+  \ ca len = page ID
   \ true = continue with the next element?
 
 public
@@ -67,7 +67,7 @@ public
 : lioc_by_prefix_and_level ( ca len n -- )
   level ! prefix $!  ['] (lioc_by_prefix_and_level) traverse_pids ;
   \ Create a list of content
-  \ with pages whose pid has the given prefix and level.
+  \ with pages whose page ID has the given prefix and level.
   \ ca len = prefix
   \ n = page hierarchical level (0 is the top)
 
@@ -79,7 +79,11 @@ end-package
 \ Change log
 
 \ 2014-11-18: Created, based on <fendo.addon.lioc_by_prefix.fs>.
+\
 \ 2017-06-22: Update source style, layout and header.
+\
 \ 2018-09-27: Use `package` instead of `module:`.
+\
+\ 2018-12-08: Update notation of page IDs in comments and strings.
 
 \ vim: filetype=gforth
