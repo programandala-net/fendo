@@ -5,10 +5,10 @@
 
 \ This file provides lists of tagged pages.
 
-\ Last modified 201812080157.
+\ Last modified 201812081823.
 \ See change log at the end of the file.
 
-\ Copyright (C) 2014,2015,2017 Marcos Cruz (programandala.net)
+\ Copyright (C) 2014,2015,2017,2018 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute it and/or modify it
 \ under the terms of the GNU General Public License as published by
@@ -50,7 +50,7 @@ variable prefix$
 : ((tagged_pages_by_prefix)) { D: pid -- }
 
   \ Create a description list of content
-  \ if the given pid starts with the current prefix.
+  \ if the given page ID starts with the current prefix.
 
 \  ." Parameter in `((tagged_pages_by_prefix))` = " pid type cr  \ XXX INFORMER
 
@@ -76,7 +76,7 @@ variable prefix$
 
 : (tagged_pages_by_prefix) ( ca len -- true )
   ((tagged_pages_by_prefix)) true ;
-  \ ca len = pid
+  \ ca len = page ID
   \ true = continue with the next element?
 
 public
@@ -107,5 +107,7 @@ end-package
 \ 2018-09-27: Use `package` instead of `module:`.
 \
 \ 2018-12-08: Update notation of Forth words in comments and strings.
+\
+\ 2018-12-08: Update notation of page IDs in comments and strings.
 
 \ vim: filetype=gforth

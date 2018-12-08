@@ -5,10 +5,10 @@
 
 \ This file provides tag clouds by a page-id prefix.
 
-\ Last modified 201812080157.
+\ Last modified 201812081823.
 \ See change log at the end of the file.
 
-\ Copyright (C) 2014,2017 Marcos Cruz (programandala.net)
+\ Copyright (C) 2014,2017,2018 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute it and/or modify it
 \ under the terms of the GNU General Public License as published by
@@ -68,8 +68,8 @@ variable pages
   pid$>data>pid# tags
 \  cr ." tags = " 2dup type  \ XXX INFORMER
   evaluate_tags ;
-  \ Count the tags in the given pid
-  \ ca len = pid
+  \ Count the tags in the given page ID
+  \ ca len = page ID
 
 variable prefix$  \ module variable; in <fendo.addon.pages_by_prefix.fs> there's another one
 : (count_tags_by_prefix) { D: pid -- }
@@ -78,12 +78,12 @@ variable prefix$  \ module variable; in <fendo.addon.pages_by_prefix.fs> there's
   pid prefix$ $@ string-prefix? 0= ?exit
   pid pid$>data>pid# draft? ?exit
   pid count_tags ;
-  \ Increase the count of tags that are in pages whose pid
+  \ Increase the count of tags that are in pages whose page ID
   \ matches the current regex.
 
 : count_tags_by_prefix ( ca len -- f )
   (count_tags_by_prefix) true ;
-  \ ca len = pid
+  \ ca len = page ID
   \ f = continue with the next element?
 
 : init_tags ( xt -- min max)
@@ -175,7 +175,7 @@ public
   2dup prefix$ $!  pages_by_prefix drop
   ['] count_tags_by_prefix do_tag_cloud ;
   \ Create a tag cloud
-  \ with pages whose pid matches the given prefix.
+  \ with pages whose page ID matches the given prefix.
 
 end-package
 
@@ -210,5 +210,7 @@ end-package
 \ 2018-09-27: Use `package` instead of `module:`.
 \
 \ 2018-12-08: Update notation of Forth words in comments and strings.
+\
+\ 2018-12-08: Update notation of page IDs in comments and strings.
 
 \ vim: filetype=gforth

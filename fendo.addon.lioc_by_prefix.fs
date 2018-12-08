@@ -5,10 +5,10 @@
 
 \ This file is the code common to several content lists addons.
 
-\ Last modified 201812080157.
+\ Last modified 201812081823.
 \ See change log at the end of the file.
 
-\ Copyright (C) 2013,2014,2017 Marcos Cruz (programandala.net)
+\ Copyright (C) 2013,2014,2017,2018 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute it and/or modify it
 \ under the terms of the GNU General Public License as published by
@@ -50,11 +50,11 @@ variable prefix
   pid pid$>data>pid# draft? ?exit
   pid lioc  ;
   \ Create an element of a list of content
-  \ if the given pid starts with the current prefix.
+  \ if the given page ID starts with the current prefix.
 
 : (lioc_by_prefix) ( ca len -- f )
   ((lioc_by_prefix)) true ;
-  \ ca len = pid
+  \ ca len = page ID
   \ f = continue with the next element?
 
 public
@@ -62,7 +62,7 @@ public
 : lioc_by_prefix ( ca len -- )
   prefix $!  ['] (lioc_by_prefix) traverse_pids ;
   \ Create a list of content
-  \ with pages whose pid starts with the given prefix.
+  \ with pages whose page ID starts with the given prefix.
   \ ca len = prefix
 
 end-package
@@ -75,7 +75,7 @@ end-package
 \ 2013-11-25: Code extracted from the application Fendo-programandala.
 \
 \ 2013-11-27: Change: several words renamed, after a new uniform notation:
-\   "pid$" and "pid#" for both types of page ids.
+\   "pid$" and "pid#" for both types of page IDs.
 \
 \ 2014-03-02: Rewritten with `traverse_pids`. Renamed.
 \
@@ -89,5 +89,7 @@ end-package
 \ 2018-09-27: Use `package` instead of `module:`.
 \
 \ 2018-12-08: Update notation of Forth words in comments and strings.
+\
+\ 2018-12-08: Update notation of page IDs in comments and strings.
 
 \ vim: filetype=gforth

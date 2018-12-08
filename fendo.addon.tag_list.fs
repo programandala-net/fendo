@@ -5,10 +5,10 @@
 
 \ This file provides tag lists.
 
-\ Last modified 201812080157.
+\ Last modified 201812081823.
 \ See change log at the end of the file.
 
-\ Copyright (C) 2014,2017 Marcos Cruz (programandala.net)
+\ Copyright (C) 2014,2017,2018 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute it and/or modify it
 \ under the terms of the GNU General Public License as published by
@@ -36,7 +36,7 @@ require ./fendo.addon.tags.fs
 : tag_list { pid -- }
   tags_do_count  pid tags evaluate_tags
   tags_do_list_link  #tag off pid tags evaluate_tags ;
-  \ Create a tag list of links for the given page id.
+  \ Create a tag list of links for the given page ID.
   \ First, update the `#tags` variable.
   \ Then build the list (`#tag` must be reset, because it will be
   \ compared with `#tags` during the process).
@@ -61,5 +61,7 @@ require ./fendo.addon.tags.fs
 \ 2017-06-22: Update source style, layout and header.
 \
 \ 2018-12-08: Update notation of Forth words in comments and strings.
+\
+\ 2018-12-08: Update notation of page IDs in comments and strings.
 
 \ vim: filetype=gforth

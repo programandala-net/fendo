@@ -5,10 +5,10 @@
 
 \ This file is the Forth blocks source code addon.
 
-\ Last modified 201809271539.
+\ Last modified 201812081823.
 \ See change log at the end of the file.
 
-\ Copyright (C) 2013,2014,2017 Marcos Cruz (programandala.net)
+\ Copyright (C) 2013,2014,2017,2018 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute it and/or modify it
 \ under the terms of the GNU General Public License as published by
@@ -86,13 +86,22 @@ end-package
 \ ==============================================================
 \ Change log
 
-\ 2013-12-10: Code extracted from <addons/forth_blocks_source_code.fs>.
+\ 2013-12-10: Code extracted from
+\ <addons/forth_blocks_source_code.fs>.
+\
 \ 2014-02-15: Fix: path of the Fendo addons is converted to relative.
+\
 \ 2014-03-12: Change: module renamed after the filename.
+\
 \ 2014-10-13: Improvement: UDG chars are translated.
+\
 \ 2014-10-19: Improvement: The code is highlighted with a specific Vim
-\   syntax file, created for Abersoft Forth.
+\ syntax file, created for Abersoft Forth.
+\
 \ 2017-06-22: Update source style, layout and header.
+\
 \ 2018-09-27: Use `package` instead of `module:`.
+\
+\ 2018-12-08: Update notation of page IDs in comments and strings.
 
 \ vim: filetype=gforth

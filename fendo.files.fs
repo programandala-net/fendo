@@ -5,10 +5,10 @@
 
 \ This file defines the file tools.
 
-\ Last modified 201812080157.
+\ Last modified 201812081823.
 \ See change log at the end of the file.
 
-\ Copyright (C) 2013,2014,2015,2017 Marcos Cruz (programandala.net)
+\ Copyright (C) 2013,2014,2015,2017,2018 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute
 \ it and/or modify it under the terms of the GNU General
@@ -139,17 +139,17 @@ false [if]  \ XXX OLD
   2dup s" .php" string-suffix? ?exit
   2dup s" .htm" string-suffix? ?exit
   html_extension $@ s+ ;
-  \ Make sure _ca1 len1_, which is a page id (old page filename
+  \ Make sure _ca1 len1_, which is a page ID (old page filename
   \ without path and extension) or a page filename (with html, htm or
   \ php extensions), have a filename extension. If not, add the
   \ default HTML extension.
 
 : redirected>target ( ca1 len1 -- ca2 len2 )
   ?+redirected_extension +target_dir ;
-  \ Convert an old page id (whose filename does not exist any more)
+  \ Convert an old page ID (whose filename does not exist any more)
   \ to its correspondent target filename.
   \ The default target extension is assumed.
-  \ ca1 len1 = page id (old page filename without path and extension)
+  \ ca1 len1 = page ID (old page filename without path and extension)
   \            or page filename (with html, htm or php extensions)
   \ ca2 len2 = target filename with path
 
@@ -180,26 +180,26 @@ created>redirection
   2r> current_page redirection_date set_file_mtime
   created>redirection ; \ restore the default
   \ Create a file that redirects to the current page.
-  \ ca len = page id (old page filename without path and extension)
+  \ ca len = page ID (old page filename without path and extension)
   \          or page filename (with html, htm or php extensions)
   \ 2013-10-02 Start, based on code from ForthCMS.
 
 : redirected ( ca len -- )
   current_page draft? if  2drop  else  (redirected)  then ;
   \ Create a file that redirects to the current page, if possible.
-  \ ca len = page id (old page filename without path and extension)
+  \ ca len = page ID (old page filename without path and extension)
   \          or page filename (with html, htm or php extensions)
 
 : redirect ( "name" -- )
   parse-name redirected ;
   \ Create a file that redirects to the current page, if possible.
-  \ "name" = page id (old page filename without path and extension)
+  \ "name" = page ID (old page filename without path and extension)
   \          or page filename (with html, htm or php extensions)
 
 : new_redirected ( ca len -- )
   current_page draft? if  2drop  else  (redirected)  then ;
   \ Create a file that redirects to the current page, if possible.
-  \ ca len = page id (old page filename without path and extension)
+  \ ca len = page ID (old page filename without path and extension)
   \          or page filename (with html, htm or php extensions)
   \ The date of the redirection file will be the modification date
   \ of the current page.
@@ -209,7 +209,7 @@ created>redirection
   \ Create a file that redirects to the current page, if possible.
   \ The date of the redirection file will be the modification date
   \ of the current page.
-  \ "name" = page id (old page filename without path and extension)
+  \ "name" = page ID (old page filename without path and extension)
   \          or page filename (with html, htm or php extensions)
 
 \ ==============================================================
@@ -283,5 +283,7 @@ s" /counted-string" environment? 0=
 \ is empty.
 \
 \ 2018-12-08: Update notation of Forth words in comments and strings.
+\
+\ 2018-12-08: Update notation of page IDs in comments and strings.
 
 \ vim: filetype=gforth

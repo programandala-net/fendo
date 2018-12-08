@@ -6,10 +6,10 @@
 \ This file provides the words needed to create links,
 \ by the markup words or by the user application.
 
-\ Last modified 201812080157.
+\ Last modified 201812081823.
 \ See change log at the end of the file.
 
-\ Copyright (C) 2013,2014,2017 Marcos Cruz (programandala.net)
+\ Copyright (C) 2013,2014,2017,2018 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute
 \ it and/or modify it under the terms of the GNU General
@@ -163,7 +163,7 @@ variable link_type
   2dup external_href? if  2drop external_link exit  then
   file_href? if  file_link exit  then
   local_link ;
-  \ Convert an href attribute to its type id.
+  \ Convert an href attribute to its type ID.
 
 : set_link_type ( ca len -- )
   >link_type_id link_type ! ;
@@ -259,12 +259,12 @@ variable local_link_to_draft_page?
   s" pid#>lang$ 2dup current_lang$" evaluate str=
   if  2drop  else  hreflang=?!  then ;
   \ Set the hreflang attribute of a local link, if needed.
-  \ a = page id of the link destination
+  \ a = page ID of the link destination
 
 : tune_local_hreflang ( a -- )
   multilingual? if  (tune_local_hreflang)  else  drop  then ;
   \ Set the hreflang attribute of a local link, if needed.
-  \ a = page id of the link destination
+  \ a = page ID of the link destination
 
 : ?href>current_pid$ ( ca len -- ca' len' )
 \  ." In `?href>current_pid$` parameter = " 2dup type cr  \ XXX INFORMER
@@ -352,7 +352,7 @@ defer link_suffix
 \ Links
 
 defer (get_link_href) ( ca len -- )
-  \ ca len = page id, URL or shortcut
+  \ ca len = page ID, URL or shortcut
   \ Defined in <fendo.markup.fendo.link.fs>.
 
 : (link) ( ca len -- )
@@ -360,16 +360,16 @@ defer (get_link_href) ( ca len -- )
   (get_link_href) echo_link ;
   \ Create a link.
   \ Its attributes and link text have to be set previously.
-  \ ca len = page id, URL or shortcut
+  \ ca len = page ID, URL or shortcut
 
 : link ( ca1 len1 ca2 len2 -- )
 \   ." In `link` the link text is " 2dup type cr  \ XXX INFORMER
-\   ." In `link` the page id is " 2over type cr  \ XXX INFORMER
+\   ." In `link` the page ID is " 2over type cr  \ XXX INFORMER
 \  ." `title=` in `link` = " title=@ type cr  \ XXX INFORMER
   link_text! (link) ;
   \ Create a link of any type.
   \ Its attributes have to be set previously.
-  \ ca1 len1 = page id, URL or shortcut
+  \ ca1 len1 = page ID, URL or shortcut
   \ ca2 len2 = link text
 
 : link<pid$ ( ca len -- )
@@ -377,7 +377,7 @@ defer (get_link_href) ( ca len -- )
   \ Create a link to a local page.
   \ Its attributes have to be set previously.
   \ If `link_text` is not set, the page title will be used.
-  \ ca len = page id or shortcut to it
+  \ ca len = page ID or shortcut to it
   \ XXX TODO -- make it work with anchors!?
 
 : link<pid# ( pid -- )
@@ -394,7 +394,7 @@ defer (get_link_href) ( ca len -- )
 \ 2013-11-11: Code extracted from <fendo_markup_wiki.fs>: `link`.
 \
 \ 2013-11-26: Change: several words renamed, after a new uniform
-\ notation: "pid$" and "pid#" for both types of page ids.
+\ notation: "pid$" and "pid#" for both types of page IDs.
 \
 \ 2014-03-03: New: `link<pid#`.
 \
@@ -464,5 +464,7 @@ defer (get_link_href) ( ca len -- )
 \ `basename`.
 \
 \ 2018-12-08: Update notation of Forth words in comments and strings.
+\
+\ 2018-12-08: Update notation of page IDs in comments and strings.
 
 \ vim: filetype=gforth

@@ -7,10 +7,10 @@
 
 \ XXX UNDER DEVELOPMENT
 
-\ Last modified 201812080157.
+\ Last modified 201812081823.
 \ See change log at the end of the file.
 
-\ Copyright (C) 2015,2017 Marcos Cruz (programandala.net)
+\ Copyright (C) 2015,2017,2018 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute it and/or modify it
 \ under the terms of the GNU General Public License as published by
@@ -75,7 +75,7 @@ defer sitemap_edit_summary$
   r> target_file s+ ;
   \ Return the tag URI of a page.
   \ Code converted from ForthCMS' `>page-taguri`, by the same author.
-  \ a = page id
+  \ a = page ID
 
 \ ==============================================================
 \ Tags
@@ -183,23 +183,23 @@ defer sitemap_site_title$ ( -- ca len )
 
 : sitemap_entry_title ( a -- )
   s" xhtml" type=! [<title>] title evaluate_content [</title>] ;
-  \ a = page id
+  \ a = page ID
 
 : sitemap_entry_id ( a -- )
   <id> pid#>taguri echo </id> ;
-  \ a = page id
+  \ a = page ID
 
 : sitemap_entry_links ( a -- )
   dup pid#>lang$ hreflang=! pid#>url s" alternate" sitemap_link ;
-  \ a = page id
+  \ a = page ID
 
 : sitemap_entry_updated ( a -- )
   <updated> modified echo </updated> ;
-  \ a = page id
+  \ a = page ID
 
 : sitemap_entry_published ( a -- )
   <published> created echo </published> ;
-  \ a = page id
+  \ a = page ID
 
 defer (sitemap_entry_summary)
 : sitemap_entry_summary ( -- )
@@ -207,11 +207,11 @@ defer (sitemap_entry_summary)
 
 : sitemap_entry_default_summary ( a -- )
   <summary> description unmarkup echo </summary> ;
-  \ a = page id
+  \ a = page ID
 
 : .sitemap_entry_comment ( ca len a -- a )
   >r echo_line r> ;
-  \ a = page id
+  \ a = page ID
 
 : sitemap_entry_updated_summary ( a -- )
   [ false ] [if]
@@ -229,12 +229,12 @@ defer (sitemap_entry_summary)
       echo_space evaluate_content  [</p>]
     else  2drop  then
   [then] ;
-  \ a = page id
+  \ a = page ID
 
 : sitemap_entry_new_summary ( ca len -- )
   [<p>] sitemap_new_page$ echo_line
   description evaluate_content [</p>] ;
-  \ ca len = page id
+  \ ca len = page ID
 
 : set_default_sitemap_entry_summary ( -- )
   ['] sitemap_entry_default_summary is (sitemap_entry_summary) ;
@@ -250,25 +250,25 @@ set_default_sitemap_entry_summary
   r> sitemap_entry_summary
   </entry> ;
   \ Create an sitemap entry in the sitemap file.
-  \ ca len = page id
+  \ ca len = page ID
 
 : (sitemap_entry) ( ca len xt -- )
   is (sitemap_entry_summary)
   sitemap_entry set_default_sitemap_entry_summary ;
   \ Create an sitemap entry in the sitemap file, with non-default summary.
-  \ ca len = page id
+  \ ca len = page ID
   \ xt = type of sitemap entry summary, new or updated
 
 : sitemap_updated_entry ( ca len -- )
   ['] sitemap_entry_updated_summary (sitemap_entry) ;
   \ Create an sitemap entry in the sitemap file,
   \ about an updated page of the site.
-  \ ca len = page id
+  \ ca len = page ID
 
 : sitemap_new_entry ( ca len -- )
   ['] sitemap_entry_new_summary (sitemap_entry) ;
   \ Create an sitemap entry in the sitemap file, about a new page of the site.
-  \ ca len = page id
+  \ ca len = page ID
 
 .( fendo.addon.sitemap.fs compiled) cr
 
@@ -280,5 +280,7 @@ set_default_sitemap_entry_summary
 \ 2017-06-22: Update source style, layout and header.
 \
 \ 2018-12-08: Update notation of Forth words in comments and strings.
+\
+\ 2018-12-08: Update notation of page IDs in comments and strings.
 
 \ vim: filetype=gforth

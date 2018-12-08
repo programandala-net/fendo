@@ -5,7 +5,7 @@
 
 \ This file defines the Fendo markup.
 
-\ Last modified 201812080157.
+\ Last modified 201812081823.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2017,2018 Marcos Cruz (programandala.net)
@@ -501,7 +501,7 @@ fendo_definitions
 \ 2013-11-05: Fix: `tune_local_link` evaluated the title and consumed
 \ it.
 \
-\ 2013-11-05: Fix: local links with only the page id (no text, no raw
+\ 2013-11-05: Fix: local links with only the page ID (no text, no raw
 \ attrs), lacked the "html" extension.
 \
 \ 2013-11-06: New: `href_checked`.
@@ -662,5 +662,7 @@ fendo_definitions
 \ 2018-09-12: Fix typo in comment.
 \
 \ 2018-12-08: Update notation of Forth words in comments and strings.
+\
+\ 2018-12-08: Update notation of page IDs in comments and strings.
 
 \ vim: filetype=gforth

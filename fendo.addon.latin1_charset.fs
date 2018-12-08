@@ -5,10 +5,10 @@
 
 \ This file is the latin1 charset addon.
 
-\ Last modified 20170622.
+\ Last modified 201812081823.
 \ See change log at the end of the file.
 
-\ Copyright (C) 2013,2017 Marcos Cruz (programandala.net)
+\ Copyright (C) 2013,2017,2018 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute it and/or modify it
 \ under the terms of the GNU General Public License as published by
@@ -145,6 +145,9 @@ uncodepage: latin1_charset_to_utf8
 \ Change log
 
 \ 2013-12-13: Written.
+\
 \ 2017-06-22: Update source style, layout and header.
+\
+\ 2018-12-08: Update notation of page IDs in comments and strings.
 
 \ vim: filetype=gforth

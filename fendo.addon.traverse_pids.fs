@@ -3,10 +3,10 @@
 \ This file is part of Fendo
 \ (http://programandala.net/en.program.fendo.html).
 
-\ This file provides a word that traverses all pids (page ids),
+\ This file provides a word that traverses all pids (page IDs),
 \ required by other addons.
 
-\ Last modified 201812080157.
+\ Last modified 201812081823.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2017,2018 Marcos Cruz (programandala.net)
@@ -49,11 +49,11 @@ s" /tmp/fendo.traverse_pids.fs" 2constant pids_file$
   s\" #s\" \\1\" traversed_pid#'" s+ ;
   \ Return the shell command _ca len_ used to convert the list of
   \ page source files into a list of Forth commands to traverse
-  \ their corresponding page ids.
+  \ their corresponding page IDs.
 
 : sort$ ( -- ca len )
   s" sort --key 2,2" ;
-  \ Return the shell command _ca len_ used to sort the list of page ids.
+  \ Return the shell command _ca len_ used to sort the list of page IDs.
   \
   \ Option `--key 2,2` makes the second field the only sorting key, which is
   \ required in order to ignore rest of the line.  By default, `sort` separete
@@ -62,18 +62,18 @@ s" /tmp/fendo.traverse_pids.fs" 2constant pids_file$
 : command$ ( -- ca len )
   ls$ s" |" s+ sed$ s+ s" |" s+ sort$ s+ ;
   \ Return the shell command _ca len_ used to create the Forth source
-  \ that traverses all of the page ids.
+  \ that traverses all of the page IDs.
 
 : create_pids_file ( -- )
   command$ s"  > " s+ pids_file$ s+ system ;
 
 defer (traversed_pid) ( ca len -- f )
-  \ User action for every pid.
+  \ User action for every page ID.
 
 :noname ( ca len -- true )
   2drop true ;
-  \ Default user action for every pid.
-  \ ca len = pid
+  \ Default user action for every page ID.
+  \ ca len = page ID
   \ true = continue with the next element?
 
 is (traversed_pid)
@@ -86,7 +86,7 @@ variable last_traversed_pid
 \  ." Parameter in `traversed_pid` = " 2dup type cr  \ XXX INFORMER
   2dup last_traversed_pid $!
   (traversed_pid) 0= if \eof then ;
-  \ ca len = pid
+  \ ca len = page ID
 
 : traverse_pids ( xt -- )
   is (traversed_pid)  create_pids_file
@@ -103,7 +103,7 @@ end-package
 \ <addons/list_of_content_by_prefix.fs>.
 \
 \ 2013-11-26: Change: several words renamed, after a new uniform
-\ notation: "pid$" and "pid#" for both types of page ids.
+\ notation: "pid$" and "pid#" for both types of page IDs.
 \
 \ 2013-11-27: Change: all words and the addon itself renamed.
 \
@@ -113,7 +113,7 @@ end-package
 \
 \ 2013-11-27: New: `pid$_list@` rewritten: now it skips draft pages.
 \
-\ 2014-03-02: Everything renamed. Rewritten. Simplified. The pid list
+\ 2014-03-02: Everything renamed. Rewritten. Simplified. The page ID list
 \ is Forth source, not a simple list anymore.
 \
 \ 2014-03-03: Fix: removed a redundant definition.
@@ -130,5 +130,7 @@ end-package
 \ 2018-09-28: Update source style. Improve documentation.
 \
 \ 2018-12-08: Update notation of Forth words in comments and strings.
+\
+\ 2018-12-08: Update notation of page IDs in comments and strings.
 
 \ vim: filetype=gforth

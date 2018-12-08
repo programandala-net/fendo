@@ -5,10 +5,10 @@
 
 \ This file creates the tools needed to use page tags.
 
-\ Last modified 201812080157.
+\ Last modified 201812081823.
 \ See change log at the end of the file.
 
-\ Copyright (C) 2014,2017 Marcos Cruz (programandala.net)
+\ Copyright (C) 2014,2017,2018 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute it and/or modify it
 \ under the terms of the GNU General Public License as published by
@@ -98,11 +98,11 @@ s" tag." 2constant (tags_url_section$)
 
 : (tag>pid$) ( tag -- ca len )
   tags_url_section$ rot tag>name s+ ;
-  \ Default conversion from tag to pid.
+  \ Default conversion from tag to page ID.
 
 defer tag>pid$ ( tag -- ca len )
 ' (tag>pid$) is tag>pid$
-  \ Actual conversion from tag to pid,
+  \ Actual conversion from tag to page ID,
   \ to be configured by the application.
 
 \ ==============================================================
@@ -125,7 +125,7 @@ variable lonely_tags_link_to_content  \ flag
 : ((tag_link)) ( tag ca len -- )
 \  2dup cr type  \ XXX INFORMER
   rot tag>text link ;
-  \ ca len = pid
+  \ ca len = page ID
 
 : (tag_link_to_tag_page) ( tag -- )
   dup tag>pid$ ((tag_link)) ;
@@ -266,10 +266,10 @@ defer (tag_does)  \ current behaviour of the tags
   get-current >r  fendo_tags_wid set-current
   create
     \ The body holds a counter, the name token, the text,
-    \ and the last own page id ( XXX not used yet)
+    \ and the last own page ID ( XXX not used yet)
     0 ,  \ tag counter
     latestxt >name ,  \ name token
-    0 , \ dynamic string variable, pid of the (last) own page
+    0 , \ dynamic string variable, page ID of the (last) own page
     s,  \ text
   r> set-current
   does>  ( -- ) ( dfa ) (tag_does) ;
@@ -357,5 +357,7 @@ s" /tmp/fendo.tags.fs" 2constant tags_filename$
 \ module `module`, which is not used anymore by Fendo.
 \
 \ 2018-12-08: Update notation of Forth words in comments and strings.
+\
+\ 2018-12-08: Update notation of page IDs in comments and strings.
 
 \ vim: filetype=gforth

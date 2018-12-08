@@ -8,7 +8,7 @@
 \
 \ XXX NOT FINISHED
 
-\ Last modified 201812080157.
+\ Last modified 201812081823.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2015,2017,2018 Marcos Cruz (programandala.net)
@@ -92,7 +92,7 @@ variable projects  \ counter
 \ ------------------------------
 \ Second approach
 
-\ An ordinary metadatum holds the page id of the page that has the
+\ An ordinary metadatum holds the page ID of the page that has the
 \ data of the project (or nothing if the current page has the data).
 \ Project metadata are hold in special fields.
 
@@ -183,5 +183,7 @@ end-package
 \ 2018-12-06: Fix typo.
 \
 \ 2018-12-08: Update notation of Forth words in comments and strings.
+\
+\ 2018-12-08: Update notation of page IDs in comments and strings.
 
 \ vim: filetype=gforth

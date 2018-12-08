@@ -5,10 +5,10 @@
 
 \ This file defines the HTML attributes.
 
-\ Last modified 201812080157.
+\ Last modified 201812081823.
 \ See change log at the end of the file.
 
-\ Copyright (C) 2013,2014,2015,2017 Marcos Cruz (programandala.net)
+\ Copyright (C) 2013,2014,2015,2017,2018 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute
 \ it and/or modify it under the terms of the GNU General
@@ -320,7 +320,7 @@ create attributes  \ table for the attribute variables
   if  hreflang=!  else  2drop  then ;
   \ If the given page has a different language than the current one,
   \ then update the `hreflang` attribute.
-  \ a = page id
+  \ a = page ID
 
 \ ==============================================================
 \ Echo
@@ -475,5 +475,7 @@ create attributes  \ table for the attribute variables
 \ 2017-06-22: Update source style, layout and header.
 \
 \ 2018-12-08: Update notation of Forth words in comments and strings.
+\
+\ 2018-12-08: Update notation of page IDs in comments and strings.
 
 \ vim: filetype=gforth

@@ -3,13 +3,13 @@
 \ This file is part of Fendo
 \ (http://programandala.net/en.program.fendo.html).
 
-\ This file provides a word that counts all pages whose pid matches a
+\ This file provides a word that counts all pages whose page ID matches a
 \ prefix.
 
-\ Last modified 201812080157.
+\ Last modified 201812081823.
 \ See change log at the end of the file.
 
-\ Copyright (C) 2013,2014,2017 Marcos Cruz (programandala.net)
+\ Copyright (C) 2013,2014,2017,2018 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute it and/or modify it
 \ under the terms of the GNU General Public License as published by
@@ -49,14 +49,14 @@ variable prefix$
 variable pages
 
 : ((pages_by_prefix)) { D: pid -- }
-  \ Increase the number of pages whose pid starts with the given prefix.
+  \ Increase the number of pages whose page ID starts with the given prefix.
   pid prefix$ $@ string-prefix? 0= ?exit
   pid pid$>data>pid# draft? ?exit  1 pages +! ;
 
 : (pages_by_prefix) ( ca len -- f )
   ((pages_by_prefix)) true ;
-  \ Increase the number of pages whose pid starts with the given prefix.
-  \ ca len = pid
+  \ Increase the number of pages whose page ID starts with the given prefix.
+  \ ca len = page ID
   \ f = continue with the next element?
 
 public
@@ -66,7 +66,7 @@ public
   prefix$ $!  pages off   ['] (pages_by_prefix) traverse_pids  pages @
 \  ." and the pages count is " dup . \ XXX INFORMER
   ;
-  \ Number of pages whose pid starts with the given prefix.
+  \ Number of pages whose page ID starts with the given prefix.
   \ Update `prefix` and `pages`.
 
 end-package
@@ -83,5 +83,7 @@ end-package
 \ 2018-09-27: Use `package` instead of `module:`.
 \
 \ 2018-12-08: Update notation of Forth words in comments and strings.
+\
+\ 2018-12-08: Update notation of page IDs in comments and strings.
 
 \ vim: filetype=gforth

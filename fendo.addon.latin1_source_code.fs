@@ -5,10 +5,10 @@
 
 \ This file is the latin1 source code addon.
 
-\ Last modified 20170622.
+\ Last modified 201812081823.
 \ See change log at the end of the file.
 
-\ Copyright (C) 2013,2017 Marcos Cruz (programandala.net)
+\ Copyright (C) 2013,2017,2018 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute it and/or modify it
 \ under the terms of the GNU General Public License as published by
@@ -57,7 +57,11 @@ require ./fendo.addon.latin1_charset.fs
 \ Change log
 
 \ 2013-12-13: Written.
+\
 \ 2014-02-15: Fix: path of the Fendo addons is converted to relative.
+\
 \ 2017-06-22: Update source style, layout and header.
+\
+\ 2018-12-08: Update notation of page IDs in comments and strings.
 
 \ vim: filetype=gforth

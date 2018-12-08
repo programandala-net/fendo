@@ -5,10 +5,10 @@
 
 \ This file is the code common to several content lists addons.
 
-\ Last modified 201812080157.
+\ Last modified 201812081823.
 \ See change log at the end of the file.
 
-\ Copyright (C) 2013,2014,2017 Marcos Cruz (programandala.net)
+\ Copyright (C) 2013,2014,2017,2018 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute it and/or modify it
 \ under the terms of the GNU General Public License as published by
@@ -48,11 +48,11 @@ variable prefix
   pid pid$>data>pid# draft? ?exit
   pid dtddoc  ;
   \ Create a description list of content
-  \ if the given pid starts with the current prefix.
+  \ if the given page ID starts with the current prefix.
 
 : (dloc_by_prefix) ( ca len -- f )
   ((dloc_by_prefix)) true ;
-  \ ca len = pid
+  \ ca len = page ID
   \ f = continue with the next element?
 
 public
@@ -60,7 +60,7 @@ public
 : dloc_by_prefix ( ca len -- )
   prefix $!  [<dl>] ['] (dloc_by_prefix) traverse_pids [</dl>] ;
   \ Create a description list of content
-  \ with pages whose pid starts with the given prefix.
+  \ with pages whose page ID starts with the given prefix.
 
 end-package
 
@@ -85,5 +85,7 @@ end-package
 \ 2018-09-27: Use `package` instead of `module:`.
 \
 \ 2018-12-08: Update notation of Forth words in comments and strings.
+\
+\ 2018-12-08: Update notation of page IDs in comments and strings.
 
 \ vim: filetype=gforth

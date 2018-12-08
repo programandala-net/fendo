@@ -8,7 +8,7 @@
 \ Last modified 201809271539.
 \ See change log at the end of the file.
 
-\ Copyright (C) 2014,2017 Marcos Cruz (programandala.net)
+\ Copyright (C) 2014,2017,2018 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute it and/or modify it
 \ under the terms of the GNU General Public License as published by
@@ -48,11 +48,11 @@ package fendo.addon.lioc_by_wild-match
   pid pid$>data>pid# draft? ?exit
   pid lioc ;
   \ Create an element of a list of content,
-  \ if the given pid (page id) matches the current wild-match string.
+  \ if the given page ID matches the current wild-match string.
 
 : (lioc_by_wild-match) ( ca len -- true )
   ((lioc_by_wild-match)) true ;
-  \ ca len = pid
+  \ ca len = page ID
   \ true = continue with the next element?
 
 public
@@ -60,7 +60,7 @@ public
 : lioc_by_wild-match ( ca len -- )
   wild-match$ $! ['] (lioc_by_wild-match) traverse_pids ;
   \ Create a list of content
-  \ with pages whose pid matches the given wild-match string.
+  \ with pages whose page ID matches the given wild-match string.
 
 end-package
 
@@ -70,7 +70,11 @@ end-package
 \ Change log
 
 \ 2014-11-16 Start.
+\
 \ 2017-06-22: Update source style, layout and header.
+\
 \ 2018-09-27: Use `package` instead of `module:`.
+\
+\ 2018-12-08: Update notation of page IDs in comments and strings.
 
 \ vim: filetype=gforth

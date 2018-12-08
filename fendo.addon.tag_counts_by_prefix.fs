@@ -5,10 +5,10 @@
 
 \ This file is the code common to several content lists addons.
 
-\ Last modified 201809271539.
+\ Last modified 201812081823.
 \ See change log at the end of the file.
 
-\ Copyright (C) 2013,2014,2017 Marcos Cruz (programandala.net)
+\ Copyright (C) 2013,2014,2017,2018 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute it and/or modify it
 \ under the terms of the GNU General Public License as published by
@@ -47,12 +47,12 @@ variable prefix
   pid prefix $@ string-prefix? 0= ?exit
   pid pid$>data>pid# dup draft? 
   if  drop  else  tags evaluate_tags  then ;
-  \ Increase the number of pages whose pid starts with the given prefix.
+  \ Increase the number of pages whose page ID starts with the given prefix.
 
 : ((tag_counts_by_prefix)) ( ca len -- f )
   (((tag_counts_by_prefix))) true ;
-  \ Increase the number of pages whose pid starts with the given prefix.
-  \ ca len = pid
+  \ Increase the number of pages whose page ID starts with the given prefix.
+  \ ca len = page ID
   \ f = continue with the next element?
 
 : (tag_counts_by_prefix) ( -- +n_1 ... +n_n n )
@@ -74,7 +74,11 @@ end-package
 \ Change log
 
 \ 2014-03-07: Start.
+\
 \ 2017-06-22: Update source style, layout and header.
+\
 \ 2018-09-27: Use `package` instead of `module:`.
+\
+\ 2018-12-08: Update notation of page IDs in comments and strings.
 
 \ vim: filetype=gforth
