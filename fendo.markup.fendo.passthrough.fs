@@ -6,7 +6,7 @@
 \ This file defines the Fendo markup for passthroughs,
 \ used to output content 'as is'.
 
-\ Last modified 20170622.
+\ Last modified 201812080157.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2017 Marcos Cruz (programandala.net)
@@ -32,7 +32,7 @@
 
 forth_definitions
 
-require galope/trim.fs  \ 'trim'
+require galope/trim.fs  \ `trim`
 
 \ ==============================================================
 \ Tools
@@ -40,7 +40,7 @@ require galope/trim.fs  \ 'trim'
 fendo_definitions
 
 : passthrough-line ( -- ca len )
-  read_source_line 0= abort" Missing closing '~~~~'" ;
+  read_source_line 0= abort" Missing closing `~~~~`" ;
   \ Parse a new line from the current passthrough block.
 
 : "~~~~"? ( ca len -- f )
@@ -68,7 +68,7 @@ markup_definitions
 \ Escape
 
 : ~ ( "name" -- )
-  parse-name? abort" Parseable name expected by '~'"  content ;
+  parse-name? abort" Parseable name expected by `~`"  content ;
   \ Escape a name: Parse and echo it, even if it's a markup.
 
 fendo_definitions
@@ -79,7 +79,11 @@ fendo_definitions
 \ Change log
 
 \ 2014-04-21: Code moved from <fendo.markup.fendo.fs>.
-\ 2014-11-04: Simpler loop in '~~~~'.
+\
+\ 2014-11-04: Simpler loop in `~~~~`.
+\
 \ 2017-06-22: Update source style, layout and header.
+\
+\ 2018-12-08: Update notation of Forth words in comments and strings.
 
 \ vim: filetype=gforth

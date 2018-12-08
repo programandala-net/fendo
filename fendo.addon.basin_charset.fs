@@ -5,7 +5,7 @@
 
 \ This file is the Sinclair QL source code addon.
 
-\ Last modified 201712042300.
+\ Last modified 201812080157.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2017 Marcos Cruz (programandala.net)
@@ -178,5 +178,7 @@ end-translations drop
 \ 2017-06-22: Update source style, layout and header.
 \
 \ 2017-12-04: Update to Galope 0.161.0.
+\
+\ 2018-12-08: Update notation of Forth words in comments and strings.
 
 \ vim: filetype=gforth

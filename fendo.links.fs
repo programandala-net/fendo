@@ -6,7 +6,7 @@
 \ This file provides the words needed to create links,
 \ by the markup words or by the user application.
 
-\ Last modified 201711041742.
+\ Last modified 201812080157.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2017 Marcos Cruz (programandala.net)
@@ -32,7 +32,7 @@
 
 forth_definitions
 
-require galope/minus-prefix.fs  \ '-prefix'
+require galope/minus-prefix.fs  \ `-prefix`
 
 fendo_definitions
 
@@ -78,7 +78,7 @@ $variable (link_text)
 
 : link_text?! ( ca len -- )
   link_text@ empty? if  link_text!  else  2drop  then ;
-  \ If the the string variable 'link_text' is empty,
+  \ If the the string variable `link_text` is empty,
   \ store the given string into it.
 
 [then]  \ XXX 2014-11-07 this was missing,
@@ -99,10 +99,10 @@ link_text_already_evaluated? off
   if    echo  link_text_already_evaluated? off
   else  separate? @ >r evaluate_content r> separate? !  then
 \  separate? !  \ XXX TMP 2014-08-13 try to fix the bug described in the to-do
-  \ XXX TMP saving and restoring 'separate?' makes no difference
+  \ XXX TMP saving and restoring `separate?` makes no difference
   ;
-  \ Note: 'link_text_already_evaluated?' is turned on by
-  \ '(parse_link_text)' in <fendo.parser.fs>.
+  \ Note: `link_text_already_evaluated?` is turned on by
+  \ `(parse_link_text)` in <fendo.parser.fs>.
 
 $variable (link_anchor)
 
@@ -116,7 +116,7 @@ $variable (link_anchor)
 \   2 pick 0= over 0<> and
 \  dup if  ~~  then  \ XXX INFORMER
 \  to_local_anchor? !
-\  ." At the end of '/anchor' 'to_local_anchor?' = " to_local_anchor? ? cr  \ XXX INFORMER
+\  ." At the end of `/anchor` `to_local_anchor?` = " to_local_anchor? ? cr  \ XXX INFORMER
   ; 
   \ Divide a href attribute at its anchor.
   \ ca1 len1 = href attribute
@@ -124,7 +124,7 @@ $variable (link_anchor)
   \ ca3 len3 = anchor without the "#" character
 
 :noname ( ca len -- ca len | ca' len' )
-\   ." href parameter in '-anchor' = " 2dup type cr  \ XXX INFORMER
+\   ." href parameter in `-anchor` = " 2dup type cr  \ XXX INFORMER
   /anchor 2drop
   ; is -anchor  \ defered in <fendo.fs>
   \ Remove the anchor from a href attribute.
@@ -132,7 +132,7 @@ $variable (link_anchor)
   \ ca' len' = href attribute without anchor
 
 :noname ( ca len -- ca len | ca' len' )
-\   ." href parameter in '-anchor!' = " 2dup type cr  \ XXX INFORMER
+\   ." href parameter in `-anchor!` = " 2dup type cr  \ XXX INFORMER
   /anchor link_anchor $!
   ; is -anchor!  \ defered in <fendo.fs>
   \ Extract the anchor from a href attribute and store it.
@@ -140,7 +140,7 @@ $variable (link_anchor)
   \ ca' len' = href attribute without anchor
 
 :noname ( ca len -- ca len | ca' len' )
-\   ." href parameter in '-anchor?!' = " 2dup type cr  \ XXX INFORMER
+\   ." href parameter in `-anchor?!` = " 2dup type cr  \ XXX INFORMER
   /anchor dup if  link_anchor $!  else  2drop  then
   ; is -anchor?!  \ defered in <fendo.fs>
   \ Extract the anchor from a href attribute and store it, if not empty.
@@ -148,7 +148,7 @@ $variable (link_anchor)
   \ ca' len' = href attribute without anchor
 
 : +anchor ( ca1 len1 ca2 len2 -- ca1 len1 | ca3 len3 )
-\   ." Anchor parameter in '+anchor' = " 2dup type cr  \ XXX INFORMER
+\   ." Anchor parameter in `+anchor` = " 2dup type cr  \ XXX INFORMER
   dup if  2>r s" #" s+ 2r> s+  else  2drop  then ;
   \ Add a link anchor to a href attribute.
   \ ca1 len1 = href attribute
@@ -211,9 +211,9 @@ variable link_type
   \ Add "external" to the class attribute.
 
 :noname ( ca len -- )
-\   ." Parameter in 'link_anchor+' = " 2dup type cr  \ XXX INFORMER
+\   ." Parameter in `link_anchor+` = " 2dup type cr  \ XXX INFORMER
   link_anchor $@
-\   ." 'link_anchor' in 'link_anchor+' = " 2dup type cr  \ XXX INFORMER
+\   ." `link_anchor` in `link_anchor+` = " 2dup type cr  \ XXX INFORMER
   +anchor
   ; is link_anchor+
   \ Restore the link anchor of the local href attribute, if any.
@@ -227,16 +227,16 @@ variable link_type
 
 : local_anchor_href? ( -- f )
   href=@ local_anchor? ;
-  \ Is the 'href=' attribute an anchor to the current page?
+  \ Is the `href=` attribute an anchor to the current page?
 
 : (convert_local_link_href) ( ca1 len1 -- ca2 len2 )
   dup if  pid$>data>pid# target_file  then ;
   \ Convert a raw local href to a finished href, if not empty.
 
 : convert_local_link_href ( ca1 len1 -- ca2 len2 )
-\  ." Parameter in 'convert_local_link_href' = " 2dup type cr  \ XXX INFORMER
+\  ." Parameter in `convert_local_link_href` = " 2dup type cr  \ XXX INFORMER
   2dup local_anchor? 0= if  (convert_local_link_href)  then
-\  ." Result in 'convert_local_link_href' = " 2dup type cr  \ XXX INFORMER
+\  ." Result in `convert_local_link_href` = " 2dup type cr  \ XXX INFORMER
   ;
   \ Convert a raw local href to a finished href, if not a local anchor.
 
@@ -247,7 +247,7 @@ variable link_type
   -file://  files_subdir $@ 2swap s+ ;
 
 : convert_link_href ( ca len -- ca' len' )
-\  ." Parameter in 'convert_link_href' = " 2dup type cr  \ XXX INFORMER
+\  ." Parameter in `convert_link_href` = " 2dup type cr  \ XXX INFORMER
   link_type @ case
     local_link      of  convert_local_link_href     endof
     file_link       of  convert_file_link_href      endof
@@ -267,13 +267,13 @@ variable local_link_to_draft_page?
   \ a = page id of the link destination
 
 : ?href>current_pid$ ( ca len -- ca' len' )
-\  ." In '?href>current_pid$' parameter = " 2dup type cr  \ XXX INFORMER
+\  ." In `?href>current_pid$` parameter = " 2dup type cr  \ XXX INFORMER
   dup 0= if  2drop current_pid$  then
-\  ." In '?href>current_pid$' result    = " 2dup type cr  \ XXX INFORMER
+\  ." In `?href>current_pid$` result    = " 2dup type cr  \ XXX INFORMER
   ;
 
 : (tune_local_link) ( ca len -- )
-\  ." 'title=' at the start of '(tune_local_link)' = " title=@ ." «" type ." »" cr  \ XXX INFORMER
+\  ." `title=` at the start of `(tune_local_link)` = " title=@ ." «" type ." »" cr  \ XXX INFORMER
   ?href>current_pid$ pid$>(data>)pid#  >r
   r@ draft? local_link_to_draft_page? !
   local_anchor_href?  0= if
@@ -282,7 +282,7 @@ variable local_link_to_draft_page?
     r@ access_key accesskey=?!
   then
   r> title link_text?!
-\  ." 'title=' at the end of '(tune_local_link)' = " title=@ type cr  \ XXX INFORMER
+\  ." `title=` at the end of `(tune_local_link)` = " title=@ type cr  \ XXX INFORMER
   ;
 
 : tune_local_link ( -- )
@@ -290,7 +290,7 @@ variable local_link_to_draft_page?
   href=@ dup if  (tune_local_link)  else  2drop  then ;
 
 : tune_link ( -- )  \ XXX TODO
-\   ." 'href=' in 'tune_link' = " href=@ type cr  \ XXX INFORMER
+\   ." `href=` in `tune_link` = " href=@ type cr  \ XXX INFORMER
   local_link? if  tune_local_link  then
   href=@ convert_link_href href=!
   link_text@ empty? if  missing_link_text link_text!  then
@@ -298,7 +298,7 @@ variable local_link_to_draft_page?
   \ Tune the attributes parsed from the link.
 
 : echo_link_text ( -- )
-\  ." At 'echo_link_text'" cr  \ XXX INFORMER
+\  ." At `echo_link_text`" cr  \ XXX INFORMER
   echo_space  \ XXX FIXME not always required, but how to know?
   evaluate_link_text separate? on ;
   \ Echo just the link text.
@@ -318,10 +318,10 @@ defer link_suffix
 
 : (echo_link) ( -- )
 \  to_local_anchor? @ if  \ XXX OLD
-\  ." 'title=' in '(echo_link)' before 'local_anchor_href?' = " title=@ type cr  \ XXX INFORMER
+\  ." `title=` in `(echo_link)` before `local_anchor_href?` = " title=@ type cr  \ XXX INFORMER
   local_anchor_href?
-\  ." In (echo_link) 'local_anchor_href?' = " dup . cr  \ XXX INFORMER
-\  ." 'title=' in '(echo_link)' after 'local_anchor_href?' = " title=@ type cr  \ XXX INFORMER
+\  ." In (echo_link) `local_anchor_href?` = " dup . cr  \ XXX INFORMER
+\  ." `title=` in `(echo_link)` after `local_anchor_href?` = " title=@ type cr  \ XXX INFORMER
   if  anchor_only  then
   [<a>] evaluate_link_text link_text_suffix [</a>] link_suffix ;
   \ Echo the final link.
@@ -338,9 +338,9 @@ defer link_suffix
   \ and are not reseted by the HTML tags layer.
 
 : echo_link ( -- )
-\  ." In 'echo_link', 'link_text$' = " link_text@ type cr  \ XXX INFORMER
-\  ." 'href=' in 'echo_link' = " href=@ 2dup type ." [" .s 2drop ." ]" cr  \ XXX INFORMER
-\  ." 'href=' in 'echo_link' = " href=@ type cr  \ XXX INFORMER
+\  ." In `echo_link`, `link_text$` = " link_text@ type cr  \ XXX INFORMER
+\  ." `href=` in `echo_link` = " href=@ 2dup type ." [" .s 2drop ." ]" cr  \ XXX INFORMER
+\  ." `href=` in `echo_link` = " href=@ type cr  \ XXX INFORMER
   tune_link  echo_link?
   if  (echo_link)  else  -attributes echo_link_text  then  reset_link ;
   \ Echo a link, if possible.
@@ -356,16 +356,16 @@ defer (get_link_href) ( ca len -- )
   \ Defined in <fendo.markup.fendo.link.fs>.
 
 : (link) ( ca len -- )
-\  ." 'title=' in '(link)' = " title=@ type cr  \ XXX INFORMER
+\  ." `title=` in `(link)` = " title=@ type cr  \ XXX INFORMER
   (get_link_href) echo_link ;
   \ Create a link.
   \ Its attributes and link text have to be set previously.
   \ ca len = page id, URL or shortcut
 
 : link ( ca1 len1 ca2 len2 -- )
-\   ." In 'link' the link text is " 2dup type cr  \ XXX INFORMER
-\   ." In 'link' the page id is " 2over type cr  \ XXX INFORMER
-\  ." 'title=' in 'link' = " title=@ type cr  \ XXX INFORMER
+\   ." In `link` the link text is " 2dup type cr  \ XXX INFORMER
+\   ." In `link` the page id is " 2over type cr  \ XXX INFORMER
+\  ." `title=` in `link` = " title=@ type cr  \ XXX INFORMER
   link_text! (link) ;
   \ Create a link of any type.
   \ Its attributes have to be set previously.
@@ -376,7 +376,7 @@ defer (get_link_href) ( ca len -- )
   2dup pid$>data>pid# title link_text?! (link) ;
   \ Create a link to a local page.
   \ Its attributes have to be set previously.
-  \ If 'link_text' is not set, the page title will be used.
+  \ If `link_text` is not set, the page title will be used.
   \ ca len = page id or shortcut to it
   \ XXX TODO -- make it work with anchors!?
 
@@ -384,83 +384,85 @@ defer (get_link_href) ( ca len -- )
   dup title link_text?! pid#>pid$ (link) ;
   \ Create a link to a local page.
   \ Its attributes have to be set previously.
-  \ If 'link_text' is not set, the page title will be used.
+  \ If `link_text` is not set, the page title will be used.
 
 .( fendo.links.fs ) cr
 
 \ ==============================================================
 \ Change log
 
-\ 2013-11-11: Code extracted from <fendo_markup_wiki.fs>: 'link'.
+\ 2013-11-11: Code extracted from <fendo_markup_wiki.fs>: `link`.
 \
 \ 2013-11-26: Change: several words renamed, after a new uniform
 \ notation: "pid$" and "pid#" for both types of page ids.
 \
-\ 2014-03-03: New: 'link<pid#'.
+\ 2014-03-03: New: `link<pid#`.
 \
-\ 2014-03-03: Change: 'title_link' renamed to 'link<pid$'.
+\ 2014-03-03: Change: `title_link` renamed to `link<pid$`.
 \
 \ 2014-06-15: Fix: repeated evaluation of link texts is solved with
-\ the new 'link_text_already_evaluated?' flag.
+\ the new `link_text_already_evaluated?` flag.
 \
-\ 2014-07-11: Change: 'pid$>url' moved to <fendo.data.fs>.
+\ 2014-07-11: Change: `pid$>url` moved to <fendo.data.fs>.
 \
 \ 2014-08-15: Fix: comment updated.
 \
 \ 2014-08-15: Fix: 'link_text_already_evaluated? off' was missing in
-\ 'evaluate_link_text'.
+\ `evaluate_link_text`.
 \
-\ 2014-10-12: Fix: 'evaluate_link_text' now preserves the content of
-\ 'separate?' in the return stack; it ruined the stack before calling
-\ 'evaluate_content'.
+\ 2014-10-12: Fix: `evaluate_link_text` now preserves the content of
+\ `separate?` in the return stack; it ruined the stack before calling
+\ `evaluate_content`.
 \
-\ 2014-11-07: a '[then]' was missing (more details in a comment marked
+\ 2014-11-07: a `[then]` was missing (more details in a comment marked
 \ with this date).
 \
-\ 2014-11-08: Change: 'unmarkup' (just implemented) is used instead of
+\ 2014-11-08: Change: `unmarkup` (just implemented) is used instead of
 \ hard-coded plain text versions of some data fields.
 \
 \ 2014-11-09: Change: all 'true [if]' that compiled code that long ago
 \ was moved from <fendo.markup.fendo.link.fs> have been removed. Those
 \ conditions were needed just in case strange things happened.
 \
-\ 2014-11-11: Change: '+anchor' rewritten without locals.
+\ 2014-11-11: Change: `+anchor` rewritten without locals.
 \
-\ 2014-11-14: Change: 'reset_link' resets also 'link_anchor'.
+\ 2014-11-14: Change: `reset_link` resets also `link_anchor`.
 \
-\ 2014-11-16: Fix: 'link_anchor+' removed from 'convert_link_href'.
-\ This is done in a lower level, in 'target_file' (defined in
+\ 2014-11-16: Fix: `link_anchor+` removed from `convert_link_href`.
+\ This is done in a lower level, in `target_file` (defined in
 \ <fendo.data.fs>).
 \
-\ 2014-11-27: Fix: now 'echo_link' executes '-attributes' when only
+\ 2014-11-27: Fix: now `echo_link` executes `-attributes` when only
 \ the link text is printed; formerly the link attributes were used by
 \ the next HTML tag.
 \
-\ 2014-11-27: Fix: now 'echo_link_text' does 'separate? on' at the
+\ 2014-11-27: Fix: now `echo_link_text` does 'separate? on' at the
 \ end.
 \
-\ 2014-11-27: New: 'to_local_anchor?' flag, set by '/anchor'.
+\ 2014-11-27: New: `to_local_anchor?` flag, set by `/anchor`.
 \
-\ 2014-11-27: Fix: now 'echo_link?' uses also 'link_anchor'.
+\ 2014-11-27: Fix: now `echo_link?` uses also `link_anchor`.
 \
-\ 2014-11-28: Fix: The 'to_local_anchor?' flag is removed, because it
+\ 2014-11-28: Fix: The `to_local_anchor?` flag is removed, because it
 \ was overwritten and ruined several times during the link process.
-\ The word 'local_anchor_href?' and 'local_anchor?' are used instead;
+\ The word `local_anchor_href?` and `local_anchor?` are used instead;
 \ the calculation is done only when required, with the contents of
-\ 'href=' and 'link_anchor'. 'convert_local_link_href' is updated
+\ `href=` and `link_anchor`. `convert_local_link_href` is updated
 \ accordingly.
 \
-\ 2014-12-06: Fix: Now '(tune_local_link)' uses the calcutated datum
-\ 'description|title', just written for the fix (in <fendo.data.fs>),
-\ instead of the datum 'description'. This makes sure links to
+\ 2014-12-06: Fix: Now `(tune_local_link)` uses the calcutated datum
+\ `description|title`, just written for the fix (in <fendo.data.fs>),
+\ instead of the datum `description`. This makes sure links to
 \ description-less pages have a link title.
 \
-\ 2015-02-12: Change: 'link_anchor' and 'link_text' are defered in
+\ 2015-02-12: Change: `link_anchor` and `link_text` are defered in
 \ <fendo.fs> and defined here. Required because of a fix.
 \
 \ 2017-06-22: Update source style, layout and header.
 \
 \ 2017-11-04: Update to Galope 0.103.0: Replace `-path` with Gforth's
 \ `basename`.
+\
+\ 2018-12-08: Update notation of Forth words in comments and strings.
 
 \ vim: filetype=gforth

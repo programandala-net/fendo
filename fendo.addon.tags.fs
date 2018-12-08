@@ -5,7 +5,7 @@
 
 \ This file creates the tools needed to use page tags.
 
-\ Last modified 201809271547.
+\ Last modified 201812080157.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2014,2017 Marcos Cruz (programandala.net)
@@ -30,15 +30,15 @@
 \ Stack notation
 
 \ In this file, the stack notation "tag" represents the body (the data
-\ field address) of a tag word. Tag words are created by 'create'.
+\ field address) of a tag word. Tag words are created by `create`.
 
 \ ==============================================================
 \ Requirements
 
 forth_definitions
-require galope/n-to-r.fs  \ 'n>r'
-require galope/n-r-from.fs  \ 'nr<'
-require galope/one-plus-store.fs  \ '1+!'
+require galope/n-to-r.fs  \ `n>r`
+require galope/n-r-from.fs  \ `nr<`
+require galope/one-plus-store.fs  \ `1+!`
 fendo_definitions
 
 \ ==============================================================
@@ -110,7 +110,7 @@ defer tag>pid$ ( tag -- ca len )
 
 variable lonely_tags_link_to_content  \ flag
 
-\ When 'lonely_tags_link_to_content' is on, the tag cloud
+\ When `lonely_tags_link_to_content` is on, the tag cloud
 \ links of tags used only once are changed to its actual tagged page.
 \ But this does not work for tag lists. The code required for tag list
 \ would be much more complex. In order to achive the same effect in
@@ -119,7 +119,7 @@ variable lonely_tags_link_to_content  \ flag
 \   shortcut: en.tag.dbase  s" en.program.my_database" href!  ;
 
 \ In fact such a shortcut would have effect also in tag clouds, so the
-\ current code triggered by 'lonely_tags_link_to_content'
+\ current code triggered by `lonely_tags_link_to_content`
 \ is unnecessary.
 
 : ((tag_link)) ( tag ca len -- )
@@ -188,9 +188,9 @@ variable lonely_tags_link_to_content  \ flag
   last_listed_link? if  s" last" class=!  then  [<li>] tag_link [</li>] ;
   \ Create a list element with a link to the page of the given tag.
   \ Note: Before creating the link list,
-  \ the '#tag' variable must be set to zero, and
-  \ the '#tags' variable must be calculated.
-  \ See the definition of 'tag_list' in <fendo.addon.tag_list.fs>
+  \ the `#tag` variable must be set to zero, and
+  \ the `#tags` variable must be calculated.
+  \ See the definition of `tag_list` in <fendo.addon.tag_list.fs>
   \ as as example how a tag link list is built.
 
 variable tag_searched_for$
@@ -257,7 +257,7 @@ defer (tag_does)  \ current behaviour of the tags
 : tags_do_count ( -- )
   #tags off  ['] (tag_does_count) is (tag_does) ;
   \ Set the tags to count how many tags are executed.
-  \ Output will be in the '#tags' variable.
+  \ Output will be in the `#tags` variable.
 
 \ ==============================================================
 \ Create new tags
@@ -326,28 +326,28 @@ s" /tmp/fendo.tags.fs" 2constant tags_filename$
 \
 \ 2014-03-03: First draft.
 \
-\ 2014-03-04: New: 'evaluate_tags' and wid order words; words for
+\ 2014-03-04: New: `evaluate_tags` and wid order words; words for
 \ listed links.
 \
-\ 2014-03-04: Change: 'execute_tags' renamed to 'execute_all_tags'.
+\ 2014-03-04: Change: `execute_tags` renamed to `execute_all_tags`.
 \
-\ 2014-03-07: Change: 'tag_link' factored from '(does_tag_link)'.
+\ 2014-03-07: Change: `tag_link` factored from `(does_tag_link)`.
 \
-\ 2014-03-11: Fix: now 'tag_link' sets the needed wordlist order; this
+\ 2014-03-11: Fix: now `tag_link` sets the needed wordlist order; this
 \ is needed because the order was changed before evaluating the tags.
 \
-\ 2014-05-28: New: 'tags_used_only_once_link_to_its_own_page' flag.
+\ 2014-05-28: New: `tags_used_only_once_link_to_its_own_page` flag.
 \
-\ 2104-05-28: Change: '(tag_link)' modified in order to implement
-\ 'tags_used_only_once_link_to_its_own_page'.
+\ 2104-05-28: Change: `(tag_link)` modified in order to implement
+\ `tags_used_only_once_link_to_its_own_page`.
 \
-\ 2014-06-03: Change: 'tags_used_only_once_link_to_its_own_page'
-\ renamed to 'lonely_tags_link_to_content'.
+\ 2014-06-03: Change: `tags_used_only_once_link_to_its_own_page`
+\ renamed to `lonely_tags_link_to_content`.
 \
 \ 2014-11-05: Improvement: In order to add a class to the last element
 \ of a tag link list (what makes some things easier for CSS), new
-\ words are added: '#tags', '#tag', '(tag_does_count)' and
-\ 'tag_do_count'.
+\ words are added: `#tags`, `#tag`, `(tag_does_count)` and
+\ `tag_do_count`.
 \
 \ 2017-06-22: Update source style, layout and header.
 \
@@ -355,5 +355,7 @@ s" /tmp/fendo.tags.fs" 2constant tags_filename$
 \
 \ 2018-09-27: Remove useless forgotten `export`, part of Galope's
 \ module `module`, which is not used anymore by Fendo.
+\
+\ 2018-12-08: Update notation of Forth words in comments and strings.
 
 \ vim: filetype=gforth

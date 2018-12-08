@@ -5,7 +5,7 @@
 
 \ This file defines the page data tools.
 
-\ Last modified 201812061928.
+\ Last modified 201812080157.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2015,2017,2018 Marcos Cruz (programandala.net)
@@ -99,7 +99,7 @@ defer get_datum ( a u -- ca len )
     else ( a1 u )          get_datum  then ;
   \ Create a page metadatum that parses or returns its value.
   \ This is the normal version of the metadatum: when executed in the
-  \ metadata header (between 'data{' and '}data'), it will get its
+  \ metadata header (between `data{` and `}data`), it will get its
   \ datum from the input stream, until the end of the line, and will
   \ store it; when executed out of the metadata header, it will return
   \ the datum string.
@@ -107,7 +107,7 @@ defer get_datum ( a u -- ca len )
 
 : :datum>address ( ca len -- )
   s" '" 2swap s+ nextname
-  latestxt  \ of the word previously created by ':datum>value'
+  latestxt  \ of the word previously created by `:datum>value`
   create ( xt ) >body ,
   does> ( a1 -- a2 )
     ( a1 dfa ) @ @ ( a1 u ) + ;
@@ -115,7 +115,7 @@ defer get_datum ( a u -- ca len )
   \ The new name will have a tick at the start.
   \ ca len = datum name
   \ a1 = page data address
-  \ a2 = datum address (a dynamic string that can be updated by '$!')
+  \ a2 = datum address (a dynamic string that can be updated by `$!`)
   \ dfa = data field address of the datum word
   \ u = datum offset
 
@@ -136,7 +136,7 @@ datum: description  \ page description; XXX TODO -- can include markups?
 datum: created  \ content creation (publication) date
 datum: modified  \ content modification date
 ' modified alias modifed
-datum: file_modified  \ file modification date; if not specified, 'modified' is used
+datum: file_modified  \ file modification date; if not specified, `modified` is used
 
 datum: access_key  \ access key (one char)
 
@@ -204,10 +204,10 @@ datum: template  \ HTML template filename in the design subdir
   \ ca len = page id
 
 : target_file ( a -- ca len )
-\   ." 'link_anchor' in 'target_file' = " link_anchor $@ type cr  \ XXX INFORMER
-\ XXX TODO -- 'link_anchor+' should not be here
+\   ." `link_anchor` in `target_file` = " link_anchor $@ type cr  \ XXX INFORMER
+\ XXX TODO -- `link_anchor+` should not be here
   dup >r pid#>pid$ r> target_extension s+ link_anchor+
-\   ." Result in 'target_file' = " 2dup type cr  \ XXX INFORMER
+\   ." Result in `target_file` = " 2dup type cr  \ XXX INFORMER
   ;
   \ Return a target HTML page filename.
   \ a = page id
@@ -260,7 +260,7 @@ datum: template  \ HTML template filename in the design subdir
 : current_pid$ ( -- ca len )
   /sourcefilename -extension ;
   \ Return the name of the current page id.
-  \ XXX TODO -- combine with 'current_page_pid$'?
+  \ XXX TODO -- combine with `current_page_pid$`?
 
 : known_pid$? ( ca len -- 0 | xt +-1 )
   -anchor fendo_pid_wid search-wordlist ;
@@ -292,9 +292,9 @@ datum: template  \ HTML template filename in the design subdir
 \  current_page ?dup if  pid#>pid$  else  pad 0  then
   ;
   \ Return the string page id of the current page,
-  \ XXX TODO -- combine with 'current_pid$'?
-  \ XXX TODO 'current_page' can be zero during debugging tasks,
-  \ for example while using 'echo>screen' to check the
+  \ XXX TODO -- combine with `current_pid$`?
+  \ XXX TODO `current_page` can be zero during debugging tasks,
+  \ for example while using `echo>screen` to check the
   \ engine without files. But this alternative creates new
   \ problems because of the empty pid:
   \ ca len = page id or empty string
@@ -374,7 +374,7 @@ defer set_default_data ( -- )
   execute to current_page
 \  ." skip_data{" cr  \ XXX INFORMER
   begin   parse-name dup 0=
-    if    2drop refill 0= dup abort" Missing '}data'"
+    if    2drop refill 0= dup abort" Missing `}data`"
     else  s" }data" str=  then
   until   }data ;
   \ Skip the page data.
@@ -442,7 +442,7 @@ variable do_content?  do_content? on
   \ Require a page file _ca len_ in order to get its data.
 
 : required_data ( ca len -- )
-\   ." parameter in 'required_data' = " 2dup type cr  \ XXX INFORMER
+\   ." parameter in `required_data` = " 2dup type cr  \ XXX INFORMER
 \   ." related = " current_page related type cr  \ XXX INFORMER
   do_content? @ >r  current_page >r
   (required_data)
@@ -461,8 +461,8 @@ variable do_content?  do_content? on
 
 : (required_data<pid$) ( ca len -- )
 \   ." Stack at the start of `(required_data<pid$)` : " .s cr key drop \ XXX INFORMER
-\   ." Parameter in '(required_data<pid$)' = " 2dup type cr key drop  \ XXX INFORMER
-\   ." 'link_anchor' in '(required_data<pid$)' = " link_anchor $@ type cr  \ XXX INFORMER
+\   ." Parameter in `(required_data<pid$)` = " 2dup type cr key drop  \ XXX INFORMER
+\   ." `link_anchor` in `(required_data<pid$)` = " link_anchor $@ type cr  \ XXX INFORMER
   -anchor?! +forth_extension
 \   ." Stack before `required_data` in `(required_data<pid$)` : " .s cr key drop \ XXX INFORMER
   required_data
@@ -473,9 +473,9 @@ variable do_content?  do_content? on
   \ ca len = page id
 
 : required_data<pid$ ( ca len -- )
-\  ." Parameter in 'required_data<pid$' before 'unshortcut' = " 2dup type cr  \ XXX INFORMER
+\  ." Parameter in `required_data<pid$` before `unshortcut` = " 2dup type cr  \ XXX INFORMER
   unshortcut
-\  ." Parameter in 'required_data<pid$' after 'unshortcut' = " 2dup type cr  \ XXX INFORMER
+\  ." Parameter in `required_data<pid$` after `unshortcut` = " 2dup type cr  \ XXX INFORMER
   (required_data<pid$) ;
   \ Require a page file in order to get its data.
   \ ca len = page id
@@ -487,7 +487,7 @@ variable do_content?  do_content? on
   \ ca len = target file, without path
 
 : require_data ( "name" -- )
-  parse-name? abort" File name expected in 'require_data'"
+  parse-name? abort" File name expected in `require_data`"
   required_data ;
   \ Require a page file in order to get its data.
   \ "name" = filename
@@ -496,7 +496,7 @@ variable do_content?  do_content? on
 \  ." Parameter of `(pid$>data>pid#)` : " 2dup type cr key drop \ XXX INFORMER
 \   ." Stack at the start of `(pid$>data>pid#)` : " .s cr key drop \ XXX INFORMER
 \  -anchor \ XXX TMP
-\  ." 'link_anchor' in '(pid$>data>pid#)' = " link_anchor $@ type cr  \ XXX INFORMER
+\  ." `link_anchor` in `(pid$>data>pid#)` = " link_anchor $@ type cr  \ XXX INFORMER
   2dup (required_data<pid$) pid$>pid#
 \   ." Stack at the end of `(pid$>data>pid#` : " .s cr key drop \ XXX INFORMER
   ;
@@ -506,14 +506,14 @@ variable do_content?  do_content? on
   \ a = page id
 
 : pid$>data>pid# ( ca len -- a )
-\   ." Parameter in 'pid$>data>pid#'  before 'dry_unshortcut' = " 2dup type cr  \ XXX INFORMER
+\   ." Parameter in `pid$>data>pid#`  before `dry_unshortcut` = " 2dup type cr  \ XXX INFORMER
 \  key drop  \ XXX INFORMER
-\  ."    'href=' in 'pid$>data>pid#' before 'dry_unshortcut' = " s" href=@" evaluate .s ." = " type cr  \ XXX INFORMER
-\   ." 'link_anchor' in 'pid$>data>pid#' before 'dry_unshortcut' = " link_anchor $@ type cr  \ XXX INFORMER
+\  ."    `href=` in `pid$>data>pid#` before `dry_unshortcut` = " s" href=@" evaluate .s ." = " type cr  \ XXX INFORMER
+\   ." `link_anchor` in `pid$>data>pid#` before `dry_unshortcut` = " link_anchor $@ type cr  \ XXX INFORMER
   dry_unshortcut  \ XXX TMP
-\  ." >> 'href=' in 'pid$>data>pid#' after 'dry_unshortcut'  = " s" href=@" evaluate .s ." = " type cr  \ XXX INFORMER
-\   ." Parameter in 'pid$>data>pid#' after 'dry_unshortcut' = " 2dup type cr  \ XXX INFORMER
-\   ." 'link_anchor' in 'pid$>data>pid#' after 'dry_unshortcut' = " link_anchor $@ type cr  \ XXX INFORMER
+\  ." >> `href=` in `pid$>data>pid#` after `dry_unshortcut`  = " s" href=@" evaluate .s ." = " type cr  \ XXX INFORMER
+\   ." Parameter in `pid$>data>pid#` after `dry_unshortcut` = " 2dup type cr  \ XXX INFORMER
+\   ." `link_anchor` in `pid$>data>pid#` after `dry_unshortcut` = " link_anchor $@ type cr  \ XXX INFORMER
   dup 0= abort" Empty page-id"  \ XXX TMP
   (pid$>data>pid#)
 \  find-name name>int execute  \ XXX SECOND version; no difference, same corruption of the input stream
@@ -525,7 +525,7 @@ variable do_content?  do_content? on
   \ a = page id
 
 : pid$>(data>)pid# ( ca len -- a )
-\   ." Parameter in 'pid$>(data>)pid#'  = " 2dup type cr  \ XXX INFORMER
+\   ." Parameter in `pid$>(data>)pid#`  = " 2dup type cr  \ XXX INFORMER
   dup if  pid$>data>pid#  else  2drop current_page  then ;
   \ Return a number page id from a string page id;
   \ if it's different from the current page, require its data.
@@ -558,8 +558,8 @@ variable do_content?  do_content? on
   dup file_modified dup
   if  rot drop  else  2drop modified  then ;
   \ ISO time string used to set the mtime (modification time) of the
-  \ target files. The 'file_modified' datum is the first choice,
-  \ then 'modified'.
+  \ target files. The `file_modified` datum is the first choice,
+  \ then `modified`.
 
 : newer? ( a -- f )
   dup target_path/file 2dup file-exists?
@@ -586,7 +586,7 @@ variable do_content?  do_content? on
   \ a = page id (address of its data)
   \ f = is the property in the properties field of the page?
 
-\ 'ignore_draft_property?' is a flag for the application
+\ `ignore_draft_property?` is a flag for the application
 \ that does what its name suggets:
 \ When it's true, the "draft" status will be ignored,
 \ so draft pages will be built as definitive pages.
@@ -741,7 +741,7 @@ variable a_next_page \ flag
   file-mtime 2dup current_page modified
   str< if  2drop  else  current_page 'modified $!  then ;
   \ If the modification time of the given file is more recent
-  \ than the current page 'modified' datum, update the page datum with
+  \ than the current page `modified` datum, update the page datum with
   \ the file modification time.
 
 true value included_files_update_the_page_date?
@@ -751,10 +751,10 @@ true value included_files_update_the_page_date?
   included_files_update_the_page_date?
   if (file-mtime>modified) else 2drop then ;
   \ If the modification time of the given file is more recent
-  \ than the current page 'modified' datum, update the page datum with
+  \ than the current page `modified` datum, update the page datum with
   \ the file modification time.
   \ This is used by addons that include contents file into the page,
-  \ in order to update the page 'modified' datum with the date of
+  \ in order to update the page `modified` datum with the date of
   \ the most recent file used.
 
 .( fendo.data.fs compiled) cr
@@ -766,218 +766,218 @@ true value included_files_update_the_page_date?
 \
 \ 2013-05-01: Fixed and finished the data system.
 \
-\ 2013-05-17: Fix: There were two words with the name '>datum'; it
+\ 2013-05-17: Fix: There were two words with the name `>datum`; it
 \ caused no problem in practice, but was confusing.
 \
-\ 2013-05-17: Improvement: 'data{' gets the data only the first time.
+\ 2013-05-17: Improvement: `data{` gets the data only the first time.
 \
-\ 2013-05-17: New: 'require_data' is moved here from its own file, and
+\ 2013-05-17: New: `require_data` is moved here from its own file, and
 \ simplified.
 \
 \ 2013-05-18: Change: data fields return their offset, not their
-\ content (neccessary to write 'datum!'; '>datum' removed (now '+' can
-\ be used instead). 'datum!' is necessary in order to set default
+\ content (neccessary to write `datum!`; `>datum` removed (now `+` can
+\ be used instead). `datum!` is necessary in order to set default
 \ values to certain fields.
 \
-\ 2013-05-18: New: 'parse_datum' is rewriten and factored out to
-\ 'datum!'.
+\ 2013-05-18: New: `parse_datum` is rewriten and factored out to
+\ `datum!`.
 \
-\ 2013-06-07: Fix: The check in 'data{' was obsolete; it has been
+\ 2013-06-07: Fix: The check in `data{` was obsolete; it has been
 \ rewritten.
 \
 \ 2013-06-08: Fix: The leading spaces of parsed data were not removed.
 \
-\ 2013-06-08: Fix: now 'datum@' returns an empty string if the datum
+\ 2013-06-08: Fix: now `datum@` returns an empty string if the datum
 \ was not set.
 \
-\ 2013-06-08: Fix: '@' missing in 'default_data'; beside, renamed to
+\ 2013-06-08: Fix: `@` missing in `default_data`; beside, renamed to
 \ "set_default_data'.
 \
-\ 2013-06-08: Change: 'datum@' and 'datum!' are removed; '$@' and '$!'
+\ 2013-06-08: Change: `datum@` and `datum!` are removed; `$@` and `$!`
 \ are used instead (from Gforth's <string.fs>)).
 \
-\ 2013-06-08: Fix: name clash (old 'source_filename' > '+source_path';
-\ new 'source_filename' > '/sourcefilename').
+\ 2013-06-08: Fix: name clash (old `source_filename` > `+source_path`;
+\ new `source_filename` > `/sourcefilename`).
 \
 \ 2013-06-23: Change: design and template fields are renamed after the
 \ changes in the config module.
 \
 \ 2013-06-28: Change: hierarchy metadata fields are renamed with the
-\ "_page" prefix, to avoid the clash with 'next' and make the code
-\ clearer; 'up' is renamed to 'upper_page'.
+\ "_page" prefix, to avoid the clash with `next` and make the code
+\ clearer; `up` is renamed to `upper_page`.
 \
 \ 2013-06-28: Change: metadata fields return their values, not their
 \ addresses; a parallel word is created to return the address, only
 \ needed to set the default data; this change makes the code nicer.
 \
-\ 2013-06-29: Change: '/sourcefilename' moved here from
+\ 2013-06-29: Change: `/sourcefilename` moved here from
 \ <fendo_files.fs>.
 \
-\ 2013-06-29: Change: 'source>target_extension' moved here from
+\ 2013-06-29: Change: `source>target_extension` moved here from
 \ <fendo_files.fs>.
 \
-\ 2013-06-29: New: 'target_extension'; now target filename extension
+\ 2013-06-29: New: `target_extension`; now target filename extension
 \ depends on the corresponding optional metadatum too.
 \
-\ 2013-07-28: New: 'required_data', '-forth_extension',
-\ '+forth_extension'.
+\ 2013-07-28: New: `required_data`, `-forth_extension`,
+\ `+forth_extension`.
 \
-\ 2013-09-06: Fix: '(required_data)' didn't save 'current_page'.
+\ 2013-09-06: Fix: `(required_data)` didn't save `current_page`.
 \
-\ 2013-09-06: New: 'property?', 'draft?'.
+\ 2013-09-06: New: `property?`, `draft?`.
 \
-\ 2013-09-29: Fix: 'current_page' was not properly preserved when
-\ 'require_data' was used. This caused many pages were not created.
+\ 2013-09-29: Fix: `current_page` was not properly preserved when
+\ `require_data` was used. This caused many pages were not created.
 \ This bug was difficult to find out.
 \
-\ 2013-10-22: Change: the new word 'trim', defined in the Galope
+\ 2013-10-22: Change: the new word `trim`, defined in the Galope
 \ library, is used instead of '-trailing -leading'.
 \
-\ 2013-10-22: Fix: 'parse_datum' now uses 'trim' instead of
-\ '-leading'.
+\ 2013-10-22: Fix: `parse_datum` now uses `trim` instead of
+\ `-leading`.
 \
-\ 2013-10-22: New: 'data<id$>id'.
+\ 2013-10-22: New: `data<id$>id`.
 \
-\ 2013-10-23: Improvement: 'unshortcut' is used in 'required_data<id$'
-\ and 'data<id$>id'.
+\ 2013-10-23: Improvement: `unshortcut` is used in `required_data<id$`
+\ and `data<id$>id`.
 \
-\ 2013-11-06: New: '(data<)id$>id'.
+\ 2013-11-06: New: `(data<)id$>id`.
 \
-\ 2013-11-07: New: '(required_data)' traps the errors and show an
+\ 2013-11-07: New: `(required_data)` traps the errors and show an
 \ additional error message that includes the filename. This is
 \ important because the actual filename could be different from the
 \ filename taken from the markup, because of the "unshortcuttting"
 \ system.
 \
-\ 2013-11-11: Change: '/csv' moved to the Galope library.
+\ 2013-11-11: Change: `/csv` moved to the Galope library.
 \
-\ 2013-11-24: New: 'page_id$', 'descendant?', 'current_page_id$'.
+\ 2013-11-24: New: `page_id$`, `descendant?`, `current_page_id$`.
 \
-\ 2013-11-25: New: 'source>id$', 'source>id'.
+\ 2013-11-25: New: `source>id$`, `source>id`.
 \
 \ 2013-11-26: Change: several words renamed, after a new uniform
 \ notation: "pid$" and "pid#" for both types of page ids.
 \
-\ 2013-11-26: New: 'pid$>pid#'; page ids are created in a specific
+\ 2013-11-26: New: `pid$>pid#`; page ids are created in a specific
 \ wordlist.
 \
-\ 2013-11-27: New: '(pid$>data>pid#)' factored out from
-\ 'pid$>data>pid#', as required by 'pid$_list@' (defined in
-\ <addons/pid_list.fs>), where 'unshortcut' is inconvenient.
+\ 2013-11-27: New: `(pid$>data>pid#)` factored out from
+\ `pid$>data>pid#`, as required by `pid$_list@` (defined in
+\ <addons/pid_list.fs>), where `unshortcut` is inconvenient.
 \
-\ 2013-11-28: New: 'known_pid$?', factored from 'pid$>pid#' to be
-\ reused in ':pid'.
+\ 2013-11-28: New: `known_pid$?`, factored from `pid$>pid#` to be
+\ reused in `:pid`.
 \
-\ 2013-11-28: New: 'pid$>target', to fix 'redirected' (in
+\ 2013-11-28: New: `pid$>target`, to fix `redirected` (in
 \ <fendo_files.fs>)
 \
-\ 2013-12-05: Change: 'current_file_pid$' renamed to 'current_pid$'.
+\ 2013-12-05: Change: `current_file_pid$` renamed to `current_pid$`.
 \
-\ 2013-12-06: New: 'pid$>level' and 'pid#>level'.
+\ 2013-12-06: New: `pid$>level` and `pid#>level`.
 \
-\ 2014-01-05: Typo: 'modifed' corrected to 'modified'; alias created
+\ 2014-01-05: Typo: `modifed` corrected to `modified`; alias created
 \ for the remaining mentions in the old pages.
 \
-\ 2014-01-06: New: 'replaced', used by the wiki markup module and the
+\ 2014-01-06: New: `replaced`, used by the wiki markup module and the
 \ common source code addon.
 \
-\ 2014-02-15: Fix: 'forth-wordlist' is set to current before requiring
+\ 2014-02-15: Fix: `forth-wordlist` is set to current before requiring
 \ the library files. The problem was <ffl/config.fs> created
-\ 'ffl.version' in the 'fendo' vocabulary, but searched for it in
-\ 'forth-wordlist'. This somehow arised after renaming all Fendo files
+\ `ffl.version` in the `fendo` vocabulary, but searched for it in
+\ `forth-wordlist`. This somehow arised after renaming all Fendo files
 \ for version A-03. The same problem happened in <fendo.fs> on
 \ 2013-10-30.
 \
-\ 2014-02-23: Fix: '(:pid)' now erases the data space.
+\ 2014-02-23: Fix: `(:pid)` now erases the data space.
 \
-\ 2014-02-23: Change: '(:pid)' is factored to 'new_page_data_space'.
+\ 2014-02-23: Change: `(:pid)` is factored to `new_page_data_space`.
 \
-\ 2014-02-25: Change: 'required_data<pid' renamed to
-\ 'required_data<pid#'.
+\ 2014-02-25: Change: `required_data<pid` renamed to
+\ `required_data<pid#`.
 \
 \ 2014-02-25: Still debugging: some data is copied to a different
 \ page.
 \
-\ 2014-02-28: 'replaced' is moved to the Galope library.
+\ 2014-02-28: `replaced` is moved to the Galope library.
 \
-\ 2014-02-28: Fix: stack notations and parameters in 'pid:' and
-\ '(pid:)'.
+\ 2014-02-28: Fix: stack notations and parameters in `pid:` and
+\ `(pid:)`.
 \
-\ 2014-02-28: Fix: 'data_already_got?' checked 'fendo_wid', not
-\ 'fendo_pid_wid'! That was the reason of the data corruption between
-\ pages. Besides, 'data_already_got?' can be factored with
-\ 'known_pid$?'.
+\ 2014-02-28: Fix: `data_already_got?` checked `fendo_wid`, not
+\ `fendo_pid_wid`! That was the reason of the data corruption between
+\ pages. Besides, `data_already_got?` can be factored with
+\ `known_pid$?`.
 \
-\ 2014-03-02: New: 'domain&current_target_file', factored from
-\ '(redirected)' (defined in <fendo.files.fs>).
+\ 2014-03-02: New: `domain&current_target_file`, factored from
+\ `(redirected)` (defined in <fendo.files.fs>).
 \
-\ 2014-03-03: New: 'filename>hierarchy'.  Change: '(hierarchy)'
-\ renamed to 'pid$>hierarchy'; 'hierarchy' updated.
+\ 2014-03-03: New: `filename>hierarchy`.  Change: `(hierarchy)`
+\ renamed to `pid$>hierarchy`; `hierarchy` updated.
 \
-\ 2014-03-03: Fix: 'abort"' added to 'pid$>data>pid#', in order to
+\ 2014-03-03: Fix: `abort"` added to `pid$>data>pid#`, in order to
 \ detect temporary shortcuts of missing pages that return an empty
 \ string (these temporary shortcuts make links possible, but made the
 \ program crash when trying to load the page metadata).
 \
-\ 2014-07-11: New: 'pid#>url', needed by the Atom module.  New:
-\ 'domain_url' factored out; needed by the Atom module.  New:
-\ '+domain_url' factored out.  New: 'pid$>url', moved here from
+\ 2014-07-11: New: `pid#>url`, needed by the Atom module.  New:
+\ `domain_url` factored out; needed by the Atom module.  New:
+\ `+domain_url` factored out.  New: `pid$>url`, moved here from
 \ <fendo.links.fs>.
 \
-\ 2014-07-14: Change: 'domain' is updated; it's not a dynamic variable
+\ 2014-07-14: Change: `domain` is updated; it's not a dynamic variable
 \ anymore, after the changes in <fendo.config.fs>.  New:
-\ 'current_target_file_url', used by the Atom module.  Fix: the
-\ separator slash was missing in '+domain_url'.  Change:
-\ 'source>target_extension' renamed to
-\ 'source>current_target_extension'.  Fix: 'target_file' added the
+\ `current_target_file_url`, used by the Atom module.  Fix: the
+\ separator slash was missing in `+domain_url`.  Change:
+\ `source>target_extension` renamed to
+\ `source>current_target_extension`.  Fix: `target_file` added the
 \ current target extension, not the target extension for the given
 \ page id.
 \
-\ 2014-11-08: Change: the 'plain_title' and 'plain_description' data
-\ fields are removed because 'unmarkup' (just implemented) makes them
+\ 2014-11-08: Change: the `plain_title` and `plain_description` data
+\ fields are removed because `unmarkup` (just implemented) makes them
 \ unnecessary.
 \
-\ 2014-11-11: Change: 'hierarchy' renamed to 'pid#>hierarchy'; the old
+\ 2014-11-11: Change: `hierarchy` renamed to `pid#>hierarchy`; the old
 \ alias is removed.
 \
-\ 2014-11-11: Change: '-anchor' was defered and added to
-\ '(pid$>data>pid#)'.
+\ 2014-11-11: Change: `-anchor` was defered and added to
+\ `(pid$>data>pid#)`.
 \
-\ 2014-11-11: Fix: 'link_anchor+' was missing in 'target_file'.
+\ 2014-11-11: Fix: `link_anchor+` was missing in `target_file`.
 \
-\ 2014-11-13: Fix: 'pid$>level'.
+\ 2014-11-13: Fix: `pid$>level`.
 \
-\ 2014-11-14: Change: '-anchor!' instead of '-anchor' in
-\ '(pid$>data>pid#)'; '-anchor!' called also in 'known_pid$?' and
-\ '(required_data<pid$)'. The new approach is to keep the anchors, and
+\ 2014-11-14: Change: `-anchor!` instead of `-anchor` in
+\ `(pid$>data>pid#)`; `-anchor!` called also in `known_pid$?` and
+\ `(required_data<pid$)`. The new approach is to keep the anchors, and
 \ remove them only to when the actual files are required. Shortcuts
-\ need no modification; 'pid$>source' was not used, it is removed.
+\ need no modification; `pid$>source` was not used, it is removed.
 \
-\ 2014-11-16: Fix: now 'link_anchor+' is called by 'target_file', not
+\ 2014-11-16: Fix: now `link_anchor+` is called by `target_file`, not
 \ at upper levels of the code, what caused problems.  Beside,
-\ '(required_data<pid$)' now calls '-anchor?!' instead of '-anchor!',
+\ `(required_data<pid$)` now calls `-anchor?!` instead of `-anchor!`,
 \ what ruined the anchor in some cases.
 \
-\ 2014-11-17: Change: now 'pid$>data>pid#' calls 'dry_unshortcut'
-\ instead of 'just_unshortcut'. This fixes the problem href was echoed
-\ in "<dt>", in 'tagged_pages_by_prefix'.
+\ 2014-11-17: Change: now `pid$>data>pid#` calls `dry_unshortcut`
+\ instead of `just_unshortcut`. This fixes the problem href was echoed
+\ in "<dt>", in `tagged_pages_by_prefix`.
 \
-\ 2014-12-05: Change: '/ssv' is moved to the Galope library; an
-\ useless 'trim' is removed from 'property?'.
+\ 2014-12-05: Change: `/ssv` is moved to the Galope library; an
+\ useless `trim` is removed from `property?`.
 \
-\ 2014-12-06: New: calcutated datum 'description|title'.
+\ 2014-12-06: New: calcutated datum `description|title`.
 \
-\ 2015-01-14: New: 'file_modified' datum and 'file_mtime' calculated
+\ 2015-01-14: New: `file_modified` datum and `file_mtime` calculated
 \ datum.
 \
-\ 2015-01-30: New: 'ignore_draft_property?'.
+\ 2015-01-30: New: `ignore_draft_property?`.
 \
-\ 2015-02-11: Improvement: more detailed comments in ':datum>address'
-\ and ':datum>value'. Change: ':datum>value' renamed to ':datum'. New:
-\ 'file-mtime>modified' and related words.
+\ 2015-02-11: Improvement: more detailed comments in `:datum>address`
+\ and `:datum>value`. Change: `:datum>value` renamed to `:datum`. New:
+\ `file-mtime>modified` and related words.
 \
-\ 2015-02-17: New: 'get_datum' and '(get_datum)', factored out from
-\ ':datum' in order to let the application hack the default datum
+\ 2015-02-17: New: `get_datum` and `(get_datum)`, factored out from
+\ `:datum` in order to let the application hack the default datum
 \ fields.
 \
 \ 2017-06-22: Update source style, layout and header.
@@ -1007,5 +1007,7 @@ true value included_files_update_the_page_date?
 \ `?first_page`. Improve documentation.
 \
 \ 2018-12-06: Add some debugging code.
+\
+\ 2018-12-08: Update notation of Forth words in comments and strings.
 
 \ vim: filetype=gforth

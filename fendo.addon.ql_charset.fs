@@ -5,7 +5,7 @@
 
 \ This file is the Sinclair QL source code addon.
 
-\ Last modified 20170622.
+\ Last modified 201812080157.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2017 Marcos Cruz (programandala.net)
@@ -186,9 +186,15 @@ uncodepage: ql_charset_to_utf8
 \ Change log
 
 \ 2013-12-10: Written with <galope/translated.fs>.
+\
 \ 2013-12-12: Rewritten with <galope/uncodepaged.fs>.
+\
 \ 2014-10-24: Solution for the QL char 0xB5: Unicode chars U+01A8 and U+0323 combined.
+\
 \ 2014-10-24: Reference URL no longer exists; updated to a copy in web.archive.org.
+\
 \ 2017-06-22: Update source style, layout and header.
+\
+\ 2018-12-08: Update notation of Forth words in comments and strings.
 
 \ vim: filetype=gforth

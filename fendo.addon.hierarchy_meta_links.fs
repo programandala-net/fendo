@@ -5,7 +5,7 @@
 
 \ This file is the hierarchy meta links addon.
 
-\ Last modified 201809281517.
+\ Last modified 201812080157.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2015,2017,2018 Marcos Cruz (programandala.net)
@@ -56,11 +56,11 @@
 : (hierarchy_meta_link) ( ca1 len1 ca2 len2 -- )
 \  cr 2dup type ."  --> " 2over type  \ XXX INFORMER
   rel=!
-\   ." Pid parameter in '(hierarchy_meta_link)' before 'pid$>data>pid#' = " 2dup type cr  \ XXX INFORMER
-\   ." 'link_anchor' in '(hierarchy_meta_link)' before 'pid$>data>pid#' = " link_anchor $@ type cr  \ XXX INFORMER
+\   ." Pid parameter in `(hierarchy_meta_link)` before `pid$>data>pid#` = " 2dup type cr  \ XXX INFORMER
+\   ." `link_anchor` in `(hierarchy_meta_link)` before `pid$>data>pid#` = " link_anchor $@ type cr  \ XXX INFORMER
   pid$>data>pid#
-\   ." 'href=' in '(hierarchy_meta_link)' after 'pid$>data>pid#' = " href=@ type cr  \ XXX INFORMER
-\   ." 'link_anchor' in '(hierarchy_meta_link)' after 'pid$>data>pid#' = " link_anchor $@ type cr  \ XXX INFORMER
+\   ." `href=` in `(hierarchy_meta_link)` after `pid$>data>pid#` = " href=@ type cr  \ XXX INFORMER
+\   ." `link_anchor` in `(hierarchy_meta_link)` after `pid$>data>pid#` = " link_anchor $@ type cr  \ XXX INFORMER
   dup target_file href=!
   dup title unmarkup title=!
   ?hreflang=!  s" text/html" type=!
@@ -70,11 +70,11 @@
   \ ca2 len2 = rel
 
 : hierarchy_meta_link ( ca1 len1 ca2 len2 -- )
-\   ." Stack in 'hierarchy_meta_link' : " .s cr  \ XXX INFORMER
-\   ." Parameter in 'hierarchy_meta_link' = " 2dup type cr  \ XXX INFORMER
+\   ." Stack in `hierarchy_meta_link` : " .s cr  \ XXX INFORMER
+\   ." Parameter in `hierarchy_meta_link` = " 2dup type cr  \ XXX INFORMER
 \   key drop \ XXX INFORMER
   proper_hierarchical_link?
-\   ." Stack in 'hierarchy_meta_link' after `proper_hierarchical_link?` : " .s cr  \ XXX INFORMER
+\   ." Stack in `hierarchy_meta_link` after `proper_hierarchical_link?` : " .s cr  \ XXX INFORMER
 \   key drop \ XXX INFORMER
   if  2swap (hierarchy_meta_link)  else  2drop 2drop  then ;
   \ Create a hierarchy meta link in the HTML header, if needed.
@@ -99,26 +99,26 @@
 
 \ 2013-10-14 Moved from the application Fendo-programandala.
 \
-\ 2013-10-27 Change: 'hierarchy_meta_link' simplified.
+\ 2013-10-27 Change: `hierarchy_meta_link` simplified.
 \
 \ 2013-11-26 Change: several words renamed, after a new uniform
 \ notation: "pid$" and "pid#" for both types of page ids.
 \
-\ 2014-11-08: Change: 'unmarkup' (just implemented) is used instead of
+\ 2014-11-08: Change: `unmarkup` (just implemented) is used instead of
 \ hard-coded plain text versions of some data fields.
 \
-\ 2014-11-08: Improved: 'hierarchy_meta_link' factored out from
-\ 'hierarchy_meta_links'; 'unshortcut' added.
+\ 2014-11-08: Improved: `hierarchy_meta_link` factored out from
+\ `hierarchy_meta_links`; `unshortcut` added.
 \
-\ 2014-11-08: Fix: 'unshortcut' was missing.
+\ 2014-11-08: Fix: `unshortcut` was missing.
 \
-\ 2014-11-08: Fix: second '2drop' was missing in
-\ 'hierarchy_meta_link'.
+\ 2014-11-08: Fix: second `2drop` was missing in
+\ `hierarchy_meta_link`.
 \
-\ 2015-01-17: New: 'proper_hierarchical_link?'.
+\ 2015-01-17: New: `proper_hierarchical_link?`.
 \
-\ 2015-01-17: Fix: 'hierarchy_meta_link' uses the new
-\ 'proper_hierarchical_link?' and does not create links to local draft
+\ 2015-01-17: Fix: `hierarchy_meta_link` uses the new
+\ `proper_hierarchical_link?` and does not create links to local draft
 \ pages anymore.
 \
 \ 2015-02-26: Fix: It seems "up", "first" and "last" are not allowed
@@ -136,5 +136,7 @@
 \
 \ 2018-09-28: Replace `previous_page` with `?previous_page`.  Replace
 \ `next_page` with `?next_page`.
+\
+\ 2018-12-08: Update notation of Forth words in comments and strings.
 
 \ vim: filetype=gforth

@@ -5,7 +5,7 @@
 
 \ This file is the CP850 charset addon.
 
-\ Last modified 20170622.
+\ Last modified 201812080201.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2017 Marcos Cruz (programandala.net)
@@ -376,9 +376,14 @@ uncodepage: cp850_charset_to_utf8
 \ ==============================================================
 \ Change log
 
-\ 2013-12-10 Written with <galope/translated.fs>.
-\ 2013-12-11 Rewritten with <ftrac/ftrac.fs>.
-\ 2013-12-12 Rewritten with <galope/uncodepaged.fs>.
+\ 2013-12-10: Written with <galope/translated.fs>.
+\
+\ 2013-12-11: Rewritten with <ftrac/ftrac.fs>.
+\
+\ 2013-12-12: Rewritten with <galope/uncodepaged.fs>.
+\
 \ 2017-06-22: Update source style, layout and header.
+\
+\ 2018-12-08: Update change log layout.
 
 \ vim: filetype=gforth

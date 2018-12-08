@@ -5,7 +5,7 @@
 
 \ This file defines the Fendo markup for literal zones.
 
-\ Last modified 20170622.
+\ Last modified 201812080157.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2017 Marcos Cruz (programandala.net)
@@ -31,7 +31,7 @@
 
 forth_definitions
 
-require galope/trim.fs  \ 'trim'
+require galope/trim.fs  \ `trim`
 
 \ ==============================================================
 \ Tools
@@ -39,7 +39,7 @@ require galope/trim.fs  \ 'trim'
 fendo_definitions
 
 : literal-line ( -- ca len )
-  read_source_line 0= abort" Missing closing '....'"
+  read_source_line 0= abort" Missing closing `....`"
   escaped_source_code ;
   \ Parse a new line from the current literal block.
 
@@ -72,6 +72,9 @@ fendo_definitions
 \ Change log
 
 \ 2014-04-21: Code moved from <fendo.markup.fendo.fs>.
+\
 \ 2017-06-22: Update source style, layout and header.
+\
+\ 2018-12-08: Update notation of Forth words in comments and strings.
 
 \ vim: filetype=gforth

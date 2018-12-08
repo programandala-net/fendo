@@ -5,7 +5,7 @@
 
 \ This file is the ZX Spectrum source code addon.
 
-\ Last modified 201712042300.
+\ Last modified 201812080157.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2015,2017 Marcos Cruz (programandala.net)
@@ -39,11 +39,11 @@ uncodepage: zx_spectrum_charset_below_128
 ;uncodepage
   \ These translations can be done with (and before) or without syntax
   \ highlighting.
-  \ XXX FIXME -- see 'zx_spectrum_source_code_translated_without_highlighting'.
+  \ XXX FIXME -- see `zx_spectrum_source_code_translated_without_highlighting`.
 
 uncodepage: zx_spectrum_charset_for_source_code_without_highlighting
 
-  \ XXX FIXME -- see 'zx_spectrum_source_code_translated_without_highlighting'.
+  \ XXX FIXME -- see `zx_spectrum_source_code_translated_without_highlighting`.
   096 s" £"  \ British pound sterling
   127 s" ©"  \ copyright
 
@@ -611,14 +611,14 @@ end-translations drop
   zx_spectrum_charset_for_source_code_without_highlighting uncodepaged ;
   \ Convert the content of a ZX Spectrum file to UTF-8.
   \
-  \ XXX FIXME When 'zx_spectrum_charset_below_128' is used here,
+  \ XXX FIXME When `zx_spectrum_charset_below_128` is used here,
   \ the translation done with
-  \ 'zx_spectrum_charset_for_source_code_without_highlighting' is ruined
+  \ `zx_spectrum_charset_for_source_code_without_highlighting` is ruined
   \ (if the order is changed, it seems to work, but it is not a good
   \ solution, because one of the chars translated is 127).
   \ That's why all translations are done in
-  \ 'zx_spectrum_charset_for_source_code_without_highlighting'.
-  \ It seems the bug is in 'uncodepaged':
+  \ `zx_spectrum_charset_for_source_code_without_highlighting`.
+  \ It seems the bug is in `uncodepaged`:
   \ when two translations are done on a chain way, something
   \ can go wrong.
 
@@ -672,8 +672,8 @@ end-translations drop
 \ 2014-10-12: Start.
 \
 \ 2014-11-05: Fix: charset translation worked only when highlighting
-\ was on. Now, 'set_zx_spectrum_source_code_translation' (factored
-\ from  'zx_spectrum_source_code', defined in
+\ was on. Now, `set_zx_spectrum_source_code_translation` (factored
+\ from  `zx_spectrum_source_code`, defined in
 \ <fendo.addon.zx_spectrum_source_code.fs>) does the proper selection.
 \
 \ 2014-11-05: Change: <galope/uncodepaged.fs> is used instead of
@@ -687,5 +687,7 @@ end-translations drop
 \ 2017-06-22: Update source style, layout and header.
 \
 \ 2017-12-04: Update to Galope 0.161.0.
+\
+\ 2018-12-08: Update notation of Forth words in comments and strings.
 
 \ vim: filetype=gforth

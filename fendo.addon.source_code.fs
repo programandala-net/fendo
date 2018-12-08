@@ -5,7 +5,7 @@
 
 \ This file is the source code addon.
 
-\ Last modified 201809271539.
+\ Last modified 201812080157.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2015,2017 Marcos Cruz (programandala.net)
@@ -33,10 +33,10 @@ forth_definitions
 
 require string.fs  \ Gforth's dynamic strings
 
-require galope/dollar-variable.fs \ '$variable'
-require galope/minus-leading.fs \ '-leading'
+require galope/dollar-variable.fs \ `$variable`
+require galope/minus-leading.fs \ `-leading`
 require galope/package.fs \ `package`, `private`, `public`, `end-package`
-require galope/string-suffix-question.fs \ 'string-suffix?'
+require galope/string-suffix-question.fs \ `string-suffix?`
 
 fendo_definitions
 
@@ -95,7 +95,7 @@ package fendo.addon.source_code
 
 : filename>filetype ( ca1 len1 -- ca2 len2 )
   \ Convert a filename to a Vim's filetype, if needed.
-  \ If 'programming_language$' has been set, use it; this let the application
+  \ If `programming_language$` has been set, use it; this let the application
   \ to override the default guessing based on the filename.
 \  cr ." In filename>filetype " 2dup type ."  --> "  \ XXX INFORMER
   programming_language$ $@ dup if  2nip  else  2drop (filename>filetype)  then
@@ -113,7 +113,7 @@ public
 0 value source_code_fid
 : read_source_code_line ( -- ca len f )
   source_code_fid read_fid_line ;
-  \ Note: 'read_fid_line' is defined in
+  \ Note: `read_fid_line` is defined in
   \ <fendo/fendo_wiki_markup_wiki.fs>.
 
 : slurp_source_code ( -- ca len )
@@ -162,7 +162,7 @@ no_source_code_translation
 
 : close_source_code ( -- )
   source_code_fid close-file throw  source_code_finished
-\  [<p>] s" At the end of 'close_source_code' 'programming_language' = " echo   \ XXX INFORMER
+\  [<p>] s" At the end of `close_source_code` `programming_language` = " echo   \ XXX INFORMER
 \  s" «" programming_language@ s" »" s+ s+ echo [</p>]  \ XXX INFORMER
   ;
 
@@ -189,7 +189,7 @@ no_source_code_translation
   2dup filename>filetype programming_language!  (source_code) ;
   \ Read and echo the content of a source code file.
   \ The Vim filetype is guessed from the filename, unless
-  \ already set in the 'programming_language$' dynamic string.
+  \ already set in the `programming_language$` dynamic string.
   \ ca len = file name
 
 : unsorted_source_code_files_by_dir_and_regex ( ca1 len1 ca2 len2 -- )
@@ -205,7 +205,7 @@ no_source_code_translation
   \ in local target files directory ca1 len1 that match
   \ regex ca2 len2. The files will be unsorted.
   \ The Vim filetype is guessed from the filenames, unless
-  \ already set in the 'programming_language$' dynamic string.
+  \ already set in the `programming_language$` dynamic string.
   \ ca1 len1 = path under the target <files> directory,
   \   with or without ending slash
   \ ca2 len2 = regex supported by the rgx module
@@ -232,7 +232,7 @@ no_source_code_translation
   \ Forth source file that will be sorted and interpreted later.
   \
   \ The Vim filetype is guessed from the filenames, unless
-  \ already set in the 'programming_language$' dynamic string.
+  \ already set in the `programming_language$` dynamic string.
   \ ca1 len1 = path under the target <files> directory,
   \   with or without ending slash
   \ ca2 len2 = regex supported by the rgx module
@@ -247,7 +247,7 @@ s" .fs" s+ 2constant tmp_sorted_file$
   tmp_raw_file$ w/o create-file throw  dup >r outfile-execute
   r> close-file throw
     \ First, create a file with the required commands,
-    \ by executing '(sorted_source_codes_by_dir_and_regex)' with
+    \ by executing `(sorted_source_codes_by_dir_and_regex)` with
     \ the output redirected to the file.
 
   s" sort " tmp_raw_file$ s+ s"  > " s+ tmp_sorted_file$ s+ system
@@ -259,7 +259,7 @@ s" .fs" s+ 2constant tmp_sorted_file$
   \ regex ca2 len2. The files will be sorted.
   \
   \ The Vim filetype is guessed from the filenames, unless
-  \ already set in the 'programming_language$' dynamic string.
+  \ already set in the `programming_language$` dynamic string.
   \
   \ ca1 len1 = path under the target <files> directory,
   \   with or without ending slash
@@ -276,14 +276,14 @@ end-package
 \ Change log
 
 \ 2013-07-21: Start, with noop definitions from
-\ <fendo-programandala.fs>; only the basic 'source_code' works.
+\ <fendo-programandala.fs>; only the basic `source_code` works.
 \
 \ 2013-07-26: New: BASin and Forth blocks.
 \
 \ 2013-07-26: Fix: now source files are closed at the end.
 \
-\ 2013-07-28: Fix: 'basin_source_code' called 'echo_source_code'
-\ instead of '(echo_source_code)'.
+\ 2013-07-28: Fix: `basin_source_code` called `echo_source_code`
+\ instead of `(echo_source_code)`.
 \
 \ 2013-11-07: Change: Forth blocks are printed apart; empty blocks are
 \ omited; no line number are printed.
@@ -296,20 +296,20 @@ end-package
 \
 \ 2013-11-09: First working version with syntax highlighting.  Addon
 \ moved from Fendo-programandala to Fendo, because part of the code is
-\ required to implement optional syntax highlighting in the '###'
+\ required to implement optional syntax highlighting in the `###`
 \ markup.
 \
 \ 2013-11-09: The BASin-specific code is moved to its own file.
 \
 \ 2013-11-09: The Forth-blocks-specific code is moved to its own file.
 \
-\ 2013-11-18: 'open_source_code' factored out to 'file>local' (defined
+\ 2013-11-18: `open_source_code` factored out to `file>local` (defined
 \ in <fendo_files.fs>.
 \
-\ 2013-11-18: Change: 'programming_language' renamed to
-\ 'programming_language!'.
+\ 2013-11-18: Change: `programming_language` renamed to
+\ `programming_language!`.
 \
-\ 2013-11-18: New: 'programming_language@'.
+\ 2013-11-18: New: `programming_language@`.
 \
 \ 2013-11-18: Change: All words related to syntax highlighting are
 \ moved to <addons/source_code_common.fs>, because they are needed
@@ -325,7 +325,7 @@ end-package
 \ an xt is used instead of a translation table created with
 \ <galope/translated.fs>; this way any tool can be used for the task.
 \
-\ 2014-02-06: New: 'source_code_finished' now does all reseting final
+\ 2014-02-06: New: `source_code_finished` now does all reseting final
 \ task.  This fixes some obscure issues too.
 \
 \ 2014-02-15: Fix: path of the Fendo addons is converted to relative.
@@ -333,18 +333,18 @@ end-package
 \ 2014-03-12: Change: module renamed after the filename;
 \ "fendo.addon.source_code.common.fs" filename updated.
 \
-\ 2014-10-13: New: 'zx_spectrum_source_code'.
+\ 2014-10-13: New: `zx_spectrum_source_code`.
 \
-\ 2014-10-17: Change: 'zx_spectrum_source_code' is moved to its own
+\ 2014-10-17: Change: `zx_spectrum_source_code` is moved to its own
 \ file <fendo.addon.zx_spectrum_source_code.fs>.
 \
-\ 2014-10-17: Improvement: '(filename>filetype)' is updated with
+\ 2014-10-17: Improvement: `(filename>filetype)` is updated with
 \ Vimclair BASIC filetype, and alternative extensions for MasterBASIC
 \ and Beta BASIC.
 \
-\ 2014-10-19: New: 'programming_language?!'.
+\ 2014-10-19: New: `programming_language?!`.
 \
-\ 2014-12-07: Change: 'source_code_finished' and related words have
+\ 2014-12-07: Change: `source_code_finished` and related words have
 \ been moved to <fendo.addon.source_code.common.fs>, in order to use
 \ that word in <fendo.markup.fendo.code.fs>.
 \
@@ -353,22 +353,25 @@ end-package
 \
 \ 2015-01-30: New: ".sinclairbas" extension for Sinclair BASIC.
 \
-\ 2015-01-31: New: additional extensions: '.vimbas' and 'vimclairbas'
-\ for Vimclair BASIC; '.unexpanded_llist' for Sinclair BASIC.
+\ 2015-01-31: New: additional extensions: `.vimbas` and `vimclairbas`
+\ for Vimclair BASIC; `.unexpanded_llist` for Sinclair BASIC.
 \
-\ 2015-02-04: Fix: removed the definition of 'source_code_finished',
+\ 2015-02-04: Fix: removed the definition of `source_code_finished`,
 \ already moved to to <fendo.addon.source_code.common.fs>.
 \
-\ 2015-05-02: New: 'unsorted_source_codes_by_dir_and_regex',
-\ "Makefile" support in '(filename>filetype)'.
-\ 'sorted_source_codes_by_dir_and_regex'.
+\ 2015-05-02: New: `unsorted_source_codes_by_dir_and_regex`,
+\ "Makefile" support in `(filename>filetype)`.
+\ `sorted_source_codes_by_dir_and_regex`.
 \
-\ 2015-05-05: Fix: '(filename>filetype)' didn't recognize whole
+\ 2015-05-05: Fix: `(filename>filetype)` didn't recognize whole
 \ filenames, only suffixes, because the path was not removed.
 \
 \ 2017-06-22: Update source style, layout and header.
 \
 \ 2017-12-04: Update requirements.
+\
 \ 2018-09-27: Use `package` instead of `module:`.
+\
+\ 2018-12-08: Update notation of Forth words in comments and strings.
 
 \ vim: filetype=gforth

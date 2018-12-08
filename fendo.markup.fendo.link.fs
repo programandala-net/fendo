@@ -5,7 +5,7 @@
 
 \ This file defines the Fendo markup for links.
 
-\ Last modified 20170622.
+\ Last modified 201812080157.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2015,2017 Marcos Cruz (programandala.net)
@@ -31,7 +31,7 @@
 
 forth_definitions
 
-require galope/dollar-variable.fs  \ '$variable'
+require galope/dollar-variable.fs  \ `$variable`
 
 \ ==============================================================
 \ Tools
@@ -50,11 +50,11 @@ variable link_finished?  \ flag, no more link markup to parse?
   \ ca len = latest name parsed
 
 : more_link? ( -- f )
-  refill 0= dup abort" Missing ']]'" ;
+  refill 0= dup abort" Missing `]]`" ;
   \ Fill the input buffer or abort.
 
 defer parse_link_text ( "...<spaces>|<spaces>" | "...<spaces>]]<spaces>"  -- )
-  \ Parse the link text and store it into 'link_text'.
+  \ Parse the link text and store it into `link_text`.
   \ Defined in <fendo.parser.fs>.
 
 : get_link_raw_attributes ( "...<space>]]<space>"  -- )
@@ -119,7 +119,7 @@ markup_definitions
   parse_link echo_link ;
 
 : ]] ( -- )
-  true abort" ']]' without '[['" ;
+  true abort" `]]` without `[[`" ;
 
 fendo_definitions
 
@@ -130,16 +130,16 @@ fendo_definitions
 
 \ 2014-04-21: Code moved from <fendo.markup.fendo.fs>.
 \
-\ 2014-07-14: Change: 'domain' is updated; it's not a dynamic variable
+\ 2014-07-14: Change: `domain` is updated; it's not a dynamic variable
 \ anymore, after the changes in <fendo.config.fs>.
 \
-\ 2014-08-13: Fix: 'separate?' is saved and restored in 'parse_link',
-\ because 'parse_link_text' changed it to true, what ruined previous
+\ 2014-08-13: Fix: `separate?` is saved and restored in `parse_link`,
+\ because `parse_link_text` changed it to true, what ruined previous
 \ opening punctuation. For example, in the source "bla bla bla ( [[
 \ url | link text ]] )" the bug caused the opening paren to remain
 \ separated from the link.
 \
-\ 2014-11-08: Change: 'unmarkup' (just implemented) is used instead of
+\ 2014-11-08: Change: `unmarkup` (just implemented) is used instead of
 \ hard-coded plain text versions of some data fields.
 \
 \ 2014-11-08: Removed some code that some time ago was moved to
@@ -148,5 +148,7 @@ fendo_definitions
 \ 2015-01-17: Fix: typo in stack comment.
 \
 \ 2017-06-22: Update source style, layout and header.
+\
+\ 2018-12-08: Update notation of Forth words in comments and strings.
 
 \ vim: filetype=gforth

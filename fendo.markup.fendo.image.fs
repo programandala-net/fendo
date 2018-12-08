@@ -5,7 +5,7 @@
 
 \ This file defines the Fendo markup for images.
 
-\ Last modified 20170622.
+\ Last modified 201812080157.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2017 Marcos Cruz (programandala.net)
@@ -85,7 +85,7 @@ variable image_finished?  \ flag, no more image markup to parse?
   \ ca len = latest name parsed
 
 : more_image? ( -- f )
-  refill 0= dup abort" Missing '}}'" ;
+  refill 0= dup abort" Missing `}}`" ;
   \ Fill the input buffer or abort.
 
 : get_image_alt_attribute ( "...<space>|<space>" | "...<space>}}<space>"  -- )
@@ -134,7 +134,7 @@ markup_definitions
   ({{) ;
 
 : }} ( -- )
-  true abort" '}}' without '{{'" ;
+  true abort" `}}` without `{{`" ;
 
 fendo_definitions
 
@@ -144,6 +144,9 @@ fendo_definitions
 \ Change log
 
 \ 2014-04-21: Code moved from <fendo.markup.fendo.fs>.
+\
 \ 2017-06-22: Update source style, layout and header.
+\
+\ 2018-12-08: Update notation of Forth words in comments and strings.
 
 \ vim: filetype=gforth

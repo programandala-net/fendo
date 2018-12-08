@@ -5,7 +5,7 @@
 
 \ This file defines the HTML tags.
 
-\ Last modified 20170622.
+\ Last modified 201812080157.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2015,2017 Marcos Cruz (programandala.net)
@@ -47,8 +47,8 @@ fendo_definitions
   \ ca len = HTML tag
 
 : (html{) ( ca len -- )
-\  ." Parameter in '(html{)' = " 2dup type  \ XXX INFORMER
-\  ." ; 'separate?' = " separate? ? cr  \ XXX INFORMER
+\  ." Parameter in `(html{)` = " 2dup type  \ XXX INFORMER
+\  ." ; `separate?` = " separate? ? cr  \ XXX INFORMER
   s" <" _echo echo echo_attributes ;
   \ Start an opening HTML tag.
   \ ca len = HTML tag
@@ -286,7 +286,7 @@ set-current
 \ ==============================================================
 \ Immediate version of some usual tags, in the Fendo wordlist, in
 \ order to save code when they are used in the user's application (no
-\ '[markup>order]' and '[markup<order]' are required).
+\ `[markup>order]` and `[markup<order]` are required).
 
 markup>order
 : [-->] ( -- ) postpone --> ; immediate
@@ -505,50 +505,52 @@ markup<order
 \ 2013-10-23: New: immediate version of some tags, for the user's
 \ application.
 \
-\ 2013-10-26: New: immediate version of '<p>'.
+\ 2013-10-26: New: immediate version of `<p>`.
 \
-\ 2013-10-27: New: '<link/>' and its immediate version '[<link/>]'.
+\ 2013-10-27: New: `<link/>` and its immediate version `[<link/>]`.
 \
 \ 2013-10-30: New: More immediate versions of tags.
 \
-\ 2013-11-18: New: '[<br/>]', '[<hr/>]'.
+\ 2013-11-18: New: `[<br/>]`, `[<hr/>]`.
 \
 \ 2013-11-26: New: Immediate version of definition lists tags.
 \
 \ 2013-11-30: New: Immediate version of <abbr> tags.
 \
-\ 2013-12-06: Change: '(html{)' and '(}html)' factored from '{html}'
-\ and '{html'.
+\ 2013-12-06: Change: `(html{)` and `(}html)` factored from `{html}`
+\ and `{html`.
 \
 \ 2013-12-06: Change: carriage returns in tags have been corrected,
 \ and removed from the immediate versions; this makes the final HTML
 \ clearer.
 \
-\ 2014-02-15: New: '[<strong>]', '[</strong>]', '[</div>]'.
+\ 2014-02-15: New: `[<strong>]`, `[</strong>]`, `[</div>]`.
 \
-\ 2014-02-15: New: '(html{})' for empty tags (it does the same than
-\ '(html{)' but without the separation).
+\ 2014-02-15: New: `(html{})` for empty tags (it does the same than
+\ `(html{)` but without the separation).
 \
-\ 2014-07-13: New: '[<q>]', '[</q>]', '[<blockquote>]',
-\ '[</blockquote>]'.
+\ 2014-07-13: New: `[<q>]`, `[</q>]`, `[<blockquote>]`,
+\ `[</blockquote>]`.
 \
-\ 2014-07-14: New: '[<title>]', '[</title>]', needed by the Atom
-\ module; also '<meta/>'.
+\ 2014-07-14: New: `[<title>]`, `[</title>]`, needed by the Atom
+\ module; also `<meta/>`.
 \
-\ 2014-11-09: Fix: the '-attributes' in '(}html)' caused a problem
-\ after the recent implementation of 'unmarkup': the 'href=' attribute
-\ was deleted, because 'unmarkup' uses 'evaluate_content'. The
+\ 2014-11-09: Fix: the `-attributes` in `(}html)` caused a problem
+\ after the recent implementation of `unmarkup`: the `href=` attribute
+\ was deleted, because `unmarkup` uses `evaluate_content`. The
 \ solution was to save and restore the attributes in
-\ '(evaluate_content)' (defined in <fendo.parser.fs>).
+\ `(evaluate_content)` (defined in <fendo.parser.fs>).
 \
 \ 2014-11-18: Fix: 'separate? on' is added again at the end of
-\ 'html}'.
+\ `html}`.
 \
 \ 2014-12-13: New: All missing immediate versions of the HTML tags.
 \ Now the list is complete.
 \
-\ 2015-02-01: Change: the 'xhtml?' variable is a value now.
+\ 2015-02-01: Change: the `xhtml?` variable is a value now.
 \
 \ 2017-06-22: Update source style, layout and header.
+\
+\ 2018-12-08: Update notation of Forth words in comments and strings.
 
 \ vim: filetype=gforth

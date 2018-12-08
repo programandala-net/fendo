@@ -5,7 +5,7 @@
 
 \ This file defines the words that print to the target HTML file.
 
-\ Last modified 20170622.
+\ Last modified 201812080157.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2017 Marcos Cruz (programandala.net)
@@ -30,7 +30,7 @@
 \ Requirements
 
 forth_definitions
-require galope/n-to-str.fs  \ 'n>str'
+require galope/n-to-str.fs  \ `n>str`
 require galope/xstack.fs
 fendo_definitions
 
@@ -38,7 +38,7 @@ fendo_definitions
 \ Output
 
 variable echo>  \ destination of the output
-\ Possible values of 'echo>':
+\ Possible values of `echo>`:
 0 constant >screen
 1 constant >file
 2 constant >string
@@ -58,7 +58,7 @@ s" " echoed $!
 
 : echo>string ( -- )
   >string echo> !  0 echoed $!len ;
-  \ Redirect the output to the dynamic string 'echoed'.
+  \ Redirect the output to the dynamic string `echoed`.
 
 : echo>file ( -- )
   >file echo> ! ;
@@ -91,7 +91,7 @@ variable target_fid  \ file id of the HTML target page
 
 : (echo>string) ( ca len -- )
   echoed $+! ;
-  \ Add a string to the 'echoed' string.
+  \ Add a string to the `echoed` string.
 
 : echo ( ca len -- )
   echo>string?
@@ -166,41 +166,43 @@ false value compact_html?  \ if true, no carriage return is created
 \
 \ 2013-06-08: New: First code for output redirection.
 \
-\ 2013-06-29: Change: 'target_fid' moved here from <fendo_files.fs>.
+\ 2013-06-29: Change: `target_fid` moved here from <fendo_files.fs>.
 \
-\ 2013-07-03: Change: 'dry?' renamed to 'echo>screen?'.
+\ 2013-07-03: Change: `dry?` renamed to `echo>screen?`.
 \
 \ 2013-07-03: New: tools to redirect the output to a dynamic string.
 \
-\ 2013-07-12: New: '?_echo' moved here from <fendo_markup_wiki.fs>.
+\ 2013-07-12: New: `?_echo` moved here from <fendo_markup_wiki.fs>.
 \
-\ 2013-07-14: New: '?echo_line'.
+\ 2013-07-14: New: `?echo_line`.
 \
-\ 2013-07-21: New: 'echo.'. This somehow fixes the print corruption
+\ 2013-07-21: New: `echo.`. This somehow fixes the print corruption
 \ caused by using 's>d <# #s #> echo' in the HTML template.
 \
-\ 2013-07-21: New: 'echo_line'.
+\ 2013-07-21: New: `echo_line`.
 \
-\ 2013-11-07: New: '_echo.'.
+\ 2013-11-07: New: `_echo.`.
 \
-\ 2013-11-26: Change: 'n>str' instead of '(echo.)'.
+\ 2013-11-26: Change: `n>str` instead of `(echo.)`.
 \
-\ 2013-12-06: Fix: 'echo_cr' now does 'separate? off' in order to
+\ 2013-12-06: Fix: `echo_cr` now does 'separate? off' in order to
 \ remove unnecessary blank spaces.
 \
-\ 2014-02-15: New: 'echo_period'.
+\ 2014-02-15: New: `echo_period`.
 \
-\ 2014-03-11: New: '+echo', experimental, factored from user macros.
+\ 2014-03-11: New: `+echo`, experimental, factored from user macros.
 \
-\ 2014-11-01: Fix: now '+echo' preserves 'separate?'.
+\ 2014-11-01: Fix: now `+echo` preserves `separate?`.
 \
-\ 2014-11-17: Fix: 'save_echo' and 'restore_echo' didn't activate
-\ 'echo_stack'.
+\ 2014-11-17: Fix: `save_echo` and `restore_echo` didn't activate
+\ `echo_stack`.
 \
-\ 2014-12-13: New: 'compact_html?' flag (experimental).
+\ 2014-12-13: New: `compact_html?` flag (experimental).
 \
 \ 2015-10-15: Updated the name of the Galope module <n-to-str.fs>.
 \
 \ 2017-06-22: Update source style, layout and header.
+\
+\ 2018-12-08: Update notation of Forth words in comments and strings.
 
 \ vim: filetype=gforth

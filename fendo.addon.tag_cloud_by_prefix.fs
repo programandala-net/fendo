@@ -5,7 +5,7 @@
 
 \ This file provides tag clouds by a page-id prefix.
 
-\ Last modified 201809271539.
+\ Last modified 201812080157.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2014,2017 Marcos Cruz (programandala.net)
@@ -31,9 +31,9 @@
 
 forth_definitions
 
-require galope/max-n.fs \ 'max-n'
+require galope/max-n.fs \ `max-n`
 require galope/package.fs \ `package`, `private`, `public`, `end-package`
-require galope/rgx-wcmatch-question.fs \ 'rgx-wcmatch?'
+require galope/rgx-wcmatch-question.fs \ `rgx-wcmatch?`
 
 fendo_definitions
 
@@ -90,7 +90,7 @@ variable prefix$  \ module variable; in <fendo.addon.pages_by_prefix.fs> there's
 \  ." init_tags" cr  \ XXX INFORMER
   tags_do_reset execute_all_tags  tags_do_increase  traverse_pids
   tags_do_min_max ;
-  \ xt = parameter for 'traverse_pids'
+  \ xt = parameter for `traverse_pids`
 
 public
 
@@ -161,7 +161,7 @@ private
 
 : do_tag_cloud ( xt -- )
 \  ." do_tag_cloud " cr  \ XXX INFORMER
-  \ xt = parameter for 'init_tags'
+  \ xt = parameter for `init_tags`
   init_tags
 \  ." do_tag_cloud after init_tags" cr  \ XXX INFORMER
   [<ul>] tags_do_echo_cloud execute_all_tags [</ul>]
@@ -185,18 +185,30 @@ end-package
 \ Change log
 
 \ 2014-03-03: Start.
+\
 \ 2014-03-07: First working version.
+\
 \ 2014-03-08: Improved. First draft to change the size of tags.
+\
 \ 2014-03-09: Fix: calculation for the tag font size.
-\ 2014-03-12: Improvement: faster, with additional '?exit' and rearranged
+\
+\ 2014-03-12: Improvement: faster, with additional `?exit` and rearranged
 \   conditions.
-\ 2014-05-28: Change: '++' used.
-\ 2014-05-28: New: 'tags_used_only_once_link_to_its_own_page' flag.
-\ 2014-06-03: Change: 'tags_used_only_once_link_to_its_own_page'
-\   renamed to 'lonely_tags_link_to_content'.
-\ 2014-10-12: Fix: now 'tag_cloud_by_prefix' also sets the 'prefix$'
-\   variable, because 'pages_by_prefix' sets a homonymous module variable.
+\
+\ 2014-05-28: Change: `++` used.
+\
+\ 2014-05-28: New: `tags_used_only_once_link_to_its_own_page` flag.
+\
+\ 2014-06-03: Change: `tags_used_only_once_link_to_its_own_page`
+\   renamed to `lonely_tags_link_to_content`.
+\
+\ 2014-10-12: Fix: now `tag_cloud_by_prefix` also sets the `prefix$`
+\   variable, because `pages_by_prefix` sets a homonymous module variable.
+\
 \ 2017-06-22: Update source style, layout and header.
+\
 \ 2018-09-27: Use `package` instead of `module:`.
+\
+\ 2018-12-08: Update notation of Forth words in comments and strings.
 
 \ vim: filetype=gforth

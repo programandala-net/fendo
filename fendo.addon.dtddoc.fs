@@ -5,7 +5,7 @@
 
 \ This file provides a word that is needed by other addons.
 
-\ Last modified 20170622.
+\ Last modified 201812080157.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2017 Marcos Cruz (programandala.net)
@@ -29,9 +29,9 @@
 \ ==============================================================
 
 : dtddoc ( ca len -- )
-\  ." >>>> Parameter in 'dtddoc' = " 2dup type cr  \ XXX INFORMER
+\  ." >>>> Parameter in `dtddoc` = " 2dup type cr  \ XXX INFORMER
   [<dt>] 
-\  ." 'separate?' in 'dtddoc' after '[<dt>]' = " separate? ? cr  \ XXX INFORMER
+\  ." `separate?` in `dtddoc` after `[<dt>]` = " separate? ? cr  \ XXX INFORMER
   2dup link<pid$ [</dt>]
 \  ." href= (0) " href=@ type cr  \ XXX INFORMER
   [<dd>]
@@ -56,9 +56,14 @@
 \ Change log
 
 \ 2013-11-26: Start.
+\
 \ 2014-03-02: Renamed.
-\ 2014-03-03: Change: 'title_link' now is 'link<pid$', after the
+\
+\ 2014-03-03: Change: `title_link` now is `link<pid$`, after the
 \ changes in <fendo.tools.fs>.
+\
 \ 2017-06-22: Update source style, layout and header.
+\
+\ 2018-12-08: Update notation of Forth words in comments and strings.
 
 \ vim: filetype=gforth

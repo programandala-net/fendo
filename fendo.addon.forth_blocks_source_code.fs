@@ -5,7 +5,7 @@
 
 \ This file is the Forth blocks source code addon.
 
-\ Last modified 201809271539.
+\ Last modified 201812080157.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2017 Marcos Cruz (programandala.net)
@@ -54,7 +54,7 @@ private
 s" Block" 2constant (default_forth_block$)
 ' (default_forth_block$) is forth_block$
 (*
-\ 'forth_block$' can be vectored by the application
+\ `forth_block$` can be vectored by the application
 \ to a multilingual string, e.g.:
   s" Block"   \ English
   s" Bloko"   \ Esperanto
@@ -95,7 +95,7 @@ s" Block" 2constant (default_forth_block$)
   source_line dup /forth_block_line source_code_fid read-file throw
 \  2dup ." «" type ." »" cr  \ XXX INFORMER
   ;
-  \ Note: 'source_line' is a buffer defined in
+  \ Note: `source_line` is a buffer defined in
   \ <fendo/fendo_markup_wiki.fs>.
 
 public
@@ -140,24 +140,36 @@ end-package
 \ Change log
 
 \ 2013-11-09: Code extracted from <addons/source_code.fs>.
-\ 2013-11-18: Change: 'programming_language' renamed to
-\   'programming_language!', after the changes in the main code.
-\ 2013-11-19: Fix: '(echo_forth_block)' and
-\   'update_block_0_highlighting'  still used 'higlight?' as a
+\
+\ 2013-11-18: Change: `programming_language` renamed to
+\   `programming_language!`, after the changes in the main code.
+\
+\ 2013-11-19: Fix: `(echo_forth_block)` and
+\   `update_block_0_highlighting`  still used `higlight?` as a
 \   variable, but it was converted to a value.
-\ 2013-11-30: Fix: now 'forth_block$' is defered; the application must
+\
+\ 2013-11-30: Fix: now `forth_block$` is defered; the application must
 \   set it, depending on the languages used in the website.
-\ 2013-12-10: Change: 'ql_forth_blocks_source_code' moved to its own file
+\
+\ 2013-12-10: Change: `ql_forth_blocks_source_code` moved to its own file
 \   <addons/ql_forth_blocks_source_code.fs>.
+\
 \ 2013-12-10: Change: All Abersoft Forth code is moved to its own file
 \   <addons/abersoft_forth_blocks_source_code.fs>.
-\ 2014-02-05: Fix: 'update_forth_block_0_highlighting' set 'highlight?'
+\
+\ 2014-02-05: Fix: `update_forth_block_0_highlighting` set `highlight?`
 \   when it was unset!
+\
 \ 2014-03-12: Change: module renamed after the filename.
+\
 \ 2014-10-19: Improvement: the programming language is not set to
 \   Forth if it's not empty; this allows other flavours of Forth to be
-\   used, e.g. ZX Spectrum's Abersoft Forth or QL's SuperForth.
+\   used, e.g. ZX Spectrum`s Abersoft Forth or QL`s SuperForth.
+\
 \ 2017-06-22: Update source style, layout and header.
+\
 \ 2018-09-27: Use `package` instead of `module:`.
+\
+\ 2018-12-08: Update notation of Forth words in comments and strings.
 
 \ vim: filetype=gforth

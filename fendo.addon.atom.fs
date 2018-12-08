@@ -5,7 +5,7 @@
 
 \ This file is the Atom addon.
 
-\ Last modified 20170622.
+\ Last modified 201812080157.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2009,2014,2015,2017 Marcos Cruz (programandala.net)
@@ -41,8 +41,8 @@
 
 forth_definitions
 
-require galope/n-to-r.fs  \ 'n>r'
-require galope/n-r-from.fs  \ 'nr>'
+require galope/n-to-r.fs  \ `n>r`
+require galope/n-r-from.fs  \ `nr>`
 
 fendo_definitions
 
@@ -77,7 +77,7 @@ defer atom_edit_summary$
   r@ created 10 min s+ s" :" s+
   r> target_file s+ ;
   \ Return the tag URI of a page.
-  \ Code converted from ForthCMS' '>page-taguri', by the same author.
+  \ Code converted from ForthCMS's `>page-taguri`, by the same author.
   \ a = page id
 
 \ ==============================================================
@@ -184,17 +184,17 @@ defer atom_site_title$ ( -- ca len )
   s" http://www.w3.org/2005/Atom" xmlns=!  <feed>
   atom_feed_header ;
   \ Create an Atom file.
-  \ f = saved content of 'xhtml?', to be restored by '}atom'
+  \ f = saved content of `xhtml?`, to be restored by `}atom`
 
 : atom{ ( -- )
   do_page? if  .sourcefilename (atom{)  else  skip_page  then ;
   \ Start the Atom content, if needed.
-  \ The end of the content is marked with the '}atom' markup.
-  \ Only one 'atom{ ... }atom' block is allowed in the page.
+  \ The end of the content is marked with the `}atom` markup.
+  \ Only one `atom{ ... }atom` block is allowed in the page.
 
 : }atom ( f -- )
   \ Finish and close the Atom file.
-  \ f = saved 'xhtml?'
+  \ f = saved `xhtml?`
   </feed> close_target  to xhtml? ;
 
 \ ==============================================================
@@ -296,7 +296,7 @@ set_default_atom_entry_summary
 \ from 2009-10-21) of: ForthCMS ("Forth Calm Maker of Sites") version
 \ B-00-201206 (http://programandala.net/en.program.forthcms.html).
 \
-\ 2014-07-06: First changes. 'echo' and 'echo_line' used instead of
+\ 2014-07-06: First changes. `echo` and `echo_line` used instead of
 \ the old ForthCMS words.
 \
 \ 2014-07-08: Site variables converted to Fendo.
@@ -305,39 +305,39 @@ set_default_atom_entry_summary
 \
 \ 2014-07-11: More changes to make the code compatible with Fendo.
 \
-\ 2014-11-08: Change: 'unmarkup' (just implemented) is used instead of
+\ 2014-11-08: Change: `unmarkup` (just implemented) is used instead of
 \ hard-coded plain text versions of some data fields.
 \
-\ 2014-12-02: Fix: 'xmlns=' was wrongly set in "<summary>", not in the
+\ 2014-12-02: Fix: `xmlns=` was wrongly set in "<summary>", not in the
 \ inner "<div>", what made the news reader to ignore the summary.
 \
-\ 2014-12-05: Fix: now 'atom_feed_icon' creates a complete URL, not
+\ 2014-12-05: Fix: now `atom_feed_icon` creates a complete URL, not
 \ just the file name.
 \
-\ 2014-12-05: Improvement: '(atom{)' now uses 'xml:base=!' and
-\ 'xml:lang=!' with '<feed>'; 'atom_feed_selflink' and
-\ 'atom_feed_alternate_link' use 'hreflang=!'.
+\ 2014-12-05: Improvement: `(atom{)` now uses `xml:base=!` and
+\ `xml:lang=!` with `<feed>`; `atom_feed_selflink` and
+\ `atom_feed_alternate_link` use `hreflang=!`.
 \
-\ 2014-12-05: Improvement: '(atom{)' saves and sets 'xhtml?', and
-\ '}atom' restores it. This forces some HTML tags and attributes to
+\ 2014-12-05: Improvement: `(atom{)` saves and sets `xhtml?`, and
+\ `}atom` restores it. This forces some HTML tags and attributes to
 \ get the proper XML flavour, without affecting the content pages.
 \
-\ 2014-12-05: Improvement: 'atom_entry_links' now uses 'hreflang=!'.
+\ 2014-12-05: Improvement: `atom_entry_links` now uses `hreflang=!`.
 \
 \ 2014-12-06: Change: new convention for the string constants and
 \ variables; quotes ruined the syntax highlighting.
 \
-\ 2014-12-06: Improvement: 'atom_entry_updated_summary' rewritten; it
+\ 2014-12-06: Improvement: `atom_entry_updated_summary` rewritten; it
 \ shows the edit summary metadatum, if not empty.
 \
 \ 2014-12-06: Improvement: now there's Atom-specific site title
-\ ('atom_site_title$') configurable by the application; it defaults to
-\ 'site_title'.
+\ (`atom_site_title$`) configurable by the application; it defaults to
+\ `site_title`.
 \
-\ 2014-12-07: Fix: added 'forth_definitions' and 'fendo_definitions'
+\ 2014-12-07: Fix: added `forth_definitions` and `fendo_definitions`
 \ for requirements, though no problem was detected.
 \
-\ 2015-02-01: Change: the 'xhtml?' variable is a value now.
+\ 2015-02-01: Change: the `xhtml?` variable is a value now.
 \
 \ 2015-12-18: Confirmed the `<update>` and `<published>` entry tags
 \ are right. The problem was the order used by the feed
@@ -345,5 +345,7 @@ set_default_atom_entry_summary
 \ empty.
 \
 \ 2017-06-22: Update source style, layout and header.
+\
+\ 2018-12-08: Update notation of Forth words in comments and strings.
 
 \ vim: filetype=gforth

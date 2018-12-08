@@ -5,7 +5,7 @@
 
 \ This file defines the file tools.
 
-\ Last modified 201706260028.
+\ Last modified 201812080157.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2015,2017 Marcos Cruz (programandala.net)
@@ -162,7 +162,7 @@ defer redirection_date ( a1 -- a2 )
   ['] file_mtime is redirection_date ;
   \ The file modification time of the next redirected file will
   \ be the modification date of the current page.
-  \ The calculated datum 'file_mtime' is used instead of 'modified',
+  \ The calculated datum `file_mtime` is used instead of `modified`,
   \ because it gives more control to the user.
 
 : created>redirection ( -- )
@@ -170,7 +170,7 @@ defer redirection_date ( a1 -- a2 )
   \ The file modification time of the next redirected file will
   \ be the creation date of the current page.
 
-\ The default is the 'created' date. This way the redirected files
+\ The default is the `created` date. This way the redirected files
 \ are not uploaded during server updates.
 
 created>redirection
@@ -233,42 +233,42 @@ s" /counted-string" environment? 0=
 \ Change log
 
 \ 2013-10-01: File created for the page redirection tools;
-\ 'open_target' and 'close_target' are moved here from
+\ `open_target` and `close_target` are moved here from
 \ "fendo_parser.fs".
 \
 \ 2013-10-02: Page redirection tools.
 \
-\ 2013-11-18: New: 'file>local', factored from 'open_source_code',
+\ 2013-11-18: New: `file>local`, factored from `open_source_code`,
 \ (defined in <addons/source_code.fs>).
 \
-\ 2013-11-28: Fix: 'redirected' didn't add the target extension, only
-\ the path; fixed with the new word 'pid$>target'.
+\ 2013-11-28: Fix: `redirected` didn't add the target extension, only
+\ the path; fixed with the new word `pid$>target`.
 \
-\ 2014-03-02: Change: 'domain&current_target_file', factored from
-\ '(redirected)' to <fendo.data.fs>.
+\ 2014-03-02: Change: `domain&current_target_file`, factored from
+\ `(redirected)` to <fendo.data.fs>.
 \
-\ 2014-07-13: New: 'set_current_target_modification_time'.
+\ 2014-07-13: New: `set_current_target_modification_time`.
 \
-\ 2014-11-04: Improvement: 'redirected' set the file modification time
+\ 2014-11-04: Improvement: `redirected` set the file modification time
 \ of the redirected file with the correspondent metadadatum of its
 \ goal page. This way server updates will be easier.
 \ 'set_current_target_modification_time ' was factored out.
 \
-\ 2015-01-14: Improvement: 'set_modification_time' uses the new
-\ calculated datum 'file_mtime'.
+\ 2015-01-14: Improvement: `set_modification_time` uses the new
+\ calculated datum `file_mtime`.
 \
-\ 2015-01-14: Fix: 'redirected' created the redirected file even when
+\ 2015-01-14: Fix: `redirected` created the redirected file even when
 \ the current page is a draft.
 \
-\ 2015-01-14: Improvement: 'set_modification_time' is factored out to
-\ 'set_file_mtime', that receives also the desired date. This lets the
+\ 2015-01-14: Improvement: `set_modification_time` is factored out to
+\ `set_file_mtime`, that receives also the desired date. This lets the
 \ redirection files to be set to the date the original was created.
 \ The words for redirection are updated accordingly.
 \
 \ 2015-01-31: Change: there were two related words called
-\ '(redirected)'. Although this caused no problem but a warning
+\ `(redirected)`. Although this caused no problem but a warning
 \ message during compilation, for clarity the deeper one has been
-\ renamed to '((redirected))'.
+\ renamed to `((redirected))`.
 \
 \ 2015-02-11: Typos.
 \
@@ -281,5 +281,7 @@ s" /counted-string" environment? 0=
 \
 \ 2017-06-25: Improve `set_file_mtime`: do nothing if the date string
 \ is empty.
+\
+\ 2018-12-08: Update notation of Forth words in comments and strings.
 
 \ vim: filetype=gforth

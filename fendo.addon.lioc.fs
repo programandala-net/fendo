@@ -5,7 +5,7 @@
 
 \ This file provides a word that is needed by other addons.
 
-\ Last modified 20170622.
+\ Last modified 201812080157.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2014,2017 Marcos Cruz (programandala.net)
@@ -45,8 +45,12 @@
 
 \ 2014-03-02: Factored out from <fendo.addon.lioc_by_regex.fs> and
 \ <fendo.addon.lioc_by_prefix.fs>.
-\ 2014-03-03: Change: 'title_link' now is 'link<pid$', after the
+\
+\ 2014-03-03: Change: `title_link` now is `link<pid$`, after the
 \ changes in <fendo.tools.fs>.
+\
 \ 2017-06-22: Update source style, layout and header.
+\
+\ 2018-12-08: Update notation of Forth words in comments and strings.
 
 \ vim: filetype=gforth

@@ -5,7 +5,7 @@
 
 \ This file creates the tools for user's shortcuts.
 
-\ Last modified 20170622.
+\ Last modified 201812080157.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2017 Marcos Cruz (programandala.net)
@@ -72,7 +72,7 @@ s" " :shortcut ( -- )
 
 0 [if]
 
-\ Usage example of 'shortcut:'
+\ Usage example of `shortcut:`
 \
 \ User's shortcuts are used as recursive href parameters.
 \ They can be used to create mnemonics, redirections or
@@ -110,20 +110,20 @@ shortcut: gforth_ext
   \ xt2 = new xt
 
 : (shortcut?) ( xt ca len -- xt xt true  |  false )
-\  ." Parameter in '(shortcut?)' = " 2dup type .s cr  \ XXX INFORMER
+\  ." Parameter in `(shortcut?)` = " 2dup type .s cr  \ XXX INFORMER
   fendo_shortcuts_wid search-wordlist ((shortcut?)) ;
   \ Is an href attribute a shortcut different from xt?
   \ ca len = href attribute (not empty)
 
 : shortcut? ( xt ca len -- xt xt true  |  false )
-\  ." Parameter in 'shortcut?' = " 2dup type .s cr  \ XXX INFORMER
+\  ." Parameter in `shortcut?` = " 2dup type .s cr  \ XXX INFORMER
   dup  if  (shortcut?)  else  nip nip  then ;
   \ Is an href attribute a shortcut different from xt?
   \ ca len = href attribute (or an empty string)
 
 :noname ( ca len -- ca len | ca' len' )
 \  cr ." order = " order cr ." entering unshortcut " 2dup type  \ XXX INFORMER
-\  ." Parameter in 'unshortcut' = " 2dup type .s cr  \ XXX INFORMER
+\  ." Parameter in `unshortcut` = " 2dup type .s cr  \ XXX INFORMER
   2dup href=!
   0 rot rot  \ fake xt
 \  2dup cr ." order = " order cr ." about to unshortcut " type  \ XXX INFORMER
@@ -131,8 +131,8 @@ shortcut: gforth_ext
   while   execute href=@
 \  ." --> " 2dup type  \ XXX INFORMER
   repeat  href=@
-\  ." Result of 'unshortcut' = " 2dup type .s cr  \ XXX INFORMER
-\ save-mem  \ XXX TMP -- needed to preserve the actual zone of 'href='? No.
+\  ." Result of `unshortcut` = " 2dup type .s cr  \ XXX INFORMER
+\ save-mem  \ XXX TMP -- needed to preserve the actual zone of `href=`? No.
 \  .s cr  \ XXX INFORMER
 \  cr  \ XXX INFORMER
   ; is unshortcut  \ defered in <fendo.fs>
@@ -141,13 +141,13 @@ shortcut: gforth_ext
   \ ca' len' = actual href attribute
 
 :noname ( ca len -- ca len | ca' len' )
-\  ." Parameter in 'just_unshortcut' = " 2dup type .s cr  \ XXX INFORMER
+\  ." Parameter in `just_unshortcut` = " 2dup type .s cr  \ XXX INFORMER
   save_attributes
   unshortcut save-mem 2>r
-\  ." 'href=' in 'just_unshortcut' before 'restore_attributes' = " s" href=@" evaluate .s cr type cr  \ XXX INFORMER
+\  ." `href=` in `just_unshortcut` before `restore_attributes` = " s" href=@" evaluate .s cr type cr  \ XXX INFORMER
   restore_attributes
   2r> 2dup href=!
-\  ." 'href=' in 'just_unshortcut' after 'restore_attributes' = " s" href=@" evaluate .s cr type cr  \ XXX INFORMER
+\  ." `href=` in `just_unshortcut` after `restore_attributes` = " s" href=@" evaluate .s cr type cr  \ XXX INFORMER
   ; is just_unshortcut  \ defered in <fendo.fs>
   \ Unshortcut an href attribute recursively,
   \ but preserving all other attributes.
@@ -155,15 +155,15 @@ shortcut: gforth_ext
   \ ca' len' = actual href attribute
 
 :noname ( ca len -- ca len | ca' len' ) \ XXX TMP -- for debugging
-\  ." 'href=' in 'dry_unshortcut' before 'save_attributes'    = " s" href=@" evaluate .s space type cr  \ XXX INFORMER
+\  ." `href=` in `dry_unshortcut` before `save_attributes`    = " s" href=@" evaluate .s space type cr  \ XXX INFORMER
   save_attributes
-\  ." 'href=' in 'dry_unshortcut' after 'save_attributes'     = " s" href=@" evaluate .s space type cr  \ XXX INFORMER
+\  ." `href=` in `dry_unshortcut` after `save_attributes`     = " s" href=@" evaluate .s space type cr  \ XXX INFORMER
   unshortcut 
-\  ." TOS in 'dry_unshortcut' after 'unshortcut'              = " .s space 2dup type cr  \ XXX INFORMER
+\  ." TOS in `dry_unshortcut` after `unshortcut`              = " .s space 2dup type cr  \ XXX INFORMER
   save-mem 2>r
-\  ." 'href=' in 'dry_unshortcut' before 'restore_attributes' = " s" href=@" evaluate .s space type cr  \ XXX INFORMER
+\  ." `href=` in `dry_unshortcut` before `restore_attributes` = " s" href=@" evaluate .s space type cr  \ XXX INFORMER
   restore_attributes
-\  ." 'href=' in 'dry_unshortcut' after 'restore_attributes'  = " s" href=@" evaluate .s space type cr  \ XXX INFORMER
+\  ." `href=` in `dry_unshortcut` after `restore_attributes`  = " s" href=@" evaluate .s space type cr  \ XXX INFORMER
   2r> 
   ; is dry_unshortcut  \ defered in <fendo.fs>
   \ Unshortcut an href attribute recursively,
@@ -181,13 +181,15 @@ shortcut: gforth_ext
 \ "shortcut".
 \
 \ 2013-10-23: Fix: stack comments.
-\ 
-\ 2013-10-25: New: debugging version of 'shortcut:'.
 \
-\ 2014-11-11: Fix: 'just_unshortcut' now preserves the 'href='
-\ attribute with 'save-mem'. The problem started because of the use of
-\ 'save_attributes' and 'restore_attributes'.
+\ 2013-10-25: New: debugging version of `shortcut:`.
+\
+\ 2014-11-11: Fix: `just_unshortcut` now preserves the `href=`
+\ attribute with `save-mem`. The problem started because of the use of
+\ `save_attributes` and `restore_attributes`.
 \
 \ 2017-06-22: Update source style, layout and header.
+\
+\ 2018-12-08: Update notation of Forth words in comments and strings.
 
 \ vim: filetype=gforth

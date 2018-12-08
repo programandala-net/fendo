@@ -5,7 +5,7 @@
 
 \ This file is the code common to several source code addons.
 
-\ Last modified 201809271539.
+\ Last modified 201812080157.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2017 Marcos Cruz (programandala.net)
@@ -32,8 +32,8 @@
 forth_definitions
 
 require galope/package.fs \ `package`, `private`, `public`, `end-package`
-require galope/replaced.fs  \ 'replaced'
-require galope/sourcepath.fs  \ 'sourcepath'
+require galope/replaced.fs  \ `replaced`
+require galope/sourcepath.fs  \ `sourcepath`
 
 fendo_definitions
 
@@ -47,7 +47,7 @@ false value highlight?
   \ flag to switch the code highlighting on and off
 
 $variable programming_language$
-  \ same values than Vim's 'filetype'
+  \ same values than Vim's `filetype`
 
 $variable previous_programming_language$
   \ copy used by some addons
@@ -88,7 +88,7 @@ $variable source_code$
 \ ==============================================================
 \ Syntax highlighting with Vim
 
-\ XXX FIXME remove spaces and use 's&' instead of 's+'.
+\ XXX FIXME remove spaces and use `s&` instead of `s+`.
 
 private
 
@@ -137,7 +137,7 @@ private
   \   ex -f -b -c "set filetype=PROGRAMMING_LANGUAGE"
   \      -S ~/forth/fendo/fendo.addon.source_code.vim /tmp/fendo_addon.source_code.txt
 
-\ XXX TODO -- There are similar words '>input_file' and '<output_file'
+\ XXX TODO -- There are similar words `>input_file` and `<output_file`
 \ in <fendo.addon.source_code.common.fs>; maybe they can be shared.
 
 : >input_file ( ca len -- )
@@ -205,30 +205,30 @@ end-package
 
 \ 2013-11-18: Code extracted from <fendo_source_code.fs>.
 \
-\ 2013-12-11: New: '-b' parameter added to 'syntax+', then renamed to
-\ 'parameters+'.
+\ 2013-12-11: New: `-b` parameter added to `syntax+`, then renamed to
+\ `parameters+`.
 \
-\ 2014-01-06: New: 'escaped_source_code'.
+\ 2014-01-06: New: `escaped_source_code`.
 \
-\ 2014-01-06: Fix: 'append_source_code_line' now escapes de the code
-\ with 'escaped_source_code'.
+\ 2014-01-06: Fix: `append_source_code_line` now escapes de the code
+\ with `escaped_source_code`.
 \
-\ 2014-02-06: Fix: 'highlighted' reseted 'programming_language$'
+\ 2014-02-06: Fix: `highlighted` reseted `programming_language$`
 \ before exiting, what turned off the highlighting of Forth blocks.
 \
-\ 2014-02-07: Fix: now 'append_source_code_line' calls
-\ 'escaped_source_code' only if 'highlight?' is false, because Vim
+\ 2014-02-07: Fix: now `append_source_code_line` calls
+\ `escaped_source_code` only if `highlight?` is false, because Vim
 \ will do the task while highlighting; if "<" were already converted
 \ to "&lt;", Vim converted it to "&amp;lt;" and the code was ruined.
 \
-\ 2014-02-07: New: 'escaped_source_code' translates "&" too.
+\ 2014-02-07: New: `escaped_source_code` translates "&" too.
 \
-\ 2014-02-28: Change: 'replaced' is adapted to its new version in
+\ 2014-02-28: Change: `replaced` is adapted to its new version in
 \ Galope
 \
 \ 2014-03-02: Trivial fix.
 \
-\ 2014-03-09: Fix: 'escaped_source_code' converted ampersands, what
+\ 2014-03-09: Fix: `escaped_source_code` converted ampersands, what
 \ ruined the rest of HTML entities in source code blocks.
 \
 \ 2014-03-12: Change: filename and module renamed.
@@ -236,17 +236,20 @@ end-package
 \ 2014-06-16: Fix: <source_code.vim> renamed to
 \ <fendo.addon.source_code.vim>.
 \
-\ 2014-10-24: Change: 'escaped_source_code' only works if 'highlight?'
+\ 2014-10-24: Change: `escaped_source_code` only works if `highlight?`
 \ is off; otherwise Vim does its own substitutions.
 \
-\ 2014-11-01: Fix: 'escaped_source_code' converted "&" to HTML
+\ 2014-11-01: Fix: `escaped_source_code` converted "&" to HTML
 \ notation, what ruined the HTML entities.
 \
-\ 2014-12-07: Change: 'source_code_finished' and related words have
+\ 2014-12-07: Change: `source_code_finished` and related words have
 \ been moved from <fendo.addon.source_code.fs>, in order to use that
 \ word in <fendo.markup.fendo.code.fs>.
 \
 \ 2017-06-22: Update source style, layout and header.
+\
 \ 2018-09-27: Use `package` instead of `module:`.
+\
+\ 2018-12-08: Update notation of Forth words in comments and strings.
 
 \ vim: filetype=gforth

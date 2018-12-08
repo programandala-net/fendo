@@ -5,7 +5,7 @@
 
 \ This file defines the HTML entities.
 
-\ Last modified 20170622.
+\ Last modified 201812080157.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2017 Marcos Cruz (programandala.net)
@@ -38,7 +38,7 @@
   \ ca len = entity --and name of its entity word
 
 : entity: ( "name" -- )
-  parse-name? abort" Parseable name expected in 'entity:'"
+  parse-name? abort" Parseable name expected in `entity:`"
   :entity ;
   \ Create a HTML entity word.
   \ "name" = entity --and name of its entity word
@@ -313,5 +313,7 @@ entity: &diams; \ ♦ \ U+2666 (9830) \ HTML 4.0 \ HTMLsymbol \ ISOpub \ black d
 \ https://en.wikipedia.org/wiki/List_of_XML_and_HTML_character_entity_references
 \
 \ 2017-06-22: Update source style, layout and header.
+\
+\ 2018-12-08: Update notation of Forth words in comments and strings.
 
 \ vim: filetype=gforth

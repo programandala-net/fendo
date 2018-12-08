@@ -5,7 +5,7 @@
 
 \ This file defines the Fendo markup for lists.
 
-\ Last modified 20170622.
+\ Last modified 201812080157.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2017 Marcos Cruz (programandala.net)
@@ -99,7 +99,7 @@ markup_definitions
 
 : =|= ( -- )
   table_started? @ if
-    #rows @ abort" The '=|=' markup must be the first one in a table"
+    #rows @ abort" The `=|=` markup must be the first one in a table"
     ['] <caption> ['] </caption> opened_[=|=]? markups
   else  s" =|=" content  then ;
   \ Open or close a table caption; it must be the first markup inside a table.
@@ -124,5 +124,7 @@ fendo_definitions
 \ 2017-06-22: Update source style, layout and header.
 \
 \ 2018-12-07: Fix typo.
+\
+\ 2018-12-08: Update notation of Forth words in comments and strings.
 
 \ vim: filetype=gforth

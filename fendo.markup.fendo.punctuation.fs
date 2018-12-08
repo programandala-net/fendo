@@ -5,7 +5,7 @@
 
 \ This file defines the Fendo markup for punctuation.
 
-\ Last modified 20170622.
+\ Last modified 201812080157.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2017 Marcos Cruz (programandala.net)
@@ -36,7 +36,7 @@
 \   But this // emphasis // , well, it
 \   needs to be followed by a markup comma.
 
-\ The ',' markup must print a comma without a leading space.  If ','
+\ The `,` markup must print a comma without a leading space.  If `,`
 \ were not a markup but an ordinary printable content, a leading space
 \ would be printed.
 
@@ -46,19 +46,19 @@
 \   In this ( « ** example ** »).
 
 \ the characters "(" and "«" must be defined as opening punctuation
-\ (one single word '(«' would work too), and '»).' should be a closing
-\ punctuation word ('»', ')' and '.' apart would work too).
+\ (one single word `(«` would work too), and `»).` should be a closing
+\ punctuation word (`»`, `)` and `.` apart would work too).
 
 fendo_definitions
 
 : }punctuation:  ( "name" -- )
-  parse-name? abort" Missing name in '}punctuation:'"
+  parse-name? abort" Missing name in `}punctuation:`"
   :echo_name_ ;
   \ Create a closing punctuation word.
   \ "name" = punctuation --and name of its punctuation word
 
 : punctuation{:  ( "name" -- )
-  parse-name? abort" Missing name in 'punctuation{:'"
+  parse-name? abort" Missing name in `punctuation{:`"
   :echo_name+ ;
   \ Create an opening punctuation word.
   \ "name" = punctuation --and name of its punctuation word
@@ -146,12 +146,14 @@ fendo_definitions
 \ the ending space in calculated HTML attributes in the template.
 \
 \ 2014-10-12: New: "'s", though it's not punctuation.
-\ 
-\ 2014-11-04: New: '&#39;s' (HTML version of "'s"; useful in certain
+\
+\ 2014-11-04: New: `&#39;s` (HTML version of "'s"; useful in certain
 \ cases).
 \
 \ 2014-12-10: Fix: duplicated punctuation removed.
 \
 \ 2017-06-22: Update source style, layout and header.
+\
+\ 2018-12-08: Update notation of Forth words in comments and strings.
 
 \ vim: filetype=gforth
