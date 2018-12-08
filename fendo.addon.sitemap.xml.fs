@@ -7,7 +7,7 @@
 
 \ XXX UNDER DEVELOPMENT
 
-\ Last modified 20170622.
+\ Last modified 201812080157.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2015,2017 Marcos Cruz (programandala.net)
@@ -38,8 +38,8 @@
 
 forth_definitions
 
-require galope/n-to-r.fs  \ 'n>r'
-require galope/n-r-from.fs  \ 'nr>'
+require galope/n-to-r.fs  \ `n>r`
+require galope/n-r-from.fs  \ `nr>`
 
 fendo_definitions
 
@@ -74,7 +74,7 @@ defer sitemap_edit_summary$
   r@ created 10 min s+ s" :" s+
   r> target_file s+ ;
   \ Return the tag URI of a page.
-  \ Code converted from ForthCMS' '>page-taguri', by the same author.
+  \ Code converted from ForthCMS' `>page-taguri`, by the same author.
   \ a = page id
 
 \ ==============================================================
@@ -165,18 +165,18 @@ defer sitemap_site_title$ ( -- ca len )
   s" http://www.w3.org/2005/sitemap" xmlns=!  <feed>
   sitemap_feed_header ;
   \ Create an sitemap file.
-  \ f = saved content of 'xhtml?', to be restored by '}sitemap'
+  \ f = saved content of `xhtml?`, to be restored by `}sitemap`
 
 : sitemap{ ( -- )
   do_page? if  .sourcefilename (sitemap{)  else  skip_page  then ;
   \ Start the sitemap content, if needed.
-  \ The end of the content is marked with the '}sitemap' markup.
+  \ The end of the content is marked with the `}sitemap` markup.
   \ Only one 'sitemap{ ... }sitemap' block is allowed in the page.
 
 : }sitemap ( f -- )
   </feed> close_target  to xhtml? ;
   \ Finish and close the sitemap file.
-  \ f = saved 'xhtml?'
+  \ f = saved `xhtml?`
 
 \ ==============================================================
 \ sitemap entries
@@ -276,6 +276,9 @@ set_default_sitemap_entry_summary
 \ Change log
 
 \ 2015-10-05: Start, using the code of the Atom module.
+\
 \ 2017-06-22: Update source style, layout and header.
+\
+\ 2018-12-08: Update notation of Forth words in comments and strings.
 
 \ vim: filetype=gforth

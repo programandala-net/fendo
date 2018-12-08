@@ -5,7 +5,7 @@
 
 \ This file is the Sinclair QL source code addon.
 
-\ Last modified 201709182037.
+\ Last modified 201812080157.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2017 Marcos Cruz (programandala.net)
@@ -55,13 +55,21 @@ require ./fendo.addon.ql_charset.fs
 \ ==============================================================
 \ Change log
 
-\ 2013-12-10 Written with <galope/translated.fs>.
-\ 2013-12-11 New: 'ql_source_code_translated'.
-\ 2013-12-11 Change: an xt is used, not a translation table; this
+\ 2013-12-10: Written with <galope/translated.fs>.
+\
+\ 2013-12-11: New: `ql_source_code_translated`.
+\
+\ 2013-12-11: Change: an xt is used, not a translation table; this
 \   makes it possible to use different translation tools.
-\ 2013-12-12 Rewritten with <galope/uncodepaged.fs>.
+\
+\ 2013-12-12: Rewritten with <galope/uncodepaged.fs>.
+\
 \ 2014-02-15: Fix: path of the Fendo addons is converted to relative.
+\
 \ 2017-06-22: Update source style, layout and header.
+\
 \ 2017-09-18: Improve documentation.
+\
+\ 2018-12-08: Update notation of Forth words in comments and strings.
 
 \ vim: filetype=gforth

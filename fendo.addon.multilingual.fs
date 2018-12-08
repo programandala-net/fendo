@@ -13,7 +13,7 @@
 \   es.sección.subsección.html
 \   eo.fako.subfako.html
 
-\ Last modified 201812061853.
+\ Last modified 201812080157.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2017,2018 Marcos Cruz (programandala.net)
@@ -42,8 +42,8 @@
 
 0 [if]
 
-\ **Before using** the word 'mlsconstant' defined by this addon, the
-\ application must set the 'langs' value with the number of language
+\ **Before using** the word `mlsconstant` defined by this addon, the
+\ application must set the `langs` value with the number of language
 \ sections the website has.  Otherwise the program will stop with a
 \ message.
 
@@ -65,9 +65,9 @@
 
 forth_definitions
 
-require galope/dollar-comma.fs    \ '$,'
-require galope/c-slash-string.fs  \ 'c/string'
-require galope/paren-star.fs      \ '(*'
+require galope/dollar-comma.fs    \ `$,`
+require galope/c-slash-string.fs  \ `c/string`
+require galope/paren-star.fs      \ `(*`
 
 fendo_definitions
 
@@ -131,7 +131,7 @@ true to multilingual?
   \ Define what localization strings do.
 
 : l10n-string ( ca-n len-n ... ca1 len1 "name" -- )
-  langs 0= abort" 'langs' is not set; 'l10n-string' can not work."
+  langs 0= abort" `langs` is not set; `l10n-string` can not work."
   create  l10n-string,  (l10n-string) ;
   \ Create a localization string constant.
   \ It will return the string in the language of the current page.
@@ -145,9 +145,9 @@ true to multilingual?
   *)
 
 : noname-l10n-string ( ca-n len-n ... ca1 len1 -- xt )
-  langs 0= abort" 'langs' is not set; 'noname-l10n-string' can not work."
+  langs 0= abort" `langs` is not set; `noname-l10n-string` can not work."
   noname create  l10n-string,  latestxt  (l10n-string) ;
-  \ Unnamed version of 'l10n-string'.
+  \ Unnamed version of `l10n-string`.
   \ Create a localization string constant.
   \ It will return the string in the language of the current page.
   \ ca1 len1 = text in the first language
@@ -164,18 +164,18 @@ true to multilingual?
 
 \ 2013-10-14: Moved from the application Fendo-programandala.
 \
-\ 2013-10-15: Improvement: 'mlsconstant' checks if 'langs' is set.
+\ 2013-10-15: Improvement: `mlsconstant` checks if `langs` is set.
 \
-\ 2013-11-11: Improvement: 'lang' uses both the "language" metadatum
+\ 2013-11-11: Improvement: `lang` uses both the "language" metadatum
 \ and the language prefix of the file.name.
 \
-\ 2013-11-30: Change: 'mlsconstant' and 'langs' are deprecated; now
+\ 2013-11-30: Change: `mlsconstant` and `langs` are deprecated; now
 \ the application must define its own words to store the number of
 \ languages and the multilingual strings. \ XXX TMP
 \
 \ 2013-12-01: Change: several renamings.
 \
-\ 2014-02-04: Change: 'current_lang#' returns 0 even if no pid is set;
+\ 2014-02-04: Change: `current_lang#` returns 0 even if no pid is set;
 \ this is useful for testing the localization strings.
 \
 \ 2014-02-22: Change: all "l10n$" renamed to "l10n-str" in names.
@@ -183,12 +183,12 @@ true to multilingual?
 \ 2014-03-02: Change: all "l10n-str" renamed to "l10n-string" in
 \ names; "-str" is used by Forth Foundation Library's str module.
 \
-\ 2014-03-11: Fix: in certain cases, 'pid#>lang#' needed to make sure
-\ 'fendo_wid' is in 'order'.
+\ 2014-03-11: Fix: in certain cases, `pid#>lang#` needed to make sure
+\ `fendo_wid` is in `order`.
 \
-\ 2014-03-24: New: 'pid$>lang#'.
+\ 2014-03-24: New: `pid$>lang#`.
 \
-\ 2014-12-06: Change: the deprecated old names of 'l10n-string' are
+\ 2014-12-06: Change: the deprecated old names of `l10n-string` are
 \ finally removed.
 \
 \ 2017-06-22: Update source style, layout and header.
@@ -196,5 +196,7 @@ true to multilingual?
 \ 2017-10-30: Update Galope `$!,` to `$,`.
 \
 \ 2018-12-06: Improve documentation.
+\
+\ 2018-12-08: Update notation of Forth words in comments and strings.
 
 \ vim: filetype=gforth

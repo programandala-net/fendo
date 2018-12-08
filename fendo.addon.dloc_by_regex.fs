@@ -5,7 +5,7 @@
 
 \ This file is the code common to several content lists addons.
 
-\ Last modified 201809271539.
+\ Last modified 201812080157.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2017 Marcos Cruz (programandala.net)
@@ -32,7 +32,7 @@
 forth_definitions
 
 require galope/package.fs \ `package`, `private`, `public`, `end-package`
-require galope/rgx-wcmatch-question.fs  \ 'rgx-wcmatch?'
+require galope/rgx-wcmatch-question.fs  \ `rgx-wcmatch?`
 
 fendo_definitions
 
@@ -71,14 +71,23 @@ end-package
 \ Change log
 
 \ 2013-11-26: Start. First working version.
+\
 \ 2013-11-27: Change: several words renamed, after a new uniform
 \   notation: "pid$" and "pid#" for both types of page ids.
-\ 2014-03-02: Rewritten with 'traverse_pids'.
+\
+\ 2014-03-02: Rewritten with `traverse_pids`.
+\
 \ 2014-03-03: Draft pages are not included.
-\ 2014-03-09: Improvement: faster, with '?exit' and rearranged
+\
+\ 2014-03-09: Improvement: faster, with `?exit` and rearranged
 \ conditions.
+\
 \ 2014-03-10: Fix: double local.
+\
 \ 2017-06-22: Update source style, layout and header.
+\
 \ 2018-09-27: Use `package` instead of `module:`.
+\
+\ 2018-12-08: Update notation of Forth words in comments and strings.
 
 \ vim: filetype=gforth

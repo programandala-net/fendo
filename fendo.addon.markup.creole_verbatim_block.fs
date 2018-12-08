@@ -6,7 +6,7 @@
 \ This file provides the Creole markup for verbatim blocks, deprecated
 \ from the set of markups used by default.
 
-\ Last modified 20170622.
+\ Last modified 201812080157.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2017 Marcos Cruz (programandala.net)
@@ -32,7 +32,7 @@
 fendo_definitions
 
 : {{{-line ( -- ca len )
-  read_source_line 0= abort" Missing closing '}}}'"
+  read_source_line 0= abort" Missing closing `}}}`"
   escaped_source_code ;
   \ Parse a new line from the current verbatim block.
 
@@ -55,7 +55,7 @@ markup_definitions
   \ Open, parse and close a verbatim block.
 
 : }}} ( -- )
-  true abort" '}}}' without '{{{'" ; immediate
+  true abort" `}}}` without `{{{`" ; immediate
   \ Close a verbatim or pass-through block.
 
 fendo_definitions
@@ -66,6 +66,9 @@ fendo_definitions
 \ 2014-04-20: Code deprecated, substituted by the Asciidoctor markup.
 \ Extracted from <fendo.markup.wiki.fs> (then renamed to
 \ <fendo.markup.fendo.fs>.
+\
 \ 2017-06-22: Update source style, layout and header.
+\
+\ 2018-12-08: Update notation of Forth words in comments and strings.
 
 \ vim: filetype=gforth

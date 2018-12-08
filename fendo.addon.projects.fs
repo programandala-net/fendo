@@ -8,7 +8,7 @@
 \
 \ XXX NOT FINISHED
 
-\ Last modified 201812062345.
+\ Last modified 201812080157.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2015,2017,2018 Marcos Cruz (programandala.net)
@@ -107,7 +107,7 @@ datum: project_page
     else ( a1 u ) + $@  then ;
   \ Create a project page metadatum that returns its value.
   \ This is the normal version of the metadatum: if executed in
-  \ the metadata header (between 'data{' and '}data') it will
+  \ the metadata header (between `data{` and `}data`) it will
   \ parse its datum from the input stream; out of the header it
   \ will return the datum string.
   \ ca len = datum name
@@ -118,7 +118,7 @@ datum: project_page
 
 : :project_datum>address ( ca len -- )
   s" '" 2swap s+ nextname
-  latestxt  \ of the word previously created by ':project_datum>value'
+  latestxt  \ of the word previously created by `:project_datum>value`
   create ( xt ) >body ,
   does> ( a1 -- a2 ) ( a1 dfa ) @ @
 \    dup ." datum offset = " .  \ XXX INFORMER
@@ -174,12 +174,14 @@ end-package
 \
 \ 2015-02-06: Start of a new approach.
 \
-\ 2015-02-11: Fix: proper 'definitions' in the requirements.
+\ 2015-02-11: Fix: proper `definitions` in the requirements.
 \
 \ 2017-06-22: Update source style, layout and header.
 \
 \ 2018-09-27: Use `package` instead of `module:`.
 \
 \ 2018-12-06: Fix typo.
+\
+\ 2018-12-08: Update notation of Forth words in comments and strings.
 
 \ vim: filetype=gforth

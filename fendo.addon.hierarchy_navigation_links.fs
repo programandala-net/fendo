@@ -5,7 +5,7 @@
 
 \ This file is the hierarchy navigation links addon.
 
-\ Last modified 201809281539.
+\ Last modified 201812080157.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2017,2018 Marcos Cruz (programandala.net)
@@ -39,7 +39,7 @@ defer last$ ( -- ca len )
   \ `noname-l10n-string` can be used for multilingual sites.
 
 : (hierarchy_navigation_link)  ( ca1 len1 ca2 len2 -- )
-  2swap s" <span class='br'>" 2swap s+
+  2swap s" <span class=`br`>" 2swap s+
   s" :</span> " s+  \ a trailing space is needed...
   2over pid$>pid# title s+  \ ..because the title could start with markups
   link ;
@@ -95,5 +95,7 @@ defer last$ ( -- ca len )
 \ 2018-09-28: Replace `previous_page` with `?previous_page`.  Replace
 \ `next_page` with `?next_page`.  Replace `upper_page` with
 \ `?upper_page`.
+\
+\ 2018-12-08: Update notation of Forth words in comments and strings.
 
 \ vim: filetype=gforth

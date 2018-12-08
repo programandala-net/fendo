@@ -5,7 +5,7 @@
 
 \ This file defines the HTML attributes.
 
-\ Last modified 20170622.
+\ Last modified 201812080157.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2015,2017 Marcos Cruz (programandala.net)
@@ -47,9 +47,9 @@ false  dup constant [gforth_strings_for_attributes?]  immediate
 [then]
 
 require galope/three-dup.fs
-require galope/dollar-store-new.fs  \ '$!new'
+require galope/dollar-store-new.fs  \ `$!new`
 require galope/xstack.fs
-require galope/minus-cell-bounds.fs  \ '-cell-bounds'
+require galope/minus-cell-bounds.fs  \ `-cell-bounds`
 
 fendo_definitions
 
@@ -78,7 +78,7 @@ fendo_definitions
 : :attribute!  ( ca len a -- )
   rot rot s" !" s+ :create  ,
   does>  ( ca1 len1 -- )
-\    ." Parameter in 'does>' of ':attribute!' = " 2dup type cr  \ XXX INFORMER
+\    ." Parameter in `does>` of `:attribute!` = " 2dup type cr  \ XXX INFORMER
     ( ca1 len1 dfa ) @ attribute! ;
   \ Create a word that stores an attribute.
   \ ca len = name of the attribute variable
@@ -147,7 +147,7 @@ fendo_definitions
 
 : attribute:  ( "name" -- a )
   get-current fendo>current
-  parse-name? abort" Missing name after 'attribute:'"
+  parse-name? abort" Missing name after `attribute:`"
   2dup (attribute:) ( ca len a )  dup >r
   :attribute  set-current  r> ;
   \ Create an attribute variable in the markup vocabulary,
@@ -301,8 +301,8 @@ create attributes  \ table for the attribute variables
 
 : (attributes)  ( -- a len )
   attributes #attributes cells ;
-  \ Return the start and length of the ''attribute_xt' table.
-  \ attributes #attributes 1- cells  \ XXX OLD -- why '1-'?
+  \ Return the start and length of the `'attribute_xt` table.
+  \ attributes #attributes 1- cells  \ XXX OLD -- why `1-`?
 
 : -attribute  ( a -- )
   [gforth_strings_for_attributes?]
@@ -319,7 +319,7 @@ create attributes  \ table for the attribute variables
   language 2dup current_page language compare
   if  hreflang=!  else  2drop  then ;
   \ If the given page has a different language than the current one,
-  \ then update the 'hreflang' attribute.
+  \ then update the `hreflang` attribute.
   \ a = page id
 
 \ ==============================================================
@@ -398,8 +398,8 @@ create attributes  \ table for the attribute variables
 
 \ 2013-06-10: Start. Factored from <fendo_markup_html.fs>.
 \
-\ 2013-06-29: Fix: the 'raw=' attribute, the last in the table, wasn't
-\ cleared by '-attributes'.
+\ 2013-06-29: Fix: the `raw=` attribute, the last in the table, wasn't
+\ cleared by `-attributes`.
 \
 \ 2013-07-03: New: secondary set of attributes, selectable with a
 \ variable, in order to let nested markups.
@@ -410,35 +410,35 @@ create attributes  \ table for the attribute variables
 \
 \ 2013-08-10: Change: FFL's strings as a compile option.
 \
-\ 2013-08-12: New: 'attribute!' and 'attribute@' hide the conditional
+\ 2013-08-12: New: `attribute!` and `attribute@` hide the conditional
 \ compilation required to change the string system.
 \
-\ 2013-08-14: Change: The 'raw=' attributte is removed; the word
-\ 'unraw_attributes' (defined in <fendo_markup_wiki.fs>) makes it
+\ 2013-08-14: Change: The `raw=` attributte is removed; the word
+\ `unraw_attributes` (defined in <fendo_markup_wiki.fs>) makes it
 \ unnecessary.
 \
-\ 2013-08-15: New: ':attribute?!', required by the bookmarked links.
+\ 2013-08-15: New: `:attribute?!`, required by the bookmarked links.
 \
-\ 2013-10-27: New: '?hreflang=!', factored out from
-\ 'hierarchy_meta_link' in <addons/hierarchy_meta_links.fs>.
+\ 2013-10-27: New: `?hreflang=!`, factored out from
+\ `hierarchy_meta_link` in <addons/hierarchy_meta_links.fs>.
 \
-\ 2013-10-30: Fix: 'forth-wordlist' is set to current before requiring
+\ 2013-10-30: Fix: `forth-wordlist` is set to current before requiring
 \ the library files. The problem was <ffl/config.fs> created
-\ 'ffl.version' in the 'fendo' vocabulary, but searched for it in
-\ 'forth-wordlist'.
+\ `ffl.version` in the `fendo` vocabulary, but searched for it in
+\ `forth-wordlist`.
 \
-\ 2013-12-05: Change: '(xml:)lang=' moved here from
+\ 2013-12-05: Change: `(xml:)lang=` moved here from
 \ <fendo_markup_wiki.fs>.
 \
-\ 2013-12-05: New: '(xml:)lang=!', factored from
-\ <fendo_markup_wiki.fs>; '(xml:)lang=@'.
+\ 2013-12-05: New: `(xml:)lang=!`, factored from
+\ <fendo_markup_wiki.fs>; `(xml:)lang=@`.
 \
-\ 2014-07-13: New: 'xmlnl=' attribute, needed by the Atom module.
+\ 2014-07-13: New: `xmlnl=` attribute, needed by the Atom module.
 \
-\ 2014-11-09: Change: all code related to the old unused 'raw='
+\ 2014-11-09: Change: all code related to the old unused `raw=`
 \ pseudo-attribute attribute is removed.
 \
-\ 2014-11-09: '-attribute' factored out from '-attributes'.
+\ 2014-11-09: `-attribute` factored out from `-attributes`.
 \
 \ 2014-11-10: Change: Attribute variables don't contain an execution
 \ token anymore. Now they behave as ordinary variables that contain a
@@ -448,30 +448,32 @@ create attributes  \ table for the attribute variables
 \ are saved and restore when needed, using a specific stack. All
 \ related words have been adapted.
 \
-\ 2014-11-16: Change: '-attributes' clears also 'link_anchor'.
+\ 2014-11-16: Change: `-attributes` clears also `link_anchor`.
 \
-\ 2014-11-17: Fix: 'save_attribute' uses 'save-mem' in order to create
-\ a copy of the string; 'attribute!', when using Gforth's dynamic
+\ 2014-11-17: Fix: `save_attribute` uses `save-mem` in order to create
+\ a copy of the string; `attribute!`, when using Gforth's dynamic
 \ strings, removes the current string from memory before updating it.
 \ These changes solve the problem caused by shortcuts created in the
 \ same memory zone than the original href.
 \
-\ 2014-11-18: Changes: 'mem>x' is factored out from 'save_attribute'
-\ and 'save_attributes'; Galope's '$!new' is factored out from
-\ 'attribute!' and used also in 'restore_attributes'.
+\ 2014-11-18: Changes: `mem>x` is factored out from `save_attribute`
+\ and `save_attributes`; Galope's `$!new` is factored out from
+\ `attribute!` and used also in `restore_attributes`.
 \
-\ 2014-11-30: New: ':attribute+!'.
+\ 2014-11-30: New: `:attribute+!`.
 \
-\ 2014-12-13: New: 'language=' attribute, required by '<script>'.
+\ 2014-12-13: New: `language=` attribute, required by `<script>`.
 \
 \ 2014-12-22: New: "attribute'" is added to support also single quotes
-\ in HTML attributes. 'unraw_attributes' is updated accordingly in
+\ in HTML attributes. `unraw_attributes` is updated accordingly in
 \ <fendo.markup.fendo.fs>.
 \
-\ 2014-12-22: Change ':attribute' factored from 'attribute:'.
+\ 2014-12-22: Change `:attribute` factored from `attribute:`.
 \
-\ 2015-02-01: Change: the 'xhtml?' variable is a value now.
+\ 2015-02-01: Change: the `xhtml?` variable is a value now.
 \
 \ 2017-06-22: Update source style, layout and header.
+\
+\ 2018-12-08: Update notation of Forth words in comments and strings.
 
 \ vim: filetype=gforth

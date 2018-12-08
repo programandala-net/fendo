@@ -7,7 +7,7 @@
 
 \ This file provides tag clouds by a page-id prefix.
 
-\ Last modified 201809271539.
+\ Last modified 201812080157.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2014,2017 Marcos Cruz (programandala.net)
@@ -33,9 +33,9 @@
 
 forth_definitions
 
-require galope/max-n.fs  \ 'max-n'
+require galope/max-n.fs  \ `max-n`
 require galope/package.fs \ `package`, `private`, `public`, `end-package`
-require galope/rgx-wcmatch-question.fs  \ 'rgx-wcmatch?'
+require galope/rgx-wcmatch-question.fs  \ `rgx-wcmatch?`
 
 fendo_definitions
 
@@ -97,7 +97,7 @@ variable prefix$
 \  ." init_tags" cr  \ XXX INFORMER
   tags_do_reset execute_all_tags  tags_do_increase  traverse_pids
   tags_do_min_max ;
-  \ xt = parameter for 'traverse_pids'
+  \ xt = parameter for `traverse_pids`
 
 public
 
@@ -167,7 +167,7 @@ private
   [<ul>] tags_do_echo_cloud execute_all_tags [</ul>]
 \  ." do_tag_cloud end" cr  \ XXX INFORMER
   ;
-  \ xt = parameter for 'init_tags'
+  \ xt = parameter for `init_tags`
 
 public
 
@@ -198,7 +198,11 @@ end-package
 
 \ 2014-03-09: Start, with the code of
 \ <fendo.addon.tag_cloud_by_prefix.fs>
+\
 \ 2017-06-22: Update source style, layout and header.
+\
 \ 2018-09-27: Use `package` instead of `module:`.
+\
+\ 2018-12-08: Update notation of Forth words in comments and strings.
 
 \ vim: filetype=gforth

@@ -5,7 +5,7 @@
 
 \ This file defines the Fendo markup for code.
 
-\ Last modified 201709182041.
+\ Last modified 201812080157.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2017 Marcos Cruz (programandala.net)
@@ -31,7 +31,7 @@
 
 forth_definitions
 
-require galope/trim.fs  \ 'trim'
+require galope/trim.fs  \ `trim`
 
 fendo_definitions
 
@@ -46,7 +46,7 @@ fendo_definitions
   begin   parse-name dup
     if    2dup s" ##" str=
           dup >r 0= if  escaped_source_code _echo  else  2drop  then  r>
-    else  2drop refill 0= dup abort" Missing closing '##'"  then
+    else  2drop refill 0= dup abort" Missing closing `##`"  then
   until ;
   \ Parse an inline source code region.
   \ XXX FIXME preserve spaces
@@ -54,7 +54,7 @@ fendo_definitions
 
 : ####-line ( -- ca len )
   \ Parse a new line from the current source code block.
-  read_source_line 0= abort" Missing closing '####'"
+  read_source_line 0= abort" Missing closing `####`"
   escaped_source_code ;
 
 : "####"? ( ca len -- f )
@@ -66,7 +66,7 @@ fendo_definitions
   \ ca len = source code line
   \ f = is it "####"?
   ####-line 2dup "####"?
-\  cr ." exit stack in '####-line?' " .s key drop  \ XXX INFORMER
+\  cr ." exit stack in `####-line?` " .s key drop  \ XXX INFORMER
   ;
 
 : plain_####-zone ( "source code ####" -- )
@@ -74,7 +74,7 @@ fendo_definitions
     ####-line? dup >r
     if  2drop  else  escaped_source_code echo_line  then  r>
   until
-\  cr ." exit stack in 'plain_####-zone' " .s key drop  \ XXX INFORMER
+\  cr ." exit stack in `plain_####-zone` " .s key drop  \ XXX INFORMER
   ;
   \ Parse and echo a source code zone "as is".
 
@@ -170,16 +170,18 @@ fendo_definitions
 \
 \ 2014-04-22: Fix: silly bug.
 \
-\ 2014-12-12: Fix: 'source_code_finished' has been added at the end of
-\ 'highlighted_####-zone'. This obscure bug made caused
-\ 'programming_language$' to be preserved after source code blocks, so
-\ overwritting the automatic detection done by the next 'source_code'
+\ 2014-12-12: Fix: `source_code_finished` has been added at the end of
+\ `highlighted_####-zone`. This obscure bug made caused
+\ `programming_language$` to be preserved after source code blocks, so
+\ overwritting the automatic detection done by the next `source_code`
 \ addon, in the current or next page. In order to call
-\ 'source_code_finished', <fendo/fendo.addon.source_code.common.fs>
+\ `source_code_finished`, <fendo/fendo.addon.source_code.common.fs>
 \ has been modifed and included.
 \
 \ 2017-06-22: Update source style, layout and header.
 \
 \ 2017-09-18: Fix documentation.
+\
+\ 2018-12-08: Update notation of Forth words in comments and strings.
 
 \ vim: filetype=gforth

@@ -7,7 +7,7 @@
 \ with pages created with the alinome-bici engine
 \ (based on ForthCMS and fhp).
 
-\ Last modified 20170622.
+\ Last modified 201812080157.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2017 Marcos Cruz (programandala.net)
@@ -44,7 +44,11 @@ fendo_definitions
 \ Change log
 
 \ 2013-04-28: Start.
-\ 2014-11-16: 'forth_definitions' and 'fendo_definitions'.
+\
+\ 2014-11-16: `forth_definitions` and `fendo_definitions`.
+\
 \ 2017-06-22: Update source style, layout and header.
+\
+\ 2018-12-08: Update notation of Forth words in comments and strings.
 
 \ vim: filetype=gforth

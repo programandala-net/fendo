@@ -6,7 +6,7 @@
 \ This file provides a word that traverses all pids (page ids),
 \ required by other addons.
 
-\ Last modified 201809281633.
+\ Last modified 201812080157.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2017,2018 Marcos Cruz (programandala.net)
@@ -31,7 +31,7 @@
 
 forth_definitions
 
-require galope/backslash-end-of-file.fs  \ '\eof'
+require galope/backslash-end-of-file.fs  \ `\eof`
 require galope/package.fs \ `package`, `private`, `public`, `end-package`
 
 fendo_definitions
@@ -83,7 +83,7 @@ public
 variable last_traversed_pid
 
 : traversed_pid ( ca len -- )
-\  ." Parameter in 'traversed_pid' = " 2dup type cr  \ XXX INFORMER
+\  ." Parameter in `traversed_pid` = " 2dup type cr  \ XXX INFORMER
   2dup last_traversed_pid $!
   (traversed_pid) 0= if \eof then ;
   \ ca len = pid
@@ -109,18 +109,18 @@ end-package
 \
 \ 2013-11-27: New: the list doesn't include file paths.
 \
-\ 2013-11-27: Change: '(pid$_list@)' factored out from 'pid$_list@'.
+\ 2013-11-27: Change: `(pid$_list@)` factored out from `pid$_list@`.
 \
-\ 2013-11-27: New: 'pid$_list@' rewritten: now it skips draft pages.
+\ 2013-11-27: New: `pid$_list@` rewritten: now it skips draft pages.
 \
 \ 2014-03-02: Everything renamed. Rewritten. Simplified. The pid list
 \ is Forth source, not a simple list anymore.
 \
 \ 2014-03-03: Fix: removed a redundant definition.
 \
-\ 2014-03-11: Fix: '--key=2,2' added to 'sort$'.
+\ 2014-03-11: Fix: `--key=2,2` added to `sort$`.
 \
-\ 2014-05-28: New: 'last_traversed_pid', required to improve the tag
+\ 2014-05-28: New: `last_traversed_pid`, required to improve the tag
 \ cloud.
 \
 \ 2017-06-22: Update source style, layout and header.
@@ -128,5 +128,7 @@ end-package
 \ 2018-09-27: Use `package` instead of `module:`. Simplify `traverse_pids`.
 \
 \ 2018-09-28: Update source style. Improve documentation.
+\
+\ 2018-12-08: Update notation of Forth words in comments and strings.
 
 \ vim: filetype=gforth

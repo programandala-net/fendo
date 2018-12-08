@@ -5,7 +5,7 @@
 
 \ This file is the code common to several content lists addons.
 
-\ Last modified 201809271539.
+\ Last modified 201812080157.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2017 Marcos Cruz (programandala.net)
@@ -70,12 +70,20 @@ end-package
 \ Change log
 
 \ 2013-11-25: Start. Unfinished.
-\ 2014-03-02: Rewritten with 'traverse_pids'.
+\
+\ 2014-03-02: Rewritten with `traverse_pids`.
+\
 \ 2014-03-03: Draft pages are not included.
+\
 \ 2014-03-06: Typo. Missing requirement.
-\ 2014-03-10: Improvement: faster, with '?exit' and rearranged
+\
+\ 2014-03-10: Improvement: faster, with `?exit` and rearranged
 \ conditions.
+\
 \ 2017-06-22: Update source style, layout and header.
+\
 \ 2018-09-27: Use `package` instead of `module:`.
+\
+\ 2018-12-08: Update notation of Forth words in comments and strings.
 
 \ vim: filetype=gforth

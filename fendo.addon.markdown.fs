@@ -6,7 +6,7 @@
 \ This file is the Markdown addon. It provides words to include
 \ contents in Markdown, either inline or from a file.
 
-\ Last modified 201809271539.
+\ Last modified 201812080157.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2015,2017 Marcos Cruz (programandala.net)
@@ -47,7 +47,7 @@ package fendo.addon.markdown
 s" /tmp/fendo_addon.markdown.adoc" 2dup 2constant input_file$
 s" .html" s+ 2constant output_file$
 
-\ XXX TODO -- There are similar words '>input_file' and '<output_file'
+\ XXX TODO -- There are similar words `>input_file` and `<output_file`
 \ in <fendo.addon.source_code.common.fs>; maybe they can be shared.
 
 : >input_file ( ca len -- )
@@ -131,6 +131,9 @@ end-package
 \ Change log
 
 \ 2017-06-25: Start.
+\
 \ 2018-09-27: Use `package` instead of `module:`.
+\
+\ 2018-12-08: Update notation of Forth words in comments and strings.
 
 \ vim: filetype=gforth

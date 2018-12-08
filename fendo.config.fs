@@ -5,7 +5,7 @@
 
 \ This file setups the default configuration.
 
-\ Last modified 201812071303.
+\ Last modified 201812080157.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2015,2017,2018 Marcos Cruz (programandala.net)
@@ -34,7 +34,7 @@ fendo_definitions
 \ Configurable site data
 
 \ Some site data are stored in ordinary variables, but as dynamic
-\ strings (with  '$!', '$@', etc.). Other are defered words, in order
+\ strings (with  `$!`, `$@`, etc.). Other are defered words, in order
 \ to make them configurable as multilingual constants.
 
 \ All directories and subdirectories must have an ending slash.
@@ -49,7 +49,7 @@ variable html_extension  \ default filename extension of target HTML files
 s" .html" html_extension $!
 
 \ Note: every page can have its own target filename extension, defined
-\ by the 'filename_extension' metadatum. Example for Atom documents:
+\ by the `filename_extension` metadatum. Example for Atom documents:
 \
 \     filename_extension  .xml
 
@@ -101,20 +101,20 @@ defer site_author
 
 \ 2013-06-07: Start.
 \
-\ 2013-06-23: Change: 'style_subdir' and 'designs_dir' removed; one
+\ 2013-06-23: Change: `style_subdir` and `designs_dir` removed; one
 \ single subdir for files and images; design and template variables
 \ are renamed. This way all is a bit simpler.
 \
-\ 2014-03-04: 'xhtml?' moved here from <fendo.markup.common.fs>.
+\ 2014-03-04: `xhtml?` moved here from <fendo.markup.common.fs>.
 \
 \ 2014-07-08: New: Site variables, needed for the Atom module; they
 \ are going to be used in the site template too.
 \
-\ 2014-07-14: Change: site variables, and 'domain' as well, are
+\ 2014-07-14: Change: site variables, and `domain` as well, are
 \ converted to defered words, in order to make them configurable as
 \ multilingual constants.
 \
-\ 2015-02-01: Change: the 'xhtml?' variable is changed to a value.
+\ 2015-02-01: Change: the `xhtml?` variable is changed to a value.
 \
 \ 2015-02-11: Code reorganized.
 \
@@ -122,5 +122,7 @@ defer site_author
 \
 \ 2018-12-07: Move `{CONTENT}` to <fendo.parser.fs> in order to
 \ prepare the alternative method for templates.
+\
+\ 2018-12-08: Update notation of Forth words in comments and strings.
 
 \ vim: filetype=gforth

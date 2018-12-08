@@ -5,7 +5,7 @@
 
 \ This file is the main one; it loads all the modules.
 
-\ Last modified 201711041743.
+\ Last modified 201812080157.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2012,2013,2014,2015,2017 Marcos Cruz (programandala.net)
@@ -53,29 +53,29 @@ require string.fs  \ dynamic strings
 
 require galope/three-dup.fs
 require galope/anew.fs
-require galope/backslash-end-of-file.fs  \ '\eof'
-require galope/bracket-false.fs  \ '[false]'
-require galope/buffer-colon.fs  \ 'buffer:'
-require galope/colon-alias.fs  \ ':alias'
-require galope/colon-create.fs  \ ':create'
-require galope/dollar-variable.fs  \ '$variable'
-require galope/enum.fs  \ 'enum'
-require galope/minus-extension.fs  \ '-extension'
-require galope/minus-leading.fs  \ '-leading'
-require galope/minus-suffix.fs  \ '-suffix'
-require galope/parse-name-question.fs  \ 'parse-name?'
-require galope/paren-star.fs  \ '(*'
-require galope/sconstant.fs  \ 'sconstant'
-require galope/sides-slash.fs  \ 'sides/'
-require galope/slash-sides.fs  \ '/sides'
-require galope/tilde-tilde.fs  \ improved '~~' for debugging
-require galope/trim.fs  \ 'trim'
+require galope/backslash-end-of-file.fs  \ `\eof`
+require galope/bracket-false.fs  \ `[false]`
+require galope/buffer-colon.fs  \ `buffer:`
+require galope/colon-alias.fs  \ `:alias`
+require galope/colon-create.fs  \ `:create`
+require galope/dollar-variable.fs  \ `$variable`
+require galope/enum.fs  \ `enum`
+require galope/minus-extension.fs  \ `-extension`
+require galope/minus-leading.fs  \ `-leading`
+require galope/minus-suffix.fs  \ `-suffix`
+require galope/parse-name-question.fs  \ `parse-name?`
+require galope/paren-star.fs  \ `(*`
+require galope/sconstant.fs  \ `sconstant`
+require galope/sides-slash.fs  \ `sides/`
+require galope/slash-sides.fs  \ `/sides`
+require galope/tilde-tilde.fs  \ improved `~~` for debugging
+require galope/trim.fs  \ `trim`
 
 \ Safer alternatives for words of Gforth's string.fs
 \ (they will not be defined if Gforth >= 0.8):
 
-require galope/dollar-fetch.fs  \ '$@'
-require galope/dollar-fetch-len.fs  \ '$@len'
+require galope/dollar-fetch.fs  \ `$@`
+require galope/dollar-fetch-len.fs  \ `$@len`
 
 false [if]
 
@@ -260,45 +260,47 @@ depth [if] abort [then]  \ XXX DEBUGGING
 \ Change log
 
 \ 2012-06-30: Start.
-\ 
+\
 \ 2013-04-28: New: <fendo_data.fs>, <fendo_content.fs>.
 \
 \ 2013-05-07: New: <fendo_require.fs>.
 \
 \ 2013-06: New: Generic tool words; wordlists.
 \
-\ 2013-07-09: Change: 'parse-name?' moved to Galope.
+\ 2013-07-09: Change: `parse-name?` moved to Galope.
 \
-\ 2014-02-05: New: 'fendo_markup_macros_wid'.
+\ 2014-02-05: New: `fendo_markup_macros_wid`.
 \
-\ 2014-02-05: New: 'markup_wids', 'markup_order', 'set_markup_order';
+\ 2014-02-05: New: `markup_wids`, `markup_order`, `set_markup_order`;
 \ they are written to make the parser kernel simpler and easier to
 \ expand.
 \
-\ 2014-02-05: Change: 'markup>order' and 'markup<order' rewritten with
-\ the new word 'markup_order'.
+\ 2014-02-05: Change: `markup>order` and `markup<order` rewritten with
+\ the new word `markup_order`.
 \
-\ 2014-03-18: Fix checking "gforth" with 'environment?'.
+\ 2014-03-18: Fix checking "gforth" with `environment?`.
 \
-\ 2014-04-20: New: 'markup_definitions', 'fendo_definitions',
-\ 'forth_definitions', 'forth>current'...; this makes some thing
+\ 2014-04-20: New: `markup_definitions`, `fendo_definitions`,
+\ `forth_definitions`, `forth>current`...; this makes some thing
 \ easier, e.g. modules that define markups and require libraries.  The
 \ requirements section of all Fendo files is updated with
-\ 'forth_definitions' and 'fendo_definitions'.
+\ `forth_definitions` and `fendo_definitions`.
 \
-\ 2014-06-14: New: 'recognize_macros?'.
+\ 2014-06-14: New: `recognize_macros?`.
 \
-\ 2014-06-15: Change: 'recognize_macros?' is commented out. The
-\ problem was solved with 'evaluate_the_markup?' in <fendo.parser.fs>.
+\ 2014-06-15: Change: `recognize_macros?` is commented out. The
+\ problem was solved with `evaluate_the_markup?` in <fendo.parser.fs>.
 \
 \ 2015-02-11: Change: requirements reorganized and tidied.
 \
-\ 2015-02-12: Change: 'link_anchor' and 'link_text' are defered here
+\ 2015-02-12: Change: `link_anchor` and `link_text` are defered here
 \ and defined in <fendo.fs>. Required because of a fix.
 \
 \ 2017-06-22: Update source style, layout and header.
 \
 \ 2017-11-04: Update to Galope 0.103.0: Remove <galope/minus-path.fs>
 \ and use Gforth's `basename` instead.
+\
+\ 2018-12-08: Update notation of Forth words in comments and strings.
 
 \ vim: filetype=gforth

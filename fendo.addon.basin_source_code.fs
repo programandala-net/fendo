@@ -5,7 +5,7 @@
 
 \ This file is the BASin source code addon.
 
-\ Last modified 201809271539.
+\ Last modified 201812080157.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2017 Marcos Cruz (programandala.net)
@@ -31,7 +31,7 @@
 
 forth_definitions
 
-require ffl/chr.fs  \ 'chr-digit'
+require ffl/chr.fs  \ `chr-digit`
 
 require galope/package.fs \ `package`, `private`, `public`, `end-package`
 
@@ -93,15 +93,24 @@ end-package
 \ ==============================================================
 \ Change log
 
-\ 2013-11-09 Code extracted from <addons/source_code.fs>.
-\ 2013-11-18 Change: 'programming_language' renamed to
-\   'programming_language!', after the changes in the main code.
-\ 2013-12-11 New: 'basin_source_code_translated'.
-\ 2013-12-11 Change: an xt is used, not a translation table; this
-\   makes it possible to use different translation tools.
+\ 2013-11-09: Code extracted from <addons/source_code.fs>.
+\
+\ 2013-11-18: Change: `programming_language` renamed to
+\ `programming_language!`, after the changes in the main code.
+\
+\ 2013-12-11: New: `basin_source_code_translated`.
+\
+\ 2013-12-11: Change: an xt is used, not a translation table; this
+\ makes it possible to use different translation tools.
+\
 \ 2014-02-15: Fix: path of the Fendo addons is converted to relative.
+\
 \ 2014-03-12: Change: module renamed after the filename.
+\
 \ 2017-06-22: Update source style, layout and header.
+\
 \ 2018-09-27: Use `package` instead of `module:`.
+\
+\ 2018-12-08: Update notation of Forth words in comments and strings.
 
 \ vim: filetype=gforth

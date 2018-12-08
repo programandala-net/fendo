@@ -7,7 +7,7 @@
 \ contents in Asciidoctor (or AsciiDoc) format, either inline or from
 \ a file.
 
-\ Last modified 201809271539.
+\ Last modified 201812080157.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2015,2017 Marcos Cruz (programandala.net)
@@ -52,7 +52,7 @@ package fendo.addon.asciidoctor
 s" /tmp/fendo_addon.asciidoctor.adoc" 2dup 2constant input_file$
 s" .html" s+ 2constant output_file$
 
-\ XXX TODO -- There are similar words '>input_file' and '<output_file'
+\ XXX TODO -- There are similar words `>input_file` and `<output_file`
 \ in <fendo.addon.source_code.common.fs>; maybe they can be shared.
 
 : >input_file ( ca len -- )
@@ -66,8 +66,8 @@ s" .html" s+ 2constant output_file$
   \ Get the content of the file that Asciidoctor created as output.
   \ ca len = contents in HTML format
 
-\ XXX TODO Use also AsciiDoc as alternative. Maybe 'asciidoc_command'
-\ and a defered 'adoc_command'.
+\ XXX TODO Use also AsciiDoc as alternative. Maybe `asciidoc_command`
+\ and a defered `adoc_command`.
 
 \ The Asciidoctor command includes all the required options, even when
 \ they are the default; just in case the deafaults change in the
@@ -135,14 +135,22 @@ end-package
 \ ==============================================================
 \ Change log
 
-\ 2015-02-11: Start. 'include_asciidoctor' works.
-\ 2015-09-03: Added 'file>local' to 'include_asciidoctor'.
+\ 2015-02-11: Start. `include_asciidoctor` works.
+\
+\ 2015-09-03: Added `file>local` to `include_asciidoctor`.
+\
 \ 2017-02-10: Factor `(include_asciidoctor)` from
 \ `include_asciidoctor`, to reuse it for README.adoc files, which need
 \ additional operations.
+\
 \ 2017-06-22: Update source style, layout and header.
+\
 \ 2017-06-24: Add `asciidoctor{`.
+\
 \ 2018-08-20: Deactivate the Asciidoctor option "--compact".
+\
 \ 2018-09-27: Use `package` instead of `module:`.
+\
+\ 2018-12-08: Update notation of Forth words in comments and strings.
 
 \ vim: filetype=gforth

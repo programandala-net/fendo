@@ -6,7 +6,7 @@
 \ This file defines some common words for the markup definitions, also
 \ required by the links module.
 
-\ Last modified 20170622.
+\ Last modified 201812080157.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2017 Marcos Cruz (programandala.net)
@@ -93,15 +93,15 @@ variable forth_code_depth
   \ Remove the markup of a string.
   \ The method used is to convert it to HTML and then remove the HTML,
   \ easier than removing all possible original markups.
-  \ Gforth's 'save-mem' copies a memory block into a newly allocated
-  \ region in the heap. It is needed because the region used by 'echoed'
-  \ will be restored at the end of 'unmarkup'.
+  \ Gforth's `save-mem` copies a memory block into a newly allocated
+  \ region in the heap. It is needed because the region used by `echoed`
+  \ will be restored at the end of `unmarkup`.
   \
   \ XXX TODO -- remove double spaces? (with galope/unspace.fs)
 
 : unmarkup ( ca len -- ca' len' )
   save_echo (unmarkup) restore_echo ;
-  \ Remove the markup of a string; the current status of 'echo' is preserved.
+  \ Remove the markup of a string; the current status of `echo` is preserved.
 
 .( fendo.markup.common.fs compiled) cr
 
@@ -109,10 +109,16 @@ variable forth_code_depth
 \ Change log
 
 \ 2014-03-04: Start. Code extracted from <fendo.markup.fs>.
-\ 2014-03-04: Change: 'xhtml?' moved to <fendo.config.fs>.
+\
+\ 2014-03-04: Change: `xhtml?` moved to <fendo.config.fs>.
+\
 \ 2014-03-04: Change: parser vectors moved here from
 \   <fendo.markup.wiki.fs>.
-\ 2014-11-08: New: 'unmarkup' and '(unmarkup)'.
+\
+\ 2014-11-08: New: `unmarkup` and `(unmarkup)`.
+\
 \ 2017-06-22: Update source style, layout and header.
+\
+\ 2018-12-08: Update notation of Forth words in comments and strings.
 
 \ vim: filetype=gforth

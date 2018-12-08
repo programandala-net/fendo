@@ -5,7 +5,7 @@
 
 \ This file defines the markup.
 
-\ Last modified 20170622.
+\ Last modified 201812080157.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2017 Marcos Cruz (programandala.net)
@@ -41,11 +41,18 @@ require ./fendo.markup.macros.fs
 
 \ 2013-06-06: Start. This file is created with part of the old
 \   <fendo_html_tags.fs>.
-\ 2013-06-08: Change: 'forth_block?' renamed to 'forth_code?'.
-\ 2013-06-28: Change: 'forth_code?' changed to 'forth_code_depth', a counter.
-\ 2014-02-03: New: ':echo_name+'.
+\
+\ 2013-06-08: Change: `forth_block?` renamed to `forth_code?`.
+\
+\ 2013-06-28: Change: `forth_code?` changed to `forth_code_depth`, a counter.
+\
+\ 2014-02-03: New: `:echo_name+`.
+\
 \ 2014-03-04: Change: all definitions are moved to
 \ <fendo.markup.common.fs>.
+\
 \ 2017-06-22: Update source style, layout and header.
+\
+\ 2018-12-08: Update notation of Forth words in comments and strings.
 
 \ vim: filetype=gforth

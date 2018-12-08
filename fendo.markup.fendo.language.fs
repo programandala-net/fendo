@@ -5,7 +5,7 @@
 
 \ This file defines the Fendo markup for languages.
 
-\ Last modified 201812062302.
+\ Last modified 201812080157.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2017 Marcos Cruz (programandala.net)
@@ -98,7 +98,7 @@ Usage example:
 
 \ 2014-04-21: Code moved from <fendo.markup.fendo.fs>.
 \
-\ 2014-06-06: ")))" changed to "))))", after the last changes in
+\ 2014-06-06: `)))` changed to `))))`, after the last changes in
 \ Fendo's markup.
 \
 \ 2014-07-13: New: inline and block quotes.
@@ -108,5 +108,7 @@ Usage example:
 \ 2017-06-22: Update source style, layout and header.
 \
 \ 2018-12-06: Improve documentation.
+\
+\ 2018-12-08: Update notation of Forth words in comments and strings.
 
 \ vim: filetype=gforth
