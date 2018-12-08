@@ -1,4 +1,4 @@
-= Fendo markup to-do
+= Markup
 :author: Marcos Cruz (programandala.net)
 :revdate: 2017-06-20
 
@@ -16,6 +16,9 @@ Creole and Simplilo. Columns reordered.
 
 2017-06-20: Rename to <TO-DO_markup.adoc>.
 
+2018-12-08: Prepare for the manual. Remove columns of Fendo A-03 and
+Simplilo A-08.
+
 ////
 
 == Markup comparation table
@@ -28,13 +31,11 @@ are shown only if they are different than the opening marks; then an
 ellipsis character ("…") represents the content. Some marks have a
 note in brackets.
 
-[cols="h,<,<,<,<,<,<"]
+[cols="h,<,<,<,<"]
 |===
-| | txt2tags | Creole 1.0 | Simplilo A-08 | Asciidoctor | Fendo A-03 | Fendo A-04
+| | txt2tags | Creole 1.0 | Asciidoctor | Fendo
 
 | addition (block)
-|
-|
 |
 |
 |
@@ -44,56 +45,42 @@ note in brackets.
 |
 |
 |
-|
-|
 | &#43;&#43;
 
 | code (block)
 | ```
 |
-| \#!…!#
 | ----
-| \###
 | \####
 
 | code (inline)
 | ``
 |
-| \#!…!#
 |
-| ##
 | ##
 
 | comment (block)
 |
 |
-| {\*…*}
 | ////
-| (\*…*)
 | (\*…*)
 
 | comment (line)
 | %
 |
-|
 | //
-|
 | \
 
 | emphatized
 | //
 | //
-| //
 | _ __ [1 or 2 underscores]
-| //
 | //
 
 | escape
 |
 |
-| ~
 | \
-| ~
 | ~
 
 | headers
@@ -101,156 +88,116 @@ note in brackets.
 | = == === ==== ===== ======
 | = == === ==== ===== ======
 | = == === ==== ===== ======
-| = == === ==== ===== ======
-| = == === ==== ===== ======
 
 | headers (numbered)
-| &#43; &#43;&#43; &#43;&#43;&#43; &#43;&#43;&#43;&#43; &#43;&#43;&#43;&#43;&#43; &#43;&#43;&#43;&#43;&#43;&#43; 
-|
+| &#43; &#43;&#43; &#43;&#43;&#43; &#43;&#43;&#43;&#43; &#43;&#43;&#43;&#43;&#43; &#43;&#43;&#43;&#43;&#43;&#43;
 |
 | = == === ==== ===== ====== [with :numbered:]
-|
-| [TODO]
+| n/a
 
 | image
 | […]
 | {{…}}
-| {{…}}
 | image: image::
-| {{…}}
 | {{…}}
 
 | lang (block)
 |
 |
-| lang&#40;&#40;&#40;…)))
 |
-| lang&#40;&#40;&#40;…)))
 | lang&#40;&#40;&#40;&#40;…))))
 
 | lang (inline)
 |
 |
-| lang&#40;&#40;…))
 |
-| lang&#40;&#40;…))
 | lang&#40;&#40;…))
 
 | line break
 |
 | \\
-| \\
 | <<<
-| \\
 | \\
 
 | link
 | […]
 | [[…]]
-| [[…]]
 | http: link:
-| [[…]]
 | [[…]]
 
 | list (bulleted)
 | - [indented for nesting]
 | * [repeated for nesting]
-| * [repeated for nesting]
 | * [repeated for nesting] - [not nested]
-| * - [both not nested]
-| [TODO]
+| * [not nested] - [not nested]
 
 | list (labeled)
 | &#58;
 |
-|
 | &#58;&#58;
-|
-| [TODO]
+| n/a
 
 | list (numbered)
 | + [indented for nesting]
 | # [repetaded for nesting]
-| # [repetaded for nesting]
 | 1. a. . [repeated for nesting]
-| # [one level only]
-| [TODO]
+| # [not nested]
 
 | literal (block)
 | """ [3 double quotes]
 | {{{…}}}
-| {{{…}}}
 | ....
-| {{{…}}}
 | ....
 
 | literal (inline)
 | "" [2 double quotes]
 |
-|
 | pass: ` $$
-|
-| .. [TODO]
+| .. [to-do]
 
 | monospace
 |
 |
-|
 | + ++
-|
 |
 
 | paragraph
 |
 |
 |
-|
-| _ [1 underscore]
 | _ [1 underscore]
 
 | passthrough (block)
 | &#39;&#39;&#39; [3 single quotes]
-| 
 |
 | &#43;&#43;&#43;&#43;
-|
 | \~~~~
 
 | passthrough (inline)
 | &#39;&#39; [2 single quotes]
 |
-|
 | pass: ` $$
-|
-| ~~ [TODO]
+| \~~ [to-do]
 
 | quote (block)
 | [indented]
 |
-| optional_lang"""…""" [3 double quotes]
 | &#95;&#95;&#95;&#95; [4 underscores]
-| """ [3 double quotes]
 | &#39;&#39;&#39;&#39; [4 single quotes]
 
 | quote (inline)
 |
 |
-| optional_lang""…"" [2 double quotes]
 |
-| "" [2 double quotes]
 | &#39;&#39; [2 single quotes]
 
 | removal (block)
-| 
 |
-| 
 |
 |
 | ----
 
 | removal (inline)
-| \--
-|
 | \--
 |
 |
@@ -259,138 +206,43 @@ note in brackets.
 | rule
 | --------------------
 | ----
-| ----
 | &#39;&#39;&#39; \*** ---
-| ----
 | --------
 
 | strong
 | **
 | **
-| **
 | * **
-| **
 | **
 
 | subscript
 |
 |
-| ,, [2 commas]
 | ~~
-| ,, [2 commas]
 | ,, [2 commas]
 
 | superscript
 |
 |
-| ^^
 | ^
-| ^^
 | ^^
 
 | underline
 | &#95;&#95; [2 underscores]
 |
-| &#95;&#95; [2 underscores]
 |
-| &#95;&#95; [2 underscores]
 | &#95;&#95; [2 underscores]
 
 | general (inline; =span)
 |
 |
-|
 | ## #
-|
 | &#40;&#40;…))
 
-| general (inline; =div)
+| general (block; =div)
 |
 |
-|
-| 
 |
 | &#40;&#40;&#40;&#40;…))))
 
 |===
-
-== Lists
-
-Possible markups for lists:
-
-....
-
--{
-- element 1 bla bla bla bla bla
-- element2 
-}-
-
-#{
-
-  # element 1
-  # element 2
-
-}#
-
-:{
-
-: term
-  : definition
-
-: term
-  : definition
-
-}:
-
-*{
-
-  * term : definition
-  * term : definition
-
-}*
-....
-
-Nested lists:
-
-
-....
-
-
--{
-  - element 1 bla bla bla bla bla
-
-    #{
-      # element 1
-      # element 2
-    }#
-
-  - element2 
-}-
-
-{
-  - element 1 bla bla bla bla bla
-
-    {
-      # element 1
-      # element 2
-    }
-
-  - element2 
-}
-....
-
-
-
-== Language marks
-
-....
-
-This is a latine expression: <: s" la" lang=! :> (( alea jacta est )) .
-
-This is a latine expression: <: s" la" lang=! :> <span> alea jacta est
-</span> .
-
-This is a latine expression: la(( alea jacta est )) .
-
-
-....

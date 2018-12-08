@@ -1,6 +1,6 @@
 = Fendo TO-DO
 :author: Marcos Cruz (programandala.net)
-:revdate: 2018-12-07
+:revdate: 2018-12-08
 
 // This text file is in Asciidoctor format
 // See http://asciidoctor.org
@@ -512,3 +512,9 @@ commented out from <fendo.addon.asciidoctor.fs>.
 - Deprecate the old `{CONTENT}` markup (defined in <fendo.parser.fs>) and
   replace it with `<[ contents ]>`, after the new method has been fully tested.
 
+== 2018-12-08
+
+- Replace underscores with hyphens in all words.
+- Change the naming convention of flags: use a question mark suffix
+  only when the word returns a flag. Use `value` when possible.
+- Integrate the markup table into the manual.
