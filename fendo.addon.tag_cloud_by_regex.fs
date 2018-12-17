@@ -7,7 +7,7 @@
 
 \ This file provides tag clouds by a page-id prefix.
 
-\ Last modified 201812081823.
+\ Last modified 201812172116.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2014,2017,2018 Marcos Cruz (programandala.net)
@@ -67,7 +67,7 @@ variable pages
 
 : count_tags ( ca len -- )
 \  ." count_tags " 2dup type cr  \ XXX INFORMER
-  pid$>data>pid# tags evaluate_tags ;
+  pid$>pid# tags evaluate_tags ;
   \ ca len = page ID
 
 0 [if]  \ XXX TODO
@@ -84,7 +84,7 @@ variable pages
 variable prefix$
 : (count_tags_by_prefix) { D: pid -- }
 \  ." count_tags_by_prefix " 2dup type cr  \ XXX INFORMER
-  pid pid$>data>pid# draft? ?exit
+  pid pid$>pid# draft? ?exit
   pid prefix$ $@ string-prefix? if  pid count_tags  then ;
   \ Increase the count of tags that are in pages whose page ID
   \ matches the current regex. 
@@ -206,5 +206,7 @@ end-package
 \ 2018-12-08: Update notation of Forth words in comments and strings.
 \
 \ 2018-12-08: Update notation of page IDs in comments and strings.
+\
+\ 2018-12-17: Update: replace `pid$>data>pid#` with `pid$>pid#`.
 
 \ vim: filetype=gforth

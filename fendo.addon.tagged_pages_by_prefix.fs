@@ -5,7 +5,7 @@
 
 \ This file provides lists of tagged pages.
 
-\ Last modified 201812081823.
+\ Last modified 201812172116.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2014,2015,2017,2018 Marcos Cruz (programandala.net)
@@ -57,12 +57,12 @@ variable prefix$
   \ Do nothing if length is 0.
   \ XXX FIXME
   \ This check seems to be needed, because temporary shortcuts created by the
-  \ application could return an empty string, what would make `pid$>data>pid#` crash.
+  \ application could return an empty string, what would make `pid$>pid#` crash.
   \ But it's not clear yet.
 \  pid nip 0= ?exit
 
   pid prefix$ $@ string-prefix? 0= ?exit
-  pid pid$>data>pid#
+  pid pid$>pid#
 \  ." pid# = " dup . cr  \ XXX INFORMER
 
   \ Do nothing if it's a draft page.
@@ -109,5 +109,7 @@ end-package
 \ 2018-12-08: Update notation of Forth words in comments and strings.
 \
 \ 2018-12-08: Update notation of page IDs in comments and strings.
+\
+\ 2018-12-17: Update: replace `pid$>data>pid#` with `pid$>pid#`.
 
 \ vim: filetype=gforth

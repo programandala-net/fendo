@@ -5,7 +5,7 @@
 
 \ This file is the code common to several content lists addons.
 
-\ Last modified 201812081823.
+\ Last modified 201812172116.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2017,2018 Marcos Cruz (programandala.net)
@@ -45,7 +45,7 @@ variable prefix
 
 : (((tag_counts_by_prefix))) { D: pid -- }
   pid prefix $@ string-prefix? 0= ?exit
-  pid pid$>data>pid# dup draft? 
+  pid pid$>pid# dup draft? 
   if  drop  else  tags evaluate_tags  then ;
   \ Increase the number of pages whose page ID starts with the given prefix.
 
@@ -80,5 +80,7 @@ end-package
 \ 2018-09-27: Use `package` instead of `module:`.
 \
 \ 2018-12-08: Update notation of page IDs in comments and strings.
+\
+\ 2018-12-17: Update: replace `pid$>data>pid#` with `pid$>pid#`.
 
 \ vim: filetype=gforth

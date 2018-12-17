@@ -1,6 +1,6 @@
 = Fendo TO-DO
 :author: Marcos Cruz (programandala.net)
-:revdate: 2018-12-13
+:revdate: 2018-12-17
 
 // This text file is in Asciidoctor format
 // See http://asciidoctor.org
@@ -233,12 +233,7 @@ Idea:
 
 Remove double spaces in `(unmarkup)` (defined in <fendo.markup.common.fs>)?
 
-== 2014-11-17, 2018-12-17
-
-Change:
-
-- First, rename `pid$>pid#` to `pid$>pid#?`.
-- Second, rename `pid$>data>pid#` to `pid$>pid#`.
+== 2014-11-17
 
 Bug:
 

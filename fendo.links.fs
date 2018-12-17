@@ -6,7 +6,7 @@
 \ This file provides the words needed to create links,
 \ by the markup words or by the user application.
 
-\ Last modified 201812081823.
+\ Last modified 201812172116.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2017,2018 Marcos Cruz (programandala.net)
@@ -230,7 +230,7 @@ variable link_type
   \ Is the `href=` attribute an anchor to the current page?
 
 : (convert_local_link_href) ( ca1 len1 -- ca2 len2 )
-  dup if  pid$>data>pid# target_file  then ;
+  dup if  pid$>pid# target_file  then ;
   \ Convert a raw local href to a finished href, if not empty.
 
 : convert_local_link_href ( ca1 len1 -- ca2 len2 )
@@ -373,7 +373,7 @@ defer (get_link_href) ( ca len -- )
   \ ca2 len2 = link text
 
 : link<pid$ ( ca len -- )
-  2dup pid$>data>pid# title link_text?! (link) ;
+  2dup pid$>pid# title link_text?! (link) ;
   \ Create a link to a local page.
   \ Its attributes have to be set previously.
   \ If `link_text` is not set, the page title will be used.
@@ -466,5 +466,7 @@ defer (get_link_href) ( ca len -- )
 \ 2018-12-08: Update notation of Forth words in comments and strings.
 \
 \ 2018-12-08: Update notation of page IDs in comments and strings.
+\
+\ 2018-12-17: Update: replace `pid$>data>pid#` with `pid$>pid#`.
 
 \ vim: filetype=gforth

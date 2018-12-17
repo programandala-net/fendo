@@ -13,7 +13,7 @@
 \   es.sección.subsección.html
 \   eo.fako.subfako.html
 
-\ Last modified 201812081823.
+\ Last modified 201812172116.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2017,2018 Marcos Cruz (programandala.net)
@@ -103,7 +103,7 @@ true to multilingual?
   \ a = page ID
 
 : pid$>lang# ( ca len -- n )
-  pid$>data>pid# pid#>lang#  ;
+  pid$>pid# pid#>lang#  ;
   \ Return the language number of the given page ID.
   \ This number is used as an offset, e.g. for multilingual
   \ texts.
@@ -200,5 +200,7 @@ true to multilingual?
 \ 2018-12-08: Update notation of Forth words in comments and strings.
 \
 \ 2018-12-08: Update notation of page IDs in comments and strings.
+\
+\ 2018-12-17: Update: replace `pid$>data>pid#` with `pid$>pid#`.
 
 \ vim: filetype=gforth

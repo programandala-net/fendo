@@ -5,7 +5,7 @@
 
 \ This file defines the page data tools.
 
-\ Last modified 201812081823.
+\ Last modified 201812172116.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2015,2017,2018 Marcos Cruz (programandala.net)
@@ -276,16 +276,23 @@ datum: template  \ HTML template filename in the design subdir
   \ Create a new page ID and its data space.
 
 : :pid ( -- )
-  \ Create the current page ID and its data space, if needed.
   current_pid$ 2dup known_pid$?
   if  drop 2drop  else  (:pid)  then ;
+  \ Create the current page ID and its data space, if needed.
 
-: pid$>pid# ( ca len -- a | false )
-  known_pid$? if  execute  else  false  then ;
-  \ Convert a string page ID to its numerical form,
-  \ or return false if the page ID is unknown.
-  \ ca len = page ID
-  \ a = page ID
+: pid$>pid#? ( ca len -- a true | false )
+  known_pid$? if execute true else 0 false then ;
+
+  \ doc{
+  \
+  \ pid$>pid#? ( ca len -- a true | 0 false )
+  \
+  \ If string page ID _ca len_ is known, return its equivalent page ID
+  \ _a_ and _true_. Otherwise return _0_ and _false_.
+  \
+  \ See: `pid$>pid#`.
+  \
+  \ }doc
 
 : current_page_pid$ ( -- ca len )
   current_page pid#>pid$
@@ -492,48 +499,62 @@ variable do_content?  do_content? on
   \ Require a page file in order to get its data.
   \ "name" = filename
 
-: (pid$>data>pid#) ( ca len -- a )
-\  ." Parameter of `(pid$>data>pid#)` : " 2dup type cr key drop \ XXX INFORMER
-\   ." Stack at the start of `(pid$>data>pid#)` : " .s cr key drop \ XXX INFORMER
+: (pid$>pid#) ( ca len -- a )
+\  ." Parameter of `(pid$>pid#)` : " 2dup type cr key drop \ XXX INFORMER
+\   ." Stack at the start of `(pid$>pid#)` : " .s cr key drop \ XXX INFORMER
 \  -anchor \ XXX TMP
-\  ." `link_anchor` in `(pid$>data>pid#)` = " link_anchor $@ type cr  \ XXX INFORMER
-  2dup (required_data<pid$) pid$>pid#
-\   ." Stack at the end of `(pid$>data>pid#` : " .s cr key drop \ XXX INFORMER
+\  ." `link_anchor` in `(pid$>pid#)` = " link_anchor $@ type cr  \ XXX INFORMER
+  2dup (required_data<pid$) pid$>pid#? drop
+\   ." Stack at the end of `(pid$>pid#` : " .s cr key drop \ XXX INFORMER
   ;
-  \ Require a page file in order to get its data
-  \ and convert its string page ID to its number page ID.
-  \ ca len = page ID of an existent page file
-  \ a = page ID
 
-: pid$>data>pid# ( ca len -- a )
-\   ." Parameter in `pid$>data>pid#`  before `dry_unshortcut` = " 2dup type cr  \ XXX INFORMER
+  \ doc{
+  \
+  \ (pid$>pid#) ( ca len -- a )
+  \
+  \ Convert page ID _ca len_ into its equivalent _a_.
+  \
+  \ See: `pid$>pid#`
+  \
+  \ }doc
+
+: pid$>pid# ( ca len -- a )
+\   ." Parameter in `pid$>pid#`  before `dry_unshortcut` = " 2dup type cr  \ XXX INFORMER
 \  key drop  \ XXX INFORMER
-\  ."    `href=` in `pid$>data>pid#` before `dry_unshortcut` = " s" href=@" evaluate .s ." = " type cr  \ XXX INFORMER
-\   ." `link_anchor` in `pid$>data>pid#` before `dry_unshortcut` = " link_anchor $@ type cr  \ XXX INFORMER
+\  ."    `href=` in `pid$>pid#` before `dry_unshortcut` = " s" href=@" evaluate .s ." = " type cr  \ XXX INFORMER
+\   ." `link_anchor` in `pid$>pid#` before `dry_unshortcut` = " link_anchor $@ type cr  \ XXX INFORMER
   dry_unshortcut  \ XXX TMP
-\  ." >> `href=` in `pid$>data>pid#` after `dry_unshortcut`  = " s" href=@" evaluate .s ." = " type cr  \ XXX INFORMER
-\   ." Parameter in `pid$>data>pid#` after `dry_unshortcut` = " 2dup type cr  \ XXX INFORMER
-\   ." `link_anchor` in `pid$>data>pid#` after `dry_unshortcut` = " link_anchor $@ type cr  \ XXX INFORMER
+\  ." >> `href=` in `pid$>pid#` after `dry_unshortcut`  = " s" href=@" evaluate .s ." = " type cr  \ XXX INFORMER
+\   ." Parameter in `pid$>pid#` after `dry_unshortcut` = " 2dup type cr  \ XXX INFORMER
+\   ." `link_anchor` in `pid$>pid#` after `dry_unshortcut` = " link_anchor $@ type cr  \ XXX INFORMER
   dup 0= abort" Empty page-id"  \ XXX TMP
-  (pid$>data>pid#)
+  (pid$>pid#)
 \  find-name name>int execute  \ XXX SECOND version; no difference, same corruption of the input stream
 \  cr ." end of data<pid$>pid"  \ XXX INFORMER
   ;
-  \ Require a page file in order to get its data
-  \ and convert its string page ID to its number page ID.
-  \ ca len = page ID
-  \ a = page ID
+
+  \ doc{
+  \
+  \ pid$>pid# ( ca len -- a )
+  \
+  \ If string page ID _ca len_ is unknown, get its data from the
+  \ corresponding source page. Then return return the equivalent page
+  \ ID _a_.
+  \
+  \ See: `pid$>pid#?`.
+  \
+  \ }doc
 
 : pid$>(data>)pid# ( ca len -- a )
 \   ." Parameter in `pid$>(data>)pid#`  = " 2dup type cr  \ XXX INFORMER
-  dup if  pid$>data>pid#  else  2drop current_page  then ;
+  dup if  pid$>pid#  else  2drop current_page  then ;
   \ Return a number page ID from a string page ID;
   \ if it's different from the current page, require its data.
   \ This word is needed to manage links to the current page
   \ (href attributes that contain just an anchor).
 
 : pid$>url ( ca1 len1 -- ca2 len2 )
-  pid$>data>pid# target_file +domain_url ;
+  pid$>pid# target_file +domain_url ;
 
 : source>pid$ ( ca1 len1 -- ca2 len2 )
   basename -forth_extension ;
@@ -542,13 +563,13 @@ variable do_content?  do_content? on
   \ ca2 len2 = page ID
 
 : source>pid# ( ca len -- a )
-  source>pid$ pid$>data>pid# ;
+  source>pid$ pid$>pid# ;
   \ Convert a source page to a page ID.
   \ ca len = Forth source page filename with path
   \ a = page ID
 
 : pid$>target ( ca1 len1 -- ca2 len2 )
-  2dup pid$>data>pid# target_extension s+ +target_dir ;
+  2dup pid$>pid# target_extension s+ +target_dir ;
   \ Convert a page ID to a target filename.
 
 \ ==============================================================
@@ -598,7 +619,7 @@ false value ignore_draft_property?
 
 : pid$>draft? ( ca len -- f )
 \   ." Stack at the start of `pid$>draft?` : " .s cr key drop \ XXX INFORMER
-  pid$>data>pid# draft?
+  pid$>pid# draft?
 \   ." Stack at the end of `pid$>draft?` : " .s cr key drop \ XXX INFORMER
   ;
   \ Is page ID _ca len_ a draft page?
@@ -636,7 +657,7 @@ variable a_previous_page \ dynamic string
 
 : (pid$>previous) ( ca1 len1 -- true | ca2 len2 false )
   {: D: pid$ :}
-  pid$ pid$>data>pid# draft?          ?dup ?exit
+  pid$ pid$>pid# draft?          ?dup ?exit
   pid$ this_page $@ brother_pages? 0= ?dup ?exit
   pid$ this_page $@ str=
   if        a_previous_page $@ false
@@ -668,7 +689,7 @@ variable a_next_page \ flag
 
 : (pid$>next) ( ca1 len1 -- true | ca1 len1 false )
   {: D: pid$ :}
-  pid$ pid$>data>pid# draft?          ?dup ?exit
+  pid$ pid$>pid# draft?          ?dup ?exit
   this_page $@ pid$ brother_pages? 0= ?dup ?exit
   this_page $@ pid$ -common-prefix str<
   if a_next_page on pid$ false else true then ;
@@ -710,7 +731,7 @@ variable a_next_page \ flag
 
 : (pid$>first) ( ca1 len1 -- true | ca2 len2 false )
   {: D: pid$ :}
-  pid$ pid$>data>pid# draft?          ?dup ?exit
+  pid$ pid$>pid# draft?          ?dup ?exit
   pid$ this_page $@ brother_pages? 0= ?dup ?exit
   pid$ false ;
   \ Is page ID _ca1 len1_ (local _pid$_) contained in the dynamic string
@@ -1011,5 +1032,10 @@ true value included_files_update_the_page_date?
 \ 2018-12-08: Update notation of Forth words in comments and strings.
 \
 \ 2018-12-08: Update notation of page IDs in comments and strings.
+\
+\ 2018-12-17: Rename `pid$>pid#` to `pid$>pid#` and make it return
+\ also a true flag for consistency. Adapt the code to the new
+\ behaviour. Then rename `pid$>data>pid#` to `pid$>pid#` and document
+\ both words.
 
 \ vim: filetype=gforth
