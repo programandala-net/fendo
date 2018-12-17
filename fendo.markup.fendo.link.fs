@@ -5,7 +5,7 @@
 
 \ This file defines the Fendo markup for links.
 
-\ Last modified 201812081823.
+\ Last modified 201812131712.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2015,2017,2018 Marcos Cruz (programandala.net)
@@ -118,8 +118,38 @@ markup_definitions
 : [[ ( "linkmarkup ]]" -- )
   parse_link echo_link ;
 
+  \ doc{
+  \
+  \ [[ ( "ccc ]]" -- )
+  \
+  \ Start the definition of a link.
+  \
+  \ Examples:
+
+  \ ----
+  \ [[ http://programandala.net ]]
+  \ [[ http://programandala.net/en.program.fendo.html | Fendo ]]
+  \ [[ http://programandala.net/en.program.fendo.html | Fendo | title="Fendo home page" ]]
+  \ ----
+
+  \ // XXX FIXME --
+  \ WARNING: The link definition must be on one single line of text.
+  \ This limitation will be removed from a future version of Fendo.
+  \
+  \ See: `]]`.
+  \
+  \ }doc
+
 : ]] ( -- )
   true abort" `]]` without `[[`" ;
+
+  \ doc{
+  \
+  \ ]] ( -- )
+  \
+  \ End the definition of a link that was started by `[[`.
+  \
+  \ }doc
 
 fendo_definitions
 
@@ -152,5 +182,7 @@ fendo_definitions
 \ 2018-12-08: Update notation of Forth words in comments and strings.
 \
 \ 2018-12-08: Update notation of page IDs in comments and strings.
+\
+\ 2018-12-13: Document `[[` and `]]`.
 
 \ vim: filetype=gforth

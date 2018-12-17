@@ -5,7 +5,7 @@
 
 \ This file defines the Fendo markup.
 
-\ Last modified 201812081823.
+\ Last modified 201812131719.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2017,2018 Marcos Cruz (programandala.net)
@@ -225,9 +225,25 @@ false [if]
   s" =' " s" ='" replaced
   >sb  \ XXX TMP
   evaluate ;
-  \ Extract and store the individual attributes from
-  \ a string of raw verbatim attributes.
-  \ Used by links and images markup.
+
+  \ doc{
+  \
+  \ unraw_attributes ( ca len -- )
+  \
+  \ Extract and store the individual attributes from a string _ca len_
+  \ of raw verbatim attributes.
+  \
+  \ Example: if string _ca len_ contains `title="My title" id="myid"`,
+  \ first it will converted into `title=" My title" id=" myid"`, and
+  \ then evaluated as Forth code. Single or double quotes can be used,
+  \ provided the opening and closing quotes of every individual
+  \ attribute are the same type.
+  \
+  \ ``unraw_attributes`` is used by links and images markup.
+  \
+  \ See: `[[`, `{{`.
+  \
+  \ }doc
 
 : :create_markup ( ca len -- )
   get-current >r  markup>current :create  r> set-current ;
@@ -664,5 +680,7 @@ fendo_definitions
 \ 2018-12-08: Update notation of Forth words in comments and strings.
 \
 \ 2018-12-08: Update notation of page IDs in comments and strings.
+\
+\ 2018-12-13: Document `unraw_attributes`.
 
 \ vim: filetype=gforth

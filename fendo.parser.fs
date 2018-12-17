@@ -5,7 +5,7 @@
 
 \ This file creates the parser.
 
-\ Last modified 201812080157.
+\ Last modified 201812080235.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2017,2018 Marcos Cruz (programandala.net)
@@ -392,14 +392,41 @@ variable page_input
 : contents ( -- )
   save-input (contents) restore-input
   abort" The template input source could not be restored" ;
+
+  \ doc{
+  \
+  \ contents ( -- )
+  \
   \ Insert the page contents into the template, which is being interpreted.
+  \
+  \ NOTE: This word is not a markup. Therefore it must be included in the
+  \ template inside a Forth zone, i.e.  between `<[` and `]>`.
+  \
+  \ }doc
 
 get-current markup>current
 
 : {CONTENT} ( -- ) contents ;
   \ Mimic the old `{CONTENT}` markup.
-  \ XXX OLD 
+  \ XXX OLD
   \ XXX TODO -- deprecate
+
+  \ doc{
+  \
+  \ {CONTENT} ( -- )
+  \
+  \ This word is deprecated.  It was not even a Forth word, but simply a string
+  \ that was included in the template. The parser searched for it in order to
+  \ know where to split the template and insert the page contents. That was the
+  \ old method before Fendo 0.6.0.
+  \
+  \ In the current method the whole template is interpreted at once, and
+  \ `contents` must be executed in it in order to insert the page contents.
+  \
+  \ For backward compatibility, now ``{CONTENT}`` simply executes `contents`,
+  \ but it will be removed from a future version.
+  \
+  \ }doc
 
 set-current
 
@@ -411,7 +438,7 @@ set-current
   opened_markups_off
   open_target
   save-input n>temp page_input !
-  get_template evaluate_content 
+  get_template evaluate_content
   finish_the_target ;
   \ Evaluate the template.
 
@@ -439,8 +466,16 @@ false value updating?  \ XXX TODO document
 : content{ ( "text }content" -- )
   do_page? if   empty_stack .sourcefilename (content{)
            else skip_page then ;
-  \ Parse and store the the page content, if needed,
-  \ for later usage by `{CONTENT}`.
+
+  \ doc{
+  \
+  \ content{ ( "text }content" -- )
+  \
+  \ Mark the start of the page content. Its end is marked by `}content`.
+  \
+  \ See: `contents`.
+  \
+  \ }doc
 
 get-current markup>current
 
@@ -451,7 +486,16 @@ get-current markup>current
 \  .s cr ." end of }content" cr  \ XXX INFORMER
 \  ." `argc` in `}content`= " argc ? cr  \ XXX INFORMER
   ;
-  \ Finish the page content.
+
+  \ doc{
+  \
+  \ }content ( -- )
+  \
+  \ Mark the end of the page content. Its start was marked by `}content`.
+  \
+  \ See: `contents`.
+  \
+  \ }doc
 
 set-current
 
