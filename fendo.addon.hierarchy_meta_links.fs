@@ -5,7 +5,7 @@
 
 \ This file is the hierarchy meta links addon.
 
-\ Last modified 201812081823.
+\ Last modified 201812172116.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2015,2017,2018 Marcos Cruz (programandala.net)
@@ -56,11 +56,11 @@
 : (hierarchy_meta_link) ( ca1 len1 ca2 len2 -- )
 \  cr 2dup type ."  --> " 2over type  \ XXX INFORMER
   rel=!
-\   ." Pid parameter in `(hierarchy_meta_link)` before `pid$>data>pid#` = " 2dup type cr  \ XXX INFORMER
-\   ." `link_anchor` in `(hierarchy_meta_link)` before `pid$>data>pid#` = " link_anchor $@ type cr  \ XXX INFORMER
-  pid$>data>pid#
-\   ." `href=` in `(hierarchy_meta_link)` after `pid$>data>pid#` = " href=@ type cr  \ XXX INFORMER
-\   ." `link_anchor` in `(hierarchy_meta_link)` after `pid$>data>pid#` = " link_anchor $@ type cr  \ XXX INFORMER
+\   ." Pid parameter in `(hierarchy_meta_link)` before `pid$>pid#` = " 2dup type cr  \ XXX INFORMER
+\   ." `link_anchor` in `(hierarchy_meta_link)` before `pid$>pid#` = " link_anchor $@ type cr  \ XXX INFORMER
+  pid$>pid#
+\   ." `href=` in `(hierarchy_meta_link)` after `pid$>pid#` = " href=@ type cr  \ XXX INFORMER
+\   ." `link_anchor` in `(hierarchy_meta_link)` after `pid$>pid#` = " link_anchor $@ type cr  \ XXX INFORMER
   dup target_file href=!
   dup title unmarkup title=!
   ?hreflang=!  s" text/html" type=!
@@ -140,5 +140,7 @@
 \ 2018-12-08: Update notation of Forth words in comments and strings.
 \
 \ 2018-12-08: Update notation of page IDs in comments and strings.
+\
+\ 2018-12-17: Update: replace `pid$>data>pid#` with `pid$>pid#`.
 
 \ vim: filetype=gforth

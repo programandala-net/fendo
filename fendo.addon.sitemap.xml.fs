@@ -7,7 +7,7 @@
 
 \ XXX UNDER DEVELOPMENT
 
-\ Last modified 201812081823.
+\ Last modified 201812172116.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2015,2017,2018 Marcos Cruz (programandala.net)
@@ -241,7 +241,7 @@ defer (sitemap_entry_summary)
 
 set_default_sitemap_entry_summary
 : sitemap_entry ( ca len -- )
-  <entry>  pid$>data>pid# >r
+  <entry>  pid$>pid# >r
   r@ sitemap_entry_title
   r@ sitemap_entry_id
   r@ sitemap_entry_links
@@ -282,5 +282,7 @@ set_default_sitemap_entry_summary
 \ 2018-12-08: Update notation of Forth words in comments and strings.
 \
 \ 2018-12-08: Update notation of page IDs in comments and strings.
+\
+\ 2018-12-17: Update: replace `pid$>data>pid#` with `pid$>pid#`.
 
 \ vim: filetype=gforth

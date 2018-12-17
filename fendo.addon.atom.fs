@@ -260,7 +260,7 @@ defer (atom_entry_summary)
 
 set_default_atom_entry_summary
 : atom_entry ( ca len -- )
-  <entry>  pid$>data>pid# >r
+  <entry>  pid$>pid# >r
   r@ atom_entry_title
   r@ atom_entry_id
   r@ atom_entry_links

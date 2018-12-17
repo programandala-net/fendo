@@ -5,7 +5,7 @@
 
 \ This file is the code common to several content lists addons.
 
-\ Last modified 201812081823.
+\ Last modified 201812172116.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2017,2018 Marcos Cruz (programandala.net)
@@ -46,7 +46,7 @@ package fendo.addon.dloc_by_regex
 
 : ((dloc_by_regex)) { D: pid -- }
   pid regex rgx-wcmatch? 0= ?exit
-  pid pid$>data>pid# draft? ?exit
+  pid pid$>pid# draft? ?exit
   pid dtddoc  ;
   \ Create an element of a description list of content
   \ if the given page ID matchs the current regex. 
@@ -91,5 +91,7 @@ end-package
 \ 2018-12-08: Update notation of Forth words in comments and strings.
 \
 \ 2018-12-08: Update notation of page IDs in comments and strings.
+\
+\ 2018-12-17: Update: replace `pid$>data>pid#` with `pid$>pid#`.
 
 \ vim: filetype=gforth

@@ -6,7 +6,7 @@
 \ This file provides a word that counts all pages whose page ID matches a
 \ prefix.
 
-\ Last modified 201812081823.
+\ Last modified 201812172116.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2017,2018 Marcos Cruz (programandala.net)
@@ -51,7 +51,7 @@ variable pages
 : ((pages_by_prefix)) { D: pid -- }
   \ Increase the number of pages whose page ID starts with the given prefix.
   pid prefix$ $@ string-prefix? 0= ?exit
-  pid pid$>data>pid# draft? ?exit  1 pages +! ;
+  pid pid$>pid# draft? ?exit  1 pages +! ;
 
 : (pages_by_prefix) ( ca len -- f )
   ((pages_by_prefix)) true ;
@@ -85,5 +85,7 @@ end-package
 \ 2018-12-08: Update notation of Forth words in comments and strings.
 \
 \ 2018-12-08: Update notation of page IDs in comments and strings.
+\
+\ 2018-12-17: Update: replace `pid$>data>pid#` with `pid$>pid#`.
 
 \ vim: filetype=gforth
