@@ -5,7 +5,7 @@
 
 \ This file defines the Fendo markup for images.
 
-\ Last modified 201812080157.
+\ Last modified 201812131735.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2017 Marcos Cruz (programandala.net)
@@ -66,12 +66,12 @@ defer img-close
 
 : set_image_type ( ca len -- )
   2dup jpeg-filename? if  2drop set_jpeg_image exit  then
-  png-filename? if  set_png_image  exit  then 
+  png-filename? if  set_png_image  exit  then
   true abort" Unknown image file type." ;
 
 : set_image_size_attributes ( -- )
   target_dir $@ src=@ s+
-  2dup set_image_type img-open img-size 
+  2dup set_image_type img-open img-size
   n>str height=! n>str width=! img-close ;
 
 variable image_finished?  \ flag, no more image markup to parse?
@@ -133,8 +133,39 @@ markup_definitions
 : {{ ( "imagemarkup}}" -- )
   ({{) ;
 
+  \ doc{
+  \
+  \ {{ ( "ccc }}" -- )
+  \
+  \ Start the definition of an image.
+  \
+  \ Examples:
+
+  \ ----
+  \ {{ mypicture.jpg }}
+  \ {{ there/another.jpg | Optional alternative text here }}
+  \ {{ over/there/this_one.jpg | Alt text here | title="Fendo picture" }}
+  \ {{ over/there/this_one.jpg | | title="Fendo picture" }}
+  \ ----
+
+  \ - Spaces are not allowed in the filename.
+  \ - The size attributes of the images are added automatically.
+  \ - Only JPEG and PNG images are supported.
+  \
+  \ See: `}}`.
+  \
+  \ }doc
+
 : }} ( -- )
   true abort" `}}` without `{{`" ;
+
+  \ doc{
+  \
+  \ }} ( -- )
+  \
+  \ End the definition of an image that was started by `[[`.
+  \
+  \ }doc
 
 fendo_definitions
 
@@ -148,5 +179,7 @@ fendo_definitions
 \ 2017-06-22: Update source style, layout and header.
 \
 \ 2018-12-08: Update notation of Forth words in comments and strings.
+\
+\ 2018-12-13: Document `{{` and `}}`.
 
 \ vim: filetype=gforth
