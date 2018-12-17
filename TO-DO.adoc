@@ -1,6 +1,6 @@
 = Fendo TO-DO
 :author: Marcos Cruz (programandala.net)
-:revdate: 2018-12-08
+:revdate: 2018-12-13
 
 // This text file is in Asciidoctor format
 // See http://asciidoctor.org
@@ -233,11 +233,11 @@ Idea:
 
 Remove double spaces in `(unmarkup)` (defined in <fendo.markup.common.fs>)?
 
-== 2014-11-17
+== 2014-11-17, 2018-12-17
 
 Change:
 
-- First, rename `pid$>pid#`.
+- First, rename `pid$>pid#` to `pid$>pid#?`.
 - Second, rename `pid$>data>pid#` to `pid$>pid#`.
 
 Bug:
@@ -518,3 +518,11 @@ commented out from <fendo.addon.asciidoctor.fs>.
 - Change the naming convention of flags: use a question mark suffix
   only when the word returns a flag. Use `value` when possible.
 - Integrate the markup table into the manual.
+
+== 2018-12-13
+
+- Don't abort in `set_image_type` (fendo.markup.fendo.image.fs). This
+  way any format will be supported.
+- `variable wild-match$` (fendo.addon.wild-match.fs) should not be a
+  dynamic string variable?
+
