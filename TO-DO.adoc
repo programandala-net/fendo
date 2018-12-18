@@ -523,5 +523,3 @@ NOTE: Milestone: 0.7.0:
 NOTE: Milestone: 0.6.0:
 
 - Rename `content` to `echo_content`.
-- In <fendo.markup.html.entities.fs>, check entities that don't end
-  with a semicolon.

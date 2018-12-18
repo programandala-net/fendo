@@ -5,10 +5,10 @@
 
 \ This file defines the HTML entities.
 
-\ Last modified 201812080157.
+\ Last modified 201812181312.
 \ See change log at the end of the file.
 
-\ Copyright (C) 2013,2017 Marcos Cruz (programandala.net)
+\ Copyright (C) 2013,2017,2018 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute
 \ it and/or modify it under the terms of the GNU General
@@ -71,19 +71,19 @@ entity: &reg; \ ® \ U+00AE (174) \ HTML 3.2 \ HTMLlat1 \ ISOnum \ registered si
 entity: &macr; \ ¯ \ U+00AF (175) \ HTML 3.2 \ HTMLlat1 \ ISOdia \ macron (= spacing macron = overline = APL overbar)
 entity: &deg; \ ° \ U+00B0 (176) \ HTML 3.2 \ HTMLlat1 \ ISOnum \ degree symbol
 entity: &plusmn; \ ± \ U+00B1 (177) \ HTML 3.2 \ HTMLlat1 \ ISOnum \ plus-minus sign (= plus-or-minus sign)
-entity: &sup;2 \ ² \ U+00B2 (178) \ HTML 3.2 \ HTMLlat1 \ ISOnum \ superscript two (= superscript digit two = squared)
-entity: &sup;3 \ ³ \ U+00B3 (179) \ HTML 3.2 \ HTMLlat1 \ ISOnum \ superscript three (= superscript digit three = cubed)
+entity: &sup2; \ ² \ U+00B2 (178) \ HTML 3.2 \ HTMLlat1 \ ISOnum \ superscript two (= superscript digit two = squared)
+entity: &sup3; \ ³ \ U+00B3 (179) \ HTML 3.2 \ HTMLlat1 \ ISOnum \ superscript three (= superscript digit three = cubed)
 entity: &acute; \ ´ \ U+00B4 (180) \ HTML 3.2 \ HTMLlat1 \ ISOdia \ acute accent (= spacing acute)
 entity: &micro; \ µ \ U+00B5 (181) \ HTML 3.2 \ HTMLlat1 \ ISOnum \ micro sign
 entity: &para; \ ¶ \ U+00B6 (182) \ HTML 3.2 \ HTMLlat1 \ ISOnum \ pilcrow sign ( = paragraph sign)
 entity: &middot; \ · \ U+00B7 (183) \ HTML 3.2 \ HTMLlat1 \ ISOnum \ middle dot (= Georgian comma = Greek middle dot)
 entity: &cedil; \ ¸ \ U+00B8 (184) \ HTML 3.2 \ HTMLlat1 \ ISOdia \ cedilla (= spacing cedilla)
-entity: &sup;1 \ ¹ \ U+00B9 (185) \ HTML 3.2 \ HTMLlat1 \ ISOnum \ superscript one (= superscript digit one)
+entity: &sup1; \ ¹ \ U+00B9 (185) \ HTML 3.2 \ HTMLlat1 \ ISOnum \ superscript one (= superscript digit one)
 entity: &ordm; \ º \ U+00BA (186) \ HTML 3.2 \ HTMLlat1 \ ISOnum \ masculine ordinal indicator
 entity: &raquo; \ » \ U+00BB (187) \ HTML 3.2 \ HTMLlat1 \ ISOnum \ right-pointing double angle quotation mark (= right pointing guillemet)
-entity: &frac;14 \ ¼ \ U+00BC (188) \ HTML 3.2 \ HTMLlat1 \ ISOnum \ vulgar fraction one quarter (= fraction one quarter)
-entity: &frac;12 \ ½ \ U+00BD (189) \ HTML 3.2 \ HTMLlat1 \ ISOnum \ vulgar fraction one half (= fraction one half)
-entity: &frac;34 \ ¾ \ U+00BE (190) \ HTML 3.2 \ HTMLlat1 \ ISOnum \ vulgar fraction three quarters (= fraction three quarters)
+entity: &frac14; \ ¼ \ U+00BC (188) \ HTML 3.2 \ HTMLlat1 \ ISOnum \ vulgar fraction one quarter (= fraction one quarter)
+entity: &frac12; \ ½ \ U+00BD (189) \ HTML 3.2 \ HTMLlat1 \ ISOnum \ vulgar fraction one half (= fraction one half)
+entity: &frac34; \ ¾ \ U+00BE (190) \ HTML 3.2 \ HTMLlat1 \ ISOnum \ vulgar fraction three quarters (= fraction three quarters)
 entity: &iquest; \ ¿ \ U+00BF (191) \ HTML 3.2 \ HTMLlat1 \ ISOnum \ inverted question mark (= turned question mark)
 entity: &Agrave; \ À \ U+00C0 (192) \ HTML 2.0 \ HTMLlat1 \ ISOlat1 \ Latin capital letter A with grave accent (= Latin capital letter A grave)
 entity: &Aacute; \ Á \ U+00C1 (193) \ HTML 2.0 \ HTMLlat1 \ ISOlat1 \ Latin capital letter A with acute accent
@@ -273,7 +273,7 @@ entity: &or; \ ∨ \ U+2228 (8744) \ HTML 4.0 \ HTMLsymbol \ ISOtech \ logical o
 entity: &cap; \ ∩ \ U+2229 (8745) \ HTML 4.0 \ HTMLsymbol \ ISOtech \ intersection (= cap)
 entity: &cup; \ ∪ \ U+222A (8746) \ HTML 4.0 \ HTMLsymbol \ ISOtech \ union (= cup)
 entity: &int; \ ∫ \ U+222B (8747) \ HTML 4.0 \ HTMLsymbol \ ISOtech \ integral
-entity: &there;4 \ ∴ \ U+2234 (8756) \ HTML 4.0 \ HTMLsymbol \ ISOtech \ therefore sign
+entity: &there4; \ ∴ \ U+2234 (8756) \ HTML 4.0 \ HTMLsymbol \ ISOtech \ therefore sign
 entity: &sim; \ ∼ \ U+223C (8764) \ HTML 4.0 \ HTMLsymbol \ ISOtech \ tilde operator (= varies with = similar to)
 entity: &cong; \ ≅ \ U+2245 (8773) \ HTML 4.0 \ HTMLsymbol \ ISOtech \ congruent to
 entity: &asymp; \ ≈ \ U+2248 (8776) \ HTML 4.0 \ HTMLsymbol \ ISOamsr \ almost equal to (= asymptotic to)
@@ -315,5 +315,7 @@ entity: &diams; \ ♦ \ U+2666 (9830) \ HTML 4.0 \ HTMLsymbol \ ISOpub \ black d
 \ 2017-06-22: Update source style, layout and header.
 \
 \ 2018-12-08: Update notation of Forth words in comments and strings.
+\
+\ 2018-12-18: Fix the position of semicolon in several entities.
 
 \ vim: filetype=gforth
