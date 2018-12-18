@@ -19,15 +19,6 @@ echoes the corresponding HTML entity.
 
 In <fendo.data.fs>: Can `current_page` be used instead of `'data`?
 
-== 2013-06-10
-
-In <fendo.markup.html.entities.fs>: Entities are case-dependent. A
-table is required.
-
-== 2013-07-26
-
-In <fendo.addon.basin_source_code.fs>: Character set conversions.
-
 == 2013-07-26
 
 In <fendo.addon.forth_blocks_source_code.fs>: Character set conversions.
@@ -410,6 +401,8 @@ Better yet: make `datum:` create a `fieldname+` variant to do that.
 
 == 2017-02-06
 
+NOTE: Milestone: 0.6.0:
+
 Add `)),` as a shortcut of the idiom `)) ,`.
 
 == 2017-06-22
@@ -504,10 +497,14 @@ commented out from <fendo.addon.asciidoctor.fs>.
 
 == 2018-12-07
 
+NOTE: Milestone: 0.7.0:
+
 - Deprecate the old `{CONTENT}` markup (defined in <fendo.parser.fs>) and
   replace it with `<[ contents ]>`, after the new method has been fully tested.
 
 == 2018-12-08
+
+NOTE: Milestone: 0.7.0:
 
 - Replace underscores with hyphens in all words.
 - Change the naming convention of flags: use a question mark suffix
@@ -521,3 +518,10 @@ commented out from <fendo.addon.asciidoctor.fs>.
 - `variable wild-match$` (fendo.addon.wild-match.fs) should not be a
   dynamic string variable?
 
+== 2018-12-18
+
+NOTE: Milestone: 0.6.0:
+
+- Rename `content` to `echo_content`.
+- In <fendo.markup.html.entities.fs>, check entities that don't end
+  with a semicolon.
