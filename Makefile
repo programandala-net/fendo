@@ -3,7 +3,7 @@
 # This file is part of Fendo
 # http://programandala.net/en.program.fendo.html
 
-# Last modified 201812071625
+# Last modified 201812191515
 
 # ==============================================================
 # Author
@@ -20,7 +20,10 @@
 # ==============================================================
 # Requirements
 
-# Asciidoctor (by Dan Allen)
+# Asciidoctor (by Dan Allen and Sara White)
+# 	http://asciidoctor.org
+
+# asciidoctor-pdf (by Dan Allen and Sara White)
 # 	http://asciidoctor.org
 
 # cat (from the GNU coreutils)
@@ -30,9 +33,6 @@
 
 # Glosara (by Marcos Cruz)
 # 	http://programandala.net/en.program.glosara.html
-
-# htmldoc (by Michael Sweet)
-# 	http://www.htmldoc.org
 
 # pandoc (by Johw Macfarlane)
 # 	http://john-macfarlane.net/pandoc
@@ -83,22 +83,13 @@ doc: \
 	doc/fendo_manual.docbook \
 	doc/fendo_manual.info \
 	doc/fendo_manual.texi \
-	doc/fendo_manual.html.htmldoc.pdf
+	doc/fendo_manual.pdf
 
 # ----------------------------------------------
 # Common rules
 
-%.html.htmldoc.pdf: %.html
-	htmldoc \
-		--book \
-		--no-toc \
-		--linkcolor blue \
-		--linkstyle plain \
-		--header " t " \
-		--footer "  1" \
-		--format pdf14 \
-		--webpage \
-		$< > $@
+doc/%.pdf: tmp/%.adoc
+	asciidoctor-pdf --out-file $@ $<
 
 %.html: %.adoc
 	asciidoctor --out-file=$@ $<
@@ -146,3 +137,5 @@ tmp/fendo_manual.adoc: tmp/manual_skeleton.adoc tmp/glossary.adoc
 
 # 2018-12-07: Start. Adapted from Galope
 # (http://programandala.net/en.program.galope.html).
+#
+# 2018-12-19: Replace htmldoc with asciidoctor-pdf, the PDF is much better.
