@@ -5,7 +5,7 @@
 
 \ This file defines the page data tools.
 
-\ Last modified 201812172116.
+\ Last modified 201812201916.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2015,2017,2018 Marcos Cruz (programandala.net)
@@ -79,8 +79,10 @@ variable /datum
 
 defer get_datum ( a u -- ca len )
 
-: (get_datum) ( a u -- ca len )  + $@
-\  ." Output of `(get_datum)` :" 2dup type cr XXX INFORMER
+: (get_datum) ( a u -- ca len )
+  \ ." Input of `(get_datum)` :" .s cr \ XXX INFORMER
+  + $@
+  \ ." Output of `(get_datum)` :" 2dup type cr \ XXX INFORMER
   ;
 
 ' (get_datum) is get_datum
@@ -107,7 +109,7 @@ defer get_datum ( a u -- ca len )
 
 : :datum>address ( ca len -- )
   s" '" 2swap s+ nextname
-  latestxt  \ of the word previously created by `:datum>value`
+  latestxt  \ of the word previously created by `:datum`
   create ( xt ) >body ,
   does> ( a1 -- a2 )
     ( a1 dfa ) @ @ ( a1 u ) + ;
@@ -128,13 +130,19 @@ defer get_datum ( a u -- ca len )
 
 datum: source_file
 
+\ XXX TODO -- handling of markups in the data fields depend on the
+\ application
+
 datum: language  \ ISO code of the page's language
 datum: title  \ page title; can include markups
-datum: description  \ page description; XXX TODO -- can include markups?
+datum: menu_title  \ short title used menus and navigation bars
+datum: breadcrum_title \ short title used in breadcrumb navigation
+datum: description  \ page description
 
 \ Dates in ISO format:
-datum: created  \ content creation (publication) date
-datum: modified  \ content modification date
+datum: created    \ when the contents were created (written)
+datum: published  \ when the contents were published (online)
+datum: modified   \ when the contents were modified (updated)
 ' modified alias modifed
 datum: file_modified  \ file modification date; if not specified, `modified` is used
 
@@ -171,10 +179,10 @@ datum: template  \ HTML template filename in the design subdir
 
 0 value current_page  \ page ID of the current page
 
-: target_extension ( pid -- ca len )
+: target_extension ( a -- ca len )
   filename_extension dup 0=
   if  2drop html_extension $@   then ;
-  \ Return the target filename extension.
+  \ Return the target filename extension of page ID _a_.
 
 : current_target_extension ( -- ca len )
   current_page target_extension ;
@@ -333,15 +341,15 @@ datum: template  \ HTML template filename in the design subdir
 \ ==============================================================
 \ Debugging tools
 
-: .data { pid -- }
-  ." data of pid# " pid . cr
-  ."   source_file = " pid 'source_file $@ type cr
-  ."   title = " pid 'title $@ type cr
-\  ."   project_status = " pid project_status type cr
-\  ."   project_start = " pid project_start type cr
-\  ."   project_end = " pid project_end type cr
-\  ."   project_completion = " pid project_completion type cr
-  ."   related = " pid 'related $@ type cr ;
+: .data { pageID -- }
+  ." data of pid# " pageID . cr
+  ."   source_file = " pageID 'source_file $@ type cr
+  ."   title = " pageID 'title $@ type cr
+\  ."   project_status = " pageID project_status type cr
+\  ."   project_start = " pageID project_start type cr
+\  ."   project_end = " pageID project_end type cr
+\  ."   project_completion = " pageID project_completion type cr
+  ."   related = " pageID 'related $@ type cr ;
 
 : .current_data ( -- )
   current_page .data  ;
@@ -590,9 +598,9 @@ variable do_content?  do_content? on
   ;
   \ Is the given page newer than its target?
 
-: description|title ( pid -- ca len )
+: description|title ( a -- ca len )
   dup >r description dup if  rdrop  else  2drop r> title  then ;
-  \ Description or (if it's empty) title of the given page ID.
+  \ Description or (if it's empty) title of the given page ID _a_.
   \ This is used as link title when no one has been specified.
 
 : property? ( ca len a -- f )
@@ -676,12 +684,12 @@ variable a_previous_page \ dynamic string
   \ Return the previous brother page ID _ca2 len2_ of page ID _ca1 len1_.
   \ If no previous page exists, _ca2 len2_ is an empty string.
 
-: ?previous_page ( pid -- ca len )
+: ?previous_page ( a -- ca len )
   dup previous_page 2dup calculated_field?
   if   2drop pid#>pid$ pid$>previous
   else rot drop
   then ;
-  \ If field `previous_page` of page _pid_ is calculated, calculate it
+  \ If field `previous_page` of page ID _a_ is calculated, calculate it
   \ and return the result in string _ca len_; otherwise return the
   \ field contents.
 
@@ -706,12 +714,12 @@ variable a_next_page \ flag
   \ Return the next brother page ID _ca2 len2_ of page ID _ca1 len1_.
   \ If no next page exists, _ca2 len2_ is an empty string.
 
-: ?next_page ( pid -- ca len )
+: ?next_page ( a -- ca len )
   dup next_page 2dup calculated_field?
   if   2drop pid#>pid$ pid$>next
   else rot drop
   then ;
-  \ If field `next_page` of page _pid_ is calculated, calculate it
+  \ If field `next_page` of page ID _a_ is calculated, calculate it
   \ and return the result in string _ca len_; otherwise return the
   \ field contents.
 
@@ -720,12 +728,12 @@ variable a_next_page \ flag
   \ Return the upper page ID _ca2 len2_ of page ID _ca1 len1_.
   \ If no upper page exists, _ca2 len2_ is an empty string.
 
-: ?upper_page ( pid -- ca len )
+: ?upper_page ( a -- ca len )
   dup upper_page 2dup calculated_field?
   if   2drop pid#>pid$ pid$>upper
   else rot drop
   then ;
-  \ If field `upper_page` of page _pid_ is calculated, calculate it
+  \ If field `upper_page` of page ID _a_ is calculated, calculate it
   \ and return the result in string _ca len_; otherwise return the
   \ field contents.
 
@@ -746,12 +754,12 @@ variable a_next_page \ flag
   \ Return the first brother page ID _ca2 len2_ of page ID _ca1 len1_.
   \ If no first page exists, _ca2 len2_ is an empty string.
 
-: ?first_page ( pid -- ca len )
+: ?first_page ( a -- ca len )
   dup first_page 2dup calculated_field?
   if   2drop pid#>pid$ pid$>first
   else rot drop
   then ;
-  \ If field `first_page` of page _pid_ is calculated, calculate it
+  \ If field `first_page` of page ID _a_ is calculated, calculate it
   \ and return the result in string _ca len_; otherwise return the
   \ field contents.
 
@@ -1037,5 +1045,9 @@ true value included_files_update_the_page_date?
 \ also a true flag for consistency. Adapt the code to the new
 \ behaviour. Then rename `pid$>data>pid#` to `pid$>pid#` and document
 \ both words.
+\
+\ 2018-12-20: Fix typo in comment. Add metadata `published`,
+\ `menu_title` and `breadcrumb_title`. Update stack notation of page
+\ IDs.
 
 \ vim: filetype=gforth
