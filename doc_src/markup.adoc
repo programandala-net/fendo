@@ -1,25 +1,8 @@
-= Markup
-:author: Marcos Cruz (programandala.net)
-:revdate: 2017-06-20
+// = Markup
+// :author: Marcos Cruz (programandala.net)
 
-////
-
-2014-04-07: Start as part of <fendo.to-do.txt>. First table, with
-current Fendo, future Fendo and Asciidoctor. Unfinished.
-
-2014-04-20: Extracted to <fendo.to-do.markup.adoc>. Completed. Added
-Creole and Simplilo. Columns reordered.
-
-2014-04-21: Added txt2tags. Fixes.
-
-2014-07-13: Updated.
-
-2017-06-20: Rename to <TO-DO_markup.adoc>.
-
-2018-12-08: Prepare for the manual. Remove columns of Fendo A-03 and
-Simplilo A-08.
-
-////
+// Last modified 201812201932
+// See change log at the end of the file
 
 == Markup comparation table
 
@@ -246,3 +229,24 @@ note in brackets.
 | &#40;&#40;&#40;&#40;…))))
 
 |===
+
+// =============================================================
+// Change log
+
+// 2014-04-07: Start as part of <fendo.to-do.txt>. First table, with
+// current Fendo, future Fendo and Asciidoctor. Unfinished.
+//
+// 2014-04-20: Extracted to <fendo.to-do.markup.adoc>. Completed.
+// Added Creole and Simplilo. Columns reordered.
+//
+// 2014-04-21: Added txt2tags. Fixes.
+//
+// 2014-07-13: Updated.
+//
+// 2017-06-20: Rename to <TO-DO_markup.adoc>.
+//
+// 2018-12-08: Prepare for the manual. Remove columns of Fendo A-03
+// and Simplilo A-08.
+
+// =============================================================
+
