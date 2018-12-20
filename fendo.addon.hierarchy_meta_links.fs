@@ -5,7 +5,7 @@
 
 \ This file is the hierarchy meta links addon.
 
-\ Last modified 201812172116.
+\ Last modified 201812201724.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2015,2017,2018 Marcos Cruz (programandala.net)
@@ -42,9 +42,14 @@
 \   ." Stack at the end of `proper_hierarchical_link? : " .s cr \ XXX INFORMER
 \   key drop \ XXX INFORMER
     ;
+
+  \ doc{
+  \
+  \ proper_hierarchical_link? ( ca len -- ca' len' f )
+  \
   \ If page ID _ca len_ is a proper hierarchical link (i.e., not a
   \ draft page), _f_ is true and _ca' len'_ is its equivalent
-  \ unshortcut page ID; otherwise _f_ is false and _ca' len'_ is
+  \ `unshortcut` page ID; otherwise _f_ is false and _ca' len'_ is
   \ unimportant.
   \
   \ This check is required in order to bypass the default behaviour of
@@ -52,6 +57,12 @@
   \ but that is not convenient for the hierarchy meta links.  This
   \ check can be used also by the application, as part of the user's
   \ hierarchy navigation bar.
+  \
+  \ ``proper_hierarchical_link?`` is used by `hierarchical_meta_link`.
+  \
+  \ See: `hierarchical_meta_links`, `pid$>draft?`.
+  \
+  \ }doc
 
 : (hierarchy_meta_link) ( ca1 len1 ca2 len2 -- )
 \  cr 2dup type ."  --> " 2over type  \ XXX INFORMER
@@ -65,9 +76,19 @@
   dup title unmarkup title=!
   ?hreflang=!  s" text/html" type=!
   [<link/>] ;
-  \ Create a hierarchy meta link in the HTML header.
-  \ ca1 len1 = page ID
-  \ ca2 len2 = rel
+
+  \ doc{
+  \
+  \ (hierarchy_meta_link) ( ca1 len1 ca2 len2 -- )
+  \
+  \ Create a hierarchy meta link to page ID _ca2 len2_,
+  \ with ``rel`` attribute _ca1 len2_.
+  \
+  \ ``(hierarchy_meta_link)`` is a factor of `hierarchy_meta_link`.
+  \
+  \ See: `[<link/>]`.
+  \
+  \ }doc
 
 : hierarchy_meta_link ( ca1 len1 ca2 len2 -- )
 \   ." Stack in `hierarchy_meta_link` : " .s cr  \ XXX INFORMER
@@ -77,9 +98,33 @@
 \   ." Stack in `hierarchy_meta_link` after `proper_hierarchical_link?` : " .s cr  \ XXX INFORMER
 \   key drop \ XXX INFORMER
   if  2swap (hierarchy_meta_link)  else  2drop 2drop  then ;
-  \ Create a hierarchy meta link in the HTML header, if needed.
-  \ ca1 len1 = rel
-  \ ca2 len2 = page ID
+
+  \ doc{
+  \
+  \ hierarchy_meta_link ( ca1 len1 ca2 len2 -- )
+  \
+  \ If needed, create a hierarchy meta link to page ID _ca2 len2_,
+  \ with ``rel`` attribute _ca1 len2_.
+  \
+  \ Usage example in the HTML template:
+
+  \ ----
+  \ <head>
+  \ <title>Page 1</title>
+  \ <[
+  \   s" prev" s" page_0" hierarchy_meta_link
+  \   s" next" s" page_2" hierarchy_meta_link
+  \ ]>
+  \ </head>
+  \ ----
+
+  \ ``hierarchy_meta_link`` is needed only in special cases.
+  \ `hierarchy_meta_links` can be used instead to create all
+  \ hierarchical links automatically.
+  \
+  \ See: `(hierarchy_meta_link)`.
+  \
+  \ }doc
 
 : hierarchy_meta_links ( -- )
 \  s" up" current_page upper_page hierarchy_meta_link
@@ -88,9 +133,30 @@
 \  s" first" current_page first_page hierarchy_meta_link
 \  s" last" current_page last_page hierarchy_meta_link
   ;
-  \ Create the required hierarchy meta links in the HTML header.
+
   \ XXX TMP 2015-02-26: it seems "up", "first" and "last" are not allowed
   \ in <link>; I comment them out.
+
+  \ doc{
+  \
+  \ hierarchy_meta_links ( -- )
+  \
+  \ Create the hierarchy meta links in the HTML header.
+  \
+  \ NOTE: Only "next" and "prev" are created. "up", "first" and "last"
+  \ are not allowed in HTML ``<link>`` tag.
+  \
+  \ Usage example in the HTML template:
+  \
+  \ ----
+  \ <head>
+  \ <[ hierarchy_meta_links ]>
+  \ </head>
+  \ ----
+  \
+  \ See: `hierarchy_meta_link`.
+  \
+  \ }doc
 
 .( fendo.addon.hierarchy_meta_links.fs compiled) cr
 
@@ -142,5 +208,7 @@
 \ 2018-12-08: Update notation of page IDs in comments and strings.
 \
 \ 2018-12-17: Update: replace `pid$>data>pid#` with `pid$>pid#`.
+\
+\ 2018-12-20: Improve documentation.
 
 \ vim: filetype=gforth
