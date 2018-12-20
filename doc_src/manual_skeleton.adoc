@@ -6,7 +6,7 @@
 :toc-placement!:
 :linkattrs:
 
-// Last modified 201812071657
+// Last modified 201812201923
 
 toc::[]
 
@@ -41,7 +41,8 @@ By default, the corresponding target page will be
 
 == Multilingual websites
 
-Multilingual websites are built by 
+Multilingual websites are built by...
+// XXX TODO --
 
 1. Define the number of languages and their identifiers.
 2. Set the language of the pages.
@@ -59,6 +60,12 @@ eo.fako.subfako.html
 ....
 
 // XXX TODO -- Complete.
+
+// =============================================================
+
+include::../doc_src/markup.adoc[]
+
+// =============================================================
 
 == Glossary
 

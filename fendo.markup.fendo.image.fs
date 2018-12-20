@@ -5,7 +5,7 @@
 
 \ This file defines the Fendo markup for images.
 
-\ Last modified 201812131735.
+\ Last modified 201812201930.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2017 Marcos Cruz (programandala.net)
@@ -163,7 +163,7 @@ markup_definitions
   \
   \ }} ( -- )
   \
-  \ End the definition of an image that was started by `[[`.
+  \ End the definition of an image that was started by `{{`.
   \
   \ }doc
 
@@ -181,5 +181,7 @@ fendo_definitions
 \ 2018-12-08: Update notation of Forth words in comments and strings.
 \
 \ 2018-12-13: Document `{{` and `}}`.
+\
+\ 2018-12-20: Fix typo in documentation.
 
 \ vim: filetype=gforth
