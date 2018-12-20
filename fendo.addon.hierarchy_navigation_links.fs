@@ -5,7 +5,7 @@
 
 \ This file is the hierarchy navigation links addon.
 
-\ Last modified 201812080157.
+\ Last modified 201812201820.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2017,2018 Marcos Cruz (programandala.net)
@@ -35,8 +35,89 @@ defer previous$ ( -- ca len )
 defer next$ ( -- ca len )
 defer up$ ( -- ca len )
 defer last$ ( -- ca len )
-  \ Strings that must be defined by the application.  `l10n-string` or
-  \ `noname-l10n-string` can be used for multilingual sites.
+
+  \ doc{
+  \
+  \ first$ ( -- ca len )
+  \
+  \ A word defined by ``defer``. It must be configured by the
+  \ application in order to return a string _ca len_ containing
+  \ "First" in the language of the current page.
+  \
+  \ Usage example in a monolingual, English-only website:
+
+  \ ----
+  \ :noname s" First" ; is first$
+  \ ----
+
+  \ Usage example in a multilingual website:
+
+  \ ----
+  \ s" Primera" \ Spanish
+  \ s" Unua"    \ Esperanto
+  \ s" First"   \ English
+  \ noname-l10n-string is first$
+  \ ----
+
+  \ See: `previous$`, `next$`, `up$`, `last$`, `noname-l10n-string`.
+  \
+  \ }doc
+
+  \ doc{
+  \
+  \ previous$ ( -- ca len )
+  \
+  \ A word defined by ``defer``. It must be configured by the
+  \ application in order to return a string _ca len_ containing
+  \ "Previous" in the language of the current page.
+  \
+  \ See `first$` for a usage example.
+  \
+  \ See: `next$`, `up$`, `last$`.
+  \
+  \ }doc
+
+  \ doc{
+  \
+  \ next$ ( -- ca len )
+  \
+  \ A word defined by ``defer``. It must be configured by the
+  \ application in order to return a string _ca len_ containing "Next"
+  \ in the language of the current page.
+  \
+  \ See `first$` for a usage example and related words.
+  \
+  \ See: `previous$`, `up$`, `last$`.
+  \
+  \ }doc
+
+  \ doc{
+  \
+  \ up$ ( -- ca len )
+  \
+  \ A word defined by ``defer``. It must be configured by the
+  \ application in order to return a string _ca len_ containing
+  \ "Up" in the language of the current page.
+  \
+  \ See `first$` for a usage example and related words.
+  \
+  \ See: `previous$`, `next$`, `last$`.
+  \
+  \ }doc
+
+  \ doc{
+  \
+  \ last$ ( -- ca len )
+  \
+  \ A word defined by ``defer``. It must be configured by the
+  \ application in order to return a string _ca len_ containing
+  \ "Last" in the language of the current page.
+  \
+  \ See `first$` for a usage example and related words.
+  \
+  \ See: `previous$`, `next$`, `up$`.
+  \
+  \ }doc
 
 : (hierarchy_navigation_link)  ( ca1 len1 ca2 len2 -- )
   2swap s" <span class=`br`>" 2swap s+
@@ -97,5 +178,7 @@ defer last$ ( -- ca len )
 \ `?upper_page`.
 \
 \ 2018-12-08: Update notation of Forth words in comments and strings.
+\
+\ 2018-12-20: Improve documentation.
 
 \ vim: filetype=gforth

@@ -1,6 +1,6 @@
 = Fendo %VERSION%
 :author: Marcos Cruz (programandala.net)
-:revdate: 2018-12-07
+:revdate: 2018-12-20
 :toc:
 :toclevels: 1
 :toc-placement!:
@@ -20,6 +20,45 @@ include::../README.adoc[tags=status]
 // include::../README.adoc[tags=name]
 
 // =============================================================
+
+== Page hierarchy
+
+By default, the page hierarchy is defined by the the source page
+filename, using the dot as a separator.  For example, a source page
+filename <en.articles.2010.fs> has three levels of hierarchy:
+
+1. 'en' = main "section": English pages of the website.
+2. 'articles' = Articles section of the English website.
+3. '2010' = Section of articles of year 2010.
+
+Of course, 'fs' is the filename extension of the Forth source, and it
+does not belongs to the page name.
+
+By default, the corresponding target page will be
+<en.articles.2010.html>.
+
+// XXX TODO -- Complete.
+
+== Multilingual websites
+
+Multilingual websites are built by 
+
+1. Define the number of languages and their identifiers.
+2. Set the language of the pages.
+3. Set the links between page translastions.
+
+The language ID can be any string, usually its corresponding ISO 639-1
+(2-letter) code, ISO 639-2 (3-letter) code, or the name of the
+language. The language ID is used also as the first part (prefix) of
+the page's filename, e.g.:
+
+....
+en.section.subsection.html
+es.sección.subsección.html
+eo.fako.subfako.html
+....
+
+// XXX TODO -- Complete.
 
 == Glossary
 

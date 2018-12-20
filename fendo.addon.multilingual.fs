@@ -4,16 +4,9 @@
 \ (http://programandala.net/en.program.fendo.html).
 
 \ This file creates some low-level tools to manage multilingual
-\ websites. The language identifier can be any string, usually its
-\ correspondent ISO 639-1 (2-letter) code, ISO 639-2 (3-letter)
-\ code, or the name of the language. The identifier is used as the
-\ first part (prefix) of the page's filename, e.g.:
+\ websites. See the manual for details.
 
-\   en.section.subsection.html
-\   es.sección.subsección.html
-\   eo.fako.subfako.html
-
-\ Last modified 201812172116.
+\ Last modified 201812201808.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2017,2018 Marcos Cruz (programandala.net)
@@ -38,29 +31,6 @@
 \ with Gforth (http://gnu.org/software/gforth).
 
 \ ==============================================================
-\ Usage
-
-0 [if]
-
-\ **Before using** the word `mlsconstant` defined by this addon, the
-\ application must set the `langs` value with the number of language
-\ sections the website has.  Otherwise the program will stop with a
-\ message.
-
-\ The constant identifiers of the languages used in the website can be
-\ defined later, but always in alphabetical order of its ISO language
-\ code.
-
-\ Example:
-
-0 constant en_language
-1 constant eo_language
-2 constant es_language
-3 to langs  \ counter
-
-[then]
-
-\ ==============================================================
 \ Requirements
 
 forth_definitions
@@ -75,46 +45,118 @@ fendo_definitions
 
 true to multilingual?
 
-0 value langs  \ number of language sections of the website  \ XXX OLD
+0 value langs
+
+  \ doc{
+  \
+  \ langs ( -- n )
+  \
+  \ A ``value`` that returns the number of language sections of a
+  \ multilingual website. It must be configured by the application.
+  \
+  \ Usage example:
+
+  \ ----
+  \ 0 constant en_language \ English
+  \ 1 constant eo_language \ Esperanto
+  \ 2 constant es_language \ Spanish
+  \ 3 to langs
+  \ ----
+  \
+  \ }doc
 
 : lang_prefix ( ca1 len1 -- ca2 len2 )
-  [char] . c/string ;
-  \ Get the ISO language code from the first part of a source page file.
-  \ ca1 len1 = page ID
-  \ ca2 len2 = ISO language code
+  '.' c/string ;
+
+  \ doc{
+  \
+  \ lang_prefix ( ca1 len1 -- ca2 len2 )
+  \
+  \ Get the language ID _ca2 len2_ from the first part of a source page file
+  \ _ca1 len1_.
+  \
+  \ It is suggested to use ISO 639-1 or ISO 639-2 codes as language
+  \ IDs.
+  \
+  \ See: `pid$>lang#`.
+  \
+  \ }doc
 
 : pid#>lang$ { page_id -- ca len }
   page_id language dup ?exit  2drop
   page_id source_file lang_prefix ;
-  \ Return the ISO language code of the given page.
-  \ The "language" metadatum has higher priority than the filename's
-  \ prefix.
+
+  \ doc{
+  \
+  \ pid#>lang$ ( a -- ca len )
+  \
+  \ Convert page ID _a_ to its language ID _ca len_.
+  \
+  \ NOTE: The `language` metadatum has higher priority than the
+  \ filename's prefix.
+  \
+  \ See: `pid#>lang#`, `current_lang$`, `lang_prefix`.
+  \
+  \ }doc
 
 : current_lang$ ( -- ca len )
   current_page ?dup if  pid#>lang$  else  s" en"  then ;
-  \ Return the ISO language code of the current page.
   \ XXX TODO configurable default language
+
+  \ doc{
+  \
+  \ current_lang$ ( -- ca len )
+  \
+  \ Return the language ID _ca len_ of the current page.
+  \
+  \ See: `current_lang#`, `current_page`, `pid#>lang$`.
+  \
+  \ }doc
 
 : pid#>lang# ( a -- n )
   pid#>lang$ s" _language" s+ fendo>order evaluate fendo<order ;
-  \ Return the language number of the given page ID.
-  \ This number is used as an offset, e.g. for multilingual
-  \ texts.
-  \ a = page ID
+
+  \ doc{
+  \
+  \ pid#>lang# ( a -- n )
+  \
+  \ Convert page ID _a_ to its language number _n_, which is used
+  \ as an offset, e.g. for multilingual texts.
+  \
+  \ See: `pid#>lang#`, `current_lang$`.
+  \
+  \ }doc
 
 : pid$>lang# ( ca len -- n )
   pid$>pid# pid#>lang#  ;
-  \ Return the language number of the given page ID.
-  \ This number is used as an offset, e.g. for multilingual
-  \ texts.
-  \ ca len = page ID
+
+  \ doc{
+  \
+  \ pid$>lang# ( ca len -- n )
+  \
+  \ Convert page ID _ca len_ to its language ID _n_, which is used as
+  \ an offset, e.g. for multilingual texts.
+  \
+  \ See: `pid#>lang#`, `pid#>lang$`, `current_lang$`.
+  \
+  \ }doc
 
 : current_lang# ( -- n )
   current_page dup if  pid#>lang#  then  \ XXX TMP? for testing
   ;
-  \ Return the language number of the current page
-  \ (or zero, the first language, if there's no current page yet).
   \ current_page pid#>lang#  \ XXX OLD, first version
+
+  \ doc{
+  \
+  \ current_lang# ( -- n )
+  \
+  \ Return the language ID _n_ of the current page.  If no language
+  \ has been defined, _n_ is zero, which corresponds to the first
+  \ language.
+  \
+  \ See: `current_lang$`, `current_page`, `pid#>lang#`.
+  \
+  \ }doc
 
 : +lang ( a -- a' )
   current_lang# cells + ;
@@ -133,29 +175,40 @@ true to multilingual?
 : l10n-string ( ca-n len-n ... ca1 len1 "name" -- )
   langs 0= abort" `langs` is not set; `l10n-string` can not work."
   create  l10n-string,  (l10n-string) ;
-  \ Create a localization string constant.
-  \ It will return the string in the language of the current page.
-  \ ca1 len1 = text in the first language
-  \ ca-n len-n = text in the last language
-  \ name = name of the constant
-  (*
-  Note:  \ XXX TMP
-  Strings must be pushed on the stack in reverse alphabetical order
-  of its ISO language code.
-  *)
+
+  \ doc{
+  \
+  \ l10n-string ( ca-n len-n ... ca1 len1 "name" -- )
+  \
+  \ Create a localization string constant, with translations from _ca1
+  \ len1_ (in the first language defined) to translation _ca-n len-n_
+  \ (in the last language defined).
+  \
+  \ When executed, _name_ will return the string corresponding to the
+  \ language of the current page.
+  \
+  \ See: `noname-l10n-string`, `langs`.
+  \
+  \ }doc
 
 : noname-l10n-string ( ca-n len-n ... ca1 len1 -- xt )
   langs 0= abort" `langs` is not set; `noname-l10n-string` can not work."
   noname create  l10n-string,  latestxt  (l10n-string) ;
-  \ Unnamed version of `l10n-string`.
-  \ Create a localization string constant.
-  \ It will return the string in the language of the current page.
-  \ ca1 len1 = text in the first language
-  \ ca-n len-n = text in the last language
+
+  \ doc{
   \
-  \ XXX TMP -- Note:
-  \ Strings must be pushed on the stack in reverse alphabetical order
-  \ of its ISO language code.
+  \ noname-l10n-string ( ca-n len-n ... ca1 len1 -- xt )
+  \
+  \ Create an unnamed localization string constant, with translations
+  \ from _ca1 len1_ (in the first language defined) to translation
+  \ _ca-n len-n_ (in the last language defined).
+  \
+  \ When executed, _xt_ will return the string corresponding to the
+  \ language of the current page.
+  \
+  \ See: `l10n-string`.
+  \
+  \ }doc
 
 .( fendo.addon.multilingual.fs compiled) cr
 
@@ -171,7 +224,7 @@ true to multilingual?
 \
 \ 2013-11-30: Change: `mlsconstant` and `langs` are deprecated; now
 \ the application must define its own words to store the number of
-\ languages and the multilingual strings. \ XXX TMP
+\ languages and the multilingual strings.
 \
 \ 2013-12-01: Change: several renamings.
 \
@@ -202,5 +255,7 @@ true to multilingual?
 \ 2018-12-08: Update notation of page IDs in comments and strings.
 \
 \ 2018-12-17: Update: replace `pid$>data>pid#` with `pid$>pid#`.
+\
+\ 2018-12-20: Improve documentation.
 
 \ vim: filetype=gforth

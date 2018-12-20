@@ -1,6 +1,6 @@
 = Fendo TO-DO
 :author: Marcos Cruz (programandala.net)
-:revdate: 2018-12-17
+:revdate: 2018-12-20
 
 // This text file is in Asciidoctor format
 // See http://asciidoctor.org
@@ -217,8 +217,8 @@ http://www.blogger.com/blog_this.pyra?t=&u=http%3A%2F%2Fwww.iconarchive.com%2Fsh
 
 Check:
 
-`link_text_as_attribute?` is the condition of an unbalanced `[if]` in <fendo.links.fs>.
-It has been fixed, but it has to be tested.
+`link_text_as_attribute?` is the condition of an unbalanced `[if]` in
+<fendo.links.fs>.  It has been fixed, but it has to be tested.
 
 Idea:
 
@@ -523,3 +523,32 @@ NOTE: Milestone: 0.7.0:
 NOTE: Milestone: 0.6.0:
 
 - Rename `content` to `echo_content`.
+
+== 2018-12-19
+
+NOTE: Milestone: 0.6.0:
+
+- Fix: <fendo.addon.atom.fs> depends on `current_lang$`, which is
+  defined in <fendo.addon.multilingual.fs>.
+
+== 2018-12-20
+
+NOTE: Milestone: 0.6.0:
+
+- Fix: "invalid memory" errors arised trying to access empty fields in
+  two websites.  No error pattern found. The errors vanished when the
+  fields were defined in <fendo.data.fs> instead of the website
+  applications. Maybe it has to do with with initialization of dynamic
+  strings, but `datum:` was used in both cases.
+- Make metadata fields more versatile, e.g. add a variant to accept
+  strings. This way, long strings could be used with `s"" ... ""`.
+- Improve <fendo.addon.atom.fs> to add the full page contents, or
+  until a conventional mark included in the page.
+- Rename `link_text?!`. Perhasp `?link_text!`.
+- Improve: `pid#>lang#` uses  "_language", i.e. it forces the naming
+  of language numerical IDs. Fix this by creating a language defining
+  word.
+- Fix: `hierarchy_navigation_link` creates a list item. It should
+  create only a link. The layout should depend on the application.
+- Update locals notation `pid` to `pageID`.
+- Update stack notation _pid_ to _a_.
