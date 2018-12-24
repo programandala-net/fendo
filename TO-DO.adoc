@@ -1,6 +1,6 @@
 = Fendo TO-DO
 :author: Marcos Cruz (programandala.net)
-:revdate: 2018-12-20
+:revdate: 2018-12-21
 
 // This text file is in Asciidoctor format
 // See http://asciidoctor.org
@@ -489,7 +489,7 @@ commented out from <fendo.addon.asciidoctor.fs>.
 
 == 2018-09-28
 
-- Add also `?first_page` and `?last_page`.
+- Add also `?last_page`.
 - Confirm why "up", "first" and "last" are not allowed in `<link>`. Add them to
   `hierarchy_meta_links`.
 - Make `create_pids_file` check if the file already exists. This will save only
@@ -548,7 +548,15 @@ NOTE: Milestone: 0.6.0:
 - Improve: `pid#>lang#` uses  "_language", i.e. it forces the naming
   of language numerical IDs. Fix this by creating a language defining
   word.
-- Fix: `hierarchy_navigation_link` creates a list item. It should
-  create only a link. The layout should depend on the application.
 - Update locals notation `pid` to `pageID`.
 - Update stack notation _pid_ to _a_.
+- Fix `pid$>upper` (in <fendo.data.fs>): Make it recursively ignore
+  pages that don't exist.
+
+== 2018-12-21
+
+NOTE: Milestone: 0.6.0:
+
+- Write a smarter or configurable version of `brother_pages?`, in
+  order to let pages like "lang.section.year#,month#,day#.title", with
+  only "lang.section" in common, be considered as a match.
