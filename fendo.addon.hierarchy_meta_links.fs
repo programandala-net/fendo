@@ -5,7 +5,7 @@
 
 \ This file is the hierarchy meta links addon.
 
-\ Last modified 201812201724.
+\ Last modified 201812202101.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2015,2017,2018 Marcos Cruz (programandala.net)
@@ -127,21 +127,22 @@
   \ }doc
 
 : hierarchy_meta_links ( -- )
-\  s" up" current_page upper_page hierarchy_meta_link
+\  s" up" current_page ?upper_page hierarchy_meta_link
   s" next" current_page ?next_page hierarchy_meta_link
   s" prev" current_page ?previous_page hierarchy_meta_link
-\  s" first" current_page first_page hierarchy_meta_link
-\  s" last" current_page last_page hierarchy_meta_link
+\  s" first" current_page ?first_page hierarchy_meta_link
+\  s" last" current_page ?last_page hierarchy_meta_link
   ;
 
   \ XXX TMP 2015-02-26: it seems "up", "first" and "last" are not allowed
   \ in <link>; I comment them out.
+  \ XXX TODO -- Confirm.
 
   \ doc{
   \
   \ hierarchy_meta_links ( -- )
   \
-  \ Create the hierarchy meta links in the HTML header.
+  \ Create the hierarchy meta links of the current page.
   \
   \ NOTE: Only "next" and "prev" are created. "up", "first" and "last"
   \ are not allowed in HTML ``<link>`` tag.

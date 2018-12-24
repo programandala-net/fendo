@@ -5,7 +5,7 @@
 
 \ This file defines the page data tools.
 
-\ Last modified 201812201916.
+\ Last modified 201812242042.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2015,2017,2018 Marcos Cruz (programandala.net)
@@ -136,7 +136,7 @@ datum: source_file
 datum: language  \ ISO code of the page's language
 datum: title  \ page title; can include markups
 datum: menu_title  \ short title used menus and navigation bars
-datum: breadcrum_title \ short title used in breadcrumb navigation
+datum: breadcrumb_title \ short title used in breadcrumb navigation
 datum: description  \ page description
 
 \ Dates in ISO format:
@@ -332,11 +332,45 @@ datum: template  \ HTML template filename in the design subdir
   \ Return the hierarchy level of the given page ID.
   \ The top level is 0.
 
-: brother_pages? ( ca1 len1 ca2 len2 -- f )
+: (brother_pages?) ( ca1 len1 ca2 len2 -- f )
   -common-prefix pid$>level -rot pid$>level or 0= ;
-  \ Are the pages whose IDs are _ca1 len1_ and _ca2 len2_ brothers,
-  \ i.e. do the last part (level) of their IDs is preceded by a common
+
+  \ doc{
+  \
+  \ (brother_pages?) ( ca1 len1 ca2 len2 -- f )
+  \
+  \ Are the pages whose IDs are _ca1 len1_ and _ca2 len2_ brothers?
+  \ I.e. do the last part (level) of their IDs is preceded by a common
   \ ancestor (hierarchy)?
+  \
+  \ Example:
+  \
+  \ - "en.text.2018.my_first_post" and "en.text.2018.my_second_post"
+  \   are brothers, because "my_first_post" and "my_second_post" share
+  \   a common ancestor: "en.text.20128".
+  \ - "en.text.2018.my_first_post" and "en.text.2017.my_old_post" are not
+  \   brothers.
+  \
+  \ ``(brother_pages?)`` is the default behaviour of `brother_pages?`.
+  \
+  \ See: `pid$>level`.
+  \
+  \ }doc
+
+defer brother_pages? ( ca1 len1 ca2 len2 -- f )
+' (brother_pages?) is brother_pages?
+
+  \ doc{
+  \
+  \ defer brother_pages? ( ca1 len1 ca2 len2 -- f )
+  \
+  \ Are the pages whose IDs are _ca1 len1_ and _ca2 len2_ brothers?
+  \ I.e., do they belong to the same section?
+  \
+  \ ``brother_pages?`` is a a deferred word that can be reconfigured
+  \ by the application. Its default behaviours is `(brother_pages?)`.
+  \
+  \ }doc
 
 \ ==============================================================
 \ Debugging tools
@@ -374,7 +408,7 @@ defer set_default_data ( -- )
   set_default_data  in_data_header? off
 \  ." data after defaults:" cr  \ XXX INFORMER
 \  .current_data  \ XXX INFORMER
-\  ." }}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}" cr  \ XXX INFORMER
+\  ." )))))))))))))))))))))))))))))))))))))))))))))))" cr  \ XXX INFORMER
 \  key drop  \ XXX INFORMER
   ;
 
@@ -397,7 +431,7 @@ defer set_default_data ( -- )
 
 : get_data{ ( "<text><space>}data" -- )
 \  ." `argc` in `get-data{` (start)= " argc ? cr  \ XXX INFORMER
-\  ." {{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{" cr  \ XXX INFORMER
+\  ." (((((((((((((((((((((((((((((((((((((((((((((((" cr  \ XXX INFORMER
 \  ." get_data{" cr  \ XXX INFORMER
   :pid current_data @
 \  ." current_data copied to current_page =  " dup . cr  \ XXX INFORMER
@@ -648,16 +682,32 @@ false value ignore_draft_property?
   \ Return the hierarchy level of a page (0 is the top level).
   \ a = page ID (address of its data)
 
-defer calculated_field? ( ca len -- f )
-  \ Is _ca len_ the contents of a calculated field?
-  \ A conventional mark is used to make same fields calculated.
+defer calculated_field_mark$ ( -- ca len )
+:noname ( -- ca len ) s" [calculated]" ;
+is calculated_field_mark$
 
-: default_calculated_field? ( ca len -- f )
-  s" [calculated]" str= ;
-  \ Is _ca len_ the contents of a calculated field?
-  \ A conventional mark is used to make same fields calculated.
+  \ doc{
+  \
+  \ calculated_field_mark$ ( -- ca len )
+  \
+  \ String _ca len_ is the contents of calculated fields, used by
+  \ `calculaled_field?`.  ``calculaled_field_mark$`` is a deferred
+  \ word whose default output is "[calculated]". It can be configured
+  \ by the application.
+  \
+  \ }doc
 
-' default_calculated_field? ' calculated_field? defer!
+: calculated_field? ( ca len -- f )
+  calculated_field_mark$ str= ;
+
+  \ doc{
+  \
+  \ calculated_field? ( ca len -- f )
+  \
+  \ Is _ca len_ the contents of a calculated field, as returned by
+  \ `calculated_field_mark$`?
+  \
+  \ }doc
 
 variable this_page \ dynamic string
 
@@ -665,7 +715,7 @@ variable a_previous_page \ dynamic string
 
 : (pid$>previous) ( ca1 len1 -- true | ca2 len2 false )
   {: D: pid$ :}
-  pid$ pid$>pid# draft?          ?dup ?exit
+  pid$ pid$>pid# draft?               ?dup ?exit
   pid$ this_page $@ brother_pages? 0= ?dup ?exit
   pid$ this_page $@ str=
   if        a_previous_page $@ false
@@ -678,9 +728,12 @@ variable a_previous_page \ dynamic string
   \ continue the traversing).
 
 : pid$>previous ( ca1 len1 -- ca2 len2 )
+\  ." Input of `pid$>previous`: «" 2dup type ." »" cr \ XXX INFORMER
   a_previous_page off
   this_page $!
-  ['] (pid$>previous) traverse_pids ;
+  ['] (pid$>previous) traverse_pids
+\  ." Output of `pid$>previous`: «" 2dup type ." »" cr \ XXX INFORMER
+  ;
   \ Return the previous brother page ID _ca2 len2_ of page ID _ca1 len1_.
   \ If no previous page exists, _ca2 len2_ is an empty string.
 
@@ -689,17 +742,36 @@ variable a_previous_page \ dynamic string
   if   2drop pid#>pid$ pid$>previous
   else rot drop
   then ;
-  \ If field `previous_page` of page ID _a_ is calculated, calculate it
-  \ and return the result in string _ca len_; otherwise return the
+
+  \ doc{
+  \
+  \ ?previous_page ( a -- ca len )
+  \
+  \ If field `previous_page` of page ID _a_ is calculated, calculate
+  \ it and return the result in string _ca len_; otherwise return the
   \ field contents.
+  \
+  \ See: `calculated_field?`, `?first_page`, `?next_page`,
+  \ `?upper_page`.
+  \
+  \ }doc
 
 variable a_next_page \ flag
 
 : (pid$>next) ( ca1 len1 -- true | ca1 len1 false )
   {: D: pid$ :}
-  pid$ pid$>pid# draft?          ?dup ?exit
+\  ." `(pid$>next)` : " pid$ type cr \ XXX INFORMER
+  pid$ pid$>pid# draft?               ?dup ?exit
+\  ." not a draft" cr \ XXX INFORMER
+
   this_page $@ pid$ brother_pages? 0= ?dup ?exit
-  this_page $@ pid$ -common-prefix str<
+  \ this_page $@ pid$ relative_pages? 0= ?dup ?exit \ XXX TODO --
+\  ." a brother" cr \ XXX INFORMER
+
+  this_page $@ pid$ -common-prefix 
+\  2over ." this_page = " type cr 2dup ." pid$ = " type \ XXX INFORMER
+  str<
+\  ."  str<" .s cr \ XXX INFORMER
   if a_next_page on pid$ false else true then ;
   \ Is _ca1 len1_ (local _pid$_) the next brother page of the page
   \ whose page ID is contained in the dynamic string _this_page_?
@@ -707,10 +779,13 @@ variable a_next_page \ flag
   \ otherwise return just _true_ (to continue the traversion).
 
 : pid$>next ( ca1 len1 -- ca2 len2 )
+\  ." Input of `pid$>next`: «" 2dup type ." »" cr \ XXX INFORMER
   a_next_page off
   this_page $!
   ['] (pid$>next) traverse_pids
-  a_next_page @ 0= if 0 0 then ;
+  a_next_page @ 0= if 0 0 then
+\  ." Output of `pid$>next`: «" 2dup type ." »" cr \ XXX INFORMER
+  ;
   \ Return the next brother page ID _ca2 len2_ of page ID _ca1 len1_.
   \ If no next page exists, _ca2 len2_ is an empty string.
 
@@ -719,27 +794,62 @@ variable a_next_page \ flag
   if   2drop pid#>pid$ pid$>next
   else rot drop
   then ;
+
+  \ doc{
+  \
+  \ ?next_page ( a -- ca len )
+  \
   \ If field `next_page` of page ID _a_ is calculated, calculate it
   \ and return the result in string _ca len_; otherwise return the
   \ field contents.
+  \
+  \ See: `calculated_field?`, `?first_page`, `?previous_page`,
+  \ `?upper_page`.
+  \
+  \ }doc
+
+: pid$>source  ( ca1 len1 -- ca2 len2 )
+  +forth_extension +source_dir ;
+  \ Convert a page id to a source filename.
+  \
+  \ XXX REMARK -- 2014-03-03: This word was tried in
+  \ `(required_dat<pid$)`, but adding the path to the filename makes
+  \ the pages to be included into the list of included files (shown by
+  \ `.included`) with an absolute path. The solution is: the
+  \ application has to add `source_dir` to `fpath`.
 
 : pid$>upper ( ca1 len1 -- ca2 len2 )
-  -extension ;
+  -extension
+\  begin -extension 2dup pid$>source dup 0= file-exists? or until
+\  2drop
+  ;
   \ Return the upper page ID _ca2 len2_ of page ID _ca1 len1_.
   \ If no upper page exists, _ca2 len2_ is an empty string.
+  \
+  \ XXX FIXME -- Make this smarter: ignore pages that don't exist.
 
 : ?upper_page ( a -- ca len )
   dup upper_page 2dup calculated_field?
   if   2drop pid#>pid$ pid$>upper
   else rot drop
   then ;
+
+  \ doc{
+  \
+  \ ?upper_page ( a -- ca len )
+  \
   \ If field `upper_page` of page ID _a_ is calculated, calculate it
   \ and return the result in string _ca len_; otherwise return the
   \ field contents.
+  \
+  \ See: `calculated_field?`, `?first_page`, `?previous_page`,
+  \ `?next_page`.
+  \
+  \ }doc
 
 : (pid$>first) ( ca1 len1 -- true | ca2 len2 false )
   {: D: pid$ :}
-  pid$ pid$>pid# draft?          ?dup ?exit
+  pid$ pid$>pid# draft?               ?dup ?exit
   pid$ this_page $@ brother_pages? 0= ?dup ?exit
   pid$ false ;
   \ Is page ID _ca1 len1_ (local _pid$_) contained in the dynamic string
@@ -759,9 +869,19 @@ variable a_next_page \ flag
   if   2drop pid#>pid$ pid$>first
   else rot drop
   then ;
+
+  \ doc{
+  \
+  \ ?first_page ( a -- ca len )
+  \
   \ If field `first_page` of page ID _a_ is calculated, calculate it
   \ and return the result in string _ca len_; otherwise return the
   \ field contents.
+  \
+  \ See: `calculated_field?`, `?previous_page`,
+  \ `?next_page`, `?upper_page`.
+  \
+  \ }doc
 
 \ ==============================================================
 \ Data manipulation
@@ -1049,5 +1169,9 @@ true value included_files_update_the_page_date?
 \ 2018-12-20: Fix typo in comment. Add metadata `published`,
 \ `menu_title` and `breadcrumb_title`. Update stack notation of page
 \ IDs.
+\
+\ 2018-12-23: Fix and improve documentation.
+\
+\ 2018-12-24: Improve documentation.
 
 \ vim: filetype=gforth
