@@ -1,6 +1,6 @@
 = Fendo TO-DO
 :author: Marcos Cruz (programandala.net)
-:revdate: 2018-12-21
+:revdate: 2019-01-09
 
 // This text file is in Asciidoctor format
 // See http://asciidoctor.org
@@ -560,3 +560,17 @@ NOTE: Milestone: 0.6.0:
 - Write a smarter or configurable version of `brother_pages?`, in
   order to let pages like "lang.section.year#,month#,day#.title", with
   only "lang.section" in common, be considered as a match.
+
+== 2019-01-03
+
+NOTE: Milestone: 0.7.0:
+
+- Improve table markup: make the cells per row configurable with
+  variable, instead of depeding on the layout.
+
+== 2019-01-09
+
+NOTE: Milestone: 0.6.0:
+
+- Make `datum: fieldname` create a new word `fieldname+`, which will
+  add the parsed datum to the current contents.
