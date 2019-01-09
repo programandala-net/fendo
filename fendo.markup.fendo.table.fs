@@ -5,10 +5,10 @@
 
 \ This file defines the Fendo markup for lists.
 
-\ Last modified 201812080157.
+\ Last modified 201901031417.
 \ See change log at the end of the file.
 
-\ Copyright (C) 2013,2014,2017 Marcos Cruz (programandala.net)
+\ Copyright (C) 2013,2014,2017,2018,2019 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute
 \ it and/or modify it under the terms of the GNU General
@@ -33,7 +33,7 @@
 \ simpler.
 \
 \ `|===` marks the table block. `|` starts a cell, `|=` starts a
-\ header cell. `=|=` surrounds the caption and must be the before any
+\ header cell. `=|=` surrounds the caption and must be before any
 \ row.  Optional closing `|` is allowed and ignored at the end of the
 \ row.
 \
@@ -126,5 +126,7 @@ fendo_definitions
 \ 2018-12-07: Fix typo.
 \
 \ 2018-12-08: Update notation of Forth words in comments and strings.
+\
+\ 2019-01-03: Fix typo in comment.
 
 \ vim: filetype=gforth
