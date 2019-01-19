@@ -7,10 +7,10 @@
 \ contents in Asciidoctor (or AsciiDoc) format, either inline or from
 \ a file.
 
-\ Last modified 201812080157.
+\ Last modified 201901191956.
 \ See change log at the end of the file.
 
-\ Copyright (C) 2015,2017 Marcos Cruz (programandala.net)
+\ Copyright (C) 2015,2017,2018,2019 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute it and/or modify it
 \ under the terms of the GNU General Public License as published by
@@ -49,11 +49,21 @@ fendo_definitions
 
 package fendo.addon.asciidoctor
 
-s" /tmp/fendo_addon.asciidoctor.adoc" 2dup 2constant input_file$
-s" .html" s+ 2constant output_file$
+: input_file$ ( -- ca len )
+  source_dir $@ current_page source_file s" .adoc" s+ s+ ;
+  \ Return filename _ca len_ of the temporary file that
+  \ contains the Asciidoctor code to be converted to HTML.
 
-\ XXX TODO -- There are similar words `>input_file` and `<output_file`
-\ in <fendo.addon.source_code.common.fs>; maybe they can be shared.
+: output_file$ ( -- ca len )
+  input_file$ s" .html" s+ ;
+  \ Return filename _ca len_ of the temporary file that
+  \ contains the HTML output of the Asciidoctor code, to be
+  \ included in the page.
+
+: delete_files ( -- )
+  input_file$  delete-file throw
+  output_file$ delete-file throw ;
+  \ Delete the temporary files.
 
 : >input_file ( ca len -- )
   input_file$ w/o create-file throw
@@ -72,14 +82,14 @@ s" .html" s+ 2constant output_file$
 \ The Asciidoctor command includes all the required options, even when
 \ they are the default; just in case the deafaults change in the
 \ future, and also for the sake of clarity:
-s" asciidoctor "
-s" --backend html5 " s+     \ default
-s" --doctype article " s+   \ default
-s" --no-header-footer " s+  \ supress the document header and footer
-                            \ in the output
-\ s" --compact " s+           \ remove blank lines in the output
-s" --out-file " s+ output_file$ s+
-2constant asciidoctor_base_command$
+: asciidoctor_base_command$ ( -- ca len )
+  s" asciidoctor "
+  s" --backend html5 " s+     \ default
+  s" --doctype article " s+   \ default
+  s" --no-header-footer " s+  \ supress the document header and footer
+                              \ in the output
+  \ s" --compact " s+         \ remove blank lines in the output
+  s" --out-file " s+ output_file$ s+ ;
 
 \ XXX FIXME -- 2018-08-20: Asciidoctor 1.5.7.1 throws error
 \ "--compact" is not accepted. But it's still in the documentation.
@@ -114,19 +124,39 @@ s" --out-file " s+ output_file$ s+
 
 public
 
-: include_asciidoctor ( ca1 len1 -- )
-  (include_asciidoctor) echo ;
-  \ Include contents in Asciidoctor format from the given file.
-  \ The header and footer of the file will be ignored.
+: include_asciidoctor ( ca len -- )
+  (include_asciidoctor) echo delete_files ;
+
+  \ doc{
+  \
+  \ include_asciidoctor ( ca len -- )
+  \
+  \ Include contents in Asciidoctor format from the given file _ca
+  \ len_.  The header and footer of the file will be ignored.
+  \
+  \ See: `asciidoctor{`.
+  \
+  \ }doc
 
 markup>current
 
 : asciidoctor{ ( "ccc<}asciidoctor>" -- )
+  \ ." in asciidoctor{ input_file$ = " input_file$ type key drop \ XXX INFORMER
   parse_asciidoctor >input_file
-  input_file$ ((include_asciidoctor)) echo ;
+  input_file$ ((include_asciidoctor)) echo delete_files ;
+
+  \ doc{
+  \
+  \ asciidoctor{ ( "ccc<}asciidoctor>" -- )
+  \
   \ Parse contents in Asciidoctor format, until "}asciidoctor" is
-  \ found (on its own line). Then save them to a file, convert them to
-  \ HTML and and include them into the current page.
+  \ found (on its own line). Then save the contents to a temporary
+  \ file, convert it to HTML and include the result into the current
+  \ page.
+  \
+  \ See: `include_asciidoctor`.
+  \
+  \ }doc
 
 end-package
 
@@ -152,5 +182,10 @@ end-package
 \ 2018-09-27: Use `package` instead of `module:`.
 \
 \ 2018-12-08: Update notation of Forth words in comments and strings.
+\
+\ 2019-01-19: Improve documentation. Use temporary files using the
+\ source page filename with added extensions. This way the Asciidoctor
+\ `include::` comand can be relative to the page source, instead of
+\ </tmp> directory as before.
 
 \ vim: filetype=gforth
