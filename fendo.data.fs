@@ -5,10 +5,11 @@
 
 \ This file defines the page data tools.
 
-\ Last modified 201812242042.
+\ Last modified 201901191922.
 \ See change log at the end of the file.
 
-\ Copyright (C) 2013,2014,2015,2017,2018 Marcos Cruz (programandala.net)
+\ Copyright (C) 2013,2014,2015,2017,2018,2019 Marcos Cruz
+\ (programandala.net)
 
 \ Fendo is free software; you can redistribute
 \ it and/or modify it under the terms of the GNU General
@@ -129,6 +130,8 @@ defer get_datum ( a u -- ca len )
 \ Page data fields
 
 datum: source_file
+  \ This field contains the source filename. It is set automatically
+  \ by `(set_default_data)` when the page is accessed the first time.
 
 \ XXX TODO -- handling of markups in the data fields depend on the
 \ application
@@ -1173,5 +1176,7 @@ true value included_files_update_the_page_date?
 \ 2018-12-23: Fix and improve documentation.
 \
 \ 2018-12-24: Improve documentation.
+\
+\ 2019-01-19: Improve documentation.
 
 \ vim: filetype=gforth

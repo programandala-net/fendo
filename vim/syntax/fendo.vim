@@ -4,7 +4,7 @@
 " URL:      http://programandala.net/en.program.fendo_vim_syntax_file.html
 " License:  GPL (http://www.gnu.org)
 " Remarks:  Vim 6 or greater
-" Updated:  2019-01-05
+" Updated:  2019-01-10
 
 " This file is part of Fendo,
 " a static website generator written in Forth
@@ -120,7 +120,7 @@ syn match fendoTableHeaderCell /\<|=\>/ containedin=fendoTableBlock contained
 syn match fendoTableCaption /\<=|=\>/ containedin=fendoTableBlock contained
 
 syn region fendoLiteralBlock start=/^\.\{4}$/ end=/^\.\{4}$/ keepend
-syn region fendoDataBlock matchgroup=fendoDataDelimiter start=/\<data{\>/ end=/\<}data\>/ contains=fendoDatumLabel
+syn region fendoDataBlock matchgroup=fendoDataDelimiter start=/\<data{\>/ end=/\<}data\>/ contains=fendoDatumLabel,fendoDataCommentLine
 syn match fendoDatumLabel /^\s*\S\+\>/ containedin=fendoDataBlock contained
 syn match fendoContentBlock /\<content{\>\|\<}content\>/
 "syn region fendoContentBlock matchgroup=fendoContentDelimiter start=/\<content{\>/ end=/\<}content\>/
@@ -136,6 +136,7 @@ syn region fendoPassthroughBlock start="^\~\{4}$" end="^\~\{4}$"
 syn region fendoCommentBlock start='\<(\*\>' end='\<\*)\>' contains=fendoTodo
 syn match fendoCommentLine '\<\\\>.*$' contains=fendoTodo
 syn match fendoCommentLine '\<#!\>.*$'
+syn match fendoDataCommentLine '^\s*\\\>.*$' containedin=fendoDataBlock contained
 
 " XXX OLD
 ""syn region fendoAttributeEntry start=/^:\a/ end=/:\(\s\|$\)/ oneline
@@ -224,6 +225,7 @@ highlight fendoTableCaption term=standout ctermfg=darkcyan guifg=darkcyan
 "Comments
 hi default link fendoCommentBlock Comment
 hi default link fendoCommentLine Comment
+hi default link fendoDataCommentLine Comment
 
 " Sections of the document
 hi def link fendoDataDelimiter Special
@@ -300,5 +302,7 @@ set comments=://,fb:-,fb:*,fb:.,fb:+,fb:>
 " 2017-10-04: Update bullet lists with "-".
 "
 " 2019-01-05: Highlight the metadata field labels.
+"
+" 2019-01-10: Highlight line comments in data block.
 
 " ----------------------------------------------
