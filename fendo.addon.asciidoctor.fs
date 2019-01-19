@@ -7,7 +7,7 @@
 \ contents in Asciidoctor (or AsciiDoc) format, either inline or from
 \ a file.
 
-\ Last modified 201901191956.
+\ Last modified 201901192002.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2015,2017,2018,2019 Marcos Cruz (programandala.net)
@@ -131,10 +131,10 @@ public
   \
   \ include_asciidoctor ( ca len -- )
   \
-  \ Include contents in Asciidoctor format from the given file _ca
-  \ len_.  The header and footer of the file will be ignored.
+  \ Include contents in Asciidoctor format from file _ca len_.  The
+  \ header and footer of the file will be ignored.
   \
-  \ See: `asciidoctor{`.
+  \ See: `asciidoctor{`, `include_markdown`.
   \
   \ }doc
 
@@ -154,7 +154,7 @@ markup>current
   \ file, convert it to HTML and include the result into the current
   \ page.
   \
-  \ See: `include_asciidoctor`.
+  \ See: `include_asciidoctor`, `markdown{`.
   \
   \ }doc
 
