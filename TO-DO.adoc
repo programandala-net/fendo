@@ -574,3 +574,24 @@ NOTE: Milestone: 0.6.0:
 
 - Make `datum: fieldname` create a new word `fieldname+`, which will
   add the parsed datum to the current contents.
+
+== 2019-01-09
+
+Make the code of the design independent from the application, i.e. add
+a code file to the design. Use conventional filenames. Only the
+directory is needed to use the design.
+
+Directory tree example:
+
+....
+src/designs/design_zero/code.fs
+src/designs/design_zero/style.css
+src/designs/design_zero/template.fs
+src/designs/my_design/code.fs
+src/designs/my_design/style.css
+src/designs/my_design/template.fs
+....
+
+<code.fs> is loaded by the application.  It contains the Forth code
+used in the template.
+
