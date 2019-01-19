@@ -6,10 +6,10 @@
 \ This file is the Markdown addon. It provides words to include
 \ contents in Markdown, either inline or from a file.
 
-\ Last modified 201812080157.
+\ Last modified 201901192002.
 \ See change log at the end of the file.
 
-\ Copyright (C) 2015,2017 Marcos Cruz (programandala.net)
+\ Copyright (C) 2015,2017,2018,2019 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute it and/or modify it
 \ under the terms of the GNU General Public License as published by
@@ -44,11 +44,21 @@ fendo_definitions
 
 package fendo.addon.markdown
 
-s" /tmp/fendo_addon.markdown.adoc" 2dup 2constant input_file$
-s" .html" s+ 2constant output_file$
+: input_file$ ( -- ca len )
+  source_dir $@ current_page source_file s" .md" s+ s+ ;
+  \ Return filename _ca len_ of the temporary file that
+  \ contains the Markdown code to be converted to HTML.
 
-\ XXX TODO -- There are similar words `>input_file` and `<output_file`
-\ in <fendo.addon.source_code.common.fs>; maybe they can be shared.
+: output_file$ ( -- ca len )
+  input_file$ s" .html" s+ ;
+  \ Return filename _ca len_ of the temporary file that
+  \ contains the HTML output of the Markdown code, to be
+  \ included in the page.
+
+: delete_files ( -- )
+  input_file$  delete-file throw
+  output_file$ delete-file throw ;
+  \ Delete the temporary files.
 
 : >input_file ( ca len -- )
   input_file$ w/o create-file throw
@@ -109,19 +119,38 @@ private
 
 public
 
-: include_markdown ( ca1 len1 -- )
+: include_markdown ( ca len -- )
   (include_markdown) echo ;
-  \ Include contents in Markdown format from the given file.
-  \ The header and footer of the file will be ignored.
+
+  \ doc{
+  \
+  \ include_markdown ( ca len -- )
+  \
+  \ Include contents in Markdown format from file _ca len_.  The
+  \ header and footer of the file will be ignored.
+  \
+  \ See: `markdownw{`, `include_asciidoctor`.
+  \
+  \ }doc
 
 markup>current
 
 : markdown{ ( "ccc<}markdown>" -- )
   parse_markdown >input_file
   input_file$ ((include_markdown)) echo ;
-  \ Parse contents in Markdown format, until "}markdown" is
-  \ found (on its own line). Then save them to a file, convert them to
-  \ HTML and and include them into the current page.
+
+
+  \ doc{
+  \
+  \ markdown{ ( "ccc<}markdown>" -- )
+  \
+  \ Parse contents in Markdown format, until "}markdown" is found (on
+  \ its own line). Then save the contents to a temporary file, convert
+  \ it to HTML and include the result into the current page.
+  \
+  \ See: `include_markdown`, `asciidoctor{`.
+  \
+  \ }doc
 
 end-package
 
@@ -135,5 +164,8 @@ end-package
 \ 2018-09-27: Use `package` instead of `module:`.
 \
 \ 2018-12-08: Update notation of Forth words in comments and strings.
+\
+\ 2019-01-19: Improve documentation. Use temporary files using the
+\ source page filename with added extensions.
 
 \ vim: filetype=gforth

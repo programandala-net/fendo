@@ -1,6 +1,6 @@
 = Fendo TO-DO
 :author: Marcos Cruz (programandala.net)
-:revdate: 2019-01-09
+:revdate: 2019-01-19
 
 // This text file is in Asciidoctor format
 // See http://asciidoctor.org
@@ -595,3 +595,10 @@ src/designs/my_design/template.fs
 <code.fs> is loaded by the application.  It contains the Forth code
 used in the template.
 
+== 2019-01-19
+
+Search for common code in the following addons and share it:
+
+- fendo.addon.source_code.common.fs
+- fendo.addon.asciidoctor.fs
+- fendo.addon.markdown.fs
