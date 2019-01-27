@@ -7,7 +7,7 @@
 \ contents in Asciidoctor (or AsciiDoc) format, either inline or from
 \ a file.
 
-\ Last modified 201901192002.
+\ Last modified 201901271946.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2015,2017,2018,2019 Marcos Cruz (programandala.net)
@@ -59,11 +59,6 @@ package fendo.addon.asciidoctor
   \ Return filename _ca len_ of the temporary file that
   \ contains the HTML output of the Asciidoctor code, to be
   \ included in the page.
-
-: delete_files ( -- )
-  input_file$  delete-file throw
-  output_file$ delete-file throw ;
-  \ Delete the temporary files.
 
 : >input_file ( ca len -- )
   input_file$ w/o create-file throw
@@ -125,7 +120,8 @@ package fendo.addon.asciidoctor
 public
 
 : include_asciidoctor ( ca len -- )
-  (include_asciidoctor) echo delete_files ;
+  (include_asciidoctor) echo
+  output_file$ delete-file throw ;
 
   \ doc{
   \
@@ -143,7 +139,9 @@ markup>current
 : asciidoctor{ ( "ccc<}asciidoctor>" -- )
   \ ." in asciidoctor{ input_file$ = " input_file$ type key drop \ XXX INFORMER
   parse_asciidoctor >input_file
-  input_file$ ((include_asciidoctor)) echo delete_files ;
+  input_file$ ((include_asciidoctor)) echo
+  input_file$  delete-file throw
+  output_file$ delete-file throw ;
 
   \ doc{
   \
@@ -187,5 +185,8 @@ end-package
 \ source page filename with added extensions. This way the Asciidoctor
 \ `include::` comand can be relative to the page source, instead of
 \ </tmp> directory as before.
+\
+\ 2019-01-27: Fix: `include_asciidoctor` tried to delete
+\ `input_file$`.
 
 \ vim: filetype=gforth
