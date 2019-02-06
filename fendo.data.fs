@@ -5,7 +5,7 @@
 
 \ This file defines the page data tools.
 
-\ Last modified 201901191922.
+\ Last modified 201902070010.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2015,2017,2018,2019 Marcos Cruz
@@ -660,7 +660,30 @@ false value ignore_draft_property?
 
 : draft? ( a -- f )
   s" draft" rot property?  ignore_draft_property? 0= and ;
+
+  \ doc{
+  \
+  \ draft? ( a -- f )
+  \
   \ Is page ID _a_ a draft? I.e., is "draft" in its properties field?
+  \
+  \ See: `unlistable?`.
+  \
+  \ }doc
+
+: unlistable? ( a -- f )
+  s" unlistable" rot property? ;
+
+  \ doc{
+  \
+  \ unlistable? ( a -- f )
+  \ 
+  \ Is page ID _a_ unlistable? I.e., is "unlistable" in its properties
+  \ field?
+  \
+  \ See: `lioc`, `draft?`.
+  \
+  \ }doc
 
 : pid$>draft? ( ca len -- f )
 \   ." Stack at the start of `pid$>draft?` : " .s cr key drop \ XXX INFORMER
@@ -1178,5 +1201,7 @@ true value included_files_update_the_page_date?
 \ 2018-12-24: Improve documentation.
 \
 \ 2019-01-19: Improve documentation.
+\
+\ 2019-02-07: Add `unlistable?`. Improve documentation.
 
 \ vim: filetype=gforth

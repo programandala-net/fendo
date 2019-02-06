@@ -5,10 +5,10 @@
 
 \ This file provides a word that is needed by other addons.
 
-\ Last modified 201812081823.
+\ Last modified 201902070005.
 \ See change log at the end of the file.
 
-\ Copyright (C) 2014,2017,2018 Marcos Cruz (programandala.net)
+\ Copyright (C) 2014,2017,2018,2019 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute it and/or modify it
 \ under the terms of the GNU General Public License as published by
@@ -28,15 +28,39 @@
 
 \ ==============================================================
 
-: lioc ( ca len -- )
+: (lioc) ( ca len -- )
   [<li>] link<pid$ [</li>] ;
-  \ Create an element of a list of content.
-  \ ca len = page ID
+
+  \ doc{
+  \
+  \ (lioc) ( ca len -- )
+  \ 
+  \ Create an element of a list of content for the page identified by
+  \ page ID _ca len_. ``(lioc)`` is a factor of `(lioc)`.
+  \
+  \ }doc
+
+: lioc ( ca len -- )
+  2dup pid$>pid# unlistable? if 2drop else (lioc) then ;
+
+  \ doc{
+  \
+  \ lioc ( ca len -- )
+  \ 
+  \ If page identified by page ID _ca len_ can be listed, i.e. its
+  \ `properties` field does not contain "unlistable", create its
+  \ corresponding element of a list of content.
+  \
+  \ See: `unlistable?`, `(lioc)`.
+  \
+  \ }doc
 
 : ?lioc ( ca len f -- )
   if  lioc  else  2drop  then ;
   \ Create an element of a list of content, if needed.
   \ ca len = page ID
+  \
+  \ XXX OLD Not used
 
 .( fendo.addon.lioc.fs compiled) cr
 
@@ -54,5 +78,8 @@
 \ 2018-12-08: Update notation of Forth words in comments and strings.
 \
 \ 2018-12-08: Update notation of page IDs in comments and strings.
+\
+\ 2019-02-07: Improve `lioc`: check `unlistable?` and factor to
+\ `(lioc)`. Improve documentation.
 
 \ vim: filetype=gforth
