@@ -6,10 +6,10 @@
 \ This file creates some low-level tools to manage multilingual
 \ websites. See the manual for details.
 
-\ Last modified 201812201808.
+\ Last modified 201903112145.
 \ See change log at the end of the file.
 
-\ Copyright (C) 2013,2017,2018 Marcos Cruz (programandala.net)
+\ Copyright (C) 2013,2017,2018,2019 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute
 \ it and/or modify it under the terms of the GNU General
@@ -31,17 +31,19 @@
 \ with Gforth (http://gnu.org/software/gforth).
 
 \ ==============================================================
-\ Requirements
+\ Requirements {{{1
 
 forth_definitions
 
-require galope/dollar-comma.fs    \ `$,`
-require galope/c-slash-string.fs  \ `c/string`
-require galope/paren-star.fs      \ `(*`
+require galope/dollar-comma.fs   \ `$,`
+require galope/c-slash-string.fs \ `c/string`
+require galope/noname-create.fs  \ `noname-create`
+require galope/paren-star.fs     \ `(*`
 
 fendo_definitions
 
 \ ==============================================================
+\ Tools {{{1
 
 true to multilingual?
 
@@ -62,6 +64,8 @@ true to multilingual?
   \ 2 constant es_language \ Spanish
   \ 3 to langs
   \ ----
+  \
+  \ See: `lang`, `l10n-string`, `default-lang`.
   \
   \ }doc
 
@@ -143,8 +147,8 @@ true to multilingual?
 
 : current_lang# ( -- n )
   current_page dup if  pid#>lang#  then  \ XXX TMP? for testing
-  ;
   \ current_page pid#>lang#  \ XXX OLD, first version
+  ;
 
   \ doc{
   \
@@ -162,6 +166,9 @@ true to multilingual?
   current_lang# cells + ;
   \ Add the current language number as cells.
 
+\ ==============================================================
+\ l10n strings {{{1
+
 : l10n-string, ( ca-n len-n ... ca1 len1 -- )
   langs 0 ?do $, loop ;
   \ Compile the language strings.
@@ -173,8 +180,8 @@ true to multilingual?
   \ Define what localization strings do.
 
 : l10n-string ( ca-n len-n ... ca1 len1 "name" -- )
-  langs 0= abort" `langs` is not set; `l10n-string` can not work."
-  create  l10n-string,  (l10n-string) ;
+  langs 0= abort" `langs` is not set."
+  create l10n-string, (l10n-string) ;
 
   \ doc{
   \
@@ -187,7 +194,23 @@ true to multilingual?
   \ When executed, _name_ will return the string corresponding to the
   \ language of the current page.
   \
-  \ See: `noname-l10n-string`, `langs`.
+  \ Usage example:
+
+  \ ----
+  \ 0 constant en_language \ English
+  \ 1 constant eo_language \ Esperanto
+  \ 2 constant es_language \ Spanish
+  \ 3 to langs
+  \
+  \ s" Hello" s" Saluton" s" Hola"
+  \ l10n-string multilingual-salute$
+  \ ----
+  \
+  \ NOTE: ``l10n-string`` is deprecated. It has been superseded by
+  \ ``begin-translation``, which makes it easier to add new
+  \ translations gradually and maintain them.
+  \
+  \ See: `begin-translation`, `noname-l10n-string`, `langs`.
   \
   \ }doc
 
@@ -206,9 +229,321 @@ true to multilingual?
   \ When executed, _xt_ will return the string corresponding to the
   \ language of the current page.
   \
-  \ See: `l10n-string`.
+  \ NOTE: ``noname-l10n-string`` is deprecated. It has been superseded
+  \ by `begin-translation`, which makes it easier to add new
+  \ translations gradually and maintain them.
+  \
+  \ See: `begin-translation`, `l10n-string`.
   \
   \ }doc
+
+\ ==============================================================
+\ l10n$ {{{1
+
+false [if]
+
+\ XXX OLD --  This code is previous to the definitive implementation:
+\ `begin-translation`.
+
+0 value default-lang
+
+  \ doc{
+  \
+  \ default-lang ( -- n )
+  \
+  \ A ``value`` that returns the language that `l10n$` variables
+  \ will use when the translation in the current language is not
+  \ available, unless `default-l10n$` is set. Its default value is
+  \ zero, i.e. the first language defined by the application.
+  \
+  \ See: `default-l10n$`, `lang`, `langs`.
+  \
+  \ }doc
+
+$variable default-l10n$
+
+  \ default-l10n$ ( -- a )
+  \
+  \ A dynamic string variable. _a_ is the address of the string, which
+  \ can be retrieved by Gforth's ``$@`` and set by ``$!``. Its default
+  \ value is an empty string.
+  \
+  \ When the dynamic string pointed by _a_ is not empty, it will be
+  \ returned by the variables created by `l10n$`, whenever the
+  \ translation in the current language is not available.
+  \
+  \ When the dynamic string pointed by _a_ is empty, which is the
+  \ default, `default-lang` is used instead when the current
+  \ translation of a `l10n$` variable is not available.
+  \
+  \ By storing an identificable string ``default-l10n$``, missing
+  \ translations can be traced in the HTML.
+  \
+  \ See: `default-lang`, `langs`.
+
+: l10n$, ( true n[n] ca[n] len[n] ... n[1] ca[1] len[1] -- )
+  here >r langs 0 ?do s" " $, loop
+  begin  dup true <>
+  while  ( n ca len ) rot cells r@ + $!
+  repeat drop rdrop ;
+  \ Compile the localization strings received by `l10n$`.
+
+: (l10n$) ( a -- ca len )
+  dup +lang $@
+  dup if   rot drop                      \ current lang
+      else 2drop default-lang cells + $@ \ default lang
+      then ;
+  \ Behaviour of localization variables created by `l10n$`.
+  \ _a_ is the pfa
+
+: l10n$ ( true n[n] ca[n] len[n] ... n[1] ca[1] len[1] "name" -- )
+  langs 0= abort" `langs` is not set."
+  create l10n$,
+  does> ( -- ca len ) ( pfa ) (l10n$) ;
+
+  \ l10n$ ( true n[n] ca[n] len[n] ... n[1] ca[1] len[1] "name" -- )
+  \
+  \ Create a localization string constant, with translations from
+  \ _ca[1] len[1]_ in language _n[n]_ to translation _ca[n] len[n]_ in
+  \ language _n[1]_. Any number of translations can be provided.
+  \ _true_ marks the end of data.
+  \
+  \ When executed, _name_ will return the string corresponding to the
+  \ language of the current page. If the required translation is not
+  \ available, `default-l10n$` is tried first, then `default-lang`.
+  \
+  \ Usage example:
+
+  \ ----
+  \ 0 constant english
+  \ 1 constant esperanto
+  \ 2 constant spanish
+  \ 3 constant interlingue
+  \ 4 to langs
+  \
+  \ true
+  \ spanish     s" Hola"
+  \ interlingue s" Salute"
+  \ english     s" Hello"
+  \ l10n$ multilingual-salute$
+  \ ----
+
+  \ See: `l10n$`, `default-lang`, `l10n-string`.
+
+[then]
+
+\ ==============================================================
+\ begin-translation {{{1
+
+: ?langs ( -- )
+  langs 0= abort" `langs` is not set." ;
+  \ Aborts if `langs` is zero, i.e. if no languages has been set yet.
+
+0 value default-lang
+
+  \ doc{
+  \
+  \ default-lang ( -- n )
+  \
+  \ A ``value`` that returns the language that `translation` variables
+  \ will use when the translation in the current language is not
+  \ available, unless `default-translation` is set. Its default value is
+  \ zero, i.e. the first language defined by the application.
+  \
+  \ See: `default-translation`, `lang`, `langs`.
+  \
+  \ }doc
+
+$variable default-translation
+
+  \ doc{
+  \
+  \ default-translation ( -- a )
+  \
+  \ A dynamic string variable. _a_ is the address of the string, which
+  \ can be retrieved by Gforth's ``$@`` and set by ``$!``. Its default
+  \ value is an empty string.
+  \
+  \ When the dynamic string pointed by _a_ is not empty, it will be
+  \ returned by the variables created by `translation`, whenever the
+  \ translation in the current language is not available.
+  \
+  \ When the dynamic string pointed by _a_ is empty, which is the
+  \ default, `default-lang` is used instead when the current
+  \ translation of a `translation` variable is not available.
+  \
+  \ By storing an identificable string ``default-translation``, missing
+  \ translations can be traced in the HTML.
+  \
+  \ See: `default-lang`, `langs`.
+  \
+  \ }doc
+
+: translation, ( true n[n] ca[n] len[n] ... n[1] ca[1] len[1] -- )
+  here >r langs 0 ?do s" " $, loop
+  begin  dup true <>
+  while  ( n ca len ) rot cells r@ + $!
+  repeat drop rdrop ;
+  \ Compile the localization strings received by `end-translation`.
+
+: (translation) ( a -- ca len )
+  dup +lang $@
+  dup if   rot drop                      \ current lang
+      else 2drop default-lang cells + $@ \ default lang
+      then ;
+  \ Behaviour of constants created by `begin-translation`.  _a_ is the pfa.
+
+: end-translation ( true n[n] ca[n] len[n] ... n[1] ca[1] len[1] -- )
+  translation, does> ( -- ca len ) ( pfa ) (translation) ;
+
+  \ doc{
+  \
+  \ end-translation ( x n[n] ca[n] len[n] ... n[1] ca[1] len[1] --)
+  \
+  \ End the definition of a translation started by
+  \ `begin-translation`, by compiling all translations from string
+  \ _ca[1] len[1]_ in language _n[n]_ to string _ca[n] len[n]_ in
+  \ language _n[1]_. Any number of translations can be provided.  _x_
+  \ marks the end of the data, and is provided by `begin-translation`.
+  \
+  \ See `begin-translation` for details and a usage example.
+  \
+  \ }doc
+
+: begin-translation ( "name" -- x )
+  ?langs create true ;
+
+  \ doc{
+  \
+  \ begin-translation ( "name" -- x )
+  \
+  \ Begin the definition of a translation, i.e. a string constant that
+  \ will be calculated at run-time depending on the language of the
+  \ current page.  _x_ is consumed by `end-translation`.
+  \
+  \ When executed, _name_ will return the string corresponding to the
+  \ language of the current page. If the required translation is not
+  \ available, `default-translation` is tried first, then
+  \ `default-lang`.
+  \
+  \
+  \ Usage example:
+
+  \ ----
+  \ 0 constant english
+  \ 1 constant esperanto
+  \ 2 constant spanish
+  \ 3 constant interlingue
+  \ 4 to langs
+  \
+  \ begin-translation multilingual-salute$
+  \   spanish     s" Hola"
+  \   interlingue s" Salute"
+  \   english     s" Hello"
+  \ end-translation
+  \
+  \ \ Since no Esperanto translation has been defined in this
+  \ \ example, it will be calculated depending on
+  \ \ `default-translation` and `default-lang`.
+  \ ----
+
+  \ See: `end-translation`, `default-translation`, `default-lang`, `l10n-string`.
+  \
+  \ }doc
+
+: begin-noname-translation ( -- xt x )
+  ?langs noname-create true ;
+
+  \ doc{
+  \
+  \ begin-noname-translation ( -- xt x )
+  \
+  \ Begin the definition of an unnamed translation an return its _xt_.
+  \ A transaltion is a string constant that will be calculated at
+  \ run-time depending on the language of the current page.  _x_ is
+  \ consumed by `end-translation`.
+  \
+  \ When executed, _xt_ will return the string corresponding to the
+  \ language of the current page. If the required translation is not
+  \ available, `default-translation` is tried first, then
+  \ `default-lang`.
+  \
+  \ Usage example:
+
+  \ ----
+  \ 0 constant english
+  \ 1 constant esperanto
+  \ 2 constant spanish
+  \ 3 constant interlingue
+  \ 4 to langs
+  \
+  \ defer my-salute
+  \
+  \ begin-noname-translation
+  \   spanish     s" Hola"
+  \   interlingue s" Salute"
+  \   english     s" Hello"
+  \ end-translation is my-salute
+  \
+  \ \ Since no Esperanto translation has been defined in this
+  \ \ example, it will be calculated depending on
+  \ \ `default-translation` and `default-lang`.
+  \ ----
+
+  \ See: `begin-translation`, `end-translation`,
+  \ `default-translation`, `default-lang`, `l10n-string`.
+  \
+  \ }doc
+
+\ ==============================================================
+\ Development notes {{{1
+
+false [if]
+
+\ 2019-03-11: Possible syntaxes considered and tried, from simple to
+\ complex to implement:
+
+\ The simplest one:
+
+true
+s" Hola"   spanish
+s" Salute" interlingue
+s" Hello"  english
+l10n-constant$ multilingual-salute$
+
+\ More legible, and only a `rot` has to be added to the code:
+
+true
+spanish     s" Hola"
+interlingue s" Salute"
+english     s" Hello"
+l10n$ multilingual-salute$
+
+\ Just syntactic sugar instead of `true`:
+
+begin-l10n
+  spanish     s" Hola"
+  interlingue s" Salute"
+  english     s" Hello"
+end-l10n multilingual-salute$
+
+\ No change, only clearer names:
+
+begin-translation
+  spanish     s" Hola"
+  interlingue s" Salute"
+  english     s" Hello"
+end-translation multilingual-salute$
+
+\ Final, a bit more complex to implement:
+
+begin-translation multilingual-salute$
+  spanish     s" Hola"
+  interlingue s" Salute"
+  english     s" Hello"
+end-translation
+
+[then]
 
 .( fendo.addon.multilingual.fs compiled) cr
 
@@ -228,8 +563,8 @@ true to multilingual?
 \
 \ 2013-12-01: Change: several renamings.
 \
-\ 2014-02-04: Change: `current_lang#` returns 0 even if no page ID is set;
-\ this is useful for testing the localization strings.
+\ 2014-02-04: Change: `current_lang#` returns 0 even if no page ID is
+\ set; this is useful for testing the localization strings.
 \
 \ 2014-02-22: Change: all "l10n$" renamed to "l10n-str" in names.
 \
@@ -257,5 +592,10 @@ true to multilingual?
 \ 2018-12-17: Update: replace `pid$>data>pid#` with `pid$>pid#`.
 \
 \ 2018-12-20: Improve documentation.
+\
+\ 2019-03-11: Write `begin-translation` and
+\ `begin-noname-translation`, more flexible alternatives to
+\ `l10n-string` and `noname-l10n-string`. Update and improve
+\ documentation.
 
 \ vim: filetype=gforth
