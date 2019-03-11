@@ -5,10 +5,10 @@
 
 \ This file creates the parser.
 
-\ Last modified 201812080235.
+\ Last modified 201903111909.
 \ See change log at the end of the file.
 
-\ Copyright (C) 2013,2017,2018 Marcos Cruz (programandala.net)
+\ Copyright (C) 2013,2017,2018,2019 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute
 \ it and/or modify it under the terms of the GNU General
@@ -461,6 +461,7 @@ false value updating?  \ XXX TODO document
   \ restore the default value of `do_content?` for the next page.
 
 : empty_stack ( -- )
+  depth if cr ." Stack: " .s cr then
   depth abort" Stack not empty" ;
 
 : content{ ( "text }content" -- )
@@ -592,22 +593,25 @@ set-current
 \
 \ 2013-05-18: New: parser; `skip_content{`.
 \
-\ 2013-06-01: New: parser rewritten from scratch. Management of empty names and
-\ empty lines.
+\ 2013-06-01: New: parser rewritten from scratch. Management of empty
+\ names and empty lines.
 \
-\ 2013-06-02: New: counters for both types of elements (markups and printable
-\ words); required in order to separate words.
+\ 2013-06-02: New: counters for both types of elements (markups and
+\ printable words); required in order to separate words.
 \
 \ 2013-06-04: Fix: lists were not properly closed by an empty space.
 \
-\ 2013-06-05: Fix: `markup` now uses a name token; this was required in order
-\ to define `~`, a markup that parses the next name is the source.
+\ 2013-06-05: Fix: `markup` now uses a name token; this was required
+\ in order to define `~`, a markup that parses the next name is the
+\ source.
 \
-\ 2013-06-05: New: `#parsed`, required for implementing the table markup.
+\ 2013-06-05: New: `#parsed`, required for implementing the table
+\ markup.
 \
 \ 2013-06-05: Change: clearer code for closing the pending markups.
 \
-\ 2013-06-06: Change: renamed from "fendo_content.fs" to "fendo_parser.fs".
+\ 2013-06-06: Change: renamed from "fendo_content.fs" to
+\ "fendo_parser.fs".
 \
 \ 2013-06-06: New: template implemented.
 \
@@ -617,106 +621,116 @@ set-current
 \
 \ 2013-06-08: New: first implementation of target directories.
 \
-\ 2013-06-11: Fix: the target file is opened and closed depending on the `dry?`
-\ config variable.
+\ 2013-06-11: Fix: the target file is opened and closed depending on
+\ the `dry?` config variable.
 \
 \ 2013-06-11: Fix: typo in comment of `template_halves`.
 \
-\ 2013-06-16: Change: The parser has been rewritten; now `search-wordlist` is
-\ used instead of `parse-name` and `find-name`; this was needed to avoid
-\ matches in the Root wordlist.
+\ 2013-06-16: Change: The parser has been rewritten; now
+\ `search-wordlist` is used instead of `parse-name` and `find-name`;
+\ this was needed to avoid matches in the Root wordlist.
 \
-\ 2013-06-16: Fix: Now `}content` toggles the parsing off and sets the normal
-\ wordlist order.
+\ 2013-06-16: Fix: Now `}content` toggles the parsing off and sets the
+\ normal wordlist order.
 \
-\ 2013-06-23: Change: design and template variables are renamed after the
-\ changes in the config module.
+\ 2013-06-23: Change: design and template variables are renamed after
+\ the changes in the config module.
 \
-\ 2013-06-28: Change: `$@` is no longer required by metadata fields, after
-\ Fendo A-01.
+\ 2013-06-28: Change: `$@` is no longer required by metadata fields,
+\ after Fendo A-01.
 \
-\ 2013-07-03: Change: `dry?` renamed to `echo>screen?`, after the changes in
-\ the echo module.
+\ 2013-07-03: Change: `dry?` renamed to `echo>screen?`, after the
+\ changes in the echo module.
 \
-\ 2013-07-03: Change: words that check the current echo have been renamed,
-\ after the  changes in the echo module.
+\ 2013-07-03: Change: words that check the current echo have been
+\ renamed, after the  changes in the echo module.
 \
-\ 2013-07-28: New: `parse_link_text` moved here from <fendo_markup_wiki.fs>.
+\ 2013-07-28: New: `parse_link_text` moved here from
+\ <fendo_markup_wiki.fs>.
 \
-\ 2013-07-28: Fix: old `[previous]` changed to `[markup<order]`; this was the
-\ reason the so many wordlists remained in the search order.
+\ 2013-07-28: Fix: old `[previous]` changed to `[markup<order]`; this
+\ was the reason the so many wordlists remained in the search order.
 \
-\ 2013-08-10: Fix: wrong exit flags in `parsed_link_text` caused only the first
-\ word was parsed.
+\ 2013-08-10: Fix: wrong exit flags in `parsed_link_text` caused only
+\ the first word was parsed.
 \
 \ 2013-08-10: Fix: the alternative attributes set was needed in
-\ `parsed_link_text`, to preserve the current attributes already used for the
-\ <a> tag.
+\ `parsed_link_text`, to preserve the current attributes already used
+\ for the <a> tag.
 \
 \ 2013-08-10: Change: `parse_string` renamed to `evaluate_content`.
 \
 \ 2013-08-14: Fix: '#nothings off' was needed at the end of
-\ `(evaluate_content)`. Otherwise `#nothings` activated `close_pending` before
-\ expected, e.g. this happened when a link was at the end of a line.
+\ `(evaluate_content)`. Otherwise `#nothings` activated
+\ `close_pending` before expected, e.g. this happened when a link was
+\ at the end of a line.
 \
 \ 2013-09-06: New: `do_page?`.
 \
-\ 2013-09-06: Fix: `content{` doesn't call `skip_content` anymore but `\eof`;
-\ the reason is `skip_content` parsed until "}content" was found, what was
-\ wrong when this word was mentioned in the content itself! That happened in
-\ one page and was hard to solve. It's simpler to ignore the whole file.
-\ `skip_content` has been removed.
+\ 2013-09-06: Fix: `content{` doesn't call `skip_content` anymore but
+\ `\eof`; the reason is `skip_content` parsed until "}content" was
+\ found, what was wrong when this word was mentioned in the content
+\ itself! That happened in one page and was hard to solve. It's
+\ simpler to ignore the whole file.  `skip_content` has been removed.
 \
 \ 2013-09-29: New: `}content?` flag is used to check if `}content` was
 \ executed; this way some markup errors can be detected.
 \
 \ 2013-12-06: New: `opened_markups_off` in `(content{)`.
 \
-\ 2014-03-09: New: `parsed$` keeps the string in `something`; required by the
-\ new way the heading wiki markups work.
+\ 2014-03-09: New: `parsed$` keeps the string in `something`; required
+\ by the new way the heading wiki markups work.
 \
-\ 2014-06-04: Change: `close_pending_list` restored. It was commented out, but
-\ it's necessary.
+\ 2014-06-04: Change: `close_pending_list` restored. It was commented
+\ out, but it's necessary.
 \
-\ 2014-06-15: Fix: The new flag `evaluate_the_markup?` (temporarily turned off
-\ in 'parsed_link_text) fixes the following problem: link texts were rendered
-\ twice: during parsing and during echoing. For example, this caused an abbr
-\ macro was recognized and executed during parsing, and then another abbr macro
-\ inside the title attribute of the first abbr was recognized and executed as
-\ well, what ruined the HTML.  But the fix causes a new problem: images inside
-\ link texts crash. The solution was to make the evaluation optional at the
-\ higher level, in <fendo.links.fs>, as follows:
+\ 2014-06-15: Fix: The new flag `evaluate_the_markup?` (temporarily
+\ turned off in 'parsed_link_text) fixes the following problem: link
+\ texts were rendered twice: during parsing and during echoing. For
+\ example, this caused an abbr macro was recognized and executed
+\ during parsing, and then another abbr macro inside the title
+\ attribute of the first abbr was recognized and executed as well,
+\ what ruined the HTML.  But the fix causes a new problem: images
+\ inside link texts crash. The solution was to make the evaluation
+\ optional at the higher level, in <fendo.links.fs>, as follows:
 \
-\ 2014-06-15: Fix: repeated evaluation of link texts is solved with the new
-\ `link_text_already_evaluated?` flag, defined and checked in <fendo.links.fs>.
+\ 2014-06-15: Fix: repeated evaluation of link texts is solved with
+\ the new `link_text_already_evaluated?` flag, defined and checked in
+\ <fendo.links.fs>.
 \
-\ 2014-11-09: Old code that was not used or commented out has been removed.
+\ 2014-11-09: Old code that was not used or commented out has been
+\ removed.
 \
-\ 2014-11-09: Fix: Now `(evaluate_content)` saves and restores the HTML
-\ attributes.
+\ 2014-11-09: Fix: Now `(evaluate_content)` saves and restores the
+\ HTML attributes.
 \
-\ 2014-11-17: Fix: Now `(evaluate_content)` deletes the HTML attributes after
-\ saving them, and preserves `separate?`.
+\ 2014-11-17: Fix: Now `(evaluate_content)` deletes the HTML
+\ attributes after saving them, and preserves `separate?`.
 \
-\ 2014-12-06: Change: `empty_stack` is factored out from `.sourcefilename`.
+\ 2014-12-06: Change: `empty_stack` is factored out from
+\ `.sourcefilename`.
 \
 \ 2015-02-01: Improvement: `do_page?` uses `newer?`.
 \
 \ 2015-02-02: New: `update_page?`; improved `do_page?`.
 \
 \ 2015-09-26: Commented out (not deleted yet, just in case)
-\ `close_pending_table`, because the new table format (from Asciidoctor) makes
-\ it unnecessary.
+\ `close_pending_table`, because the new table format (from
+\ Asciidoctor) makes it unnecessary.
 \
 \ 2017-06-22: Update source style, layout and header.
 \
 \ 2018-12-06: Add some debugging code.
 \
-\ 2018-12-07: Write the new method for templates: the template is interpreted
-\ and the new command `contents` inserts the page contents. The old method
-\ (splitting the template at the `{CONTENT}` string) can still be selected with
-\ `whole_template?`, but it will be removed eventually.
+\ 2018-12-07: Write the new method for templates: the template is
+\ interpreted and the new command `contents` inserts the page
+\ contents. The old method (splitting the template at the `{CONTENT}`
+\ string) can still be selected with `whole_template?`, but it will be
+\ removed eventually.
 \
 \ 2018-12-08: Update notation of Forth words in comments and strings.
+\
+\ 2019-03-11: Improve `empty_stack`: show the stack contents before
+\ aborting.
 
 \ vim: filetype=gforth
