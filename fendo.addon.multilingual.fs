@@ -6,7 +6,7 @@
 \ This file creates some low-level tools to manage multilingual
 \ websites. See the manual for details.
 
-\ Last modified 201903112145.
+\ Last modified 201903112319.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2017,2018,2019 Marcos Cruz (programandala.net)
@@ -379,47 +379,62 @@ $variable default-translation
   \
   \ }doc
 
-: translation, ( true n[n] ca[n] len[n] ... n[1] ca[1] len[1] -- )
-  here >r langs 0 ?do s" " $, loop
-  begin  dup true <>
+true constant translation-sys
+  \ The value left by `begin-translation` and
+  \ `begin-noname-transaltion`, to be consumed by `end-translation`.
+
+: translation, ( translation-sys n[n] ca[n] len[n] ... n[1] ca[1] len[1] -- )
+  here >r langs 0 ?do 0 , loop
+  begin  dup translation-sys <>
   while  ( n ca len ) rot cells r@ + $!
   repeat drop rdrop ;
   \ Compile the localization strings received by `end-translation`.
 
-: (translation) ( a -- ca len )
-  dup +lang $@
-  dup if   rot drop                      \ current lang
-      else 2drop default-lang cells + $@ \ default lang
-      then ;
-  \ Behaviour of constants created by `begin-translation`.  _a_ is the pfa.
+: no-translation ( pfa -- ca len )
+  default-translation $@ dup
+  if   rot drop
+  else 2drop default-lang cells + $@
+  then ;
+  \ Behaviour of words created by `begin-translation` or
+  \ `begin-noname-translation` when no translation has been defined
+  \ for the current language: If `default-translation` contains a
+  \ non-empty string, return it. Otherwise return the translation in
+  \ the language `default-lang`.
 
-: end-translation ( true n[n] ca[n] len[n] ... n[1] ca[1] len[1] -- )
+: (translation) ( pfa -- ca len )
+  dup +lang @ if +lang $@ else no-translation then ;
+  \ Behaviour of words created by `begin-translation` or
+  \ `begin-noname-translation`.
+
+: end-translation ( translation-sys n[n] ca[n] len[n] ... n[1] ca[1] len[1] -- )
   translation, does> ( -- ca len ) ( pfa ) (translation) ;
 
   \ doc{
   \
-  \ end-translation ( x n[n] ca[n] len[n] ... n[1] ca[1] len[1] --)
+  \ end-translation ( translation-sys n[n] ca[n] len[n] ... n[1] ca[1] len[1] --)
   \
   \ End the definition of a translation started by
   \ `begin-translation`, by compiling all translations from string
   \ _ca[1] len[1]_ in language _n[n]_ to string _ca[n] len[n]_ in
-  \ language _n[1]_. Any number of translations can be provided.  _x_
-  \ marks the end of the data, and is provided by `begin-translation`.
+  \ language _n[1]_. Any number of translations can be provided.
+  \ _translation-sys_ is left by `begin-translation` and
+  \ `begin-noname-translation` in order to mark marks the end of the
+  \ parameters.
   \
   \ See `begin-translation` for details and a usage example.
   \
   \ }doc
 
-: begin-translation ( "name" -- x )
-  ?langs create true ;
+: begin-translation ( "name" -- translation-sys )
+  ?langs create translation-sys ;
 
   \ doc{
   \
-  \ begin-translation ( "name" -- x )
+  \ begin-translation ( "name" -- translation-sys )
   \
   \ Begin the definition of a translation, i.e. a string constant that
   \ will be calculated at run-time depending on the language of the
-  \ current page.  _x_ is consumed by `end-translation`.
+  \ current page.  _translation-sys_ is consumed by `end-translation`.
   \
   \ When executed, _name_ will return the string corresponding to the
   \ language of the current page. If the required translation is not
@@ -451,17 +466,17 @@ $variable default-translation
   \
   \ }doc
 
-: begin-noname-translation ( -- xt x )
-  ?langs noname-create true ;
+: begin-noname-translation ( -- xt translation-sys )
+  ?langs noname-create translation-sys ;
 
   \ doc{
   \
-  \ begin-noname-translation ( -- xt x )
+  \ begin-noname-translation ( -- xt translation-sys )
   \
   \ Begin the definition of an unnamed translation an return its _xt_.
   \ A transaltion is a string constant that will be calculated at
-  \ run-time depending on the language of the current page.  _x_ is
-  \ consumed by `end-translation`.
+  \ run-time depending on the language of the current page.
+  \ _translation-sys_ is consumed by `end-translation`.
   \
   \ When executed, _xt_ will return the string corresponding to the
   \ language of the current page. If the required translation is not
