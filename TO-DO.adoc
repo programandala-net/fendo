@@ -1,6 +1,6 @@
 = Fendo TO-DO
 :author: Marcos Cruz (programandala.net)
-:revdate: 2019-01-19
+:revdate: 2019-03-12
 
 // This text file is in Asciidoctor format
 // See http://asciidoctor.org
@@ -602,3 +602,12 @@ Search for common code in the following addons and share it:
 - fendo.addon.source_code.common.fs
 - fendo.addon.asciidoctor.fs
 - fendo.addon.markdown.fs
+
+== 2019-03-12
+
+Fix `link_text?!`: It can not work fine in shortcuts, because the link
+text is not set before the shortcut is decoded. For example in certain
+page `[[ any-shortcut ]]` will create a link with a text link already
+used in a previous operation, no matter `link_text?!` is used in the
+definiton of `any-shortcut`.  `[[` should clear any previous link
+text.
