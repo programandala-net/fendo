@@ -6,7 +6,7 @@
 \ This file creates some low-level tools to manage multilingual
 \ websites. See the manual for details.
 
-\ Last modified 201903112319.
+\ Last modified 201903140028.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2017,2018,2019 Marcos Cruz (programandala.net)
@@ -35,10 +35,9 @@
 
 forth_definitions
 
-require galope/dollar-comma.fs   \ `$,`
-require galope/c-slash-string.fs \ `c/string`
-require galope/noname-create.fs  \ `noname-create`
-require galope/paren-star.fs     \ `(*`
+require galope/begin-translation.fs \ `$,`
+require galope/dollar-comma.fs      \ `$,`
+require galope/c-slash-string.fs    \ `c/string`
 
 fendo_definitions
 
@@ -46,28 +45,6 @@ fendo_definitions
 \ Tools {{{1
 
 true to multilingual?
-
-0 value langs
-
-  \ doc{
-  \
-  \ langs ( -- n )
-  \
-  \ A ``value`` that returns the number of language sections of a
-  \ multilingual website. It must be configured by the application.
-  \
-  \ Usage example:
-
-  \ ----
-  \ 0 constant en_language \ English
-  \ 1 constant eo_language \ Esperanto
-  \ 2 constant es_language \ Spanish
-  \ 3 to langs
-  \ ----
-  \
-  \ See: `lang`, `l10n-string`, `default-lang`.
-  \
-  \ }doc
 
 : lang_prefix ( ca1 len1 -- ca2 len2 )
   '.' c/string ;
@@ -162,12 +139,12 @@ true to multilingual?
   \
   \ }doc
 
-: +lang ( a -- a' )
-  current_lang# cells + ;
-  \ Add the current language number as cells.
-
 \ ==============================================================
 \ l10n strings {{{1
+
+\ XXX REMARK -- `l10n` words are deprecated. They are superseded by
+\ `begin-translation`, which has been moved to Galope. In fact
+\ now `langs` is provided by `begin-translation`.
 
 : l10n-string, ( ca-n len-n ... ca1 len1 -- )
   langs 0 ?do $, loop ;
@@ -176,7 +153,7 @@ true to multilingual?
   \ ca-n len-n = text in the last language
 
 : (l10n-string) ( -- )
-  does> ( -- ca len ) ( pfa ) +lang $@ ;
+  does> ( -- ca len ) ( pfa ) current_lang# cells + $@ ;
   \ Define what localization strings do.
 
 : l10n-string ( ca-n len-n ... ca1 len1 "name" -- )
@@ -238,123 +215,48 @@ true to multilingual?
   \ }doc
 
 \ ==============================================================
-\ l10n$ {{{1
+\ Config and doc of `begin-translation` {{{1
 
-false [if]
+' current_lang# is lang
+  \ `lang` must return the current language.
 
-\ XXX OLD --  This code is previous to the definitive implementation:
-\ `begin-translation`.
-
-0 value default-lang
+\ This is an copy of the documentation, adapted to Fendo, in order to
+\ make it part of the program manual.
 
   \ doc{
   \
-  \ default-lang ( -- n )
+  \ langs ( -- n )
   \
-  \ A ``value`` that returns the language that `l10n$` variables
-  \ will use when the translation in the current language is not
-  \ available, unless `default-l10n$` is set. Its default value is
-  \ zero, i.e. the first language defined by the application.
-  \
-  \ See: `default-l10n$`, `lang`, `langs`.
-  \
-  \ }doc
-
-$variable default-l10n$
-
-  \ default-l10n$ ( -- a )
-  \
-  \ A dynamic string variable. _a_ is the address of the string, which
-  \ can be retrieved by Gforth's ``$@`` and set by ``$!``. Its default
-  \ value is an empty string.
-  \
-  \ When the dynamic string pointed by _a_ is not empty, it will be
-  \ returned by the variables created by `l10n$`, whenever the
-  \ translation in the current language is not available.
-  \
-  \ When the dynamic string pointed by _a_ is empty, which is the
-  \ default, `default-lang` is used instead when the current
-  \ translation of a `l10n$` variable is not available.
-  \
-  \ By storing an identificable string ``default-l10n$``, missing
-  \ translations can be traced in the HTML.
-  \
-  \ See: `default-lang`, `langs`.
-
-: l10n$, ( true n[n] ca[n] len[n] ... n[1] ca[1] len[1] -- )
-  here >r langs 0 ?do s" " $, loop
-  begin  dup true <>
-  while  ( n ca len ) rot cells r@ + $!
-  repeat drop rdrop ;
-  \ Compile the localization strings received by `l10n$`.
-
-: (l10n$) ( a -- ca len )
-  dup +lang $@
-  dup if   rot drop                      \ current lang
-      else 2drop default-lang cells + $@ \ default lang
-      then ;
-  \ Behaviour of localization variables created by `l10n$`.
-  \ _a_ is the pfa
-
-: l10n$ ( true n[n] ca[n] len[n] ... n[1] ca[1] len[1] "name" -- )
-  langs 0= abort" `langs` is not set."
-  create l10n$,
-  does> ( -- ca len ) ( pfa ) (l10n$) ;
-
-  \ l10n$ ( true n[n] ca[n] len[n] ... n[1] ca[1] len[1] "name" -- )
-  \
-  \ Create a localization string constant, with translations from
-  \ _ca[1] len[1]_ in language _n[n]_ to translation _ca[n] len[n]_ in
-  \ language _n[1]_. Any number of translations can be provided.
-  \ _true_ marks the end of data.
-  \
-  \ When executed, _name_ will return the string corresponding to the
-  \ language of the current page. If the required translation is not
-  \ available, `default-l10n$` is tried first, then `default-lang`.
+  \ A ``value`` that returns the number of language sections of a
+  \ multilingual website. It must be configured by the application.
   \
   \ Usage example:
 
   \ ----
-  \ 0 constant english
-  \ 1 constant esperanto
-  \ 2 constant spanish
-  \ 3 constant interlingue
-  \ 4 to langs
-  \
-  \ true
-  \ spanish     s" Hola"
-  \ interlingue s" Salute"
-  \ english     s" Hello"
-  \ l10n$ multilingual-salute$
+  \ 0 constant en_language \ English
+  \ 1 constant eo_language \ Esperanto
+  \ 2 constant es_language \ Spanish
+  \ 3 to langs
   \ ----
-
-  \ See: `l10n$`, `default-lang`, `l10n-string`.
-
-[then]
-
-\ ==============================================================
-\ begin-translation {{{1
-
-: ?langs ( -- )
-  langs 0= abort" `langs` is not set." ;
-  \ Aborts if `langs` is zero, i.e. if no languages has been set yet.
-
-0 value default-lang
+  \
+  \ See: `l10n-string`, `default-lang`.
+  \
+  \ }doc
 
   \ doc{
   \
   \ default-lang ( -- n )
   \
-  \ A ``value`` that returns the language that `translation` variables
-  \ will use when the translation in the current language is not
-  \ available, unless `default-translation` is set. Its default value is
-  \ zero, i.e. the first language defined by the application.
+  \ A ``value`` that returns the language of the translation returned
+  \ by constants created by `begin-translation` or
+  \ `begin-noname-transalation` when the translation in the current
+  \ language is not available, unless `default-translation` is set.
+  \ Its default value is zero, i.e. the first language defined by the
+  \ application.
   \
-  \ See: `default-translation`, `lang`, `langs`.
+  \ See: `default-translation`, `langs`.
   \
   \ }doc
-
-$variable default-translation
 
   \ doc{
   \
@@ -379,36 +281,6 @@ $variable default-translation
   \
   \ }doc
 
-true constant translation-sys
-  \ The value left by `begin-translation` and
-  \ `begin-noname-transaltion`, to be consumed by `end-translation`.
-
-: translation, ( translation-sys n[n] ca[n] len[n] ... n[1] ca[1] len[1] -- )
-  here >r langs 0 ?do 0 , loop
-  begin  dup translation-sys <>
-  while  ( n ca len ) rot cells r@ + $!
-  repeat drop rdrop ;
-  \ Compile the localization strings received by `end-translation`.
-
-: no-translation ( pfa -- ca len )
-  default-translation $@ dup
-  if   rot drop
-  else 2drop default-lang cells + $@
-  then ;
-  \ Behaviour of words created by `begin-translation` or
-  \ `begin-noname-translation` when no translation has been defined
-  \ for the current language: If `default-translation` contains a
-  \ non-empty string, return it. Otherwise return the translation in
-  \ the language `default-lang`.
-
-: (translation) ( pfa -- ca len )
-  dup +lang @ if +lang $@ else no-translation then ;
-  \ Behaviour of words created by `begin-translation` or
-  \ `begin-noname-translation`.
-
-: end-translation ( translation-sys n[n] ca[n] len[n] ... n[1] ca[1] len[1] -- )
-  translation, does> ( -- ca len ) ( pfa ) (translation) ;
-
   \ doc{
   \
   \ end-translation ( translation-sys n[n] ca[n] len[n] ... n[1] ca[1] len[1] --)
@@ -424,9 +296,6 @@ true constant translation-sys
   \ See `begin-translation` for details and a usage example.
   \
   \ }doc
-
-: begin-translation ( "name" -- translation-sys )
-  ?langs create translation-sys ;
 
   \ doc{
   \
@@ -465,9 +334,6 @@ true constant translation-sys
   \ See: `end-translation`, `default-translation`, `default-lang`, `l10n-string`.
   \
   \ }doc
-
-: begin-noname-translation ( -- xt translation-sys )
-  ?langs noname-create translation-sys ;
 
   \ doc{
   \
@@ -612,5 +478,8 @@ end-translation
 \ `begin-noname-translation`, more flexible alternatives to
 \ `l10n-string` and `noname-l10n-string`. Update and improve
 \ documentation.
+\
+\ 2019-03-14: Move `begin-translation`, `lang` and all related words
+\ to the Galope library.
 
 \ vim: filetype=gforth
