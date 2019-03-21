@@ -6,7 +6,7 @@
 \ This file provides the words needed to create links,
 \ by the markup words or by the user application.
 
-\ Last modified 201812172116.
+\ Last modified 201903212106.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2017,2018 Marcos Cruz (programandala.net)
@@ -310,6 +310,17 @@ defer link_text_suffix
 defer link_suffix
 ' noop  dup is link_text_suffix  is link_suffix
 
+  \ doc{
+  \
+  \ link_text_suffix ( -- )
+  \
+  \ A deferred word. A hook for the application. Its default action is
+  \ ``noop``.
+  \
+  \ Used by `linked_file_size`.
+  \
+  \ }doc
+
 : anchor_only ( -- )
 \  s" #" href=@ /anchor 2swap 2drop s+ href=!  \ XXX OLD
   s" #" link_anchor $@ s+ href=! ;
@@ -468,5 +479,7 @@ defer (get_link_href) ( ca len -- )
 \ 2018-12-08: Update notation of page IDs in comments and strings.
 \
 \ 2018-12-17: Update: replace `pid$>data>pid#` with `pid$>pid#`.
+\
+\ 2019-03-21: Document `link_text_suffix`.
 
 \ vim: filetype=gforth
