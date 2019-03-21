@@ -1,6 +1,6 @@
 = Fendo TO-DO
 :author: Marcos Cruz (programandala.net)
-:revdate: 2019-03-12
+:revdate: 2019-03-14
 
 // This text file is in Asciidoctor format
 // See http://asciidoctor.org
@@ -611,3 +611,10 @@ page `[[ any-shortcut ]]` will create a link with a text link already
 used in a previous operation, no matter `link_text?!` is used in the
 definiton of `any-shortcut`.  `[[` should clear any previous link
 text.
+
+== 2019-03-14
+
+- Reuse the code highlighting: keep the file with a unique filename,
+  based on its full path. Before highlighting a file, check if it
+  exists. Keep them in a temporary directory of the application.
+- Use always <tmp> directory of the application instead of </tmp>.
