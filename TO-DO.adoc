@@ -1,6 +1,6 @@
 = Fendo TO-DO
 :author: Marcos Cruz (programandala.net)
-:revdate: 2019-03-14
+:revdate: 2019-07-30
 
 // This text file is in Asciidoctor format
 // See http://asciidoctor.org
@@ -618,3 +618,29 @@ text.
   based on its full path. Before highlighting a file, check if it
   exists. Keep them in a temporary directory of the application.
 - Use always <tmp> directory of the application instead of </tmp>.
+
+== 2019-04-01
+
+Write an addon to share the page's URL.
+
+URL examples from wearespectrumprogrammers.co.uk:
+
+Facebook::
+http://www.facebook.com/sharer.php?u=http%3A%2F%2Fwww.wearespectrumprogrammers.co.uk%2Findex.php%2Fgames%2F&t=Games
+
+Reddit::
+http://www.reddit.com/submit?url=http%3A%2F%2Fwww.wearespectrumprogrammers.co.uk%2Findex.php%2Fgames%2F&title=Games
+
+Gmail::
+https://mail.google.com/mail/u/0/?view=cm&fs=1&su=Games&body=http%3A%2F%2Fwww.wearespectrumprogrammers.co.uk%2Findex.php%2Fgames%2F&ui=2&tf=1
+
+Twitter::
+http://twitter.com/share?text=Games&url=http%3A%2F%2Fwww.wearespectrumprogrammers.co.uk%2Findex.php%2Fgames%2F
+
+LinkedIn::
+http://www.linkedin.com/shareArticle?mini=true&url=http%3A%2F%2Fwww.wearespectrumprogrammers.co.uk%2Findex.php%2Fgames%2F&title=Games
+
+== 2019-07-30
+
+Fix: `previous_page [calculated]` causes an error trying to access the
+data of page "prev.fs"!
