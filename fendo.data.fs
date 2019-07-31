@@ -5,7 +5,7 @@
 
 \ This file defines the page data tools.
 
-\ Last modified 201902070010.
+\ Last modified 201907312259.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2015,2017,2018,2019 Marcos Cruz
@@ -371,7 +371,7 @@ defer brother_pages? ( ca1 len1 ca2 len2 -- f )
   \ I.e., do they belong to the same section?
   \
   \ ``brother_pages?`` is a a deferred word that can be reconfigured
-  \ by the application. Its default behaviours is `(brother_pages?)`.
+  \ by the application. Its default behaviour is `(brother_pages?)`.
   \
   \ }doc
 
@@ -677,7 +677,7 @@ false value ignore_draft_property?
   \ doc{
   \
   \ unlistable? ( a -- f )
-  \ 
+  \
   \ Is page ID _a_ unlistable? I.e., is "unlistable" in its properties
   \ field?
   \
@@ -741,33 +741,53 @@ variable a_previous_page \ dynamic string
 
 : (pid$>previous) ( ca1 len1 -- true | ca2 len2 false )
   {: D: pid$ :}
-  pid$ pid$>pid# draft?               ?dup ?exit
-  pid$ this_page $@ brother_pages? 0= ?dup ?exit
+  pid$ pid$>pid# draft? ?dup ?exit
   pid$ this_page $@ str=
-  if        a_previous_page $@ false
-  else pid$ a_previous_page $! true
+  if   a_previous_page $@ false
+  else pid$ this_page $@ brother_pages?
+       if pid$ a_previous_page $! then true
   then ;
-  \ Is page ID _ca1 len1_ (local _pid$_) contained in the dynamic string
-  \ _this_page_?  If so, return the page ID _ca2 len2_ of its previous brother
-  \ page in the hierarchy (page ID which was saved in the previous execution)
-  \ and _false_ (to stop the traversing); otherwise return just _true_ (to
-  \ continue the traversing).
+
+  \ doc{
+  \
+  \ (pid$>previous) ( ca1 len1 -- true | ca2 len2 false )
+  \
+  \ The execution token of this word is passed to `traverse_pids` by
+  \ `pid$>previous` in order to find the previous page of `this_page`
+  \ in the hierarchy.
+  \
+  \ If page ID _ca1 len1_ (local _pid$_) is the previous page of
+  \ `this_page`, return it as _ca2 len2_ with _false_ on TOS in order
+  \ to stop the traversing. Otherwise return just _true_ to continue
+  \ the traversing.
+  \
+  \ }doc
 
 : pid$>previous ( ca1 len1 -- ca2 len2 )
-\  ." Input of `pid$>previous`: «" 2dup type ." »" cr \ XXX INFORMER
-  a_previous_page off
-  this_page $!
-  ['] (pid$>previous) traverse_pids
-\  ." Output of `pid$>previous`: «" 2dup type ." »" cr \ XXX INFORMER
-  ;
-  \ Return the previous brother page ID _ca2 len2_ of page ID _ca1 len1_.
-  \ If no previous page exists, _ca2 len2_ is an empty string.
+  this_page $!  a_previous_page off
+  ['] (pid$>previous) traverse_pids ;
+
+  \ doc{
+  \
+  \ pid$>previous ( ca1 len1 -- ca2 len2 )
+  \
+  \ Search for the previous brother page ID _ca2 len2_ of page ID _ca1
+  \ len1_.  If no previous page is found in the hierarchy, _ca2 len2_
+  \ is an empty string.
+  \
+  \ ``pid$>previous`` stores _ca1 len1_ into `this_page`, then empties
+  \ `a_previous_page` and finally calls `traverse_pids` with
+  \ `(pid$>previous)`.
+  \
+  \ }doc
 
 : ?previous_page ( a -- ca len )
   dup previous_page 2dup calculated_field?
   if   2drop pid#>pid$ pid$>previous
   else rot drop
   then ;
+  \ Return the previous brother page ID _ca2 len2_ of page ID _ca1 len1_.
+  \ If no previous page exists, _ca2 len2_ is an empty string.
 
   \ doc{
   \
@@ -794,7 +814,7 @@ variable a_next_page \ flag
   \ this_page $@ pid$ relative_pages? 0= ?dup ?exit \ XXX TODO --
 \  ." a brother" cr \ XXX INFORMER
 
-  this_page $@ pid$ -common-prefix 
+  this_page $@ pid$ -common-prefix
 \  2over ." this_page = " type cr 2dup ." pid$ = " type \ XXX INFORMER
   str<
 \  ."  str<" .s cr \ XXX INFORMER
@@ -1203,5 +1223,7 @@ true value included_files_update_the_page_date?
 \ 2019-01-19: Improve documentation.
 \
 \ 2019-02-07: Add `unlistable?`. Improve documentation.
+\
+\ 2019-07-31: Fix `(pid$>previous)`. Improve documentation.
 
 \ vim: filetype=gforth
