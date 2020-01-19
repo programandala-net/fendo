@@ -5,10 +5,10 @@
 
 \ This file is the main one; it loads all the modules.
 
-\ Last modified 201812081823.
+\ Last modified 202001190149.
 \ See change log at the end of the file.
 
-\ Copyright (C) 2012,2013,2014,2015,2017,2018 Marcos Cruz (programandala.net)
+\ Copyright (C) 2012,2013,2014,2015,2017,2018,2020 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute it and/or modify it
 \ under the terms of the GNU General Public License as published by
@@ -50,6 +50,21 @@ require string.fs  \ dynamic strings
 
 \ ------------------------------
 \ From Galope
+
+\ First load the stringer and replace the original `s"` and `s+` with
+\ the stringer variants, in order to make sure the rest of the modules
+\ use the stringer:
+
+require galope/stringer.fs \ `stringer`
+require galope/s-s-plus.fs \ `ss+`
+require galope/s-s-quote.fs \ `ss"`
+
+1024 dup * 64 * allocate-stringer \ 64-MiB buffer by default
+
+synonym s" ss" \ Replace `s"` with the `stringer` version `ss"`
+synonym s+ ss+ \ Replace `s+` with the `stringer` version `ss+`
+
+\ Then load the rest of the required modules:
 
 require galope/three-dup.fs
 require galope/anew.fs
@@ -306,5 +321,9 @@ depth [if] abort [then]  \ XXX DEBUGGING
 \ 2018-12-08: Update notation of page IDs in comments and strings.
 \
 \ 2018-12-08: Update notation of page IDs in comments and strings.
+\
+\ 2020-01-19: Use the stringer and replace `s"` and `s+` with their
+\ stringer versions `ss"` and `ss+`. This partly avoids memory
+\ allocation errors when hundreds of pages are built at once.
 
 \ vim: filetype=gforth
