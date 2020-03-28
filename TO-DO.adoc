@@ -1,6 +1,6 @@
 = Fendo TO-DO
 :author: Marcos Cruz (programandala.net)
-:revdate: 2019-07-30
+:revdate: 2020-01-19
 
 // This text file is in Asciidoctor format
 // See http://asciidoctor.org
@@ -644,3 +644,8 @@ http://www.linkedin.com/shareArticle?mini=true&url=http%3A%2F%2Fwww.wearespectru
 
 Fix: `previous_page [calculated]` causes an error trying to access the
 data of page "prev.fs"!
+
+== 2020-01-19
+
+Fix: <fendo.addon.source_code.vim> does not work fine: the output file
+is empty or not created, while the input file is emptied.
