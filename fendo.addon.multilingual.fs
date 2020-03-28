@@ -6,7 +6,7 @@
 \ This file creates some low-level tools to manage multilingual
 \ websites. See the manual for details.
 
-\ Last modified 201903140028.
+\ Last modified 201912271504.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2017,2018,2019 Marcos Cruz (programandala.net)
@@ -35,7 +35,7 @@
 
 forth_definitions
 
-require galope/begin-translation.fs \ `$,`
+require galope/begin-translation.fs \ `begin-translation`
 require galope/dollar-comma.fs      \ `$,`
 require galope/c-slash-string.fs    \ `c/string`
 
@@ -481,5 +481,7 @@ end-translation
 \
 \ 2019-03-14: Move `begin-translation`, `lang` and all related words
 \ to the Galope library.
+\
+\ 2019-12-27: Fix typo in comment.
 
 \ vim: filetype=gforth
