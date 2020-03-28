@@ -119,7 +119,7 @@ false [if]
 [then]
 
 \ ------------------------------
-\ Other 
+\ Other
 
 : empty? ( ca len -- f )
   nip 0= ;
