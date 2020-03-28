@@ -1,25 +1,34 @@
 = Fendo
 :author: Marcos Cruz (programandala.net)
-:revdate: 2017-02-08
+:revdate: 2020-03-28
 
 // This file is part of Fendo
 // http://programandala.net/en.program.fendo.html
 
-// Last modified 201812071651
+// Last modified 202003282333
 
 // tag::description[]
 
 == Description
 
-Fendo is a website engine under development, designed to build static
-websites.
-
-Fendo is written in http://forth-standard.org[Forth] with
+Fendo is a static website generator written in
+http://forth-standard.org[Forth] with
 http://gnu.org/software/gforth[Gforth].
 
-Home page: http://programandala.net/en.program.fendo.html
+Some features:
 
-Documentation is still missing.
+- Every source page is an independent Forth program that builds its
+  HTML target.
+- Actual Forth code can be embedded in source pages and design
+  templates.
+- Support for several markups (native, Asciidoctor, Markdown, HTML).
+- Support for multilingual sites.
+- Many addons for specific needs.
+- Redirections.
+- Nestable page shortcuts.
+- Fully customizable.
+
+Home page: http://programandala.net/en.program.fendo.html
 
 // end::description[]
 
@@ -29,15 +38,18 @@ Documentation is still missing.
 
 The development of Fendo started in 2012, in order to replace two
 previous similar applications written by the author (one of them
-written in Forth, the other one written in PHP) with a new one that
-combines the best features of both of them.
+written in Forth, the other one in PHP) with a new one combining the
+best features of both of them.
 
 Since 2014-12, Fendo is the engine that powers
-http://programandala.net[programandala.net].
+http://programandala.net[programandala.net]. Since 2019 it powers also
+two more websites of the author.
 
 On 2017-02-08, a local Git repository was created from development
 backups, in order to resume the development and prepare the first
 public release.
+
+On 2020-03-28, the repository was uploaded to GitHub.
 
 // end::history[]
 
@@ -46,6 +58,19 @@ public release.
 == Current status
 
 Fendo is very stable and is regulary improved, after the requirements
-of the website.
+of the three personal websites it powers.
+
+The source code is documented, but specific usage documentation is
+still missing.
+
+Releases A-00..A-05 are internal, not recommended. The current version
+under development is 0.6.0, which will be considered the first public
+version.
+
+== The name
+
+Fendo stands for "Forth Engine for Net DOcuments". Also,
+http://vortaro.net/#fendo["fendo"] is the Esperanto word for "slot",
+in the sense "a narrow depression, perforation, or aperture".
 
 // end::status[]
