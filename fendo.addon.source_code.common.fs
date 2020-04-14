@@ -5,10 +5,10 @@
 
 \ This file is the code common to several source code addons.
 
-\ Last modified 201812080157.
+\ Last modified 202004141552.
 \ See change log at the end of the file.
 
-\ Copyright (C) 2013,2014,2017 Marcos Cruz (programandala.net)
+\ Copyright (C) 2013,2014,2017,2018,2020 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute it and/or modify it
 \ under the terms of the GNU General Public License as published by
@@ -98,17 +98,10 @@ s" /tmp/fendo_addon.source_code.txt" 2dup 2constant input_file$
 
 s" .xhtml" s+ 2constant output_file$
 
-public  \ XXX TMP
+public
 
-true [if]
-  s" ex -f " 2constant base_highlight_command$
-[else]  \ XXX TMP
-  $variable (base_highlight_command$)
-  s" vim -f " (base_highlight_command$) $!
-  : base_highlight_command$ ( -- ca len )
-    (base_highlight_command$) $@
-    ;
-[then]
+: base_highlight_command$ ( -- ca len )
+  s" vim -e -f " ;
 
 sourcepath s" fendo.addon.source_code.vim " s+ 2constant vim_program$
 
@@ -120,7 +113,7 @@ private
 
 : parameters+ ( ca len -- ca' len' )
 \  ." programming_language$ in parameters+ is " programming_language$ $@ type cr  \ XXX INFORMER
-  s\" -b -c \"set filetype=" s+ programming_language$ $@ s+ s\" \" " s+ ;
+  s\"  -b -c \"set filetype=" s+ programming_language$ $@ s+ s\" \" " s+ ;
   \ Add the required parameters to the Vim invocation command.
   \ These parameters must be before the Vim program
   \ and the source file in the command.
@@ -128,13 +121,11 @@ private
   \ charset translations to work fine.
 
 : highlighting_command$ ( -- ca len )
-  base_highlight_command$ parameters+ program+ input_file$ s+
-\  ." highlighting_command$ = " 2dup type cr  \ XXX INFORMER
-  ;
+  base_highlight_command$ parameters+ program+ input_file$ s+ ;
   \ Return the complete highlighting command,
   \ ready to be executed by the shell.
   \ The command calls Vim in execution mode, this way:
-  \   ex -f -b -c "set filetype=PROGRAMMING_LANGUAGE"
+  \   vim -e -f -b -c "set filetype=PROGRAMMING_LANGUAGE"
   \      -S ~/forth/fendo/fendo.addon.source_code.vim /tmp/fendo_addon.source_code.txt
 
 \ XXX TODO -- There are similar words `>input_file` and `<output_file`
@@ -148,12 +139,11 @@ private
 
 : <output_file ( -- ca len )
   output_file$ slurp-file ;
-  \ Get the content of the file. that Vim created as output.
+  \ Get the content of the file that Vim created as output.
   \ ca len = source code highlighted with <span> XHTML tags
 
 : (highlighted) ( ca1 len1 -- ca2 len2 )
-  >input_file
-  highlighting_command$ system
+  >input_file highlighting_command$ system
   $? abort" The system highlighting command failed"
   <output_file ;
   \ Highlight the given source code.
@@ -162,8 +152,8 @@ private
 
 public
 : highlighted ( ca1 len1 -- ca1 len1 | ca2 len2 )
-\  ." programming_language$ in highlighted is " programming_language$ $@ type cr cr cr  \ XXX INFORMER
-\  ." plain source code in highlighted" cr 2dup type key drop  \ XXX INFORMER
+\ ." programming_language$ in highlighted is " programming_language$ $@ type cr cr cr \ XXX INFORMER
+\  ." plain source code in highlighted" cr 2dup type \ key drop \ XXX INFORMER
   highlight? if  (highlighted)  then ;
   \ Highlight the given source code, if needed.
   \ ca1 len1 = plain source code
@@ -251,5 +241,9 @@ end-package
 \ 2018-09-27: Use `package` instead of `module:`.
 \
 \ 2018-12-08: Update notation of Forth words in comments and strings.
+\
+\ 2020-04-14: Update/remove debugging points. Replace `ex` with `vim
+\ -e`, for clarity. Remove alternative code to use Neovim instead of
+\ Vim.
 
 \ vim: filetype=gforth
