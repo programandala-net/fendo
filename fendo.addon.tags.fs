@@ -5,10 +5,10 @@
 
 \ This file creates the tools needed to use page tags.
 
-\ Last modified 201812081823.
+\ Last modified 202004141706.
 \ See change log at the end of the file.
 
-\ Copyright (C) 2014,2017,2018 Marcos Cruz (programandala.net)
+\ Copyright (C) 2014,2017,2018,2020 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute it and/or modify it
 \ under the terms of the GNU General Public License as published by
@@ -36,9 +36,10 @@
 \ Requirements
 
 forth_definitions
-require galope/n-to-r.fs  \ `n>r`
-require galope/n-r-from.fs  \ `nr<`
-require galope/one-plus-store.fs  \ `1+!`
+require galope/n-to-r.fs \ `n>r`
+require galope/n-r-from.fs \ `nr<`
+require galope/one-plus-store.fs \ `1+!`
+require galope/s-constant.fs \ `sconstant`
 fendo_definitions
 
 \ ==============================================================
@@ -93,7 +94,7 @@ variable #tags  \ number of evaluated tags (how many tags were evaluated)
 variable #tag   \ number of the tag that is being evaluated
 
 defer tags_url_section$  \ to be set by the application
-s" tag." 2constant (tags_url_section$)
+s" tag." sconstant (tags_url_section$)
 ' (tags_url_section$) is tags_url_section$  \ default
 
 : (tag>pid$) ( tag -- ca len )
@@ -282,7 +283,7 @@ defer (tag_does)  \ current behaviour of the tags
 \ ==============================================================
 \ Traverse the tags
 
-s" /tmp/fendo.tags.fs" 2constant tags_filename$
+s" /tmp/fendo.tags.fs" sconstant tags_filename$
 
 : tag_words ( -- )
   tags>order words tags<order ;
@@ -359,5 +360,8 @@ s" /tmp/fendo.tags.fs" 2constant tags_filename$
 \ 2018-12-08: Update notation of Forth words in comments and strings.
 \
 \ 2018-12-08: Update notation of page IDs in comments and strings.
+\
+\ 2020-04-14: Define strings constants with `sconstant` instead of
+\ `2constant`.
 
 \ vim: filetype=gforth

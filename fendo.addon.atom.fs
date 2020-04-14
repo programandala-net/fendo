@@ -5,10 +5,10 @@
 
 \ This file is the Atom addon.
 
-\ Last modified 201812081823.
+\ Last modified 202004141705.
 \ See change log at the end of the file.
 
-\ Copyright (C) 2009,2014,2015,2017,2018 Marcos Cruz (programandala.net)
+\ Copyright (C) 2009,2014,2015,2017,2018,2020 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute it and/or modify it
 \ under the terms of the GNU General Public License as published by
@@ -41,8 +41,9 @@
 
 forth_definitions
 
-require galope/n-to-r.fs  \ `n>r`
-require galope/n-r-from.fs  \ `nr>`
+require galope/n-to-r.fs \ `n>r`
+require galope/n-r-from.fs \ `nr>`
+require galope/s-constant.fs \ `sconstant`
 
 fendo_definitions
 
@@ -50,22 +51,26 @@ fendo_definitions
 \ Configurable texts
 
 s" Content"
-2constant atom_default_content$
+sconstant atom_default_content$
+
 defer atom_content$
 ' atom_default_content$ is atom_content$
 
 s" <strong>New page<strong>: "
-2constant atom_default_new_page$
+sconstant atom_default_new_page$
+
 defer atom_new_page$
 ' atom_default_new_page$ is atom_new_page$
 
 s" <strong>Updated page</strong>: "
-2constant atom_default_updated_page$
+sconstant atom_default_updated_page$
+
 defer atom_updated_page$
 ' atom_default_updated_page$ is atom_updated_page$
 
 s" <strong>Edit summary</strong>: "
-2constant atom_default_edit_summary$
+sconstant atom_default_edit_summary$
+
 defer atom_edit_summary$
 ' atom_default_edit_summary$ is atom_edit_summary$
 
@@ -349,5 +354,8 @@ set_default_atom_entry_summary
 \ 2018-12-08: Update notation of Forth words in comments and strings.
 \
 \ 2018-12-08: Update notation of page IDs in comments and strings.
+\
+\ 2020-04-14: Define strings constants with `sconstant` instead of
+\ `2constant`.
 
 \ vim: filetype=gforth

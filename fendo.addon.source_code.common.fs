@@ -5,7 +5,7 @@
 
 \ This file is the code common to several source code addons.
 
-\ Last modified 202004141552.
+\ Last modified 202004141707.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2017,2018,2020 Marcos Cruz (programandala.net)
@@ -32,8 +32,9 @@
 forth_definitions
 
 require galope/package.fs \ `package`, `private`, `public`, `end-package`
-require galope/replaced.fs  \ `replaced`
-require galope/sourcepath.fs  \ `sourcepath`
+require galope/replaced.fs \ `replaced`
+require galope/s-constant.fs \ `sconstant`
+require galope/sourcepath.fs \ `sourcepath`
 
 fendo_definitions
 
@@ -92,18 +93,22 @@ $variable source_code$
 
 private
 
-s" ./cache/addons/source_code/" 2constant cache_dir$  \ XXX TODO unused
+s" ./cache/addons/source_code/" sconstant cache_dir$  \ XXX TODO unused
 
-s" /tmp/fendo_addon.source_code.txt" 2dup 2constant input_file$
+s" /tmp/fendo_addon.source_code.txt" sconstant input_file$
 
-s" .xhtml" s+ 2constant output_file$
+s" .xhtml" sconstant output_file_extension$
+
+input_file$ output_file_extension$ s+ sconstant output_file$
 
 public
 
 : base_highlight_command$ ( -- ca len )
   s" vim -e -f " ;
 
-sourcepath s" fendo.addon.source_code.vim " s+ 2constant vim_program$
+s" fendo.addon.source_code.vim " sconstant vim_addon$
+
+sourcepath vim_addon$ s+ sconstant vim_program$
 
 private
 
@@ -244,6 +249,7 @@ end-package
 \
 \ 2020-04-14: Update/remove debugging points. Replace `ex` with `vim
 \ -e`, for clarity. Remove alternative code to use Neovim instead of
-\ Vim.
+\ Vim. Define strings constants with `sconstant` instead of
+\ `2constant`.
 
 \ vim: filetype=gforth
