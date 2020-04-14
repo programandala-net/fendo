@@ -5,10 +5,10 @@
 
 \ This file is the source code addon.
 
-\ Last modified 201812080157.
+\ Last modified 202004141705.
 \ See change log at the end of the file.
 
-\ Copyright (C) 2013,2014,2015,2017 Marcos Cruz (programandala.net)
+\ Copyright (C) 2013,2014,2015,2017,2018,2020 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute it and/or modify it
 \ under the terms of the GNU General Public License as published by
@@ -36,6 +36,7 @@ require string.fs  \ Gforth's dynamic strings
 require galope/dollar-variable.fs \ `$variable`
 require galope/minus-leading.fs \ `-leading`
 require galope/package.fs \ `package`, `private`, `public`, `end-package`
+require galope/s-constant.fs \ `sconstant`
 require galope/string-suffix-question.fs \ `string-suffix?`
 
 fendo_definitions
@@ -238,9 +239,11 @@ no_source_code_translation
   \ ca2 len2 = regex supported by the rgx module
   \   of the Forth Foundation Library
 
-s" /tmp/fendo.source_codes_by_dir_and_regex.txt" 2dup 2constant tmp_raw_file$
+s" /tmp/fendo.source_codes_by_dir_and_regex.txt" sconstant tmp_raw_file$
 
-s" .fs" s+ 2constant tmp_sorted_file$
+s" .fs" sconstant tmp_sorted_file_extension$
+
+tmp_raw_file$ tmp_sorted_file_extension$ s+ sconstant tmp_sorted_file$
 
 : sorted_source_code_files_by_dir_and_regex ( ca1 len1 ca2 len2 -- )
   ['] (sorted_source_code_files_by_dir_and_regex)
@@ -373,5 +376,8 @@ end-package
 \ 2018-09-27: Use `package` instead of `module:`.
 \
 \ 2018-12-08: Update notation of Forth words in comments and strings.
+\
+\ 2020-04-14: Define strings constants with `sconstant` and instead of
+\ `2constant`.
 
 \ vim: filetype=gforth

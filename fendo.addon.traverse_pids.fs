@@ -6,10 +6,10 @@
 \ This file provides a word that traverses all pids (page IDs),
 \ required by other addons.
 
-\ Last modified 201812081823.
+\ Last modified 202004141707.
 \ See change log at the end of the file.
 
-\ Copyright (C) 2013,2014,2017,2018 Marcos Cruz (programandala.net)
+\ Copyright (C) 2013,2014,2017,2018,2020 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute it and/or modify it
 \ under the terms of the GNU General Public License as published by
@@ -31,14 +31,15 @@
 
 forth_definitions
 
-require galope/backslash-end-of-file.fs  \ `\eof`
+require galope/backslash-end-of-file.fs \ `\eof`
 require galope/package.fs \ `package`, `private`, `public`, `end-package`
+require galope/s-constant.fs \ `sconstant`
 
 fendo_definitions
 
 package fendo.addon.traverse_pids
 
-s" /tmp/fendo.traverse_pids.fs" 2constant pids_file$
+s" /tmp/fendo.traverse_pids.fs" sconstant pids_file$
 
 : ls$ ( -- ca len )
   s" ls -1 " source_dir $@ s+ s" *" s+ forth_extension $@ s+ ;
@@ -65,7 +66,9 @@ s" /tmp/fendo.traverse_pids.fs" 2constant pids_file$
   \ that traverses all of the page IDs.
 
 : create_pids_file ( -- )
-  command$ s"  > " s+ pids_file$ s+ system ;
+  command$ s"  > " s+ pids_file$ s+
+\  2dup type cr \ XXX INFORMER
+  system ;
 
 defer (traversed_pid) ( ca len -- f )
   \ User action for every page ID.
@@ -132,5 +135,8 @@ end-package
 \ 2018-12-08: Update notation of Forth words in comments and strings.
 \
 \ 2018-12-08: Update notation of page IDs in comments and strings.
+\
+\ 2020-04-14: Define strings constants with `sconstant` instead of
+\ `2constant`.
 
 \ vim: filetype=gforth

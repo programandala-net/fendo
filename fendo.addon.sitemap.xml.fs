@@ -7,10 +7,10 @@
 
 \ XXX UNDER DEVELOPMENT
 
-\ Last modified 201812172116.
+\ Last modified 202004141706.
 \ See change log at the end of the file.
 
-\ Copyright (C) 2015,2017,2018 Marcos Cruz (programandala.net)
+\ Copyright (C) 2015,2017,2018,2020 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute it and/or modify it
 \ under the terms of the GNU General Public License as published by
@@ -38,8 +38,9 @@
 
 forth_definitions
 
-require galope/n-to-r.fs  \ `n>r`
-require galope/n-r-from.fs  \ `nr>`
+require galope/n-to-r.fs \ `n>r`
+require galope/n-r-from.fs \ `nr>`
+require galope/s-constant.fs \ `sconstant`
 
 fendo_definitions
 
@@ -47,22 +48,22 @@ fendo_definitions
 \ Configurable texts
 
 s" Content"
-2constant sitemap_default_content$
+sconstant sitemap_default_content$
 defer sitemap_content$
 ' sitemap_default_content$ is sitemap_content$
 
 s" <strong>New page<strong>: "
-2constant sitemap_default_new_page$
+sconstant sitemap_default_new_page$
 defer sitemap_new_page$
 ' sitemap_default_new_page$ is sitemap_new_page$
 
 s" <strong>Updated page</strong>: "
-2constant sitemap_default_updated_page$
+sconstant sitemap_default_updated_page$
 defer sitemap_updated_page$
 ' sitemap_default_updated_page$ is sitemap_updated_page$
 
 s" <strong>Edit summary</strong>: "
-2constant sitemap_default_edit_summary$
+sconstant sitemap_default_edit_summary$
 defer sitemap_edit_summary$
 ' sitemap_default_edit_summary$ is sitemap_edit_summary$
 
@@ -284,5 +285,8 @@ set_default_sitemap_entry_summary
 \ 2018-12-08: Update notation of page IDs in comments and strings.
 \
 \ 2018-12-17: Update: replace `pid$>data>pid#` with `pid$>pid#`.
+\
+\ 2020-04-14: Define strings constants with `sconstant` instead of
+\ `2constant`.
 
 \ vim: filetype=gforth

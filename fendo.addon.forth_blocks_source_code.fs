@@ -5,10 +5,10 @@
 
 \ This file is the Forth blocks source code addon.
 
-\ Last modified 201812080157.
+\ Last modified 202004141707.
 \ See change log at the end of the file.
 
-\ Copyright (C) 2013,2014,2017 Marcos Cruz (programandala.net)
+\ Copyright (C) 2013,2014,2017,2018,2020 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute it and/or modify it
 \ under the terms of the GNU General Public License as published by
@@ -32,6 +32,7 @@
 forth_definitions
 
 require galope/package.fs \ `package`, `private`, `public`, `end-package`
+require galope/s-constant.fs \ `sconstant`
 
 fendo_definitions
 
@@ -51,7 +52,7 @@ variable forth_block_line  \ counter
 variable highlight_forth_block_0?  \ flag
 defer forth_block$  \ "Block" in the current language
 private
-s" Block" 2constant (default_forth_block$)
+s" Block" sconstant (default_forth_block$)
 ' (default_forth_block$) is forth_block$
 (*
 \ `forth_block$` can be vectored by the application
@@ -171,5 +172,8 @@ end-package
 \ 2018-09-27: Use `package` instead of `module:`.
 \
 \ 2018-12-08: Update notation of Forth words in comments and strings.
+\
+\ 2020-04-14: Define strings constants with `sconstant` instead of
+\ `2constant`.
 
 \ vim: filetype=gforth
