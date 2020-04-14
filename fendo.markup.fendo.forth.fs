@@ -5,10 +5,10 @@
 
 \ This file defines the Fendo markup for inline Forth code.
 
-\ Last modified 201812080157.
+\ Last modified 202004141433.
 \ See change log at the end of the file.
 
-\ Copyright (C) 2013,2014,2017 Marcos Cruz (programandala.net)
+\ Copyright (C) 2013,2014,2017,2018,2020 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute
 \ it and/or modify it under the terms of the GNU General
@@ -177,7 +177,6 @@ $variable forth_code$
 : evaluate_forth_code ( i*x ca len -- j*x )
   get-order n>r
   only fendo>order markup>order forth>order
-  >sb  \ XXX TMP
   evaluate
   nr> set-order
 \  cr ." <[..]> done!" key drop  \ XXX INFORMER
@@ -221,5 +220,7 @@ fendo_definitions
 \ 2017-06-22: Update source style, layout and header.
 \
 \ 2018-12-08: Update notation of Forth words in comments and strings.
+\
+\ 2020-04-14: Remove old `>sb`.
 
 \ vim: filetype=gforth

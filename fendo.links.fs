@@ -6,10 +6,10 @@
 \ This file provides the words needed to create links,
 \ by the markup words or by the user application.
 
-\ Last modified 201903212106.
+\ Last modified 202004141427.
 \ See change log at the end of the file.
 
-\ Copyright (C) 2013,2014,2017,2018 Marcos Cruz (programandala.net)
+\ Copyright (C) 2013,2014,2017,2018,2019,2020 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute
 \ it and/or modify it under the terms of the GNU General
@@ -182,7 +182,7 @@ variable link_type
 : missing_local_link_text ( -- ca len )
 \  ." missing_local_link_text" cr  \ XXX INFORMER
   href=@ -extension 2dup required_data<pid$
-  >sb  \ XXX TMP
+  >stringer
   evaluate title
   save_echo echo>string
   save_attributes -attributes
@@ -207,7 +207,7 @@ variable link_type
   \ XXX TODO
 
 : external_class ( -- )
-  class=@ s" external" bs& class=! ;
+  class=@ s"  " s+ s" external" s+ class=! ;
   \ Add "external" to the class attribute.
 
 :noname ( ca len -- )
@@ -481,5 +481,8 @@ defer (get_link_href) ( ca len -- )
 \ 2018-12-17: Update: replace `pid$>data>pid#` with `pid$>pid#`.
 \
 \ 2019-03-21: Document `link_text_suffix`.
+\
+\ 2020-04-14: Rewrite `external_class` without Galope's `sb&`. Replace
+\ old `>sb` with `>stringer`.
 
 \ vim: filetype=gforth

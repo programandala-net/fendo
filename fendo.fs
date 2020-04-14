@@ -5,7 +5,7 @@
 
 \ This file is the main one; it loads all the modules.
 
-\ Last modified 202001190149.
+\ Last modified 202004141421.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2012,2013,2014,2015,2017,2018,2020 Marcos Cruz (programandala.net)
@@ -59,7 +59,7 @@ require galope/stringer.fs \ `stringer`
 require galope/s-s-plus.fs \ `ss+`
 require galope/s-s-quote.fs \ `ss"`
 
-1024 dup * 64 * allocate-stringer \ 64-MiB buffer by default
+64 1024 dup * * allocate-stringer \ 64-MiB buffer by default
 
 synonym s" ss" \ Replace `s"` with the `stringer` version `ss"`
 synonym s+ ss+ \ Replace `s+` with the `stringer` version `ss+`
@@ -91,32 +91,6 @@ require galope/trim.fs  \ `trim`
 
 require galope/dollar-fetch.fs  \ `$@`
 require galope/dollar-fetch-len.fs  \ `$@len`
-
-false [if]
-
-  \ XXX FIXME -- 2013-08-10: Without this string buffer, the input
-  \ stream gets corrupted at the end of the template.  I didn't find
-  \ the bug yet.
-
-  require galope/sb.fs  \ string buffer
-  1024 100 * heap_sb
-  \ warnings @  warnings off
-  \ ' bs" alias s"  immediate
-  \ ' bs+ alias s+
-  \ ' bs& alias s&
-  \ warnings !
-
-[else]
-
-  \ XXX TMP -- 2014-02-22: It seems the problem has vanished.  The
-  \ circular string buffer is not necessary anymore.  Two words of it
-  \ are still used in <fendo.markup.wiki.fs>; they are deactivated
-  \ here:
-
-  ' noop alias >sb
-  ' s+ alias bs&
-
-[then]
 
 \ ------------------------------
 \ Other
