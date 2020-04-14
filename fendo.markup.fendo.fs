@@ -5,10 +5,10 @@
 
 \ This file defines the Fendo markup.
 
-\ Last modified 201812131719.
+\ Last modified 202004141433.
 \ See change log at the end of the file.
 
-\ Copyright (C) 2013,2014,2017,2018 Marcos Cruz (programandala.net)
+\ Copyright (C) 2013,2014,2017,2018,2020 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute
 \ it and/or modify it under the terms of the GNU General
@@ -223,7 +223,6 @@ false [if]
 : unraw_attributes ( ca len -- )
   s\" =\" " s\" =\"" replaced
   s" =' " s" ='" replaced
-  >sb  \ XXX TMP
   evaluate ;
 
   \ doc{
@@ -682,5 +681,7 @@ fendo_definitions
 \ 2018-12-08: Update notation of page IDs in comments and strings.
 \
 \ 2018-12-13: Document `unraw_attributes`.
+\
+\ 2020-04-14: Remove old `>sb`.
 
 \ vim: filetype=gforth
