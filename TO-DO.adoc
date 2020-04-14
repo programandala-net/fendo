@@ -1,6 +1,9 @@
 = Fendo TO-DO
 :author: Marcos Cruz (programandala.net)
-:revdate: 2020-01-19
+:revdate: 2020-04-14
+
+// This file is part of Fendo
+// (http://programandala.net/en.program.fendo.html).
 
 // This text file is in Asciidoctor format
 // See http://asciidoctor.org
@@ -79,24 +82,6 @@ In <fendo.data.fs>:
 == 2014-03-03
 
 Write an addon to create a list of rencent changes?
-
-== 2014-03-03
-
-Inform the Gforth list about this:
-
-----
-: traversed_pid  ( ca len -- )
-  \ ca len = pid
-  (traversed_pid) 0= if  \eof  then
-  ;
-: traverse_pids  ( xt -- )
-  is (traversed_pid)  create_pids_file
-  \ pid_file$ included  \ xxx fixme this causes problems:
-  \   *** glibc detected *** gforth: free(): invalid pointer: 0xb69fb7f0 ***
-  \   Aborted.
-  pids_file$ slurp-file evaluate  \ xxx this works
-  ;
-----
 
 == 2014-03-08
 
@@ -623,29 +608,29 @@ text.
 
 Write an addon to share the page's URL.
 
+////
+
 URL examples from wearespectrumprogrammers.co.uk:
 
 Facebook::
-http://www.facebook.com/sharer.php?u=http%3A%2F%2Fwww.wearespectrumprogrammers.co.uk%2Findex.php%2Fgames%2F&t=Games
+`http://www.facebook.com/sharer.php?u=http%3A%2F%2Fwww.wearespectrumprogrammers.co.uk%2Findex.php%2Fgames%2F&t=Games`
 
 Reddit::
-http://www.reddit.com/submit?url=http%3A%2F%2Fwww.wearespectrumprogrammers.co.uk%2Findex.php%2Fgames%2F&title=Games
+`http://www.reddit.com/submit?url=http%3A%2F%2Fwww.wearespectrumprogrammers.co.uk%2Findex.php%2Fgames%2F&title=Games`
 
 Gmail::
-https://mail.google.com/mail/u/0/?view=cm&fs=1&su=Games&body=http%3A%2F%2Fwww.wearespectrumprogrammers.co.uk%2Findex.php%2Fgames%2F&ui=2&tf=1
+`https://mail.google.com/mail/u/0/?view=cm&fs=1&su=Games&body=http%3A%2F%2Fwww.wearespectrumprogrammers.co.uk%2Findex.php%2Fgames%2F&ui=2&tf=1`
 
 Twitter::
-http://twitter.com/share?text=Games&url=http%3A%2F%2Fwww.wearespectrumprogrammers.co.uk%2Findex.php%2Fgames%2F
+`http://twitter.com/share?text=Games&url=http%3A%2F%2Fwww.wearespectrumprogrammers.co.uk%2Findex.php%2Fgames%2F`
 
 LinkedIn::
-http://www.linkedin.com/shareArticle?mini=true&url=http%3A%2F%2Fwww.wearespectrumprogrammers.co.uk%2Findex.php%2Fgames%2F&title=Games
+`http://www.linkedin.com/shareArticle?mini=true&url=http%3A%2F%2Fwww.wearespectrumprogrammers.co.uk%2Findex.php%2Fgames%2F&title=Games`
+
+////
 
 == 2019-07-30
 
 Fix: `previous_page [calculated]` causes an error trying to access the
 data of page "prev.fs"!
 
-== 2020-01-19
-
-Fix: <fendo.addon.source_code.vim> does not work fine: the output file
-is empty or not created, while the input file is emptied.
