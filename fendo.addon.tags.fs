@@ -5,7 +5,7 @@
 
 \ This file creates the tools needed to use page tags.
 
-\ Last modified 202004141706.
+\ Last modified 202004211946.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2014,2017,2018,2020 Marcos Cruz (programandala.net)
@@ -109,46 +109,13 @@ defer tag>pid$ ( tag -- ca len )
 \ ==============================================================
 \ Possible behaviours of the tags
 
-variable lonely_tags_link_to_content  \ flag
-
-\ When `lonely_tags_link_to_content` is on, the tag cloud
-\ links of tags used only once are changed to its actual tagged page.
-\ But this does not work for tag lists. The code required for tag list
-\ would be much more complex. In order to achive the same effect in
-\ tag lists, the user application can create a normal shorcut, e.g.:
-
-\   shortcut: en.tag.dbase  s" en.program.my_database" href!  ;
-
-\ In fact such a shortcut would have effect also in tag clouds, so the
-\ current code triggered by `lonely_tags_link_to_content`
-\ is unnecessary.
-
 : ((tag_link)) ( tag ca len -- )
 \  2dup cr type  \ XXX INFORMER
   rot tag>text link ;
   \ ca len = page ID
 
-: (tag_link_to_tag_page) ( tag -- )
-  dup tag>pid$ ((tag_link)) ;
-
-: (tag_link_to_own_page) ( tag -- )
-  dup tag>own_page $@ 
-\  type cr key drop  \ XXX INFORMER
-  ((tag_link)) ;
-
-: tag_link_to_own_page? ( tag -- f )
-  tag>count @
-\  dup cr ." tag>count" . \ XXX INFORMER
-  1 =
-  lonely_tags_link_to_content @
-\  dup cr ." lonely_tags_link_to_content" . \ XXX INFORMER
-  and ;
-
 : (tag_link) ( tag -- )
-  dup tag_link_to_own_page?
-\  cr ." In (tag_link) the test is " dup .  \ XXX INFORMER
-  if    (tag_link_to_own_page)
-  else  (tag_link_to_tag_page)  then ;
+  dup tag>pid$ ((tag_link)) ;
   \ Create a link to the given tag.
 
 : tag_link ( tag -- )
@@ -162,9 +129,6 @@ variable lonely_tags_link_to_content  \ flag
 : (tag_does_increase) ( tag -- )
   tag>count 1+! ;
   \ Increase the count of the given tag.
-
-: (tag_does_increase_and_save_own_page) ( tag -- )
-  dup (tag_does_increase)  last_traversed_pid $@ rot tag>own_page $! ;
 
 : (tag_does_total) ( tag -- +n )
   tag>count @ ;
@@ -223,10 +187,7 @@ defer (tag_does)  \ current behaviour of the tags
   \ Set the tags to reset their counts.
 
 : tags_do_increase ( -- )
-  lonely_tags_link_to_content @
-  if    ['] (tag_does_increase_and_save_own_page)
-  else  ['] (tag_does_increase)
-  then  is (tag_does) ;
+  (tag_does_increase) is (tag_does) ;
   \ Set the tags to increase their counts.
 
 : tags_do_total ( -- )
@@ -363,5 +324,9 @@ s" /tmp/fendo.tags.fs" sconstant tags_filename$
 \
 \ 2020-04-14: Define strings constants with `sconstant` instead of
 \ `2constant`.
+\
+\ 2020-04-21: Remove the `lonely_tags_link_to_content` flag variable
+\ and all its related code. Its effect can be achievied with a
+\ shortcut.
 
 \ vim: filetype=gforth
