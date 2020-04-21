@@ -5,10 +5,10 @@
 
 \ This file provides tag clouds by a page-id prefix.
 
-\ Last modified 201812172116.
+\ Last modified 202004211949.
 \ See change log at the end of the file.
 
-\ Copyright (C) 2014,2017,2018 Marcos Cruz (programandala.net)
+\ Copyright (C) 2014,2017,2018,2020 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute it and/or modify it
 \ under the terms of the GNU General Public License as published by
@@ -104,7 +104,6 @@ variable tag_max_size  \ percentage
 tag_cloud_with_counts on
 tag_cloud_with_sizes on
 tag_cloud_counts_sized off
-lonely_tags_link_to_content on
 090 tag_min_size !
 400 tag_max_size !
 
@@ -112,7 +111,7 @@ private
 
 : (tag_count) ( tag -- )
   s\" &nbsp;<span class=\"tagCount\">(" echo
-  tag>count @ 
+  tag>count @
 \  dup ."  count=" . key drop  \ XXX INFORMER
   echo.
 \  s" /" echo pages @ echo.  \ XXX TMP
@@ -129,19 +128,19 @@ private
   tag_max_count @ tag_min_count @ - ;
 
 : tag_size ( +n1 -- +n2 )
-  \ +n1 = tag count
-  \ +n2 = tag size (percentage)
   tag_min_count @ - 100 *  tag_count_range /
   tag_size_range *  100 /  tag_min_size @ + ;
+  \ +n1 = tag count
+  \ +n2 = tag size (percentage)
 
 : tag_cloud_sizes ( tag -- )
-  \ Set the font size style for the next HTML tag, actually <li> or <a>.
   tag>count @ tag_size n>str s" %" s+ s" font-size:" 2swap s+ style=! ;
+  \ Set the font size style for the next HTML tag, actually <li> or <a>.
 
 : ?tag_cloud_sizes ( tag f -- )
+  tag_cloud_with_sizes @ and if  tag_cloud_sizes  else  drop  then ;
   \ Set the font size style for the next HTML tag, actually <li> or <a>,
   \ if needed.
-  tag_cloud_with_sizes @ and if  tag_cloud_sizes  else  drop  then ;
 
 : (tag_does_echo_cloud) { tag -- }
 \  tag tag>name cr ." In (tag_does_echo_cloud) the tag name is " type  \ XXX INFORMER
@@ -161,12 +160,12 @@ private
 
 : do_tag_cloud ( xt -- )
 \  ." do_tag_cloud " cr  \ XXX INFORMER
-  \ xt = parameter for `init_tags`
   init_tags
 \  ." do_tag_cloud after init_tags" cr  \ XXX INFORMER
   [<ul>] tags_do_echo_cloud execute_all_tags [</ul>]
 \  ." do_tag_cloud end" cr  \ XXX INFORMER
   ;
+  \ xt = parameter for `init_tags`
 
 public
 
@@ -214,5 +213,8 @@ end-package
 \ 2018-12-08: Update notation of page IDs in comments and strings.
 \
 \ 2018-12-17: Update: replace `pid$>data>pid#` with `pid$>pid#`.
+\
+\ 2020-04-21: Update: `lonely_tags_link_to_content` was removed in
+\ <fendo.addon.tags.fs>.
 
 \ vim: filetype=gforth
