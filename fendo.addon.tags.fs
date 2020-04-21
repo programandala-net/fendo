@@ -5,7 +5,7 @@
 
 \ This file creates the tools needed to use page tags.
 
-\ Last modified 202004211946.
+\ Last modified 202004220005.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2014,2017,2018,2020 Marcos Cruz (programandala.net)
@@ -187,7 +187,7 @@ defer (tag_does)  \ current behaviour of the tags
   \ Set the tags to reset their counts.
 
 : tags_do_increase ( -- )
-  (tag_does_increase) is (tag_does) ;
+  ['] (tag_does_increase) is (tag_does) ;
   \ Set the tags to increase their counts.
 
 : tags_do_total ( -- )
