@@ -5,10 +5,10 @@
 
 \ This file defines the file tools.
 
-\ Last modified 201812081823.
+\ Last modified 202004220143.
 \ See change log at the end of the file.
 
-\ Copyright (C) 2013,2014,2015,2017,2018 Marcos Cruz (programandala.net)
+\ Copyright (C) 2013,2014,2015,2017,2018,2020 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute
 \ it and/or modify it under the terms of the GNU General
@@ -176,7 +176,8 @@ defer redirection_date ( a1 -- a2 )
 created>redirection
 
 : (redirected) ( ca len -- )
-  redirected>target 2dup 2>r w/o create-file throw  dup ((redirected))  close-file throw
+  redirected>target 2dup 2>r w/o create-file throw
+  dup ((redirected)) close-file throw
   2r> current_page redirection_date set_file_mtime
   created>redirection ; \ restore the default
   \ Create a file that redirects to the current page.
@@ -185,7 +186,7 @@ created>redirection
   \ 2013-10-02 Start, based on code from ForthCMS.
 
 : redirected ( ca len -- )
-  current_page draft? if  2drop  else  (redirected)  then ;
+  current_page draft? if 2drop else (redirected) then ;
   \ Create a file that redirects to the current page, if possible.
   \ ca len = page ID (old page filename without path and extension)
   \          or page filename (with html, htm or php extensions)
@@ -197,15 +198,18 @@ created>redirection
   \          or page filename (with html, htm or php extensions)
 
 : new_redirected ( ca len -- )
-  current_page draft? if  2drop  else  (redirected)  then ;
+  current_page draft? if   2drop
+                      else modified>redirection (redirected)
+                           created>redirection
+                      then ;
   \ Create a file that redirects to the current page, if possible.
-  \ ca len = page ID (old page filename without path and extension)
-  \          or page filename (with html, htm or php extensions)
   \ The date of the redirection file will be the modification date
   \ of the current page.
+  \ ca len = page ID (old page filename without path and extension)
+  \          or page filename (with html, htm or php extensions)
 
 : new_redirect ( "name" -- )
-  modified>redirection redirect ;
+  parse-name new_redirected ;
   \ Create a file that redirects to the current page, if possible.
   \ The date of the redirection file will be the modification date
   \ of the current page.
@@ -285,5 +289,7 @@ s" /counted-string" environment? 0=
 \ 2018-12-08: Update notation of Forth words in comments and strings.
 \
 \ 2018-12-08: Update notation of page IDs in comments and strings.
+\
+\ 2020-04-22: Fix/improve `new_redirect` and `new_redirected`.
 
 \ vim: filetype=gforth
