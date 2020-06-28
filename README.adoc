@@ -1,11 +1,11 @@
 = Fendo
 :author: Marcos Cruz (programandala.net)
-:revdate: 2020-03-28
+:revdate: 2020-06-28
 
 // This file is part of Fendo
 // http://programandala.net/en.program.fendo.html
 
-// Last modified 202003282333
+// Last modified 202006281727
 
 // tag::description[]
 
@@ -63,9 +63,10 @@ of the three personal websites it powers.
 The source code is documented, but specific usage documentation is
 still missing.
 
-Releases A-00..A-05 are internal, not recommended. The current version
-under development is 0.6.0, which will be considered the first public
-version.
+// Releases A-00..A-05 are internal, not recommended. 
+
+The current version under development is 0.6.0, which will be
+considered the first public version.
 
 == The name
 
