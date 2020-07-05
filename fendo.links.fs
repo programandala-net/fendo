@@ -117,7 +117,7 @@ $variable (link_anchor)
 \  dup if  ~~  then  \ XXX INFORMER
 \  to_local_anchor? !
 \  ." At the end of `/anchor` `to_local_anchor?` = " to_local_anchor? ? cr  \ XXX INFORMER
-  ; 
+  ;
   \ Divide a href attribute at its anchor.
   \ ca1 len1 = href attribute
   \ ca2 len2 = href attribute without the anchor
