@@ -5,7 +5,7 @@
 
 \ This file creates the tools needed to use page tags.
 
-\ Last modified 202004220005.
+\ Last modified 202004260007.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2014,2017,2018,2020 Marcos Cruz (programandala.net)
@@ -93,18 +93,30 @@ wordlist constant fendo_tags_wid
 variable #tags  \ number of evaluated tags (how many tags were evaluated)
 variable #tag   \ number of the tag that is being evaluated
 
-defer tags_url_section$  \ to be set by the application
-s" tag." sconstant (tags_url_section$)
-' (tags_url_section$) is tags_url_section$  \ default
-
 : (tag>pid$) ( tag -- ca len )
-  tags_url_section$ rot tag>name s+ ;
-  \ Default conversion from tag to page ID.
+  s" en.tag." rot tag>name s+ ;
+
+  \ doc{
+  \
+  \ (tag>pid$) ( tag -- ca len )
+  \
+  \ Default action of `tag>pid$` to convert _tag_ to page ID _ca len_:
+  \ Add prefix "en.tag." to the name of the _tag_.
+  \
+  \ }doc
 
 defer tag>pid$ ( tag -- ca len )
 ' (tag>pid$) is tag>pid$
-  \ Actual conversion from tag to page ID,
-  \ to be configured by the application.
+
+  \ doc{
+  \
+  \ tag>pid$ ( tag -- ca len )
+  \
+  \ Convert _tag_ to page ID _ca len_.
+  \ This is a deferred word to be configured by the application.
+  \ Its default action is `(tag>pid$)`.
+  \
+  \ }doc
 
 \ ==============================================================
 \ Possible behaviours of the tags
@@ -328,5 +340,8 @@ s" /tmp/fendo.tags.fs" sconstant tags_filename$
 \ 2020-04-21: Remove the `lonely_tags_link_to_content` flag variable
 \ and all its related code. Its effect can be achievied with a
 \ shortcut.
+\
+\ 2020-04-26: Delete `tags_url_section$`. Document `tag>pid$` and
+\ `(tag>pid$)`.
 
 \ vim: filetype=gforth
