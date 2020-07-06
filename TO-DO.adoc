@@ -636,5 +636,5 @@ data of page "prev.fs"!
 
 == 2020-07-06
 
-Fix the factoring of `tag_section` and `tag_section_by_prefix`.
+Rename `tag_section` and `tag_section_by_prefix`?
 

@@ -44,11 +44,34 @@ require ./fendo.addon.tag_section_by_prefix.fs
 : tag_section_heading ( ca len -- )
   2dup id=! [<h2>] tags_do_text evaluate_tags evaluate_content [</h2>] ;
 
+  \ doc{
+  \
+  \ tag_section_heading ( ca len -- )
+  \
+  \ Create a level-2 heading for tag _ca len_.
+  \
+  \ ``tag_section_heading`` is a factor of `tag_section`.
+  \
+  \ See: `tags_do_text`, `evaluate_tags`, `evaluate_content`, `id=!`,
+  \ `[<h2>]`.
+  \
+  \ }doc
+
 : tag_section ( ca len -- )
   2dup tag_section_heading
   current_lang$ s" ." s+ tag_section_by_prefix ;
-  \ Create a tags section containing a heading and a list of pages, in
-  \ the current language, containing tag _ca len_.
+
+  \ doc{
+  \
+  \ tag_section ( ca len -- )
+  \
+  \ Create a tag section containing a heading and a definition list of
+  \ pages, in the current language, containing tag _ca len_.
+  \
+  \ See: `tag_section_heading`, `current_lang$`,
+  \ `tag_section_by_prefix`.
+  \
+  \ }doc
 
 .( fendo.addon.tag_section.fs compiled) cr
 
@@ -56,5 +79,7 @@ require ./fendo.addon.tag_section_by_prefix.fs
 \ Change log
 
 \ 2020-04-25: Start.
+\
+\ 2020-07-06: Document the public words.
 
 \ vim: filetype=gforth
