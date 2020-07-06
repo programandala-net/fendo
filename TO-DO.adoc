@@ -1,6 +1,6 @@
 = Fendo TO-DO
 :author: Marcos Cruz (programandala.net)
-:revdate: 2020-04-14
+:revdate: 2020-07-06
 
 // This file is part of Fendo
 // (http://programandala.net/en.program.fendo.html).
@@ -633,4 +633,8 @@ LinkedIn::
 
 Fix: `previous_page [calculated]` causes an error trying to access the
 data of page "prev.fs"!
+
+== 2020-07-06
+
+Fix the factoring of `tag_section` and `tag_section_by_prefix`.
 
