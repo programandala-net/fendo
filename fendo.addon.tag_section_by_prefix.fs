@@ -6,7 +6,7 @@
 \ This file provides an addon to create a section containing a heading
 \ and a list of tagged pages in the current language.
 
-\ Last modified 202004252319.
+\ Last modified 202007062136.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2020 Marcos Cruz (programandala.net)
@@ -76,8 +76,19 @@ public
 : tag_section_by_prefix ( ca1 len1 ca2 len2 -- )
   prefix$ $!  tags_do_presence
   [<dl>] ['] (tagged_pages_by_prefix) traverse_pids [</dl>] ;
-  \ Create a tags section containing a heading and a list of pages,
-  \ with prefix _ca2 len2_, containing tag _ca1 len1_.
+
+  \ doc{
+  \
+  \ tag_section_by_prefix ( ca1 len1 ca2 len2 -- )
+  \
+  \ Create a tag section (without a heading) containing a definition
+  \ list of pages that contain tag _ca1 len1_ and having prefix _ca2
+  \ len2_.
+  \
+  \ See: `tag_section`, `tag_section_heading`, `tags_do_presence`,
+  \ `[<dl>]`, `(tagged_pages_by_prefix)`, `traverse_pids`.
+  \
+  \ }doc
 
 end-package
 
@@ -87,6 +98,8 @@ end-package
 \ Change log
 
 \ 2020-04-25: Start.
+\
+\ 2020-07-06: Document the public words.
 
 \ vim: filetype=gforth
 
