@@ -1,6 +1,6 @@
 = Fendo TO-DO
 :author: Marcos Cruz (programandala.net)
-:revdate: 2020-07-06
+:revdate: 2020-10-02
 
 // This file is part of Fendo
 // (http://programandala.net/en.program.fendo.html).
@@ -638,3 +638,16 @@ data of page "prev.fs"!
 
 Rename `tag_section` and `tag_section_by_prefix`?
 
+== 2020-07-16
+
+Fix: Image filenames used in `{{` causes a memory error when they
+contain accented characters.
+
+== 2020-10-02
+
+Fix: `atom_feed_subtitle` fails when the defered `site_subtitle` is not configured.
+
+Possible solutions:
+
+1. Check if `site_subtitle` has no action defined yet.
+2. Define `site_subtitle` with a default action that returns an empty string.
