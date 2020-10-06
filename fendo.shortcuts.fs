@@ -5,10 +5,10 @@
 
 \ This file creates the tools for user's shortcuts.
 
-\ Last modified 201812080157.
+\ Last modified 202010062141.
 \ See change log at the end of the file.
 
-\ Copyright (C) 2013,2017 Marcos Cruz (programandala.net)
+\ Copyright (C) 2013,2017,2018,2020 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute
 \ it and/or modify it under the terms of the GNU General
@@ -54,6 +54,96 @@ wordlist constant fendo_shortcuts_wid  \ for user's shortcuts
   [then] ;
   \ Create an user's shortcut.
 
+  \ doc{
+  \
+  \ shortcut: ( "name" -- )
+  \
+  \ Define a user link shortcut "name". 
+  \
+  \ User link shortcuts are configurable href parameters. They can be
+  \ used to create mnemonics, redirections or "defered" links.
+  \
+  \ Shortcuts are ordinary words which are stored in a specific word
+  \ list.
+  \
+  \ Any target used in a link definition, i.e. in the first position
+  \ of a `[[` markup, will be looked for in the shortcuts word list.
+  \ When a match is found, the shortcut is executed, what usually
+  \ changes some attributes of the current link, including the href.
+  \ Then the search is repeated with the new href. The process
+  \ continues until the href is not found in the shortcuts word list.
+  \
+  \ Usage examples:
+
+  \ ----
+  \ shortcut: my_web
+  \   s" http://programandala.net" href=! ;
+  \   \ Define a shortcut "my_web" that will be converted to
+  \   \ "http://programandala.net".
+  \
+  \ shortcut: links
+  \   s" es.main.long.links" href=! ;
+  \   \ Define a shortcut "links" for page identifier
+  \   \ "es.main.long.links".
+  \
+  \ shortcut: http://old.com
+  \   s" https://new.com" href=! ;
+  \   \ Update an old URL.
+  \
+  \ shortcut: en.store.bikes.trikes
+  \   s" en.store.trikes.all" href=! ;
+  \   \ Update the links to an old local page that was renamed.
+  \
+  \ shortcut: http://www.deadlink.com
+  \   s" https://web.archive.org/web/20110426074411/http://www.deadlink.com/" href=!
+  \   current_lang# case
+  \     eo_language of
+  \       s" Kopio farita en 2011-04 de la TTT-ejo deadlink.com" title=! endof                                                                                                  es_language of
+  \     es_language of
+  \       s" Copia hecha en 2011-04 de la web deadlink.com" title=! endof
+  \     ie_language of
+  \       s" Copia fat in 2011-04 ex li web deadlink.com" title=! endof
+  \   endcase ;
+  \
+  \ shortcut: https://www.deadlink.com
+  \   s" http://www.deadlink.com" href=! ;
+  \   \ Make https... a synonym of http..., which is a shortcut.
+  \
+  \ shortcut: gforth
+  \   s" gforth_ext" href=! ;
+
+  \ shortcut: gforth_ext
+  \   s" http://www.gnu.org/software/gforth/" href=!
+  \   current_lang# case
+  \     en_language of
+  \       s" Gforth" link_text!
+  \       s" Information and main links on Gforth" title=!
+  \     endof
+  \     eo_language of
+  \       s" en(( Gforth ))" link_text!
+  \       s" en" hreflang=!
+  \       s" Informo kaj ĉefaj ligiloj pri Gforth" title=!
+  \     endof
+  \     es_language of
+  \       s" en(( Gforth ))" link_text!
+  \       s" en" hreflang=!
+  \       s" Información y enlaces principales sobre Gforth" title=!
+  \     endof
+  \     ie_language of
+  \       s" en(( Gforth ))" link_text!
+  \       s" en" hreflang=!
+  \       s" Information e ligamentes principal pri Gforth" title=!
+  \     endof
+  \   endcase ;
+
+  \ ----
+
+
+  \ See also: `[[`, `href=!`, `title=!`.
+  \
+  \ }doc
+  \
+
 false [if]
 
 : :shortcut ( ca len -- )
@@ -67,38 +157,6 @@ s" " :shortcut ( -- )
   current_pid$ href=! ;
   \ Create the default shortcut to the current page.
   \ This way links to anchors in the current page are possible.
-
-[then]
-
-0 [if]
-
-\ Usage example of `shortcut:`
-\
-\ User's shortcuts are used as recursive href parameters.
-\ They can be used to create mnemonics, redirections or
-\ "defered" links.
-
-shortcut: gforth
-  s" gforth_ext" href=! ;
-
-shortcut: gforth_ext
-  s" http://www.gnu.org/software/gforth/" href=!
-  current_lang# case
-    en_language of
-      s" Gforth" link_text!
-      s" Information and main links on Gforth" title=!
-    endof
-    eo_language of
-      s" en(( Gforth ))" link_text!
-      s" en" hreflang=!
-      s" Informo kaj ĉefaj ligiloj pri Gforth" title=!
-    endof
-    es_language of
-      s" en(( Gforth ))" link_text!
-      s" en" hreflang=!
-      s" Información y enlaces principales sobre Gforth" title=!
-    endof
-  endcase ;
 
 [then]
 
@@ -158,13 +216,13 @@ shortcut: gforth_ext
 \  ." `href=` in `dry_unshortcut` before `save_attributes`    = " s" href=@" evaluate .s space type cr  \ XXX INFORMER
   save_attributes
 \  ." `href=` in `dry_unshortcut` after `save_attributes`     = " s" href=@" evaluate .s space type cr  \ XXX INFORMER
-  unshortcut 
+  unshortcut
 \  ." TOS in `dry_unshortcut` after `unshortcut`              = " .s space 2dup type cr  \ XXX INFORMER
   save-mem 2>r
 \  ." `href=` in `dry_unshortcut` before `restore_attributes` = " s" href=@" evaluate .s space type cr  \ XXX INFORMER
   restore_attributes
 \  ." `href=` in `dry_unshortcut` after `restore_attributes`  = " s" href=@" evaluate .s space type cr  \ XXX INFORMER
-  2r> 
+  2r>
   ; is dry_unshortcut  \ defered in <fendo.fs>
   \ Unshortcut an href attribute recursively,
   \ without modifing any attribute.
@@ -191,5 +249,7 @@ shortcut: gforth_ext
 \ 2017-06-22: Update source style, layout and header.
 \
 \ 2018-12-08: Update notation of Forth words in comments and strings.
+\
+\ 2020-10-06: Document `shortcut:`.
 
 \ vim: filetype=gforth

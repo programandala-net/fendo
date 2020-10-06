@@ -5,10 +5,10 @@
 
 \ This file defines the Fendo markup for links.
 
-\ Last modified 201812131712.
+\ Last modified 202010070137.
 \ See change log at the end of the file.
 
-\ Copyright (C) 2013,2014,2015,2017,2018 Marcos Cruz (programandala.net)
+\ Copyright (C) 2013,2014,2015,2017,2018,2020 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute
 \ it and/or modify it under the terms of the GNU General
@@ -132,11 +132,14 @@ markup_definitions
   \ [[ http://programandala.net/en.program.fendo.html | Fendo | title="Fendo home page" ]]
   \ ----
 
+  \ The first part of the link con be a page identifier, an actual URL
+  \ or a shortcut. 
+
   \ // XXX FIXME --
   \ WARNING: The link definition must be on one single line of text.
   \ This limitation will be removed from a future version of Fendo.
   \
-  \ See: `]]`.
+  \ See: `]]`, `shortcut:`.
   \
   \ }doc
 
@@ -184,5 +187,7 @@ fendo_definitions
 \ 2018-12-08: Update notation of page IDs in comments and strings.
 \
 \ 2018-12-13: Document `[[` and `]]`.
+\
+\ 2020-10-07: Improve documentation of `[[`.
 
 \ vim: filetype=gforth
