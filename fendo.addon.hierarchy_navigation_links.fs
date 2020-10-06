@@ -5,10 +5,10 @@
 
 \ This file is the hierarchy navigation links addon.
 
-\ Last modified 201812242037.
+\ Last modified 202010062021.
 \ See change log at the end of the file.
 
-\ Copyright (C) 2017,2018 Marcos Cruz (programandala.net)
+\ Copyright (C) 2017,2018,2020 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute it and/or modify it
 \ under the terms of the GNU General Public License as published by
@@ -120,7 +120,7 @@ defer last$ ( -- ca len )
   \ }doc
 
 : hierarchy_navigation_link  ( ca1 len1 ca2 len2 -- )
-  2swap s" <span class=`br`>" 2swap s+
+  2swap s" <span class='br'>" 2swap s+
   s" :</span> " s+
   2over pid$>pid# title s+
   link ;
