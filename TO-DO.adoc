@@ -1,6 +1,6 @@
 = Fendo TO-DO
 :author: Marcos Cruz (programandala.net)
-:revdate: 2020-10-02
+:revdate: 2020-10-05
 
 // This file is part of Fendo
 // (http://programandala.net/en.program.fendo.html).
@@ -651,3 +651,9 @@ Possible solutions:
 
 1. Check if `site_subtitle` has no action defined yet.
 2. Define `site_subtitle` with a default action that returns an empty string.
+
+== 2020-10-05
+
+Fix: a blank line before a `[[` link is not ignored. No new `<p>` is
+added, but the previous paragraph is closed by a `</p>`. The part of
+the paragraph started by the link is not marked.
