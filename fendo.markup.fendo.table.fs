@@ -5,10 +5,10 @@
 
 \ This file defines the Fendo markup for lists.
 
-\ Last modified 201901031417.
+\ Last modified 202010072151.
 \ See change log at the end of the file.
 
-\ Copyright (C) 2013,2014,2017,2018,2019 Marcos Cruz (programandala.net)
+\ Copyright (C) 2013,2014,2017,2018,2019,2020 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute
 \ it and/or modify it under the terms of the GNU General
@@ -25,29 +25,6 @@
 \ You should have received a copy of the GNU General Public
 \ License along with this program; if not, see
 \ <http://gnu.org/licenses>.
-
-\ ==============================================================
-\ Markup description
-
-\ The tables markup is inspired by Asciidoc/AsciiDoctor, but it's
-\ simpler.
-\
-\ `|===` marks the table block. `|` starts a cell, `|=` starts a
-\ header cell. `=|=` surrounds the caption and must be before any
-\ row.  Optional closing `|` is allowed and ignored at the end of the
-\ row.
-\
-\ Example:
-
-\         |===
-\         =|= Code: ## frames0 require decode frames@ d. ## =|=
-\         |= 512-byte buffers |= system frames
-\         | 1                 | 431
-\         | 2                 | 492
-\         | 3                 | 473
-\         | 4                 | 476
-\         | 10                | 491
-\         |===
 
 \ ==============================================================
 \ Tools
@@ -91,23 +68,78 @@ markup_definitions
 
 : | ( -- )
   table_started? @ if  ['] <td> (|)  else  s" |" content  then ;
-  \ Markup used as separator in tables, images and links.
+
+  \ doc{
+  \
+  \ | ( -- )
+  \
+  \ Mark a table cell.
+  \
+  \ See `|===` far a usage example.
+  \
+  \ }doc
 
 : |= ( -- )
   table_started? @ if  ['] <th> (|)  else  s" |=" content  then ;
+
+  \ doc{
+  \
+  \ |= ( -- )
+  \
   \ Mark a table header cell.
+  \
+  \ See `|===` far a usage example.
+  \
+  \ }doc
 
 : =|= ( -- )
   table_started? @ if
     #rows @ abort" The `=|=` markup must be the first one in a table"
     ['] <caption> ['] </caption> opened_[=|=]? markups
   else  s" =|=" content  then ;
+
+  \ doc{
+  \
+  \ =|= ( -- )
+  \
   \ Open or close a table caption; it must be the first markup inside a table.
+  \
+  \ See `|===` far an usage example.
+  \
+  \ }doc
 
 : |=== ( -- )
   table_started? @ if  [</table>]  else  [<table>]  then
   #rows off  #cells off ;
-  \ Start or close a table.
+
+  \ doc{
+  \
+  \ |=== ( -- )
+  \
+  \ `|===` marks the start and end of a table.
+  \
+  \ The Fendo tables markup is similar to AsciiDoctor markup, but
+  \ simpler.
+  \
+  \ `|` starts a cell, `|=` starts a header cell. `=|=` surrounds the
+  \ caption and must be before any row.  Optional closing `|` is allowed
+  \ and ignored at the end of the row.
+  \
+  \ Example:
+
+  \ ....
+  \ |===
+  \ =|= Code: ## frames0 require decode frames@ d. ## =|=
+  \ |= 512-byte buffers |= system frames
+  \ | 1                 | 431
+  \ | 2                 | 492
+  \ | 3                 | 473
+  \ | 4                 | 476
+  \ | 10                | 491
+  \ |===
+  \ ....
+
+  \ }doc
 
 fendo_definitions
 
@@ -128,5 +160,7 @@ fendo_definitions
 \ 2018-12-08: Update notation of Forth words in comments and strings.
 \
 \ 2019-01-03: Fix typo in comment.
+\
+\ 2020-10-07: Improve documentation.
 
 \ vim: filetype=gforth
