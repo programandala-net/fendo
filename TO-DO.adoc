@@ -1,6 +1,6 @@
 = Fendo TO-DO
 :author: Marcos Cruz (programandala.net)
-:revdate: 2020-10-05
+:revdate: 2020-10-10
 
 // This file is part of Fendo
 // (http://programandala.net/en.program.fendo.html).
@@ -657,3 +657,27 @@ Possible solutions:
 Fix: a blank line before a `[[` link is not ignored. No new `<p>` is
 added, but the previous paragraph is closed by a `</p>`. The part of
 the paragraph started by the link is not marked.
+
+== 2020-10-09
+
+Fix: The `//` markup (and probably others) at the start of a field
+adds a separating space before the datum when the field is evaluated.
+This was observed first in
+<fendo/websites/trunk/src/pages/eo.kajero.2008.12.09.fs>.
+
+== 2020-10-10
+
+Fix: The title of
+<fendo/websites/trunk/src/pages/eo.kajero.2007.11.24.fs>.
+is not displayed with the proper style:
+
+----
+title es(( // África con un par // )) (Afriko je du…)
+----
+
+The resulting HTML is the following, perhaps because of an unupdated
+flag because of a previous unbalanced markup:
+
+----
+<h1><span lang="es"></em> África con un par <em></span> (Afriko je du…)</h1>
+----
