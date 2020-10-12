@@ -4,7 +4,7 @@
 " URL:      http://programandala.net/en.program.fendo_vim_syntax_file.html
 " License:  GPL (http://www.gnu.org)
 " Remarks:  Vim 6 or greater
-" Updated:  2019-01-10
+" Updated:  2020-10-10
 
 " This file is part of Fendo,
 " a static website generator written in Forth
@@ -71,7 +71,7 @@ syn match fendoEntityRef /\\\@<!&[#a-zA-Z]\S\{-};/
 
 "syn match fendoLink /\<\[\[[ \n\t]\+\_.\{-}[ \n\t]\+]]\>/
 syn match fendoLink /\<\[\[\>.\{-}\<]]\>/ contains=fendoImage
-syn match fendoImage /\<{{\>.\{-}\<}}\>/
+syn match fendoImage /\<{{\>\_.\{-}\<}}\>/
 
 " As a damage control measure quoted patterns always terminate at a blank
 " line (see 'Limitations' above).
@@ -304,5 +304,7 @@ set comments=://,fb:-,fb:*,fb:.,fb:+,fb:>
 " 2019-01-05: Highlight the metadata field labels.
 "
 " 2019-01-10: Highlight line comments in data block.
+"
+" 2020-10-10: Support multiline image markup.
 
 " ----------------------------------------------
