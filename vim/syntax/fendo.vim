@@ -4,7 +4,7 @@
 " URL:      http://programandala.net/en.program.fendo_vim_syntax_file.html
 " License:  GPL (http://www.gnu.org)
 " Remarks:  Vim 6 or greater
-" Updated:  2020-10-10
+" Updated:  2020-10-13
 
 " This file is part of Fendo,
 " a static website generator written in Forth
@@ -100,7 +100,7 @@ syn match fendoQuotedBold /\<\*\*[ \n\t]\+\_.\{-}[ \n\t]\+\*\*\>/
 "syn match fendoDoubleDollarPassthrough /\\\@<!\(^\|[^0-9a-zA-Z$]\)\@<=\$\$..\{-}\(\$\$\([^0-9a-zA-Z$]\|$\)\@=\|^$\)/
 "syn match fendoTriplePlusPassthrough /\\\@<!\(^\|[^0-9a-zA-Z$]\)\@<=+++..\{-}\(+++\([^0-9a-zA-Z$]\|$\)\@=\|^$\)/
 
-syn match fendoOneLineTitle /^\s*\(=\{1,5}\)\s\+\S.*\s\+\1\s*$/ contains=fendoQuoted.*,,fendoAttributeRef,fendoEntityRef,fendoLink,fendoBackslash
+syn match fendoOneLineTitle /^\(=\{1,5}\)\>\_.\{-}\<\1\>/ contains=fendoQuoted.*,,fendoAttributeRef,fendoEntityRef,fendoLink,fendoBackslash
 
 syn match fendoAttributeList /^\[[^[ \t].*\]$/
 syn match fendoQuoteBlockDelimiter /^'\{4}$/
@@ -306,5 +306,8 @@ set comments=://,fb:-,fb:*,fb:.,fb:+,fb:>
 " 2019-01-10: Highlight line comments in data block.
 "
 " 2020-10-10: Support multiline image markup.
+"
+" 2020-10-13: Support multiline headings markup, and ignore contents after the
+" closing mark.
 
 " ----------------------------------------------
