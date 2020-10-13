@@ -1,6 +1,6 @@
 = Fendo TO-DO
 :author: Marcos Cruz (programandala.net)
-:revdate: 2020-10-10
+:revdate: 2020-10-13
 
 // This file is part of Fendo
 // (http://programandala.net/en.program.fendo.html).
@@ -664,20 +664,3 @@ Fix: The `//` markup (and probably others) at the start of a field
 adds a separating space before the datum when the field is evaluated.
 This was observed first in
 <fendo/websites/trunk/src/pages/eo.kajero.2008.12.09.fs>.
-
-== 2020-10-10
-
-Fix: The title of
-<fendo/websites/trunk/src/pages/eo.kajero.2007.11.24.fs>.
-is not displayed with the proper style:
-
-----
-title es(( // África con un par // )) (Afriko je du…)
-----
-
-The resulting HTML is the following, perhaps because of an unupdated
-flag because of a previous unbalanced markup:
-
-----
-<h1><span lang="es"></em> África con un par <em></span> (Afriko je du…)</h1>
-----
