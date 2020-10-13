@@ -5,10 +5,10 @@
 
 \ This file defines the Fendo markup for punctuation.
 
-\ Last modified 201812080157.
+\ Last modified 202010121816.
 \ See change log at the end of the file.
 
-\ Copyright (C) 2013,2014,2017 Marcos Cruz (programandala.net)
+\ Copyright (C) 2013,2014,2017,2018,2020 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute
 \ it and/or modify it under the terms of the GNU General
@@ -110,6 +110,13 @@ punctuation{: “
 }punctuation: ...»
 }punctuation: ...».
 }punctuation: ...»;
+}punctuation: …
+}punctuation: …),
+}punctuation: …).
+}punctuation: …);
+}punctuation: …»
+}punctuation: …».
+}punctuation: …»;
 }punctuation: .’
 }punctuation: .”
 }punctuation: :
@@ -155,5 +162,7 @@ fendo_definitions
 \ 2017-06-22: Update source style, layout and header.
 \
 \ 2018-12-08: Update notation of Forth words in comments and strings.
+\
+\ 2020-10-12: Support also the ellipsis Unicode character.
 
 \ vim: filetype=gforth
