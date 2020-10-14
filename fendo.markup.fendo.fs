@@ -5,7 +5,7 @@
 
 \ This file defines the Fendo markup.
 
-\ Last modified 202004141433.
+\ Last modified 202010141757.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2017,2018,2020 Marcos Cruz (programandala.net)
@@ -291,7 +291,7 @@ markup_definitions
   \ Start or finish a <u> region.
 
 : ^^ ( -- )
-  ['] <sup> ['] </sup> opened_[^^]? markups ;
+  separate? off ['] <sup> ['] </sup> opened_[^^]? markups ;
   \ Start or finish a <sup> region.
 
 : ,, ( -- )
@@ -683,5 +683,7 @@ fendo_definitions
 \ 2018-12-13: Document `unraw_attributes`.
 \
 \ 2020-04-14: Remove old `>sb`.
+\
+\ 2020-10-14: Fix: don't separate the opening `^^`.
 
 \ vim: filetype=gforth
