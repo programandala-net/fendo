@@ -5,10 +5,10 @@
 
 \ This file defines the words that print to the target HTML file.
 
-\ Last modified 201812081823.
+\ Last modified 202010141752.
 \ See change log at the end of the file.
 
-\ Copyright (C) 2013,2014,2017,2018 Marcos Cruz (programandala.net)
+\ Copyright (C) 2013,2014,2017,2018,2020 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute
 \ it and/or modify it under the terms of the GNU General
@@ -99,6 +99,19 @@ variable target_fid  \ file ID of the HTML target page
   \ Print a text string to the HTML file.
 
 variable separate?  \ flag: separate the next item from the current one?
+
+  \ doc{
+  \
+  \ separate? ( -- a )
+  \
+  \ A variable. _a_ is the address of a cell containing a flag, which
+  \ indicates if the next item to be printed must be separated by a
+  \ space from the current one.
+  \
+  \ ``separate?`` is an internal flag to control the printing of the
+  \ HTML code.
+  \
+  \ }doc
 
 false value compact_html?  \ if true, no carriage return is created
 
@@ -206,5 +219,7 @@ false value compact_html?  \ if true, no carriage return is created
 \ 2018-12-08: Update notation of Forth words in comments and strings.
 \
 \ 2018-12-08: Update notation of page IDs in comments and strings.
+\
+\ 2020-10-14: Improve documentation of `separate?`.
 
 \ vim: filetype=gforth
