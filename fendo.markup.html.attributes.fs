@@ -5,10 +5,10 @@
 
 \ This file defines the HTML attributes.
 
-\ Last modified 201812081823.
+\ Last modified 202011142027.
 \ See change log at the end of the file.
 
-\ Copyright (C) 2013,2014,2015,2017,2018 Marcos Cruz (programandala.net)
+\ Copyright (C) 2013,2014,2015,2017,2018,2020 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute
 \ it and/or modify it under the terms of the GNU General
@@ -46,10 +46,12 @@ false  dup constant [gforth_strings_for_attributes?]  immediate
   require ffl/str.fs
 [then]
 
-require galope/three-dup.fs
 require galope/dollar-store-new.fs  \ `$!new`
-require galope/xstack.fs
 require galope/minus-cell-bounds.fs  \ `-cell-bounds`
+require galope/three-dup.fs
+require galope/trim.fs
+require galope/unspace.fs
+require galope/xstack.fs
 
 fendo_definitions
 
@@ -106,19 +108,24 @@ fendo_definitions
   \ a = attribute variable
   \ ca1 len1 = attribute value
 
+: parse_attribute ( a c "text<c>" -- )
+  parse trim unspace rot @ attribute! ;
+
 : :attribute"  ( ca len a -- )
   rot rot s\" \"" s+ :create  ,
   does>  ( "text<quote>" -- )
-    ( dfa ) [char] " parse  rot @ attribute! ;
-  \ Create a word that parses and stores an attribute.
+    ( dfa ) '"' parse_attribute ;
+  \ Create a word that parses and stores an attribute,
+  \ delimited by a double quote.
   \ ca len = name of the attribute variable
   \ a = attribute variable
 
 : :attribute'  ( ca len a -- )
   rot rot s" '" s+ :create  ,
   does>  ( "text<quote>" -- )
-    ( dfa ) [char] ' parse  rot @ attribute! ;
-  \ Create a word that parses and stores an attribute.
+    ( dfa ) ''' parse_attribute ;
+  \ Create a word that parses and stores an attribute,
+  \ delimited by a single quote.
   \ ca len = name of the attribute variable
   \ a = attribute variable
 
@@ -477,5 +484,9 @@ create attributes  \ table for the attribute variables
 \ 2018-12-08: Update notation of Forth words in comments and strings.
 \
 \ 2018-12-08: Update notation of page IDs in comments and strings.
+\
+\ 2020-11-14: Factor out `attribute:"` and `attribute:'` into
+\ `parse_attribute` and tidy the argument string using `trim` and
+\ `unspace`. Improve their documentation.
 
 \ vim: filetype=gforth
