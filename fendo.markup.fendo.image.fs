@@ -5,7 +5,7 @@
 
 \ This file defines the Fendo markup for images.
 
-\ Last modified 202011141217.
+\ Last modified 202011150014.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2017,2018,2020 Marcos Cruz (programandala.net)
@@ -69,10 +69,12 @@ defer img-close
   png-filename? if  set_png_image  exit  then
   true abort" Unknown image file type." ;
 
-: set_image_size_attributes ( -- )
-  target_dir $@ src=@ s+
+: (set_image_size_attributes) ( ca len -- )
   2dup set_image_type img-open img-size
   n>str height=! n>str width=! img-close ;
+
+: set_image_size_attributes ( -- )
+  target_dir $@ src=@ s+ (set_image_size_attributes) ;
 
 variable image_finished?  \ flag, no more image markup to parse?
 
@@ -133,13 +135,13 @@ markup_definitions
   \
   \ Start the definition of an image.
   \
-  \ Examples:
+  \ Usage examples:
 
   \ ----
   \ {{ mypicture.jpg }}
   \ {{ there/another.jpg | Optional alternative text here }}
-  \ {{ over/there/this_one.jpg | Alt text here | title="Fendo picture" }}
-  \ {{ over/there/this_one.jpg | | title="Fendo picture" }}
+  \ {{ over/there/this_one.jpg | Alt text | title="Fendo picture" }}
+  \ {{ over/there/this_one.jpg | | title="Picture without alt text" }}
   \ ----
 
   \ - Spaces are not allowed in the filename.
@@ -163,6 +165,37 @@ markup_definitions
 
 fendo_definitions
 
+: img ( ca1 len1 ca2 len2 -- )
+  alt=!
+  files_subdir $@ 2swap s+ 2dup src=!
+  target_dir $@ 2swap s+ (set_image_size_attributes)
+  [<img>] ;
+
+  \ doc{
+  \
+  \ img ( ca1 len1 ca2 len2 -- )
+  \
+  \ Define an image with source file _ca1 len1_ and alt text _ca2
+  \ len2_. ``img`` is a direct Fendo word, not a Fendo markup word.
+  \ Therefore it must be used between `<[` and `]>`. See `{{` for an
+  \ image markup.
+  \
+  \ Usage examples:
+
+  \ ----
+  \ <[ mypicture.jpg img ]>
+  \ <[ "there/another.jpg" "Optional alternative text here" img ]>
+  \ <[ "over/there/this_one.jpg" "Alt text" title=" Fendo picture" img ]>
+  \ <[ "over/there/this_one.jpg" "" title=" Fendo picture" img ]>
+  \ ----
+
+  \ - The size attributes of the images are added automatically.
+  \ - Only JPEG and PNG images are supported.
+  \
+  \ See also: `{{`.
+  \
+  \ }doc
+
 .( fendo.markup.fendo.image.fs compiled ) cr
 
 \ ==============================================================
@@ -180,6 +213,7 @@ fendo_definitions
 \
 \ 2020-10-09: Fix typo in stack comment of `parse_image`.
 \
-\ 2020-11-14: Remove old unused code from `parse_image`.
+\ 2020-11-14: Remove old unused code from `parse_image`. Add `img`.
+\ Factor `set_image_size_attributes`.
 
 \ vim: filetype=gforth
