@@ -5,7 +5,7 @@
 
 \ This file defines the Fendo markup for links.
 
-\ Last modified 202010070137.
+\ Last modified 202011141901.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2015,2017,2018,2020 Marcos Cruz (programandala.net)
@@ -32,6 +32,7 @@
 forth_definitions
 
 require galope/dollar-variable.fs  \ `$variable`
+require galope/trim.fs             \ `trim`
 
 \ ==============================================================
 \ Tools
@@ -39,6 +40,7 @@ require galope/dollar-variable.fs  \ `$variable`
 fendo_definitions
 
 variable link_finished?  \ flag, no more link markup to parse?
+
 : end_of_link? ( ca len -- f )
   s" ]]" str=  dup link_finished? !
 \  cr ." end_of_link? >> " dup .  \ XXX INFORMER
@@ -68,25 +70,24 @@ defer parse_link_text ( "...<spaces>|<spaces>" | "...<spaces>]]<spaces>"  -- )
 $variable last_href$  \ XXX new, experimental, to be used by the application
 
 :noname ( ca len -- )
-  unshortcut 2dup set_link_type
+  trim unshortcut 2dup set_link_type
   local_link? if  -anchor!  then  \ XXX OLD
   2dup last_href$ $! href=!
   ; is (get_link_href)  \ defered in <fendo.links.fs>
 
 : get_link_href ( "href<spaces>" -- )
-  \ Parse and store the link href attribute.
   parse-name (get_link_href)
 \  ." ---> " href=@ type cr  \ XXX INFORMER
 \  external_link? if  ." EXTERNAL LINK: " href=@ type cr  then  \ XXX INFORMER
-  [ true ] [if]  \ simple version
-    parse-name end_of_link_section? 0=
-    abort" Space not allowed in link href"
-  [else]  \ no abort  \ XXX TMP, this causes the parsing never ends
-    begin  parse-name end_of_link_section? 0=
-    while  s" <!-- XXX FIXME space in link filename or URL -->" echo
-    repeat
-  [then] ;
+  parse-name end_of_link_section? 0=
+  abort" Space not allowed in link href" ;
+  \ Parse and store the link href attribute.
   \ ca len = page ID, URL or shortcut
+
+1 [if]
+
+  \ XXX FIXME 2020-10-09: The parsing fails when the link markup spans
+  \ on two or more lines.
 
 : parse_link ( "linkmarkup ]]" -- )
 \  ." entering parse_link -- order = " order cr \ XXX INFORMER
@@ -109,6 +110,29 @@ $variable last_href$  \ XXX new, experimental, to be used by the application
 \  ." ---> " href=@ type cr  \ XXX INFORMER
   ;
   \ Parse and store the link attributes.
+
+[else]
+
+  \ XXX NEW
+  \ XXX TODO
+  \ XXX UNDER DEVELOPMENT
+
+: parse_link ( "linkmarkup ]]" -- )
+  cr ." parse_link #1 " .s \ XXX INFORMER
+  get_link_href
+  cr ." parse_link #2 " .s \ XXX INFORMER
+  link_finished? @ 0= if
+    cr ." link not finished " \ XXX INFORMER
+    parse_link_text
+    cr ." link text parsed " \ XXX INFORMER
+    link_finished? @ 0= if get_link_raw_attributes then
+  then
+  cr ." parse_link #end " .s \ XXX INFORMER
+  ;
+  \ Parse and store the image attributes.
+
+[then]
+
 
 \ ==============================================================
 \ Markup
@@ -133,13 +157,15 @@ markup_definitions
   \ ----
 
   \ The first part of the link con be a page identifier, an actual URL
-  \ or a shortcut. 
+  \ or a shortcut.
 
   \ // XXX FIXME --
   \ WARNING: The link definition must be on one single line of text.
   \ This limitation will be removed from a future version of Fendo.
   \
-  \ See: `]]`, `shortcut:`.
+  \ See `link` for an alternative to create links.
+  \
+  \ See also: `]]`, `shortcut:`.
   \
   \ }doc
 
@@ -189,5 +215,12 @@ fendo_definitions
 \ 2018-12-13: Document `[[` and `]]`.
 \
 \ 2020-10-07: Improve documentation of `[[`.
+\
+\ 2020-10-09: Draft an improved definition of `parse_name`.
+\
+\ 2020-11-14: Add `trim` to tidy the argument of the action of
+\ `(get_link_href)`. This makes it possible to use the alternative raw
+\ syntax for links (`<[ s" HREF" s" TEXT" title=" TITLE" link ]>`), no
+\ matter "HREF" is on a new line. Improve documentation of `[[`.
 
 \ vim: filetype=gforth
