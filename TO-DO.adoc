@@ -1,6 +1,6 @@
 = Fendo TO-DO
 :author: Marcos Cruz (programandala.net)
-:revdate: 2020-10-14
+:revdate: 2020-10-15
 
 // This file is part of Fendo
 // (http://programandala.net/en.program.fendo.html).
@@ -669,3 +669,20 @@ This was observed first in
 
 Finish <fendo.addon.images_by_wildcard.fs>. Test it in
 <programandala.net/es.programa.black_flag.fs>.
+
+== 2020-11-15
+
+Deprecate the current parsing versions of link and image markup,
+replacing them with non-parsing Forth-code versions:
+
+|===
+| Current link with parsing:       | `[[ URL | TXT | attr="ATTR" ]]`
+| Current link with code:          | `<[ "URL" "TXT" attr=" ATTR" link ]>`
+| Possible link with code:         | `[[ "URL" "TXT" attr=" ATTR" ]]`
+| Current image with parsing:      | `{{ FILE | ALT | attr="ATTR" }}`
+| Current image with code:         | `<[ "FILE" "ALT" attr=" ATTR" img ]>`
+| Possible image with recognizers: | `{{ "FILE" "ALT" attr="ATTR" }}`
+|===
+
+Also, the HTML attributes could be defined as recognizers prefixes, in order
+to allow `attr="ATTR"`.
