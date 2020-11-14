@@ -6,7 +6,7 @@
 \ This file provides the words needed to create links,
 \ by the markup words or by the user application.
 
-\ Last modified 202004141427.
+\ Last modified 202011141857.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2017,2018,2019,2020 Marcos Cruz (programandala.net)
@@ -378,10 +378,37 @@ defer (get_link_href) ( ca len -- )
 \   ." In `link` the page ID is " 2over type cr  \ XXX INFORMER
 \  ." `title=` in `link` = " title=@ type cr  \ XXX INFORMER
   link_text! (link) ;
-  \ Create a link of any type.
-  \ Its attributes have to be set previously.
-  \ ca1 len1 = page ID, URL or shortcut
-  \ ca2 len2 = link text
+
+  \ doc{
+  \
+  \ link ( ca1 len1 ca2 len2 -- )
+  \
+  \ Create a link of any type out of a string _ca1 len1_, which
+  \ contains a page ID, an URL or a shortcut, and a second string _ca2
+  \ len2_, which contains the link text.
+  \
+  \ The attributes have to be set before executing ``link``, using the
+  \ corresponding attribute-parsing words.
+  \
+  \ Usage example:
+
+  \ ----
+  \ <[ s" http://programandala.net" s" My website" title=" Home
+  \ page of programandala.net" ]>
+  \ ----
+
+  \ Note that ``title="``, ``class="`` etc. are Forth parsing words,
+  \ therefore, contrary to actual HTML, they must be followed by a
+  \ space. Leading, trailing and double spaces will be removed from
+  \ the parsed string before storing it in the corresponding attribute
+  \ variable. Therefore, the parsed string can span on multiple lines
+  \ and the line breaks will be ignored, replaced by single spaces.
+  \
+  \ An alternative link markup is provided by `[[`.
+  \
+  \ See also: `<[`.
+  \
+  \ }doc
 
 : link<pid$ ( ca len -- )
   2dup pid$>pid# title link_text?! (link) ;
@@ -484,5 +511,7 @@ defer (get_link_href) ( ca len -- )
 \
 \ 2020-04-14: Rewrite `external_class` without Galope's `sb&`. Replace
 \ old `>sb` with `>stringer`.
+\
+\ 2020-11-14: Document `link`.
 
 \ vim: filetype=gforth
