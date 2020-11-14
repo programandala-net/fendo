@@ -5,7 +5,7 @@
 
 \ This file defines the Fendo markup for images.
 
-\ Last modified 202010091824.
+\ Last modified 202011141217.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2017,2018,2020 Marcos Cruz (programandala.net)
@@ -108,14 +108,8 @@ variable image_finished?  \ flag, no more image markup to parse?
 \  cr ." parse_image " key drop  \ XXX INFORMER
   get_image_src_attribute
   set_image_size_attributes
-  [ true ] [if]  \ simple version
-    parse-name end_of_image_section? 0=
-    abort" Space not allowed in image filename"
-  [else]  \ XXX old, no abort
-    begin  parse-name end_of_image_section? 0=
-    while  s" <!-- XXX FIXME space in image filename -->" echo
-    repeat
-  [then]
+  parse-name end_of_image_section? 0=
+  abort" Space not allowed in image filename"
   image_finished? @ 0= if
     get_image_alt_attribute
     image_finished? @ 0= if  get_image_raw_attributes  then
@@ -185,5 +179,7 @@ fendo_definitions
 \ 2018-12-20: Fix typo in documentation.
 \
 \ 2020-10-09: Fix typo in stack comment of `parse_image`.
+\
+\ 2020-11-14: Remove old unused code from `parse_image`.
 
 \ vim: filetype=gforth
