@@ -6,7 +6,7 @@
 \ This file provides the words needed to create links,
 \ by the markup words or by the user application.
 
-\ Last modified 202011141857.
+\ Last modified 202011142310.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2017,2018,2019,2020 Marcos Cruz (programandala.net)
@@ -394,7 +394,13 @@ defer (get_link_href) ( ca len -- )
 
   \ ----
   \ <[ s" http://programandala.net" s" My website" title=" Home
-  \ page of programandala.net" ]>
+  \ page of programandala.net" link ]>
+  \
+  \ \ The string notation recognized by Gforth and other Forth
+  \ \ systems can be used instead of ``s"``:
+  \
+  \ <[ "http://programandala.net" "My website" title=" Home
+  \ page of programandala.net" link ]>
   \ ----
 
   \ Note that ``title="``, ``class="`` etc. are Forth parsing words,
