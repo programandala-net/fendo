@@ -5,7 +5,7 @@
 
 \ This file defines the Fendo markup.
 
-\ Last modified 202010141757.
+\ Last modified 202011142217.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2017,2018,2020 Marcos Cruz (programandala.net)
@@ -111,15 +111,8 @@ variable #nothings  \ counter of empty parsings
   \ Is the last parsed name the first one on the current line?
 
 : exhausted? ( -- f )
-  [false] [if]
-    \ First version, doesn't work when there are trailing spaces
-    \ at the end of the line.
-    >in @ source nip =
-  [else]
-    \ Second version, works fine when there are trailing spaces
-    \ at the end of the line:
-    save-input  parse-name empty? >r  restore-input throw  r>
-  [then] ;
+  save-input    parse-name empty? >r
+  restore-input throw             r> ;
   \ Is the current source line exhausted?
 
 : markups ( xt1 xt2 a -- )
@@ -154,37 +147,13 @@ variable opened_[^^]?     \ is there an open `^^`?
 variable opened_[_]?      \ is there an open `_`?
 variable opened_[__]?     \ is there an open `__`?
 
-variable #heading       \ level of the opened heading  \ XXX not used yet
+variable #heading         \ level of the opened heading  \ XXX not used yet
 
-false [if]
-
-  \ First version, one flag shared by all headings.  This causes the
-  \ opening and the closing tags become reversed in some unknown
-  \ conditions, when several pages are parsed.  Maybe the reason is
-  \ some flag remains set because a hidden markup error in certain
-  \ page.  The new word `opened_markups_off` solves the problem.
-
-  ' opened_[=]?
-  dup alias opened_[==]?    \ is there an open h2 heading?
-  dup alias opened_[===]?    \ is there an open h3 heading?
-  dup alias opened_[====]?    \ is there an open h4 heading?
-  dup alias opened_[=====]?    \ is there an open h5 heading?
-  alias opened_[======]?    \ is there an open h6 heading?
-
-[else]
-
-  \ Second version, one flag for every heading; in theory one common
-  \ flag would be enough, because headings are not nested.  Beside,
-  \ somehow this seems to fix the problem of the first version.  The
-  \ new word `opened_markups_off` solves the problem, anyway.
-
-  variable opened_[==]?    \ is there an open h2 heading?
-  variable opened_[===]?    \ is there an open h3 heading?
-  variable opened_[====]?    \ is there an open h4 heading?
-  variable opened_[=====]?    \ is there an open h5 heading?
-  variable opened_[======]?    \ is there an open h6 heading?
-
-[then]
+variable opened_[==]?     \ is there an open h2 heading?
+variable opened_[===]?    \ is there an open h3 heading?
+variable opened_[====]?   \ is there an open h4 heading?
+variable opened_[=====]?  \ is there an open h5 heading?
+variable opened_[======]? \ is there an open h6 heading?
 
 : opened_markups_off ( -- )
   opened_[####]? off
@@ -685,5 +654,8 @@ fendo_definitions
 \ 2020-04-14: Remove old `>sb`.
 \
 \ 2020-10-14: Fix: don't separate the opening `^^`.
+\
+\ 2020-11-14: Remove old unused versions of the headings flags and
+\ `exhausted?`.
 
 \ vim: filetype=gforth
