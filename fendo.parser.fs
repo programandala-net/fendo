@@ -5,7 +5,7 @@
 
 \ This file creates the parser.
 
-\ Last modified 201903111909.
+\ Last modified 202010091831.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2017,2018,2019 Marcos Cruz (programandala.net)
@@ -259,6 +259,7 @@ variable more?  \ flag: keep on parsing more words?; changed by `}content`
   save-mem   \ XXX needed?
   restore_attributes
   restore_echo
+\  2dup ." (((" type ." )))" key drop \ XXX INFORMER
 \  cr ." result of parsed_link_text = " 2dup type key drop  \ XXX INFORMER
 \  evaluate_the_markup? on  \ XXX OLD
   ;
