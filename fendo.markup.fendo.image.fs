@@ -5,10 +5,10 @@
 
 \ This file defines the Fendo markup for images.
 
-\ Last modified 201812201930.
+\ Last modified 202010091824.
 \ See change log at the end of the file.
 
-\ Copyright (C) 2013,2014,2017 Marcos Cruz (programandala.net)
+\ Copyright (C) 2013,2014,2017,2018,2020 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute
 \ it and/or modify it under the terms of the GNU General
@@ -104,7 +104,7 @@ variable image_finished?  \ flag, no more image markup to parse?
   until  ( ca len ) unraw_attributes ;
   \ Parse and store the image raw attributes.
 
-: parse_image ( "imagemarkup}}" -- )
+: parse_image ( "imagemarkup }}" -- )
 \  cr ." parse_image " key drop  \ XXX INFORMER
   get_image_src_attribute
   set_image_size_attributes
@@ -183,5 +183,7 @@ fendo_definitions
 \ 2018-12-13: Document `{{` and `}}`.
 \
 \ 2018-12-20: Fix typo in documentation.
+\
+\ 2020-10-09: Fix typo in stack comment of `parse_image`.
 
 \ vim: filetype=gforth
