@@ -5,7 +5,7 @@
 
 \ This file defines the Fendo markup for inline Forth code.
 
-\ Last modified 202004141433.
+\ Last modified 202011142326.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2017,2018,2020 Marcos Cruz (programandala.net)
@@ -187,8 +187,6 @@ $variable forth_code$
 
 markup_definitions
 
-true [if]  \ XXX first version
-
 : <[ ( "forthcode ]>" -- )
   1 forth_code_depth +!
   parse_forth_code
@@ -222,5 +220,7 @@ fendo_definitions
 \ 2018-12-08: Update notation of Forth words in comments and strings.
 \
 \ 2020-04-14: Remove old `>sb`.
+\
+\ 2020-11-14: Delete old useless compilation condition.
 
 \ vim: filetype=gforth
