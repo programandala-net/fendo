@@ -1,6 +1,6 @@
 = Fendo TO-DO
 :author: Marcos Cruz (programandala.net)
-:revdate: 2020-10-13
+:revdate: 2020-10-14
 
 // This file is part of Fendo
 // (http://programandala.net/en.program.fendo.html).
@@ -664,3 +664,8 @@ Fix: The `//` markup (and probably others) at the start of a field
 adds a separating space before the datum when the field is evaluated.
 This was observed first in
 <fendo/websites/trunk/src/pages/eo.kajero.2008.12.09.fs>.
+
+== 2020-11-14
+
+Finish <fendo.addon.images_by_wildcard.fs>. Test it in
+<programandala.net/es.programa.black_flag.fs>.
