@@ -5,7 +5,7 @@
 
 \ This file defines the Fendo markup for inline Forth code.
 
-\ Last modified 202011150119.
+\ Last modified 202011150134.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2017,2018,2020 Marcos Cruz (programandala.net)
@@ -40,19 +40,17 @@ require galope/dollar-variable.fs  \ `$variable`
 
 fendo_definitions
 
-: forth-start? ( ca len - f )
+: forth_start? ( ca len - f )
   s" <[" str= ; 
 
-: forth-end? ( ca len - f )
+: forth_end? ( ca len - f )
   s" ]>" str= ; 
 
-: update_forth_code_depth ( ca len -- )
-  2dup forth-start? abs >r
-       forth-end?       r> + forth_code_depth +! ;
+: forth_code_end? ( ca len -- )
+  2dup forth_start? abs >r
+       forth_end?   dup r> + forth_code_depth +!
+  forth_code_depth @ 0= and ;
   \ ca len = latest name parsed
-
-: last_forth_end? ( ca len -- f )
-  forth-end? forth_code_depth @ 0= and ;
 
 : bl+ ( ca len -- ca' len' )
   s"  " s+ ;
@@ -60,45 +58,13 @@ fendo_definitions
 : parse_forth_code ( "forthcode ]>" -- ca len )
   s" "
   begin  parse-name dup
-    if   2dup update_forth_code_depth
-         2dup last_forth_end?
+    if   2dup forth_code_end?
          dup >r if 2drop else s+ bl+ then r>
     else 2drop bl+ refill 0= then
   until ;
   \ Get the content of a merged Forth code.
   \ Parse the input stream until a valid "]>" markup is found.
   \ ca len = Forth code
-
-0 [if]  \ XXX TODO experimental version with a dynamic string
-
-: forth_code_end? ( ca len -- f )
-  2dup s" <[" str= abs forth_code_depth +!
-       s" ]>" str= dup forth_code_depth +!
-  forth_code_depth @ 0= and ;
-  \ Is a name a valid end markup of the Forth code?
-  \ ca len = latest name parsed
-
-$variable forth_code$
-
-: forth_code$+ ( ca len -- )
-  forth_code$ $@  s"  " s+ 2swap s+  forth_code$ $! ;
-  \ Append a string to the parsed Forth code.
-
-: parse_forth_code ( "forthcode ]>" -- ca len )
-  s" " forth_code$ $!
-  begin   parse-name dup
-    if
-\          2dup ." { " type ." }"  \ XXX INFORMER
-          2dup forth_code_end? dup >r if  2drop  else  forth_code$+  then r>
-    else  2drop s"  " forth_code$+  refill 0=  then
-  until   forth_code$ $@
-\  cr ." <[ " 2dup type ."  ]>" cr  \ XXX INFORMER
-  ;
-  \ Get the content of a merged Forth code.
-  \ Parse the input stream until a valid "]>" markup is found.
-  \ ca len = Forth code
-
-[then]
 
 : evaluate_forth_code ( i*x ca len -- j*x )
   get-order n>r
@@ -137,6 +103,7 @@ fendo_definitions
 \
 \ 2020-11-14: Delete old useless compilation condition.
 \
-\ 2020-11-15: Delete old unused code and check points.
+\ 2020-11-15: Delete old unused code and check points. Simplify
+\ `parse_forth_code`.
 
 \ vim: filetype=gforth

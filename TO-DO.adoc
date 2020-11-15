@@ -686,3 +686,7 @@ replacing them with non-parsing Forth-code versions:
 
 Also, the HTML attributes could be defined as recognizers prefixes, in order
 to allow `attr="ATTR"`.
+
+== 2020-11-15
+
+Why `<[ … ]>` are nestable? What's the advantage?
