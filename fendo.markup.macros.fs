@@ -5,7 +5,7 @@
 
 \ This file provides the tools to create the user macros.
 
-\ Last modified 201812081839.
+\ Last modified  202011160218.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2014,2017 Marcos Cruz (programandala.net)
@@ -43,7 +43,7 @@
 .( fendo.markup.macros.fs compiled ) cr
 
 \ ==============================================================
-\ Change log
+\ Change log {{{1
 
 \ 2014-02-05: Start, based on <addons/abbr.fs>.
 \

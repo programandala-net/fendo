@@ -7,7 +7,7 @@
 \ with pages created with the alinome-bici engine
 \ (based on ForthCMS and fhp).
 
-\ Last modified 201812080157.
+\ Last modified  202011160218.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2017 Marcos Cruz (programandala.net)
@@ -32,7 +32,7 @@
 \ with Gforth (http://gnu.org/software/gforth).
 
 \ ==============================================================
-\ Requirements
+\ Requirements {{{1
 
 forth_definitions
 require alinome-bici/alinome-bici.fs  \ old engine
@@ -41,7 +41,7 @@ fendo_definitions
 .( fendo.addon.alinome-bici.fs compiled) cr
 
 \ ==============================================================
-\ Change log
+\ Change log {{{1
 
 \ 2013-04-28: Start.
 \

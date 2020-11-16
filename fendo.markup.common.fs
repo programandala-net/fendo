@@ -6,7 +6,7 @@
 \ This file defines some common words for the markup definitions, also
 \ required by the links module.
 
-\ Last modified 201812080157.
+\ Last modified  202011160218.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2017 Marcos Cruz (programandala.net)
@@ -28,14 +28,14 @@
 \ <http://gnu.org/licenses>.
 
 \ ==============================================================
-\ Requirements
+\ Requirements {{{1
 
 forth_definitions
 require galope/unhtml.fs
 fendo_definitions
 
 \ ==============================================================
-\ Parser vectors
+\ Parser vectors {{{1
 
 \ Some words defined in <fendo.parser.fs> will be needed earlier.
 
@@ -49,7 +49,7 @@ defer evaluate_content ( ca len -- )
   \ Close the pending markups.
 
 \ ==============================================================
-\ Common tools
+\ Common tools {{{1
 
 : :echo_name  ( ca len -- )
   2dup :create  s,
@@ -106,7 +106,7 @@ variable forth_code_depth
 .( fendo.markup.common.fs compiled) cr
 
 \ ==============================================================
-\ Change log
+\ Change log {{{1
 
 \ 2014-03-04: Start. Code extracted from <fendo.markup.fs>.
 \

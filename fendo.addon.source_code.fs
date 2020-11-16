@@ -5,7 +5,7 @@
 
 \ This file is the source code addon.
 
-\ Last modified 202004141705.
+\ Last modified  202011160218.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2015,2017,2018,2020 Marcos Cruz (programandala.net)
@@ -27,7 +27,7 @@
 \ with Gforth (http://gnu.org/software/gforth).
 
 \ ==============================================================
-\ Requirements
+\ Requirements {{{1
 
 forth_definitions
 
@@ -108,7 +108,7 @@ package fendo.addon.source_code
   \ XXX TODO use a data structure instead of conditionals
 
 \ ==============================================================
-\ Generic source code
+\ Generic source code {{{1
 
 public
 0 value source_code_fid
@@ -276,7 +276,7 @@ end-package
 .( fendo.addon.source_code.fs compiled) cr
 
 \ ==============================================================
-\ Change log
+\ Change log {{{1
 
 \ 2013-07-21: Start, with noop definitions from
 \ <fendo-programandala.fs>; only the basic `source_code` works.

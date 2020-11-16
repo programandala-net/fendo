@@ -5,7 +5,7 @@
 
 \ This file defines the HTML tags.
 
-\ Last modified 201812080157.
+\ Last modified  202011160218.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2017 Marcos Cruz (programandala.net)
@@ -27,7 +27,7 @@
 \ <http://gnu.org/licenses>.
 
 \ ==============================================================
-\ Modules
+\ Modules {{{1
 
 require ./fendo.markup.html.attributes.fs
 require ./fendo.markup.html.tags.fs
@@ -36,7 +36,7 @@ require ./fendo.markup.html.entities.fs
 .( fendo.markup.html.fs compiled) cr
 
 \ ==============================================================
-\ Change log
+\ Change log {{{1
 
 \ 2013-06-01: Start.
 \

@@ -6,7 +6,7 @@
 \ This file creates some low-level tools to manage multilingual
 \ websites. See the manual for details.
 
-\ Last modified 201912271504.
+\ Last modified  202011160218.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2017,2018,2019 Marcos Cruz (programandala.net)
@@ -31,7 +31,7 @@
 \ with Gforth (http://gnu.org/software/gforth).
 
 \ ==============================================================
-\ Requirements {{{1
+\ Requirements {{{1 {{{1
 
 forth_definitions
 
@@ -42,7 +42,7 @@ require galope/c-slash-string.fs    \ `c/string`
 fendo_definitions
 
 \ ==============================================================
-\ Tools {{{1
+\ Tools {{{1 {{{1
 
 true to multilingual?
 
@@ -140,7 +140,7 @@ true to multilingual?
   \ }doc
 
 \ ==============================================================
-\ l10n strings {{{1
+\ l10n strings {{{1 {{{1
 
 \ XXX REMARK -- `l10n` words are deprecated. They are superseded by
 \ `begin-translation`, which has been moved to Galope. In fact
@@ -215,7 +215,7 @@ true to multilingual?
   \ }doc
 
 \ ==============================================================
-\ Config and doc of `begin-translation` {{{1
+\ Config and doc of `begin-translation` {{{1 {{{1
 
 ' current_lang# is lang
   \ `lang` must return the current language.
@@ -377,7 +377,7 @@ true to multilingual?
   \ }doc
 
 \ ==============================================================
-\ Development notes {{{1
+\ Development notes {{{1 {{{1
 
 false [if]
 
@@ -429,7 +429,7 @@ end-translation
 .( fendo.addon.multilingual.fs compiled) cr
 
 \ ==============================================================
-\ Change log
+\ Change log {{{1
 
 \ 2013-10-14: Moved from the application Fendo-programandala.
 \

@@ -6,7 +6,7 @@
 \ This file is the XXX addon.
 \ It ...
 
-\ Last modified 201812081823.
+\ Last modified  202011160218.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2017,2018 Marcos Cruz (programandala.net)
@@ -31,12 +31,12 @@
 \ with Gforth (http://gnu.org/software/gforth).
 
 \ ==============================================================
-\ Main
+\ Main {{{1
 
 .( fendo.addon.XXX.fs compiled ) cr
 
 \ ==============================================================
-\ Change log
+\ Change log {{{1
 
 \ 201x-xx-xx:
 \

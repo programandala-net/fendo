@@ -5,7 +5,7 @@
 
 \ This file creates the tools for user's shortcuts.
 
-\ Last modified 202010062141.
+\ Last modified  202011160218.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2017,2018,2020 Marcos Cruz (programandala.net)
@@ -232,7 +232,7 @@ s" " :shortcut ( -- )
 .( fendo.shortcuts.fs compiled ) cr
 
 \ ==============================================================
-\ Change log
+\ Change log {{{1
 
 \ 2013-10-22: Created with code extracted from <fendo_markup_wiki.fs>
 \ and <fendo.fs>. New terminology: every "link" is renamed to

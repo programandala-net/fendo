@@ -6,7 +6,7 @@
 \ This file provides a word that traverses all pids (page IDs),
 \ required by other addons.
 
-\ Last modified 202004141707.
+\ Last modified  202011160218.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2017,2018,2020 Marcos Cruz (programandala.net)
@@ -100,7 +100,7 @@ end-package
 .( fendo.addon.traverse_pids.fs compiled) cr
 
 \ ==============================================================
-\ Change log
+\ Change log {{{1
 
 \ 2013-11-25: Code extracted from
 \ <addons/list_of_content_by_prefix.fs>.

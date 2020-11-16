@@ -5,7 +5,7 @@
 
 \ This file is the ZX Spectrum source code addon.
 
-\ Last modified 201812080157.
+\ Last modified  202011160218.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2014,2015,2017 Marcos Cruz (programandala.net)
@@ -27,7 +27,7 @@
 \ with Gforth (http://gnu.org/software/gforth).
 
 \ ==============================================================
-\ Requirements
+\ Requirements {{{1
 
 require ./fendo.addon.source_code.fs
 require ./fendo.addon.zx_spectrum_charset.fs
@@ -43,7 +43,7 @@ require ./fendo.addon.zx_spectrum_charset.fs
 .( fendo.addon.zx_spectrum_source_code.fs compiled) cr
 
 \ ==============================================================
-\ Change log
+\ Change log {{{1
 
 \ 2014-10-17: Start, with part of the file. <fendo.addon.source_code.fs>.
 \

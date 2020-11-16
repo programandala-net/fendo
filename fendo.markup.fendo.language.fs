@@ -5,7 +5,7 @@
 
 \ This file defines the Fendo markup for languages.
 
-\ Last modified 201812080157.
+\ Last modified  202011160218.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2017 Marcos Cruz (programandala.net)
@@ -27,7 +27,7 @@
 \ <http://gnu.org/licenses>.
 
 \ ==============================================================
-\ Custom language markup tools
+\ Custom language markup tools {{{1
 
 fendo_definitions
 
@@ -94,7 +94,7 @@ Usage example:
 .( fendo.markup.fendo.language.fs compiled ) cr
 
 \ ==============================================================
-\ Change log
+\ Change log {{{1
 
 \ 2014-04-21: Code moved from <fendo.markup.fendo.fs>.
 \

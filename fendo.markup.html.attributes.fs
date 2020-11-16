@@ -5,7 +5,7 @@
 
 \ This file defines the HTML attributes.
 
-\ Last modified 202011142027.
+\ Last modified  202011160218.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2015,2017,2018,2020 Marcos Cruz (programandala.net)
@@ -27,12 +27,12 @@
 \ <http://gnu.org/licenses>.
 
 \ ==============================================================
-\ TODO
+\ TODO {{{1
 
 \ 2013-08-10: Alternative to Gforth's strings: FFL's strings.
 
 \ ==============================================================
-\ Requirements
+\ Requirements {{{1
 
 forth_definitions
 
@@ -56,7 +56,7 @@ require galope/xstack.fs
 fendo_definitions
 
 \ ==============================================================
-\ Fetch and store
+\ Fetch and store {{{1
 
 : attribute@ ( a -- ca len )
   [gforth_strings_for_attributes?] [if]  $@  [else]  @ str-get  [then] ;
@@ -67,7 +67,7 @@ fendo_definitions
   \ a = attribute variable
 
 \ ==============================================================
-\ Defining words
+\ Defining words {{{1
 
 : :attribute@ ( ca len a -- )
   rot rot s" @" s+ :create ,
@@ -163,7 +163,7 @@ fendo_definitions
   \ a = attribute variable
 
 \ ==============================================================
-\ Actual HTML attributes
+\ Actual HTML attributes {{{1
 
 depth [if]
   .( The stack must be empty before defining the attributes.)
@@ -280,7 +280,7 @@ attribute: xmlns=
 depth constant #attributes  \ count of defined attributes
 
 \ ==============================================================
-\ Virtual attributes
+\ Virtual attributes {{{1
 
 : (xml:)lang=  ( -- a )
   xhtml? if  xml:lang=  else  lang=  then ;
@@ -298,13 +298,13 @@ depth constant #attributes  \ count of defined attributes
   \ for the current syntax.
 
 \ ==============================================================
-\ Table
+\ Table {{{1
 
 create attributes  \ table for the attribute variables
 #attributes 0 [?do]  ,  [loop]  \ fill the table
 
 \ ==============================================================
-\ Tools
+\ Tools {{{1
 
 : (attributes)  ( -- a len )
   attributes #attributes cells ;
@@ -330,7 +330,7 @@ create attributes  \ table for the attribute variables
   \ a = page ID
 
 \ ==============================================================
-\ Echo
+\ Echo {{{1
 
 : ((+attribute))  ( ca1 len1 ca2 len2 -- )
 \  2dup ." label<< " type ." >> " cr  \ XXX INFORMER
@@ -360,7 +360,7 @@ create attributes  \ table for the attribute variables
   cell +loop ;
 
 \ ==============================================================
-\ Saving and restoring the attributes
+\ Saving and restoring the attributes {{{1
 
 \ The URL anchor does not work like an attribute, but it must be saved
 \ and restored with them, just in case.
@@ -401,7 +401,7 @@ create attributes  \ table for the attribute variables
 .( fendo.markup.html.attributes.fs compiled) cr
 
 \ ==============================================================
-\ Change log
+\ Change log {{{1
 
 \ 2013-06-10: Start. Factored from <fendo_markup_html.fs>.
 \

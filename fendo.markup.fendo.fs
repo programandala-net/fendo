@@ -5,7 +5,7 @@
 
 \ This file defines the Fendo markup.
 
-\ Last modified 202011160110.
+\ Last modified  202011160218.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2017,2018,2020 Marcos Cruz (programandala.net)
@@ -27,7 +27,7 @@
 \ <http://gnu.org/licenses>.
 
 \ ==============================================================
-\ XXX TODO --
+\ XXX TODO -- {{{1
 
 \ 2014-04-21: factor every markup to its own file.
 \
@@ -53,7 +53,7 @@
 \ 2014-03-04: Change: parser vectors moved to <fendo.markup.common.fs>.
 
 \ ==============================================================
-\ Requirements
+\ Requirements {{{1
 
 forth_definitions
 
@@ -65,7 +65,7 @@ require ./fendo.addon.source_code.common.fs  \ XXX TMP
 require ./fendo.links.fs  \ XXX FIXME already loaded by the main file
 
 \ ==============================================================
-\ Debug tools
+\ Debug tools {{{1
 
 : xxxtype ( ca len -- ca len )
   2dup ." «" type ." »" ;
@@ -74,7 +74,7 @@ require ./fendo.links.fs  \ XXX FIXME already loaded by the main file
   dup ." «" . ." »" ;
 
 \ ==============================================================
-\ Generic tool words for strings
+\ Generic tool words for strings {{{1
 
 \ XXX TODO -- move?
 
@@ -93,7 +93,7 @@ require ./fendo.links.fs  \ XXX FIXME already loaded by the main file
   \ if f is true, drop ca2 len2.
 
 \ ==============================================================
-\ Generic tool words for markup and parsing
+\ Generic tool words for markup and parsing {{{1
 
 \ Counters
 \ XXX used only by the parser; but will be required here too
@@ -230,7 +230,7 @@ variable opened_[======]? \ is there an open h6 heading?
   \ eventually will be used also by a new version of `{{`.
 
 \ ==============================================================
-\ Actual markup
+\ Actual markup {{{1
 
 \ The Fendo markup was inspired by Creole (http://wikicreole.org),
 \ txt2tags (http://txt2tags.org), Asciidoctor (http://ascidoctor.org)
@@ -350,7 +350,7 @@ fendo_definitions
 .( fendo.markup.fendo.fs compiled ) cr
 
 \ ==============================================================
-\ Change log
+\ Change log {{{1
 
 \ 2013-05-18: Start. First HTML tags.
 \

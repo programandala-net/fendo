@@ -5,7 +5,7 @@
 
 \ This file is the Atom addon.
 
-\ Last modified 202004141705.
+\ Last modified  202011160218.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2009,2014,2015,2017,2018,2020 Marcos Cruz (programandala.net)
@@ -27,7 +27,7 @@
 \ with Gforth (http://gnu.org/software/gforth).
 
 \ ==============================================================
-\ TODO
+\ TODO {{{1
 
 \ Add xml:lang to all human readable fields.
 \
@@ -37,7 +37,7 @@
 \ custom string.
 
 \ ==============================================================
-\ Requirements
+\ Requirements {{{1
 
 forth_definitions
 
@@ -48,7 +48,7 @@ require galope/s-constant.fs \ `sconstant`
 fendo_definitions
 
 \ ==============================================================
-\ Configurable texts
+\ Configurable texts {{{1
 
 s" Content"
 sconstant atom_default_content$
@@ -75,7 +75,7 @@ defer atom_edit_summary$
 ' atom_default_edit_summary$ is atom_edit_summary$
 
 \ ==============================================================
-\ Calculated data
+\ Calculated data {{{1
 
 : pid#>taguri ( a -- ca len )
   >r s" tag:" domain s+ s" ," s+ 
@@ -86,7 +86,7 @@ defer atom_edit_summary$
   \ a = page ID
 
 \ ==============================================================
-\ Tags
+\ Tags {{{1
 
 : <author> ( -- ) echo_cr s" author" {html  ;
 : </author> ( -- ) echo_cr s" author" html}  ;
@@ -114,7 +114,7 @@ defer atom_edit_summary$
 : </updated> ( -- ) s" updated" html}  ;
 
 \ ==============================================================
-\ Atom feed
+\ Atom feed {{{1
 
 : atom_link ( ca1 len1 ca2 len2 -- )
   rel=! href=! [<link/>] ;
@@ -203,7 +203,7 @@ defer atom_site_title$ ( -- ca len )
   </feed> close_target  to xhtml? ;
 
 \ ==============================================================
-\ Atom entries
+\ Atom entries {{{1
 
 : atom_entry_title ( a -- )
   s" xhtml" type=! [<title>] title evaluate_content [</title>] ;
@@ -295,7 +295,7 @@ set_default_atom_entry_summary
 .( fendo.addon.atom.fs compiled) cr
 
 \ ==============================================================
-\ Change log
+\ Change log {{{1
 
 \ 2014-06-05: Start, using the code of the Atom module (last version,
 \ from 2009-10-21) of: ForthCMS ("Forth Calm Maker of Sites") version

@@ -5,7 +5,7 @@
 
 \ This file defines the page data tools.
 
-\ Last modified 201907312259.
+\ Last modified  202011160218.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2015,2017,2018,2019 Marcos Cruz
@@ -28,7 +28,7 @@
 \ <http://gnu.org/licenses>.
 
 \ ==============================================================
-\ Requirements
+\ Requirements {{{1
 
 forth_definitions
 
@@ -48,7 +48,7 @@ require ffl/str.fs \ dynamic strings
 fendo_definitions
 
 \ ==============================================================
-\ Page data engine
+\ Page data engine {{{1
 
 variable data_fields  \ counter
 
@@ -127,7 +127,7 @@ defer get_datum ( a u -- ca len )
   \ Create a page metadatum.
 
 \ ==============================================================
-\ Page data fields
+\ Page data fields {{{1
 
 datum: source_file
   \ This field contains the source filename. It is set automatically
@@ -178,7 +178,7 @@ datum: template  \ HTML template filename in the design subdir
 \ .( /datum = ) /datum ? cr key drop  \ XXX INFORMER
 
 \ ==============================================================
-\ File names
+\ File names {{{1
 
 0 value current_page  \ page ID of the current page
 
@@ -259,7 +259,7 @@ datum: template  \ HTML template filename in the design subdir
   \ ca len = target HTML page file name, with its local path
 
 \ ==============================================================
-\ Page ID
+\ Page ID {{{1
 
 \ The first time a page is interpreted, its data is parsed and
 \ created (even if the content doesn't has to be parsered, e.g.
@@ -376,7 +376,7 @@ defer brother_pages? ( ca1 len1 ca2 len2 -- f )
   \ }doc
 
 \ ==============================================================
-\ Debugging tools
+\ Debugging tools {{{1
 
 : .data { pageID -- }
   ." data of pid# " pageID . cr
@@ -392,7 +392,7 @@ defer brother_pages? ( ca1 len1 ca2 len2 -- f )
   current_page .data  ;
 
 \ ==============================================================
-\ Page data header
+\ Page data header {{{1
 
 defer set_default_data ( -- )
   \ Set the default values of the page data.
@@ -618,7 +618,7 @@ variable do_content?  do_content? on
   \ Convert a page ID to a target filename.
 
 \ ==============================================================
-\ Calculated data
+\ Calculated data {{{1
 
 : file_mtime ( a -- ca len )
   dup file_modified dup
@@ -930,7 +930,7 @@ variable a_next_page \ flag
   \ }doc
 
 \ ==============================================================
-\ Data manipulation
+\ Data manipulation {{{1
 
 : (file-mtime>modified) ( ca len -- )
   file-mtime 2dup current_page modified
@@ -955,7 +955,7 @@ true value included_files_update_the_page_date?
 .( fendo.data.fs compiled) cr
 
 \ ==============================================================
-\ Change log
+\ Change log {{{1
 
 \ 2013-04-28: Start.
 \

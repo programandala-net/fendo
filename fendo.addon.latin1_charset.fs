@@ -5,7 +5,7 @@
 
 \ This file is the latin1 charset addon.
 
-\ Last modified 201812081823.
+\ Last modified  202011160218.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2017,2018 Marcos Cruz (programandala.net)
@@ -142,7 +142,7 @@ uncodepage: latin1_charset_to_utf8
 .( fendo.addon.latin1_charset.fs compiled) cr
 
 \ ==============================================================
-\ Change log
+\ Change log {{{1
 
 \ 2013-12-13: Written.
 \

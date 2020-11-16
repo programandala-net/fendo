@@ -5,7 +5,7 @@
 
 \ This file is the main one; it loads all the modules.
 
-\ Last modified 202004141421.
+\ Last modified  202011160218.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2012,2013,2014,2015,2017,2018,2020 Marcos Cruz (programandala.net)
@@ -27,12 +27,12 @@
 \ with Gforth (http://www.gnu.org/software/gforth).
 
 \ ==============================================================
-\ Debug
+\ Debug {{{1
 
 false value [bug_thread] immediate  \ XXX TMP
 
 \ ==============================================================
-\ Requirements
+\ Requirements {{{1
 
 only forth definitions
 
@@ -113,7 +113,7 @@ dup     constant [gforth-strings?]  immediate
 [then]
 
 \ ==============================================================
-\ Wordlists
+\ Wordlists {{{1
 
 table constant fendo_markup_html_entities_wid  \ HTML entities
 table constant fendo_markup_macros_wid  \ user macros
@@ -204,7 +204,7 @@ wordlist constant fendo_pid_wid  \ page IDs
 fendo_definitions
 
 \ ==============================================================
-\ Config
+\ Config {{{1
 
 require VERSION.fs
 
@@ -214,7 +214,7 @@ require VERSION.fs
 false constant link_text_as_attribute?  \ XXX TMP -- experimental
 
 \ ==============================================================
-\ Modules
+\ Modules {{{1
 
 false value multilingual?  \ to be changed by <addons/multilingual.fs>
 
@@ -246,7 +246,7 @@ depth [if] abort [then]  \ XXX DEBUGGING
 .( fendo.fs compiled) cr
 
 \ ==============================================================
-\ Change log
+\ Change log {{{1
 
 \ 2012-06-30: Start.
 \

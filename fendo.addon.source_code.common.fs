@@ -5,7 +5,7 @@
 
 \ This file is the code common to several source code addons.
 
-\ Last modified 202004141707.
+\ Last modified  202011160218.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2017,2018,2020 Marcos Cruz (programandala.net)
@@ -27,7 +27,7 @@
 \ with Gforth (http://gnu.org/software/gforth).
 
 \ ==============================================================
-\ Requirements
+\ Requirements {{{1
 
 forth_definitions
 
@@ -87,7 +87,7 @@ $variable source_code$
   source_code$ $@ ;
 
 \ ==============================================================
-\ Syntax highlighting with Vim
+\ Syntax highlighting with Vim {{{1
 
 \ XXX FIXME remove spaces and use `s&` instead of `s+`.
 
@@ -196,7 +196,7 @@ end-package
 .( fendo.addon.source_code.common.fs compiled) cr
 
 \ ==============================================================
-\ Change log
+\ Change log {{{1
 
 \ 2013-11-18: Code extracted from <fendo_source_code.fs>.
 \

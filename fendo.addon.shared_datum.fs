@@ -9,7 +9,7 @@
 \ XXX NOT FINISHED -- Even not started! -- This could be a general
 \ layer below <fendo.addon.project.fs>.
 
-\ Last modified 201812081823.
+\ Last modified  202011160218.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2015,2017,2018 Marcos Cruz (programandala.net)
@@ -38,7 +38,7 @@
 .( fendo.addon.shared_datum.fs compiled) cr
 
 \ ==============================================================
-\ Change log
+\ Change log {{{1
 
 \ 2015-02-02 Start.
 \

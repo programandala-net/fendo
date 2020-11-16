@@ -5,7 +5,7 @@
 
 \ This file defines the Fendo markup for images.
 
-\ Last modified 202011150014.
+\ Last modified  202011160218.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2017,2018,2020 Marcos Cruz (programandala.net)
@@ -27,14 +27,14 @@
 \ <http://gnu.org/licenses>.
 
 \ ==============================================================
-\ Requirements
+\ Requirements {{{1
 
 fendo_definitions
 
 require fendo.image.fs
 
 \ ==============================================================
-\ Tools to parse the image markup
+\ Tools to parse the image markup {{{1
 
 : get_image_src_attribute ( "name" -- )
   files_subdir $@ parse-name s+ src=! ;
@@ -86,7 +86,7 @@ variable image_finished?  \ flag, no more image markup to parse?
   parse_image [<img>] ;
 
 \ ==============================================================
-\ Markup
+\ Markup {{{1
 
 markup_definitions
 
@@ -130,7 +130,7 @@ markup_definitions
 .( fendo.markup.fendo.image.fs compiled ) cr
 
 \ ==============================================================
-\ Change log
+\ Change log {{{1
 
 \ 2014-04-21: Code moved from <fendo.markup.fendo.fs>.
 \

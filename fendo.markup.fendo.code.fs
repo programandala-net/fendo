@@ -5,7 +5,7 @@
 
 \ This file defines the Fendo markup for code.
 
-\ Last modified 201812080157.
+\ Last modified  202011160218.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2017 Marcos Cruz (programandala.net)
@@ -27,7 +27,7 @@
 \ <http://gnu.org/licenses>.
 
 \ ==============================================================
-\ Requirements
+\ Requirements {{{1
 
 forth_definitions
 
@@ -38,7 +38,7 @@ fendo_definitions
 require fendo/fendo.addon.source_code.common.fs
 
 \ ==============================================================
-\ Tools
+\ Tools {{{1
 
 fendo_definitions
 
@@ -95,7 +95,7 @@ fendo_definitions
   \ Parse and echo a source code zone.
 
 \ ==============================================================
-\ Markup
+\ Markup {{{1
 
 markup_definitions
 
@@ -108,7 +108,7 @@ markup_definitions
   \ Open and close a block <code> region.
 
 \ ==============================================================
-\ Custom code markup
+\ Custom code markup {{{1
 
 0 [if]
 
@@ -164,7 +164,7 @@ fendo_definitions
 .( fendo.markup.fendo.code.fs compiled ) cr
 
 \ ==============================================================
-\ Change log
+\ Change log {{{1
 
 \ 2014-04-21: Code moved from <fendo.markup.fendo.fs>.
 \

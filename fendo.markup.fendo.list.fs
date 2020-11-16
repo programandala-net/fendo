@@ -5,7 +5,7 @@
 
 \ This file defines the Fendo markup for lists.
 
-\ Last modified 201812081823.
+\ Last modified  202011160218.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2017,2018 Marcos Cruz (programandala.net)
@@ -27,7 +27,7 @@
 \ <http://gnu.org/licenses>.
 
 \ ==============================================================
-\ Tools
+\ Tools {{{1
 
 fendo_definitions
 
@@ -48,7 +48,7 @@ variable numbered_list_items  \ counter
   \ Numbered list item.
 
 \ ==============================================================
-\ Markup
+\ Markup {{{1
 
 markup_definitions
 
@@ -66,7 +66,7 @@ fendo_definitions
 .( fendo.markup.fendo.list.fs compiled ) cr
 
 \ ==============================================================
-\ Change log
+\ Change log {{{1
 
 \ 2014-04-21: Code moved from <fendo.markup.fendo.fs>.
 \

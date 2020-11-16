@@ -5,7 +5,7 @@
 
 \ This file defines the Fendo markup for links.
 
-\ Last modified 202011160118.
+\ Last modified  202011160218.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2015,2017,2018,2020 Marcos Cruz (programandala.net)
@@ -27,7 +27,7 @@
 \ <http://gnu.org/licenses>.
 
 \ ==============================================================
-\ Requirements
+\ Requirements {{{1
 
 forth_definitions
 
@@ -38,7 +38,7 @@ require galope/dollar-variable.fs  \ `$variable`
 require galope/trim.fs             \ `trim`
 
 \ ==============================================================
-\ Complex links markup code
+\ Complex links markup code {{{1
 
 fendo_definitions
 
@@ -178,7 +178,7 @@ $variable last_href$  \ XXX new, experimental, to be used by the application
   \ }doc
 
 \ ==============================================================
-\ Simple links markup code
+\ Simple links markup code {{{1
 
 : parse_link ( "ccc" -- ca len )
   s" "
@@ -205,7 +205,7 @@ variable [[-depth
   endcase ;
 
 \ ==============================================================
-\ Markup
+\ Markup {{{1
 
 markup_definitions
 
@@ -214,7 +214,7 @@ defer [[ ( "ccc" | -- | n )
 defer ]] ( ca1 len1 ca2 len2 n | ca1 len1 n | -- )
 
 \ ==============================================================
-\ Markup selectors
+\ Markup selectors {{{1
 
 fendo_definitions
 
@@ -237,7 +237,7 @@ complex_[[ \ set the default
 .( fendo.markup.fendo.link.fs compiled ) cr
 
 \ ==============================================================
-\ Change log
+\ Change log {{{1
 
 \ 2014-04-21: Code moved from <fendo.markup.fendo.fs>.
 \
