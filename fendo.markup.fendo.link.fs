@@ -5,7 +5,7 @@
 
 \ This file defines the Fendo markup for links.
 
-\ Last modified  202011160218.
+\ Last modified  202011160252.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2015,2017,2018,2020 Marcos Cruz (programandala.net)
@@ -136,16 +136,20 @@ $variable last_href$  \ XXX new, experimental, to be used by the application
 
 [then]
 
-: complex_[[ ( "linkmarkup ]]" -- )
+: (complex_[[) ( "linkmarkup ]]" -- )
   parse_link echo_link ;
+
+  \ XXX TODO Indicate what happens when _ca2 len2_ is missing:
 
   \ doc{
   \
-  \ [[ ( "ccc ]]" -- )
+  \ (complex_[[) ( "ccc ]]" -- )
   \
-  \ Start the definition of a link. There are two implementations of
+  \ Start a link markup (complex version). ``(complex_[[)`` is a
+  \ possible action of the actual markup `[[`, selected by
+  \ `complex_[[`.
   \
-  \ Examples:
+  \ Usage examples:
 
   \ ----
   \ [[ http://programandala.net ]]
@@ -153,27 +157,28 @@ $variable last_href$  \ XXX new, experimental, to be used by the application
   \ [[ http://programandala.net/en.program.fendo.html | Fendo | title="Fendo home page" ]]
   \ ----
 
-  \ The first part of the link con be a page identifier, an actual URL
+  \ The first part of the link can be a page identifier, an actual URL
   \ or a shortcut.
 
-  \ // XXX FIXME --
   \ WARNING: The link definition must be on one single line of text.
-  \ This limitation will be removed from a future version of Fendo.
+  \ This limitation may be removed from a future version of Fendo.
   \
-  \ See `link` for an alternative to create links.
-  \
-  \ See also: `]]`, `shortcut:`.
+  \ See also: `(complex_]])`, `(simple_[[)`, `link`, `shortcut:`.
   \
   \ }doc
 
-: complex_]] ( -- )
+: (complex_]]) ( -- )
   true abort" `]]` without `[[`" ;
 
   \ doc{
   \
-  \ complex_]] ( -- )
+  \ (complex_]]) ( -- )
   \
-  \ End the definition of a link that was started by `[[`.
+  \ End a link markup (complex version). ``(complex_]])`` is a
+  \ possible action of the actual markup `]]`, selected by
+  \ `complex_[[`.
+  \
+  \ See also: `(simple_]])`.
   \
   \ }doc
 
@@ -194,24 +199,77 @@ variable [[-depth
   \ Store the stack depth at the start of the link markup, in order to
   \ calculate later the number of arguments left.
 
-: simple_[[ ( -- )
+: (simple_[[) ( -- )
   depth [[-depth ! parse_link evaluate_markup ;
 
-: simple_]] ( ca1 len1 | ca1 len1 ca2 len2 -- )
+  \ doc{
+  \
+  \ (simple_[[) ( -- )
+  \
+  \ Start a link markup (simple version). ``(simple_[[)`` is a
+  \ possible action of the actual markup `[[`, selected by
+  \ `simple_[[`.
+  \
+  \ Usage examples:
+
+  \ ----
+  \ [[ "http://programandala.net" ]]
+  \ [[ "http://programandala.net/en.program.fendo.html"
+  \    "Fendo homepage" ]]
+  \ [[ "http://programandala.net/en.program.fendo.html" "Fendo"
+  \    title=" Fendo home page" ]]
+  \ [[ s" This is the title" title=!
+  \    "http://programandala.net" ]]
+  \ ----
+
+  \ The text in the markup is evaluated as Forth code. The first
+  \ string must be a page identifier, an actual URL or a shortcut. The
+  \ second, optional, string must be the link text. HTML parameters
+  \ can be set by the corresponding parsing words like ``title=``,
+  \ ``style=``, etc., in any order or position. Also their storage
+  \ variants like ``title=!`` are valid.
+  \
+  \ See also: `(simple_]])`, `(complex_[[)`, `link`, `shortcut:`.
+  \
+  \ }doc
+
+: (simple_]]) ( ca1 len1 | ca1 len1 ca2 len2 -- )
   depth [[-depth @ - case
     2       of s" " link                                             endof
     4       of      link                                             endof
     default-of true abort" Wrong number of arguments in link markup" endof
   endcase ;
 
+  \ XXX TODO Indicate what happens when _ca2 len2_ is missing:
+
+  \
+  \ doc{
+  \
+  \ (simple_]]) ( ca1 len1 | ca1 len1 ca2 len2 -- )
+  \
+  \ End a link markup (simple version). ``(simple_]])`` is a
+  \ possible action of the actual markup `]]`, selected by
+  \ `simple_[[`.
+  \
+  \ The string _ca1 len1_ is the address (an actual URL, a page
+  \ identifier or a shortcut). The optional string _ca2 len2_ is the
+  \ link text. They are provided as Forth strings. HTML attributes are
+  \ set by the corresponding Fendo words. See `(simple_[[)` for usage
+  \ examples.
+  \
+  \ See also: `(complex_]])`.
+  \
+  \ }doc
+
 \ ==============================================================
 \ Markup {{{1
 
 markup_definitions
 
-defer [[ ( "ccc" | -- | n )
+defer [[ ( "ccc" -- )
 
-defer ]] ( ca1 len1 ca2 len2 n | ca1 len1 n | -- )
+defer ]] ( -- ) \ complex version
+         ( ca1 len1 ca2 len2 | ca1 len1 | -- ) \ simple version
 
 \ ==============================================================
 \ Markup selectors {{{1
@@ -220,17 +278,37 @@ fendo_definitions
 
 : complex_[[ ( -- )
   [markup>order]
-  ['] complex_[[ is [[
-  ['] complex_]] is ]]
+  ['] (complex_[[) is [[
+  ['] (complex_]]) is ]]
   [markup<order] ;
-  \ Set the old complex version of `[[`.
+
+  \ doc{
+  \
+  \ complex_[[ ( -- )
+  \
+  \ Select the old complex version of the link markups `[[` and `]]`,
+  \ provided by `(complex_[[)` and `(complex_[[)`.
+  \
+  \ See also: `link`.
+  \
+  \ }doc
 
 : simple_[[ ( -- )
   [markup>order]
-  ['] simple_[[ is [[
-  ['] simple_]] is ]]
+  ['] (simple_[[) is [[
+  ['] (simple_]]) is ]]
   [markup<order] ;
-  \ Set the new simple version of `[[`.
+
+  \ doc{
+  \
+  \ simple_[[ ( -- )
+  \
+  \ Select the new simple version of the link markups `[[` and `]]`,
+  \ provided by `(simple_[[)` and `(simple_[[)`.
+  \
+  \ See also: `link`.
+  \
+  \ }doc
 
 complex_[[ \ set the default
 
@@ -277,6 +355,7 @@ complex_[[ \ set the default
 \
 \ 2020-11-16: Make `[[` defered, write an alternative simpler version
 \ of it and two words to select the old version or the new one. The
-\ old version is still the default.
+\ old version is still the default. Document the markups, their 
+\ actions and the selectors.
 
 \ vim: filetype=gforth
