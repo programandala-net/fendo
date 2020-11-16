@@ -4,7 +4,7 @@
 " URL:      http://programandala.net/en.program.fendo_vim_syntax_file.html
 " License:  GPL (http://www.gnu.org)
 " Remarks:  Vim 6 or greater
-" Updated:  2020-10-13
+" Updated:  2020-11-16
 
 " This file is part of Fendo,
 " a static website generator written in Forth
@@ -70,7 +70,7 @@ syn match fendoEntityRef /\\\@<!&[#a-zA-Z]\S\{-};/
 "syn match fendoAttributeRef /\\\@<!{\w\(\w\|-\)*\([=!@#$%?:].*\)\?}/
 
 "syn match fendoLink /\<\[\[[ \n\t]\+\_.\{-}[ \n\t]\+]]\>/
-syn match fendoLink /\<\[\[\>.\{-}\<]]\>/ contains=fendoImage
+syn match fendoLink /\<\[\[\>\_.\{-}\<]]\>/ contains=fendoImage
 syn match fendoImage /\<{{\>\_.\{-}\<}}\>/
 
 " As a damage control measure quoted patterns always terminate at a blank
@@ -309,5 +309,7 @@ set comments=://,fb:-,fb:*,fb:.,fb:+,fb:>
 "
 " 2020-10-13: Support multiline headings markup, and ignore contents after the
 " closing mark.
+"
+" 2020-11-16: Support multiline links markup, just implemented.
 
 " ----------------------------------------------
