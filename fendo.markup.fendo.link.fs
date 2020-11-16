@@ -5,7 +5,7 @@
 
 \ This file defines the Fendo markup for links.
 
-\ Last modified 202011141901.
+\ Last modified 202011160118.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2015,2017,2018,2020 Marcos Cruz (programandala.net)
@@ -31,11 +31,14 @@
 
 forth_definitions
 
+require fendo.markup.fendo.forth.fs \ `bl+`
+
+require galope/default-of.fs       \ `default-of`
 require galope/dollar-variable.fs  \ `$variable`
 require galope/trim.fs             \ `trim`
 
 \ ==============================================================
-\ Tools
+\ Complex links markup code
 
 fendo_definitions
 
@@ -133,20 +136,14 @@ $variable last_href$  \ XXX new, experimental, to be used by the application
 
 [then]
 
-
-\ ==============================================================
-\ Markup
-
-markup_definitions
-
-: [[ ( "linkmarkup ]]" -- )
+: complex_[[ ( "linkmarkup ]]" -- )
   parse_link echo_link ;
 
   \ doc{
   \
   \ [[ ( "ccc ]]" -- )
   \
-  \ Start the definition of a link.
+  \ Start the definition of a link. There are two implementations of
   \
   \ Examples:
 
@@ -169,18 +166,73 @@ markup_definitions
   \
   \ }doc
 
-: ]] ( -- )
+: complex_]] ( -- )
   true abort" `]]` without `[[`" ;
 
   \ doc{
   \
-  \ ]] ( -- )
+  \ complex_]] ( -- )
   \
   \ End the definition of a link that was started by `[[`.
   \
   \ }doc
 
+\ ==============================================================
+\ Simple links markup code
+
+: parse_link ( "ccc" -- ca len )
+  s" "
+  begin  parse-name dup
+    if   2dup s" ]]" str= >r s+ bl+ r>
+    else 2drop bl+ refill 0= then
+  until ;
+  \ Get the content of a `[[` link. Parse the input stream "ccc" until
+  \ a "]]" markup is found and return the parsed text (including "]]")
+  \ in string _ca len_.
+
+variable [[-depth
+  \ Store the stack depth at the start of the link markup, in order to
+  \ calculate later the number of arguments left.
+
+: simple_[[ ( -- )
+  depth [[-depth ! parse_link evaluate_markup ;
+
+: simple_]] ( ca1 len1 | ca1 len1 ca2 len2 -- )
+  depth [[-depth @ - case
+    2       of s" " link                                             endof
+    4       of      link                                             endof
+    default-of true abort" Wrong number of arguments in link markup" endof
+  endcase ;
+
+\ ==============================================================
+\ Markup
+
+markup_definitions
+
+defer [[ ( "ccc" | -- | n )
+
+defer ]] ( ca1 len1 ca2 len2 n | ca1 len1 n | -- )
+
+\ ==============================================================
+\ Markup selectors
+
 fendo_definitions
+
+: complex_[[ ( -- )
+  [markup>order]
+  ['] complex_[[ is [[
+  ['] complex_]] is ]]
+  [markup<order] ;
+  \ Set the old complex version of `[[`.
+
+: simple_[[ ( -- )
+  [markup>order]
+  ['] simple_[[ is [[
+  ['] simple_]] is ]]
+  [markup<order] ;
+  \ Set the new simple version of `[[`.
+
+complex_[[ \ set the default
 
 .( fendo.markup.fendo.link.fs compiled ) cr
 
@@ -222,5 +274,9 @@ fendo_definitions
 \ `(get_link_href)`. This makes it possible to use the alternative raw
 \ syntax for links (`<[ s" HREF" s" TEXT" title=" TITLE" link ]>`), no
 \ matter "HREF" is on a new line. Improve documentation of `[[`.
+\
+\ 2020-11-16: Make `[[` defered, write an alternative simpler version
+\ of it and two words to select the old version or the new one. The
+\ old version is still the default.
 
 \ vim: filetype=gforth

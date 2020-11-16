@@ -5,7 +5,7 @@
 
 \ This file defines the Fendo markup.
 
-\ Last modified 202011142217.
+\ Last modified 202011160110.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2017,2018,2020 Marcos Cruz (programandala.net)
@@ -219,6 +219,15 @@ variable opened_[======]? \ is there an open h6 heading?
   \ wordlist.
   \ This is used by defining words that may be invoked by the website
   \ application to create custom markups.
+
+: evaluate_markup ( i*x ca len -- j*x )
+  get-order n>r
+  only forth>order fendo>order markup>order evaluate
+  nr> set-order ;
+  \ A variant of `evaluate_forth_code` (defined in
+  \ <fendo.markup.fendo.forth.fs>), with a different wordlists order.
+  \ This is used by the new (2020-11-16) version of `[[`, and
+  \ eventually will be used also by a new version of `{{`.
 
 \ ==============================================================
 \ Actual markup
@@ -657,5 +666,7 @@ fendo_definitions
 \
 \ 2020-11-14: Remove old unused versions of the headings flags and
 \ `exhausted?`.
+\
+\ 2020-11-16: Add `evaluate_markup`.
 
 \ vim: filetype=gforth
