@@ -1,6 +1,6 @@
 = Fendo TO-DO
 :author: Marcos Cruz (programandala.net)
-:revdate: 2020-10-15
+:revdate: 2020-10-16
 
 // This file is part of Fendo
 // (http://programandala.net/en.program.fendo.html).
@@ -690,3 +690,8 @@ to allow `attr="ATTR"`.
 == 2020-11-15
 
 Why `<[ … ]>` are nestable? What's the advantage?
+
+== 2020-11-16
+
+- Move `bl+` to Galope. It's defined in <fendo.markup.fendo.forth.fs>
+  and required in <fendo.markup.fendo.link.fs>.
