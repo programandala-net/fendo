@@ -88,7 +88,7 @@ markup_definitions
   \ string as Forth code.
   \
   \ For convenience, Forth blocks delimited by the marks ``<[`` and
-  \ `]>` can be nested. Nesting doesn't makes any difference in the
+  \ `]>` can be nested. Nesting doesn't make any difference in the
   \ execution of the code: The whole code delimited by the outer marks
   \ is evaluated as if the inner ones didn't exist.
   \
