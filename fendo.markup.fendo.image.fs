@@ -5,7 +5,7 @@
 
 \ This file defines the Fendo markup for images.
 
-\ Last modified  202011160218.
+\ Last modified  202011160255.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2017,2018,2020 Marcos Cruz (programandala.net)
@@ -34,7 +34,7 @@ fendo_definitions
 require fendo.image.fs
 
 \ ==============================================================
-\ Tools to parse the image markup {{{1
+\ Complex images markup code {{{1
 
 : get_image_src_attribute ( "name" -- )
   files_subdir $@ parse-name s+ src=! ;
@@ -85,12 +85,7 @@ variable image_finished?  \ flag, no more image markup to parse?
 : ({{) ( "imagemarkup}}" -- )
   parse_image [<img>] ;
 
-\ ==============================================================
-\ Markup {{{1
-
-markup_definitions
-
-: {{ ( "imagemarkup}}" -- )
+: (complex_{{) ( "imagemarkup}}" -- )
   ({{) ;
 
   \ doc{
@@ -116,7 +111,7 @@ markup_definitions
   \
   \ }doc
 
-: }} ( -- )
+: (complex_}}) ( -- )
   true abort" `}}` without `{{`" ;
 
   \ doc{
@@ -127,6 +122,29 @@ markup_definitions
   \
   \ }doc
 
+\ ==============================================================
+\ Simple images markup code {{{1
+
+\ XXX TODO
+
+\ ==============================================================
+\ Markup {{{1
+
+markup_definitions
+
+defer {{
+
+defer }}
+
+' (complex_{{) is {{
+' (complex_}}) is }}
+
+\ ==============================================================
+\ Markup selectors {{{1
+
+\ XXX TODO
+
+fendo_definitions
 .( fendo.markup.fendo.image.fs compiled ) cr
 
 \ ==============================================================
@@ -147,5 +165,8 @@ markup_definitions
 \ 2020-11-14: Remove old unused code from `parse_image`. Add `img`.
 \ Factor `set_image_size_attributes`. Move the general code to a new
 \ file <fendo.image.fs>, keep here the markup-specific code.
+\
+\ 2020-11-16: Make `{{` and `}}` deferred in order to prepare an
+\ alternative simpler version.
 
 \ vim: filetype=gforth
