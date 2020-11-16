@@ -5,7 +5,7 @@
 
 \ This file defines the Fendo tools required to include images.
 
-\ Last modified 202011150014.
+\ Last modified  202011160218.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2017,2018,2020 Marcos Cruz (programandala.net)
@@ -27,7 +27,7 @@
 \ <http://gnu.org/licenses>.
 
 \ ==============================================================
-\ Requirements
+\ Requirements {{{1
 
 forth_definitions
 
@@ -35,7 +35,7 @@ require galope/jpeg.fs  \ JPEG tools
 require galope/png.fs  \ PNG tools
 
 \ ==============================================================
-\ Tools to set the image size attributes
+\ Tools to set the image size attributes {{{1
 
 fendo_definitions
 
@@ -74,7 +74,7 @@ defer img-close
 
 
 \ ==============================================================
-\ img
+\ img {{{1
 
 : img ( ca1 len1 ca2 len2 -- )
   alt=!
@@ -110,7 +110,7 @@ defer img-close
 .( fendo.image.fs compiled ) cr
 
 \ ==============================================================
-\ Change log
+\ Change log {{{1
 
 \ 2020-11-15: Start. Code extracted from
 \ <fendo.markup.fendo.image.fs> (2013..2020).

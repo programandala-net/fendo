@@ -6,7 +6,7 @@
 \ This file provides an addon to create a section containing a heading
 \ and a list of tagged pages in the current language.
 
-\ Last modified 202004252319.
+\ Last modified  202011160218.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2020 Marcos Cruz (programandala.net)
@@ -28,7 +28,7 @@
 \ with Gforth (http://gnu.org/software/gforth).
 
 \ ==============================================================
-\ Requirements
+\ Requirements {{{1
 
 \ forth_definitions
 
@@ -76,7 +76,7 @@ require ./fendo.addon.tag_section_by_prefix.fs
 .( fendo.addon.tag_section.fs compiled) cr
 
 \ ==============================================================
-\ Change log
+\ Change log {{{1
 
 \ 2020-04-25: Start.
 \

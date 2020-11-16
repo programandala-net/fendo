@@ -5,7 +5,7 @@
 
 \ This file defines the Fendo markup for inline Forth code.
 
-\ Last modified 202011151801.
+\ Last modified  202011160218.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2017,2018,2020 Marcos Cruz (programandala.net)
@@ -27,7 +27,7 @@
 \ <http://gnu.org/licenses>.
 
 \ ==============================================================
-\ Requirements
+\ Requirements {{{1
 
 forth_definitions
 
@@ -36,7 +36,7 @@ require galope/n-r-from.fs  \ `nr>`
 require galope/dollar-variable.fs  \ `$variable`
 
 \ ==============================================================
-\ Tools
+\ Tools {{{1
 
 fendo_definitions
 
@@ -71,7 +71,7 @@ fendo_definitions
   nr> set-order ;
 
 \ ==============================================================
-\ Markup
+\ Markup {{{1
 
 markup_definitions
 
@@ -120,7 +120,7 @@ fendo_definitions
 .( fendo.markup.fendo.forth.fs compiled ) cr
 
 \ ==============================================================
-\ Change log
+\ Change log {{{1
 
 \ 2014-04-21: Code moved from <fendo.markup.fendo.fs>.
 \

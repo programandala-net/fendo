@@ -5,7 +5,7 @@
 
 \ This file is the Forth blocks source code addon.
 
-\ Last modified 201812081823.
+\ Last modified  202011160218.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2017,2018 Marcos Cruz (programandala.net)
@@ -27,7 +27,7 @@
 \ with Gforth (http://gnu.org/software/gforth).
 
 \ ==============================================================
-\ Requirements
+\ Requirements {{{1
 
 require ./fendo.addon.forth_blocks_source_code.fs
 require ./fendo.addon.ql_charset.fs
@@ -43,7 +43,7 @@ require ./fendo.addon.ql_charset.fs
 .( fendo.addon.ql_forth_blocks_source_code.fs compiled) cr
 
 \ ==============================================================
-\ Change log
+\ Change log {{{1
 
 \ 2013-12-10: Code extracted from <addons/forth_blocks_source_code.fs>.
 \

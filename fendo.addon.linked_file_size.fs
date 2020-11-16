@@ -5,7 +5,7 @@
 
 \ This file adds the file size to all file links.
 
-\ Last modified 201903212107.
+\ Last modified  202011160218.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2017,2019 Marcos Cruz (programandala.net)
@@ -84,7 +84,7 @@ KiB dup * constant MiB
 .( fendo.addon.linked_file_size.fs compiled) cr
 
 \ ==============================================================
-\ Change log
+\ Change log {{{1
 
 \ 2019-03-21: Move the code from the application Fendo-programandala
 \ (which builds http://programandala.net), in order to reuse it in

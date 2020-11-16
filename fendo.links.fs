@@ -6,7 +6,7 @@
 \ This file provides the words needed to create links,
 \ by the markup words or by the user application.
 
-\ Last modified 202011142310.
+\ Last modified  202011160218.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2017,2018,2019,2020 Marcos Cruz (programandala.net)
@@ -28,7 +28,7 @@
 \ <http://gnu.org/licenses>.
 
 \ ==============================================================
-\ Requirements
+\ Requirements {{{1
 
 forth_definitions
 
@@ -40,7 +40,7 @@ require fendo.markup.common.fs
 require fendo.markup.html.fs
 
 \ ==============================================================
-\ Tools for links
+\ Tools for links {{{1
 
 : file://? ( ca len -- f )
   s" file://" string-prefix? ;
@@ -360,7 +360,7 @@ defer link_suffix
   \ parsed! why?
 
 \ ==============================================================
-\ Links
+\ Links {{{1
 
 defer (get_link_href) ( ca len -- )
   \ ca len = page ID, URL or shortcut
@@ -433,7 +433,7 @@ defer (get_link_href) ( ca len -- )
 .( fendo.links.fs ) cr
 
 \ ==============================================================
-\ Change log
+\ Change log {{{1
 
 \ 2013-11-11: Code extracted from <fendo_markup_wiki.fs>: `link`.
 \

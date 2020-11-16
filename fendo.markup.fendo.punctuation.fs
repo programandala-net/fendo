@@ -5,7 +5,7 @@
 
 \ This file defines the Fendo markup for punctuation.
 
-\ Last modified 202010121816.
+\ Last modified  202011160218.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2017,2018,2020 Marcos Cruz (programandala.net)
@@ -27,7 +27,7 @@
 \ <http://gnu.org/licenses>.
 
 \ ==============================================================
-\ Tools
+\ Tools {{{1
 
 \ Punctuation markup is needed in order to print punctuation properly
 \ after another markup. Example:
@@ -64,7 +64,7 @@ fendo_definitions
   \ "name" = punctuation --and name of its punctuation word
 
 \ ==============================================================
-\ Markup
+\ Markup {{{1
 
 markup_definitions
 
@@ -145,7 +145,7 @@ fendo_definitions
 .( fendo.markup.fendo.punctuation.fs compiled ) cr
 
 \ ==============================================================
-\ Change log
+\ Change log {{{1
 
 \ 2014-04-21: Code moved from <fendo.markup.fendo.fs>.
 \

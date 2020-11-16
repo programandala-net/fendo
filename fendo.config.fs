@@ -5,7 +5,7 @@
 
 \ This file setups the default configuration.
 
-\ Last modified 201812080157.
+\ Last modified  202011160218.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2015,2017,2018 Marcos Cruz (programandala.net)
@@ -24,14 +24,14 @@
 \ along with this program; if not, see <http://gnu.org/licenses>.
 
 \ ==============================================================
-\ Requirements
+\ Requirements {{{1
 
 forth_definitions
 require string.fs  \ Gforth's dynamic strings
 fendo_definitions
 
 \ ==============================================================
-\ Configurable site data
+\ Configurable site data {{{1
 
 \ Some site data are stored in ordinary variables, but as dynamic
 \ strings (with  `$!`, `$@`, etc.). Other are defered words, in order
@@ -97,7 +97,7 @@ defer site_author
 .( fendo.config.fs compiled) cr
 
 \ ==============================================================
-\ Change log
+\ Change log {{{1
 
 \ 2013-06-07: Start.
 \

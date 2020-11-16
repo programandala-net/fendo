@@ -5,7 +5,7 @@
 
 \ This file is the CP1252 source code addon.
 
-\ Last modified 201812081823.
+\ Last modified  202011160218.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2017,2018 Marcos Cruz (programandala.net)
@@ -27,7 +27,7 @@
 \ with Gforth (http://gnu.org/software/gforth).
 
 \ ==============================================================
-\ Requirements
+\ Requirements {{{1
 
 forth_definitions
 
@@ -39,7 +39,7 @@ require ./fendo.addon.source_code.fs
 require ./fendo.addon.cp1252_charset.fs
 
 \ ==============================================================
-\ Source code in CP1252 character encoding
+\ Source code in CP1252 character encoding {{{1
 
 : cp1252_source_code_translated ( ca len -- ca' len' )
   cp1252_charset_to_utf8 uncodepaged ;
@@ -54,7 +54,7 @@ require ./fendo.addon.cp1252_charset.fs
 .( fendo.addon.cp1252_source_code.fs compiled) cr
 
 \ ==============================================================
-\ Change log
+\ Change log {{{1
 
 \ 2013-12-11: Written with <galope/translated.fs>.
 \

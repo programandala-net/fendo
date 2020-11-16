@@ -7,7 +7,7 @@
 
 \ XXX UNDER DEVELOPMENT
 
-\ Last modified 202004141706.
+\ Last modified  202011160218.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2015,2017,2018,2020 Marcos Cruz (programandala.net)
@@ -29,12 +29,12 @@
 \ with Gforth (http://gnu.org/software/gforth).
 
 \ ==============================================================
-\ TODO
+\ TODO {{{1
 
 \ Everything.
 
 \ ==============================================================
-\ Requirements
+\ Requirements {{{1
 
 forth_definitions
 
@@ -45,7 +45,7 @@ require galope/s-constant.fs \ `sconstant`
 fendo_definitions
 
 \ ==============================================================
-\ Configurable texts
+\ Configurable texts {{{1
 
 s" Content"
 sconstant sitemap_default_content$
@@ -68,7 +68,7 @@ defer sitemap_edit_summary$
 ' sitemap_default_edit_summary$ is sitemap_edit_summary$
 
 \ ==============================================================
-\ Calculated data
+\ Calculated data {{{1
 
 : pid#>taguri ( a -- ca len )
   >r s" tag:" domain s+ s" ," s+
@@ -79,7 +79,7 @@ defer sitemap_edit_summary$
   \ a = page ID
 
 \ ==============================================================
-\ Tags
+\ Tags {{{1
 
 : <urlset> ( -- ) echo_cr s" urlset" {html  ;
 : </urlset> ( -- ) echo_cr s" urlset" html}  ;
@@ -95,7 +95,7 @@ defer sitemap_edit_summary$
 : </priority> ( -- ) s" priority" html}  ;
 
 \ ==============================================================
-\ sitemap feed
+\ sitemap feed {{{1
 
 : sitemap_link ( ca1 len1 ca2 len2 -- )
   rel=! href=! [<link/>] ;
@@ -180,7 +180,7 @@ defer sitemap_site_title$ ( -- ca len )
   \ f = saved `xhtml?`
 
 \ ==============================================================
-\ sitemap entries
+\ sitemap entries {{{1
 
 : sitemap_entry_title ( a -- )
   s" xhtml" type=! [<title>] title evaluate_content [</title>] ;
@@ -274,7 +274,7 @@ set_default_sitemap_entry_summary
 .( fendo.addon.sitemap.fs compiled) cr
 
 \ ==============================================================
-\ Change log
+\ Change log {{{1
 
 \ 2015-10-05: Start, using the code of the Atom module.
 \

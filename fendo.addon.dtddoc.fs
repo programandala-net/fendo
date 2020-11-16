@@ -5,7 +5,7 @@
 
 \ This file provides a word that is needed by other addons.
 
-\ Last modified 201812172116.
+\ Last modified  202011160218.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2017,2018 Marcos Cruz (programandala.net)
@@ -53,7 +53,7 @@
 .( fendo.addon.dtddoc.fs compiled) cr
 
 \ ==============================================================
-\ Change log
+\ Change log {{{1
 
 \ 2013-11-26: Start.
 \

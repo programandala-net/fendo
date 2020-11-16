@@ -8,7 +8,7 @@
 \
 \ XXX NOT FINISHED
 
-\ Last modified 201812081823.
+\ Last modified  202011160218.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2015,2017,2018 Marcos Cruz (programandala.net)
@@ -30,7 +30,7 @@
 \ with Gforth (http://gnu.org/software/gforth).
 
 \ ==============================================================
-\ Requirements
+\ Requirements {{{1
 
 forth_definitions
 
@@ -141,7 +141,7 @@ project_datum: project_end
 project_datum: project_completion
 
 \ ==============================================================
-\ Calculated data
+\ Calculated data {{{1
 
 : completed_project? ( pid -- f )
   dup project_completion s" 100%" str=
@@ -167,7 +167,7 @@ end-package
 .( fendo.addon.projects.fs compiled) cr
 
 \ ==============================================================
-\ Change log
+\ Change log {{{1
 
 \ 2015-02-02: Start, partly based on the code of
 \ <fendo-programandala.addon.projects.fs>.

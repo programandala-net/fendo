@@ -5,7 +5,7 @@
 
 \ This file is the Sinclair QL source code addon.
 
-\ Last modified 201812080157.
+\ Last modified  202011160218.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2017 Marcos Cruz (programandala.net)
@@ -171,7 +171,7 @@ end-translations drop
 .( fendo.addon.basin_charset.fs compiled) cr
 
 \ ==============================================================
-\ Change log
+\ Change log {{{1
 
 \ 2013-12-11: Start.
 \

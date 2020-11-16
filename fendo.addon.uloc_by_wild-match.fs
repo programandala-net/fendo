@@ -6,7 +6,7 @@
 \ This file is the addon that creates unnumbered content lists
 \ filtered by a wild-match string.
 
-\ Last modified 201812081823.
+\ Last modified  202011160218.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2014,2017,2018 Marcos Cruz (programandala.net)
@@ -39,7 +39,7 @@ require ./fendo.addon.lioc_by_wild-match.fs
 .( fendo.addon.uloc_by_wild-match.fs compiled) cr
 
 \ ==============================================================
-\ Change log
+\ Change log {{{1
 
 \ 2014-11-16 Start.
 \

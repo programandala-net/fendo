@@ -6,7 +6,7 @@
 \ This file defines the Fendo markup for passthroughs,
 \ used to output content 'as is'.
 
-\ Last modified 201812080157.
+\ Last modified  202011160218.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2017 Marcos Cruz (programandala.net)
@@ -28,14 +28,14 @@
 \ <http://gnu.org/licenses>.
 
 \ ==============================================================
-\ Requirements
+\ Requirements {{{1
 
 forth_definitions
 
 require galope/trim.fs  \ `trim`
 
 \ ==============================================================
-\ Tools
+\ Tools {{{1
 
 fendo_definitions
 
@@ -52,7 +52,7 @@ fendo_definitions
   \ Parse a new line from the current passthrough block.
 
 \ ==============================================================
-\ Markup
+\ Markup {{{1
 
 markup_definitions
 
@@ -76,7 +76,7 @@ fendo_definitions
 .( fendo.markup.fendo.passthrough.fs compiled ) cr
 
 \ ==============================================================
-\ Change log
+\ Change log {{{1
 
 \ 2014-04-21: Code moved from <fendo.markup.fendo.fs>.
 \

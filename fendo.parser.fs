@@ -5,7 +5,7 @@
 
 \ This file creates the parser.
 
-\ Last modified 202010091831.
+\ Last modified  202011160218.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2017,2018,2019 Marcos Cruz (programandala.net)
@@ -27,7 +27,7 @@
 \ <http://gnu.org/licenses>.
 
 \ ==============================================================
-\ Requirements
+\ Requirements {{{1
 
 forth_definitions
 
@@ -41,7 +41,7 @@ require galope/tilde-tilde.fs         \ `~~`
 fendo_definitions
 
 \ ==============================================================
-\ Pending markups
+\ Pending markups {{{1
 
 : close_pending_bullet_list ( -- )
   [</li>] [</ul>] bullet_list_items off ;
@@ -89,7 +89,7 @@ fendo_definitions
   \ parsing.
 
 \ ==============================================================
-\ Parser
+\ Parser {{{1
 
 variable more?  \ flag: keep on parsing more words?; changed by `}content`
 
@@ -282,7 +282,7 @@ variable more?  \ flag: keep on parsing more words?; changed by `}content`
 ' (parse_link_text) is parse_link_text
 
 \ ==============================================================
-\ Design template
+\ Design template {{{1
 
 true value whole_template?
   \ Can the whole template be interpreted as Forth code, without
@@ -367,7 +367,7 @@ s" {CONTENT}" content_markup $!
 [then]
 
 \ ==============================================================
-\ Markup
+\ Markup {{{1
 
 : .sourcefilename ( -- )
   sourcefilename type cr ;
@@ -588,7 +588,7 @@ set-current
 .( fendo.parser.fs compiled ) cr
 
 \ ==============================================================
-\ Change log
+\ Change log {{{1
 
 \ 2013-04-28: Start.
 \

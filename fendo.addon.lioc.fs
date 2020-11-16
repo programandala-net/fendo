@@ -5,7 +5,7 @@
 
 \ This file provides a word that is needed by other addons.
 
-\ Last modified 201902070005.
+\ Last modified  202011160218.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2014,2017,2018,2019 Marcos Cruz (programandala.net)
@@ -65,7 +65,7 @@
 .( fendo.addon.lioc.fs compiled) cr
 
 \ ==============================================================
-\ Change log
+\ Change log {{{1
 
 \ 2014-03-02: Factored out from <fendo.addon.lioc_by_regex.fs> and
 \ <fendo.addon.lioc_by_prefix.fs>.

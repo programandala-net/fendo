@@ -5,7 +5,7 @@
 
 \ This file defines the HTML tags.
 
-\ Last modified 201812080157.
+\ Last modified  202011160218.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2015,2017 Marcos Cruz (programandala.net)
@@ -27,14 +27,14 @@
 \ <http://gnu.org/licenses>.
 
 \ ==============================================================
-\ Requirements
+\ Requirements {{{1
 
 forth_definitions
 require galope/plus-slash-string.fs
 fendo_definitions
 
 \ ==============================================================
-\ Printing
+\ Printing {{{1
 
 : "/>" ( -- ca len )
   s" />" xhtml? 0= if  +/string  then ;
@@ -79,7 +79,7 @@ fendo_definitions
   \ ca len = HTML tag
 
 \ ==============================================================
-\ HTML tags
+\ HTML tags {{{1
 
 get-current markup>current
 
@@ -484,7 +484,7 @@ markup>order
 markup<order
 
 \ ==============================================================
-\ Tag shortcuts used by the Fendo markup and some addons
+\ Tag shortcuts used by the Fendo markup and some addons {{{1
 
 : block_source_code{ ( -- )
   [<pre>] [<code>] ;
@@ -495,7 +495,7 @@ markup<order
 .( fendo.markup.html.tags.fs compiled) cr
 
 \ ==============================================================
-\ Change log
+\ Change log {{{1
 
 \ 2013-06-10: Start. Factored from <fendo_markup_html.fs>.
 \

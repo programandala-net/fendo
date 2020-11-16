@@ -5,7 +5,7 @@
 
 \ This file is the footnote addon.
 
-\ Last modified 201812081823.
+\ Last modified  202011160218.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2014,2017,2018 Marcos Cruz (programandala.net)
@@ -44,7 +44,7 @@
 .( fendo.addon.footnote.fs compiled) cr
 
 \ ==============================================================
-\ Change log
+\ Change log {{{1
 
 \ 2014-11-06: Start. Noop words, just to make in easier to convert a
 \ website from Simplilo to Fendo.

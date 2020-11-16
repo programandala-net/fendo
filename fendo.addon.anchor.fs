@@ -5,7 +5,7 @@
 
 \ This file is the anchor addon.
 
-\ Last modified 201812081823.
+\ Last modified  202011160218.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2017,2018 Marcos Cruz (programandala.net)
@@ -37,7 +37,7 @@
 .( fendo.addon.anchor.fs compiled) cr
 
 \ ==============================================================
-\ Change log
+\ Change log {{{1
 
 \ 2013-06-23: Start.
 \

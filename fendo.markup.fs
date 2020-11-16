@@ -5,7 +5,7 @@
 
 \ This file defines the markup.
 
-\ Last modified 201812080157.
+\ Last modified  202011160218.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2017 Marcos Cruz (programandala.net)
@@ -37,7 +37,7 @@ require ./fendo.markup.macros.fs
 .( fendo.markup.fs compiled) cr
 
 \ ==============================================================
-\ Change log
+\ Change log {{{1
 
 \ 2013-06-06: Start. This file is created with part of the old
 \   <fendo_html_tags.fs>.

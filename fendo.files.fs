@@ -5,7 +5,7 @@
 
 \ This file defines the file tools.
 
-\ Last modified 202004220143.
+\ Last modified  202011160218.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2015,2017,2018,2020 Marcos Cruz (programandala.net)
@@ -27,14 +27,14 @@
 \ <http://gnu.org/licenses>.
 
 \ ==============================================================
-\ Requirements
+\ Requirements {{{1
 
 forth_definitions
 require galope/string-suffix-question.fs
 fendo_definitions
 
 \ ==============================================================
-\ Target file
+\ Target file {{{1
 
 : (open_target) ( -- )
   current_page
@@ -111,7 +111,7 @@ false [if]  \ XXX OLD
   \ Close the target file (HTML or Atom), if needed.
 
 \ ==============================================================
-\ Files
+\ Files {{{1
 
 : file>local ( ca1 len1 -- ca2 len2 )
   2>r target_dir $@ files_subdir $@ s+ 2r> s+ ;
@@ -119,7 +119,7 @@ false [if]  \ XXX OLD
   \ _ca2 len2_.
 
 \ ==============================================================
-\ Redirection
+\ Redirection {{{1
 
 : ((redirected)) ( fid -- )
   >r  s" <?php" r@ write-line throw
@@ -217,7 +217,7 @@ created>redirection
   \          or page filename (with html, htm or php extensions)
 
 \ ==============================================================
-\ Read source code
+\ Read source code {{{1
 
 s" /counted-string" environment? 0=
 [if]  255  [then]  dup constant /source_line
@@ -234,7 +234,7 @@ s" /counted-string" environment? 0=
 .( fendo.files.fs compiled ) cr
 
 \ ==============================================================
-\ Change log
+\ Change log {{{1
 
 \ 2013-10-01: File created for the page redirection tools;
 \ `open_target` and `close_target` are moved here from

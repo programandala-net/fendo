@@ -5,7 +5,7 @@
 
 \ This file defines the words that print to the target HTML file.
 
-\ Last modified 202010141752.
+\ Last modified  202011160218.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2017,2018,2020 Marcos Cruz (programandala.net)
@@ -27,7 +27,7 @@
 \ <http://gnu.org/licenses>.
 
 \ ==============================================================
-\ Requirements
+\ Requirements {{{1
 
 forth_definitions
 require galope/n-to-str.fs  \ `n>str`
@@ -35,7 +35,7 @@ require galope/xstack.fs
 fendo_definitions
 
 \ ==============================================================
-\ Output
+\ Output {{{1
 
 variable echo>  \ destination of the output
 \ Possible values of `echo>`:
@@ -81,7 +81,7 @@ echo>file
 \ echo>screen  \ XXX for debugging
 
 \ ==============================================================
-\ Echo
+\ Echo {{{1
 
 variable target_fid  \ file ID of the HTML target page
 
@@ -173,7 +173,7 @@ false value compact_html?  \ if true, no carriage return is created
 .( fendo.echo.fs compiled) cr
 
 \ ==============================================================
-\ Change log
+\ Change log {{{1
 
 \ 2013-06-04: Start.
 \

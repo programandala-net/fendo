@@ -5,7 +5,7 @@
 
 \ This file is the BASin source code addon.
 
-\ Last modified 201812080157.
+\ Last modified  202011160218.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2017 Marcos Cruz (programandala.net)
@@ -27,7 +27,7 @@
 \ with Gforth (http://gnu.org/software/gforth).
 
 \ ==============================================================
-\ Requirements
+\ Requirements {{{1
 
 forth_definitions
 
@@ -42,7 +42,7 @@ require ./fendo.addon.basin_charset.fs
 require ./fendo.addon.latin1_source_code.fs
 
 \ ==============================================================
-\ BASIC source code in BASin format
+\ BASIC source code in BASin format {{{1
 
 package fendo.addon.basin_source_code
 
@@ -91,7 +91,7 @@ end-package
 .( fendo.addon.basin_source_code.fs compiled) cr
 
 \ ==============================================================
-\ Change log
+\ Change log {{{1
 
 \ 2013-11-09: Code extracted from <addons/source_code.fs>.
 \

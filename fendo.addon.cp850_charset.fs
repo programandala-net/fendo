@@ -5,7 +5,7 @@
 
 \ This file is the CP850 charset addon.
 
-\ Last modified 201812080201.
+\ Last modified  202011160218.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2017 Marcos Cruz (programandala.net)
@@ -374,7 +374,7 @@ uncodepage: cp850_charset_to_utf8
 .( fendo.addon.cp850_charset.fs compiled) cr
 
 \ ==============================================================
-\ Change log
+\ Change log {{{1
 
 \ 2013-12-10: Written with <galope/translated.fs>.
 \

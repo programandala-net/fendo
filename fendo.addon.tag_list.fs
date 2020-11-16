@@ -5,7 +5,7 @@
 
 \ This file provides tag lists.
 
-\ Last modified 201812081823.
+\ Last modified  202011160218.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2014,2017,2018 Marcos Cruz (programandala.net)
@@ -27,7 +27,7 @@
 \ with Gforth (http://gnu.org/software/gforth).
 
 \ ==============================================================
-\ Requirements
+\ Requirements {{{1
 
 require ./fendo.addon.tags.fs
 
@@ -50,7 +50,7 @@ require ./fendo.addon.tags.fs
 .( fendo.addon.tag_list.fs compiled) cr
 
 \ ==============================================================
-\ Change log
+\ Change log {{{1
 
 \ 2014-03-04: Start.
 \

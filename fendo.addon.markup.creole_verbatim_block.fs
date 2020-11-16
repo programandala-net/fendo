@@ -6,7 +6,7 @@
 \ This file provides the Creole markup for verbatim blocks, deprecated
 \ from the set of markups used by default.
 
-\ Last modified 201812080157.
+\ Last modified  202011160218.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2017 Marcos Cruz (programandala.net)
@@ -61,7 +61,7 @@ markup_definitions
 fendo_definitions
 
 \ ==============================================================
-\ Change log
+\ Change log {{{1
 
 \ 2014-04-20: Code deprecated, substituted by the Asciidoctor markup.
 \ Extracted from <fendo.markup.wiki.fs> (then renamed to

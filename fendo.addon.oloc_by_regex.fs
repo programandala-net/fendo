@@ -5,7 +5,7 @@
 
 \ This file is the addon that creates numbered content lists.
 
-\ Last modified 201812081823.
+\ Last modified  202011160218.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2017,2018 Marcos Cruz (programandala.net)
@@ -38,7 +38,7 @@ require ./fendo.addon.lioc_by_regex.fs
 .( fendo.addon.oloc_by_regex.fs compiled) cr
 
 \ ==============================================================
-\ Change log
+\ Change log {{{1
 
 \ 2013-11-26: Start.
 \

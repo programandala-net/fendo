@@ -5,7 +5,7 @@
 
 \ This file creates the tools needed to use page tags.
 
-\ Last modified 202004260007.
+\ Last modified  202011160218.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2014,2017,2018,2020 Marcos Cruz (programandala.net)
@@ -27,13 +27,13 @@
 \ with Gforth (http://gnu.org/software/gforth).
 
 \ ==============================================================
-\ Stack notation
+\ Stack notation {{{1
 
 \ In this file, the stack notation "tag" represents the body (the data
 \ field address) of a tag word. Tag words are created by `create`.
 
 \ ==============================================================
-\ Requirements
+\ Requirements {{{1
 
 forth_definitions
 require galope/n-to-r.fs \ `n>r`
@@ -43,7 +43,7 @@ require galope/s-constant.fs \ `sconstant`
 fendo_definitions
 
 \ ==============================================================
-\ Tags wordlist
+\ Tags wordlist {{{1
 
 wordlist constant fendo_tags_wid
 
@@ -67,7 +67,7 @@ wordlist constant fendo_tags_wid
   tags_order set-order ;
 
 \ ==============================================================
-\ Tag data
+\ Tag data {{{1
 
 \ The body of a tag word holds three data:
 \ +0       = counter (how many times the tag is used in a set of pages)
@@ -119,7 +119,7 @@ defer tag>pid$ ( tag -- ca len )
   \ }doc
 
 \ ==============================================================
-\ Possible behaviours of the tags
+\ Possible behaviours of the tags {{{1
 
 : ((tag_link)) ( tag ca len -- )
 \  2dup cr type  \ XXX INFORMER
@@ -184,7 +184,7 @@ variable tag_presence  \ counter
 defer (tag_does)  \ current behaviour of the tags
 
 \ ==============================================================
-\ Choosing the behaviour of the tags
+\ Choosing the behaviour of the tags {{{1
 
 : tags_do_nothing ( -- )
   ['] drop is (tag_does) ;
@@ -234,7 +234,7 @@ defer (tag_does)  \ current behaviour of the tags
   \ Output will be in the `#tags` variable.
 
 \ ==============================================================
-\ Create new tags
+\ Create new tags {{{1
 
 : tag ( ca len "name" -- )
   get-current >r  fendo_tags_wid set-current
@@ -254,7 +254,7 @@ defer (tag_does)  \ current behaviour of the tags
   \   s" ZX Spectrum" tag zx_spectrum
 
 \ ==============================================================
-\ Traverse the tags
+\ Traverse the tags {{{1
 
 s" /tmp/fendo.tags.fs" sconstant tags_filename$
 
@@ -294,7 +294,7 @@ s" /tmp/fendo.tags.fs" sconstant tags_filename$
 .( fendo.addon.tags.fs compiled) cr
 
 \ ==============================================================
-\ Change log
+\ Change log {{{1
 
 \ 2014-03-02: Start.
 \

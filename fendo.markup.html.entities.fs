@@ -5,7 +5,7 @@
 
 \ This file defines the HTML entities.
 
-\ Last modified 201812181312.
+\ Last modified  202011160218.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2017,2018 Marcos Cruz (programandala.net)
@@ -27,7 +27,7 @@
 \ <http://gnu.org/licenses>.
 
 \ ==============================================================
-\ Defining words
+\ Defining words {{{1
 
 : :entity ( ca len -- )
   get-current >r entities>current
@@ -44,7 +44,7 @@
   \ "name" = entity --and name of its entity word
 
 \ ==============================================================
-\ HTML entities
+\ HTML entities {{{1
 
 \ entity comment: \ Character \ Unicode code point (decimal) \ Standard DTD \ Old ISO subset \ Description
 
@@ -306,7 +306,7 @@ entity: &diams; \ ♦ \ U+2666 (9830) \ HTML 4.0 \ HTMLsymbol \ ISOpub \ black d
 .( fendo.markup.html.entities.fs compiled) cr
 
 \ ==============================================================
-\ Change log
+\ Change log {{{1
 
 \ 2013-06-10: Factored from <fendo_markup_html.fs> and completed.
 \ Reference:

@@ -5,7 +5,7 @@
 
 \ This file is the hierarchy navigation links addon.
 
-\ Last modified 202010062021.
+\ Last modified  202011160218.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2017,2018,2020 Marcos Cruz (programandala.net)
@@ -424,7 +424,7 @@ defer last$ ( -- ca len )
 .( fendo.addon.hierarchy_navigation_links.fs compiled) cr
 
 \ ==============================================================
-\ Change log
+\ Change log {{{1
 
 \ 2017-06-25: Start. Moved from Fendo-programandala, in order to share
 \ it with Fendo-VEB.

@@ -6,7 +6,7 @@
 \ This file is the Markdown addon. It provides words to include
 \ contents in Markdown, either inline or from a file.
 
-\ Last modified 201901192002.
+\ Last modified  202011160218.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2015,2017,2018,2019 Marcos Cruz (programandala.net)
@@ -28,7 +28,7 @@
 \ with Gforth (<http://gnu.org/software/gforth>).
 
 \ ==============================================================
-\ Requirements
+\ Requirements {{{1
 
 \ Pandoc must be installed in the system.  See:
 \ <http://johnmacfarlane.net/pandoc/>.
@@ -157,7 +157,7 @@ end-package
 .( fendo.addon.markdown.fs compiled) cr
 
 \ ==============================================================
-\ Change log
+\ Change log {{{1
 
 \ 2017-06-25: Start.
 \
