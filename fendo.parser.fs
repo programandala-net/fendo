@@ -5,10 +5,10 @@
 
 \ This file creates the parser.
 
-\ Last modified  202011160218.
+\ Last modified  202011180026.
 \ See change log at the end of the file.
 
-\ Copyright (C) 2013,2017,2018,2019 Marcos Cruz (programandala.net)
+\ Copyright (C) 2013,2017,2018,2019,2020 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute
 \ it and/or modify it under the terms of the GNU General
@@ -284,12 +284,6 @@ variable more?  \ flag: keep on parsing more words?; changed by `}content`
 \ ==============================================================
 \ Design template {{{1
 
-true value whole_template?
-  \ Can the whole template be interpreted as Forth code, without
-  \ previous splitting? This is the new method.
-  \
-  \ XXX TMP -- Until the new method is fully tested.
-
 : template_file ( -- ca len )
   target_dir $@
   current_page design_subdir dup 0=  \ XXX useful?
@@ -306,76 +300,12 @@ true value whole_template?
   slurp-file ;
   \ Return the template content.
 
-whole_template? [if]
-
-  \ XXX NEW method
-  \
-  \ Instead of dividing the template at the `{CONTENT}` string before
-  \ evaluating each part (top and bottom), simply interpret it as Forth code
-  \ and create a `contents` word for providing the page contents.
-
-[else]
-
-  \ XXX OLD (current) method
-  \
-  \ The template is divided at the `{CONTENT}` string, and both parts (top and
-  \ bottom of the template) are evaluated apart, before and after the content.
-
-variable content_markup  \ markup that represents the page content in the template
-s" {CONTENT}" content_markup $!
-
-: template_halves ( ca1 len1 -- ca2 len2 ca3 len3 )
-  content_markup $@ /sides 0=
-  abort" The content markup is missing in the template" ;
-  \ Divide the template in two parts, excluding the content holder.
-  \ ca1 len1 = template content
-  \ ca2 len2 = top half of the template content
-  \ ca3 len3 = bottom half of the template content
-
-: template_top ( ca1 len1 -- ca2 len2 )
-  template_halves 2drop ;
-  \ Extract the top half of a template, above the page content.
-  \ ca1 len1 = template content
-  \ ca2 len2 = top half of the template content
-
-: template_bottom ( ca1 len1 -- ca2 len2 )
-  template_halves 2nip ;
-  \ Extract the bottom half of a template, above the page content.
-  \ ca1 len1 = template content
-  \ ca2 len2 = bottom half of the template content
-
-: template{ ( -- )
-  get_template
-\  ." in `template{` after `get_template`" cr key drop \ XXX INFORMER
-  template_top
-\  ." in `template{` after `template_top`" cr key drop \ XXX INFORMER
-  evaluate_content
-\  ." end of `template{`" cr key drop \ XXX INFORMER
-  ;
-  \ Echo the top half of the current template,
-  \ above the page content.
-
-: }template ( -- )
-\  ." in `}template`" cr key drop \ XXX INFORMER
-  get_template template_bottom
-  evaluate_content
-\  ." end of `}template`" cr key drop \ XXX INFORMER
-  ;
-  \ Echo the bottom half of the current template,
-  \ below the page content.
-
-[then]
-
 \ ==============================================================
 \ Markup {{{1
 
 : .sourcefilename ( -- )
   sourcefilename type cr ;
   \ Print the name of the currently parsed file.
-
-whole_template? [if]
-
-  \ XXX NEW method
 
 variable }content?  \ flag: was `}content` executed?
 
@@ -500,90 +430,6 @@ get-current markup>current
   \ }doc
 
 set-current
-
-[else]
-
-  \ XXX OLD method
-
-variable }content?  \ flag: was `}content` executed?
-
-: (content{) ( -- )
-  opened_markups_off
-  open_target
-\  ." in `(content{)` after `open_target`" cr key drop \ XXX INFORMER
-  template{
-\  ." in `(content{)` after `template{`" cr key drop \ XXX INFORMER
-  }content? off  parse_content
-  }content? @ 0= abort" Missing `}content` at the end of the page" ;
-  \ Create the top template part of the target page
-  \ and parse the page content.
-
-: update_page? ( -- f )
-  current_page newer?  \ source newer than target?
-  dup 0= if  current_target_file type ."  is up to date" cr  then ;
-  \ Does the target of the current page have to be updated?
-
-false value updating?  \ XXX TODO document
-
-: do_page? ( -- f )
-  false  \ don't do it, by default
-  do_content? @ 0= ?exit
-  current_page draft? ?exit
-  updating? if  drop update_page?  else  0=  then ;
-
-: skip_page ( -- )
-  \eof do_content? on ;
-  \ No target page must be created: Skip the current source page and
-  \ restore the default value of `do_content?` for the next page.
-
-: empty_stack ( -- )
-\ ."  XXX stack check: " .s  \ XXX INFORMER
-  depth abort" Stack not empty"
-\  depth if  cr ." Stack not empty" cr .s quit  then  \ XXX INFORMER
-  ;
-
-: content{ ( "text }content" -- )
-\  ." start of `content{`" cr  \ XXX INFORMER
-\  ~~  \ XXX INFORMER
-  do_page?
-\  ~~  \ XXX INFORMER
-  if
-\    ." yes do `content{`" cr key drop  \ XXX INFORMER
-\  ." `argc` in `content{`= " argc ? cr  \ XXX INFORMER
-    empty_stack .sourcefilename
-\    ~~  \ XXX INFORMER
-    (content{)
-  else
-\    ." don't do `content{`" cr key drop  \ XXX INFORMER
-    skip_page
-\    ~~  \ XXX INFORMER
-\  ." `argc` in skipped `content{`= " argc ? cr  \ XXX INFORMER
-  then
-\  ." end of `content{`" cr key drop \ XXX INFORMER
-  ;
-  \ Create the page content, if needed.
-  \ The end of the content is marked with the `}content` markup.
-  \ Only one 'content{ ... }content' block is allowed in the page.
-
-: finish_the_target ( -- )
-  close_pending }template close_target  more? off ;
-
-get-current markup>current
-
-: }content ( -- )
-\ cr .s cr ." start of }content " \ XXX INFORMER
-  finish_the_target
-\  do_content? on  \ default value for the next page  \ XXX OLD
-  only fendo>order forth>order
-  }content? on
-\  .s cr ." end of }content" cr  \ XXX INFORMER
-\  ." `argc` in `}content`= " argc ? cr  \ XXX INFORMER
-  ;
-  \ Finish the page content.
-
-set-current
-
-[then]
 
 .( fendo.parser.fs compiled ) cr
 
@@ -733,5 +579,8 @@ set-current
 \
 \ 2019-03-11: Improve `empty_stack`: show the stack contents before
 \ aborting.
+\
+\ 2020-11-18: Delete the code of the old templates method, which split
+\ the template at "{CONTENT}".
 
 \ vim: filetype=gforth
