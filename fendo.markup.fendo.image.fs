@@ -5,7 +5,7 @@
 
 \ This file defines the Fendo markup for images.
 
-\ Last modified  202011160255.
+\ Last modified  202011231815.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2017,2018,2020 Marcos Cruz (programandala.net)
@@ -82,17 +82,20 @@ variable image_finished?  \ flag, no more image markup to parse?
   then ;
   \ Parse and store the image attributes.
 
-: ({{) ( "imagemarkup}}" -- )
+: ({{) ( "ccc" -- )
   parse_image [<img>] ;
 
-: (complex_{{) ( "imagemarkup}}" -- )
+: (complex_{{) ( "ccc" -- )
   ({{) ;
 
   \ doc{
   \
-  \ {{ ( "ccc }}" -- )
+  \ (complex_{{) ( "ccc" -- )
   \
-  \ Start the definition of an image.
+  \ The default action of `{{`.
+  \
+  \ Start the definition of an image. Parse the input stream for an
+  \ image markup until and ending `}}` is found.
   \
   \ Usage examples:
 
@@ -103,7 +106,10 @@ variable image_finished?  \ flag, no more image markup to parse?
   \ {{ over/there/this_one.jpg | | title="Picture without alt text" }}
   \ ----
 
+  \ Note:
   \ - Spaces are not allowed in the filename.
+  \ - The markup can span on several text lines, provided ``|``
+  \   doesn't lay at the start of a line.
   \ - The size attributes of the images are added automatically.
   \ - Only JPEG and PNG images are supported.
   \
@@ -116,9 +122,12 @@ variable image_finished?  \ flag, no more image markup to parse?
 
   \ doc{
   \
-  \ }} ( -- )
+  \ (complex_}}) ( -- )
   \
-  \ End the definition of an image that was started by `{{`.
+  \ The default action of `}}`.
+  \
+  \ End the definition of an image that was started by the
+  \ `(complex_{{)` action of `{{`.
   \
   \ }doc
 
@@ -168,5 +177,8 @@ fendo_definitions
 \
 \ 2020-11-16: Make `{{` and `}}` deferred in order to prepare an
 \ alternative simpler version.
+\
+\ 2020-11-23: Update documentation of `(complex_{{)` and
+\ `(complex_}})`.
 
 \ vim: filetype=gforth
