@@ -5,7 +5,7 @@
 
 \ This file defines the Fendo tools required to include images.
 
-\ Last modified  202011160218.
+\ Last modified  202011282119.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2017,2018,2020 Marcos Cruz (programandala.net)
@@ -94,7 +94,7 @@ defer img-close
   \ Usage examples:
 
   \ ----
-  \ <[ mypicture.jpg img ]>
+  \ <[ s" mypicture.jpg" img ]>
   \ <[ "there/another.jpg" "Optional alternative text here" img ]>
   \ <[ "over/there/this_one.jpg" "Alt text" title=" Fendo picture" img ]>
   \ <[ "over/there/this_one.jpg" "" title=" Fendo picture" img ]>
@@ -114,5 +114,7 @@ defer img-close
 
 \ 2020-11-15: Start. Code extracted from
 \ <fendo.markup.fendo.image.fs> (2013..2020).
+\
+\ 2020-11-28: Fix typo in documentation of `img`.
 
 \ vim: filetype=gforth

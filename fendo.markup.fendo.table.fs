@@ -5,7 +5,7 @@
 
 \ This file defines the Fendo markup for lists.
 
-\ Last modified  202011160218.
+\ Last modified  202011282114.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2017,2018,2019,2020 Marcos Cruz (programandala.net)
@@ -116,7 +116,7 @@ markup_definitions
   \
   \ |=== ( -- )
   \
-  \ `|===` marks the start and end of a table.
+  \ ``|===`` marks the start and end of a table.
   \
   \ The Fendo tables markup is similar to AsciiDoctor markup, but
   \ simpler.
@@ -162,5 +162,7 @@ fendo_definitions
 \ 2019-01-03: Fix typo in comment.
 \
 \ 2020-10-07: Improve documentation.
+\
+\ 2020-11-28: Fix markup in documentation of tables.
 
 \ vim: filetype=gforth
