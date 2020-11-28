@@ -1,8 +1,10 @@
 // = Markup
 // :author: Marcos Cruz (programandala.net)
 
-// Last modified 201812201932
+// Last modified 202011282216
 // See change log at the end of the file
+
+:tilde: ~
 
 == Markup comparation table
 
@@ -46,7 +48,7 @@ note in brackets.
 |
 |
 | ////
-| (\*…*)
+| (* … *)
 
 | comment (line)
 | %
@@ -64,7 +66,7 @@ note in brackets.
 |
 |
 | \
-| ~
+| {tilde}
 
 | headers
 | = == === ==== ===== ======
@@ -82,19 +84,19 @@ note in brackets.
 | […]
 | {{…}}
 | image: image::
-| {{…}}
+| {{ … }}
 
 | lang (block)
 |
 |
 |
-| lang&#40;&#40;&#40;&#40;…))))
+| lang&#40;&#40;&#40;&#40; … ))))
 
 | lang (inline)
 |
 |
 |
-| lang&#40;&#40;…))
+| lang&#40;&#40; … ))
 
 | line break
 |
@@ -106,7 +108,7 @@ note in brackets.
 | […]
 | [[…]]
 | http: link:
-| [[…]]
+| [[ … ]]
 
 | list (bulleted)
 | - [indented for nesting]
@@ -154,13 +156,13 @@ note in brackets.
 | &#39;&#39;&#39; [3 single quotes]
 |
 | &#43;&#43;&#43;&#43;
-| \~~~~
+| {tilde}{tilde}{tilde}{tilde}
 
 | passthrough (inline)
 | &#39;&#39; [2 single quotes]
 |
 | pass: ` $$
-| \~~ [to-do]
+| {tilde}{tilde} [to-do]
 
 | quote (block)
 | [indented]
@@ -220,13 +222,13 @@ note in brackets.
 |
 |
 | ## #
-| &#40;&#40;…))
+| &#40;&#40; … ))
 
 | general (block; =div)
 |
 |
 |
-| &#40;&#40;&#40;&#40;…))))
+| &#40;&#40;&#40;&#40; … ))))
 
 |===
 
@@ -247,6 +249,9 @@ note in brackets.
 //
 // 2018-12-08: Prepare for the manual. Remove columns of Fendo A-03
 // and Simplilo A-08.
+//
+// 2020-11-28: Fix the Fendo markup with the mandatory Forth spaces.
+// Fix the escaping of tilde characters.
 
 // =============================================================
 
