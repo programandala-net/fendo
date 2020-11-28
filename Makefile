@@ -3,7 +3,7 @@
 # This file is part of Fendo
 # http://programandala.net/en.program.fendo.html
 
-# Last modified 202011282157
+# Last modified 202011282214
 
 # ==============================================================
 # Author {{{1
@@ -132,8 +132,12 @@ tmp/manual_skeleton.adoc: doc_src/manual_skeleton.adoc VERSION.fs
 tmp/files.txt: $(fendo_files) $(lib_files)
 	ls -1 $^ > $@
 
-tmp/fendo_manual.adoc: tmp/manual_skeleton.adoc tmp/glossary.adoc
-	cat $^ > $@
+tmp/fendo_manual.adoc: \
+	tmp/manual_skeleton.adoc \
+	doc_src/markup.adoc \
+	README.adoc \
+	tmp/glossary.adoc
+	cat tmp/manual_skeleton.adoc tmp/glossary.adoc > $@
 
 # ==============================================================
 # Change log {{{1
@@ -147,4 +151,5 @@ tmp/fendo_manual.adoc: tmp/manual_skeleton.adoc tmp/glossary.adoc
 # extension with ".dbk". Include the documentation of Galope library modules
 # (at the moment only the `begin-translation` module) into the glossary. Build
 # also an EPUB manual. Don't build Info and Texinfo by default, the conversions
-# have problems. Add sections to the glossary.
+# have problems. Add sections to the glossary. Fix: add <README.adoc> and
+# <doc_src/markup.adoc> to the prerequisites of the Asciidoctor manual.
