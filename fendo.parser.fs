@@ -5,7 +5,7 @@
 
 \ This file creates the parser.
 
-\ Last modified  202011180026.
+\ Last modified  202011180106.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2017,2018,2019,2020 Marcos Cruz (programandala.net)
@@ -394,6 +394,7 @@ false value updating?  \ XXX TODO document
 : empty_stack ( -- )
   depth if cr ." Stack: " .s cr then
   depth abort" Stack not empty" ;
+  \ XXX TODO -- rename or reuse a Gforth word
 
 : content{ ( "text }content" -- )
   do_page? if   empty_stack .sourcefilename (content{)
