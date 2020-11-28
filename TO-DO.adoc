@@ -1,6 +1,6 @@
 = Fendo TO-DO
 :author: Marcos Cruz (programandala.net)
-:revdate: 2020-10-16
+:revdate: 2020-10-28
 
 // This file is part of Fendo
 // (http://programandala.net/en.program.fendo.html).
@@ -695,3 +695,7 @@ Why `<[ … ]>` are nestable? What's the advantage?
 
 - Move `bl+` to Galope. It's defined in <fendo.markup.fendo.forth.fs>
   and required in <fendo.markup.fendo.link.fs>.
+
+== 2020-11-28
+
+- Replace "See:" with "See also:" in the documentation.
