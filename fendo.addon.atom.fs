@@ -5,7 +5,7 @@
 
 \ This file is the Atom addon.
 
-\ Last modified  202011160218.
+\ Last modified  202011180105.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2009,2014,2015,2017,2018,2020 Marcos Cruz (programandala.net)
@@ -90,6 +90,8 @@ defer atom_edit_summary$
 
 : <author> ( -- ) echo_cr s" author" {html  ;
 : </author> ( -- ) echo_cr s" author" html}  ;
+: <content> ( -- ) echo_cr s" content" {html  ;
+: </content> ( -- ) echo_cr s" content" html}  ;
 : <entry> ( -- ) echo_cr s" entry" {html  ;
 : </entry> ( -- ) echo_cr s" entry" html}  ;
 : <feed> ( -- ) echo_cr s" feed" {html  ;
@@ -237,6 +239,22 @@ defer (atom_entry_summary)
   >r echo_line r> ;
   \ a = page ID
 
+: pid#>content ( a -- ca len )
+  save_echo echo>string pid#>pid$ pid$>source included 
+  echoed $@ type restore_echo ;
+  \ a = page ID
+  \ XXX UNDER DEVELOPMENT
+  \ XXX TODO -- test
+
+: atom_entry_content ( a -- )
+  <content> 
+  \ pid#>content echo  \ method 1
+  contents \ method 2, after the template
+  </content> ;
+  \ a = page ID
+  \ XXX UNDER DEVELOPMENT
+  \ XXX TODO -- test
+
 : atom_entry_updated_summary ( a -- )
   [ false ] [if]
     \ XXX OLD
@@ -271,6 +289,7 @@ set_default_atom_entry_summary
   r@ atom_entry_links
   r@ atom_entry_published
   r@ atom_entry_updated
+  \ r@ atom_entry_content \ XXX UNDER DEVELOPMENT
   r> atom_entry_summary
   </entry> ;
   \ Create an Atom entry in the Atom file.
@@ -357,5 +376,7 @@ set_default_atom_entry_summary
 \
 \ 2020-04-14: Define strings constants with `sconstant` instead of
 \ `2constant`.
+\
+\ 2020-11-18: Draft the implementation of the `<content>` element.
 
 \ vim: filetype=gforth
