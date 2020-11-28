@@ -1,19 +1,34 @@
 = Fendo %VERSION%
 :author: Marcos Cruz (programandala.net)
-:revdate: 2018-12-20
+:revdate: 2020-11-28
+:doctype: book
+ifdef::backend-html5[]
 :toc:
-:toclevels: 1
+:toclevels: 2
 :toc-placement!:
+endif::[]
+ifdef::backend-pdf[]
+:toc:
+:toclevels: 2
+:toc-placement!:
+endif::[]
 :linkattrs:
 
-// Last modified 201812201923
+// Last modified 202011282156
 
+ifdef::backend-html5[]
 toc::[]
+endif::[]
+ifdef::backend-pdf[]
+toc::[]
+endif::[]
 
 // =============================================================
 
 include::../README.adoc[tags=description]
+
 include::../README.adoc[tags=history]
+
 include::../README.adoc[tags=status]
 
 // XXX TODO --
@@ -32,7 +47,7 @@ filename <en.articles.2010.fs> has three levels of hierarchy:
 3. '2010' = Section of articles of year 2010.
 
 Of course, 'fs' is the filename extension of the Forth source, and it
-does not belongs to the page name.
+does not belong to the page name.
 
 By default, the corresponding target page will be
 <en.articles.2010.html>.

@@ -3,7 +3,7 @@
 # This file is part of Fendo
 # http://programandala.net/en.program.fendo.html
 
-# Last modified 202011282127
+# Last modified 202011282157
 
 # ==============================================================
 # Author {{{1
@@ -120,9 +120,7 @@ fendo_files=$(wildcard *.fs)
 lib_files=$(wildcard doc_src/galope/*.fs)
 
 tmp/glossary.adoc: tmp/files.txt
-	glosara --level=3 --input=$< --output=$@
-
-#glosara --level=3 -m "glossary{ }glossary" --input=$< --output=$@
+	glosara --level=3 --sections --input=$< --output=$@
 
 doc/fendo_manual.html: tmp/fendo_manual.adoc README.adoc
 	asciidoctor --out-file=$@ $<
@@ -149,4 +147,4 @@ tmp/fendo_manual.adoc: tmp/manual_skeleton.adoc tmp/glossary.adoc
 # extension with ".dbk". Include the documentation of Galope library modules
 # (at the moment only the `begin-translation` module) into the glossary. Build
 # also an EPUB manual. Don't build Info and Texinfo by default, the conversions
-# have problems.
+# have problems. Add sections to the glossary.
