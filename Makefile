@@ -3,12 +3,12 @@
 # This file is part of Fendo
 # http://programandala.net/en.program.fendo.html
 
-# Last modified 201812191515
+# Last modified 202011282048
 
 # ==============================================================
 # Author
 
-# Marcos Cruz (programandala.net), 2017, 2018.
+# Marcos Cruz (programandala.net), 2017, 2018, 2020.
 
 # ==============================================================
 # License
@@ -80,7 +80,7 @@ cleandoc:
 .PHONY: doc
 doc: \
 	doc/fendo_manual.html \
-	doc/fendo_manual.docbook \
+	doc/fendo_manual.dbk \
 	doc/fendo_manual.info \
 	doc/fendo_manual.texi \
 	doc/fendo_manual.pdf
@@ -94,17 +94,14 @@ doc/%.pdf: tmp/%.adoc
 %.html: %.adoc
 	asciidoctor --out-file=$@ $<
 
-doc/%.docbook: tmp/%.adoc
+doc/%.dbk: tmp/%.adoc
 	asciidoctor --backend=docbook --out-file=$@ $<
-
-%.texi: %.docbook
-	pandoc -o $@ $<
 
 %.info: %.texi
 	makeinfo -o $@ $<
 
-%.texi: %.docbook
-	pandoc -o $@ $<
+%.texi: %.dbk
+	pandoc -f docbook -o $@ $<
 
 %.info: %.texi
 	makeinfo -o $@ $<
@@ -139,3 +136,6 @@ tmp/fendo_manual.adoc: tmp/manual_skeleton.adoc tmp/glossary.adoc
 # (http://programandala.net/en.program.galope.html).
 #
 # 2018-12-19: Replace htmldoc with asciidoctor-pdf, the PDF is much better.
+#
+# 2020-11-28: Fix parameters to convert DocBook to Texinfo. Replace ".docbook"
+# extension with ".dbk".
