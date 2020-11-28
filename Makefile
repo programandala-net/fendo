@@ -3,10 +3,10 @@
 # This file is part of Fendo
 # http://programandala.net/en.program.fendo.html
 
-# Last modified 202011282104
+# Last modified 202011282127
 
 # ==============================================================
-# Author
+# Author {{{1
 
 # Marcos Cruz (programandala.net), 2017, 2018, 2020.
 
@@ -18,7 +18,7 @@
 # license.  There is no warranty.
 
 # ==============================================================
-# Requirements
+# Requirements {{{1
 
 # Asciidoctor (by Dan Allen and Sara White)
 # 	http://asciidoctor.org
@@ -38,12 +38,12 @@
 # 	http://john-macfarlane.net/pandoc
 
 # ==============================================================
-# History
+# History {{{1
 
 # See at the end of the file.
 
 # ==============================================================
-# Notes about make
+# Notes about make {{{1
 
 # $@ = the name of the target of the rule
 # $< = the name of the first prerequisite
@@ -53,7 +53,7 @@
 # `%` works only at the start of the filter pattern
 
 # ==============================================================
-# Config
+# Config {{{1
 
 VPATH = ./
 
@@ -62,10 +62,25 @@ MAKEFLAGS = --no-print-directory
 #.ONESHELL:
 
 # ==============================================================
-# Main
+# Interface {{{1
 
 .PHONY: all
 all: doc
+
+.PHONY: doc
+doc: epub html pdf
+
+.PHONY: epub
+epub: \
+	doc/fendo_manual.epub \
+
+.PHONY: html
+html: \
+	doc/fendo_manual.html \
+
+.PHONY: pdf
+pdf: \
+	doc/fendo_manual.pdf
 
 .PHONY: clean
 clean: cleandoc
@@ -75,24 +90,19 @@ cleandoc:
 	-rm -f doc/* tmp/*
 
 # ==============================================================
-# Documentation
-
-.PHONY: doc
-doc: \
-	doc/fendo_manual.html \
-	doc/fendo_manual.dbk \
-	doc/fendo_manual.info \
-	doc/fendo_manual.texi \
-	doc/fendo_manual.pdf
+# Documentation {{{1
 
 # ----------------------------------------------
-# Common rules
+# Common rules {{{2
 
 doc/%.pdf: tmp/%.adoc
 	asciidoctor-pdf --out-file $@ $<
 
-%.html: %.adoc
+doc/%.html: tmp/%.adoc
 	asciidoctor --out-file=$@ $<
+
+doc/%.epub: tmp/%.adoc
+	asciidoctor-epub3 --out-file=$@ $<
 
 doc/%.dbk: tmp/%.adoc
 	asciidoctor --backend=docbook --out-file=$@ $<
@@ -103,11 +113,8 @@ doc/%.dbk: tmp/%.adoc
 %.texi: %.dbk
 	pandoc -f docbook -o $@ $<
 
-%.info: %.texi
-	makeinfo -o $@ $<
-
 # ----------------------------------------------
-# Main
+# Main {{{2
 
 fendo_files=$(wildcard *.fs)
 lib_files=$(wildcard doc_src/galope/*.fs)
@@ -131,7 +138,7 @@ tmp/fendo_manual.adoc: tmp/manual_skeleton.adoc tmp/glossary.adoc
 	cat $^ > $@
 
 # ==============================================================
-# Change log
+# Change log {{{1
 
 # 2018-12-07: Start. Adapted from Galope
 # (http://programandala.net/en.program.galope.html).
@@ -140,4 +147,6 @@ tmp/fendo_manual.adoc: tmp/manual_skeleton.adoc tmp/glossary.adoc
 #
 # 2020-11-28: Fix parameters to convert DocBook to Texinfo. Replace ".docbook"
 # extension with ".dbk". Include the documentation of Galope library modules
-# (at the moment only the `begin-translation` module) into the glossary.
+# (at the moment only the `begin-translation` module) into the glossary. Build
+# also an EPUB manual. Don't build Info and Texinfo by default, the conversions
+# have problems.
