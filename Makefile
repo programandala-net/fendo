@@ -3,7 +3,7 @@
 # This file is part of Fendo
 # http://programandala.net/en.program.fendo.html
 
-# Last modified 202011282048
+# Last modified 202011282104
 
 # ==============================================================
 # Author
@@ -34,7 +34,7 @@
 # Glosara (by Marcos Cruz)
 # 	http://programandala.net/en.program.glosara.html
 
-# pandoc (by Johw Macfarlane)
+# pandoc (by John Macfarlane)
 # 	http://john-macfarlane.net/pandoc
 
 # ==============================================================
@@ -110,6 +110,7 @@ doc/%.dbk: tmp/%.adoc
 # Main
 
 fendo_files=$(wildcard *.fs)
+lib_files=$(wildcard doc_src/galope/*.fs)
 
 tmp/glossary.adoc: tmp/files.txt
 	glosara --level=3 --input=$< --output=$@
@@ -123,7 +124,7 @@ tmp/manual_skeleton.adoc: doc_src/manual_skeleton.adoc VERSION.fs
 	version=$$(gforth VERSION.fs -e "fendo_version type bye" )
 	sed -e "s/%VERSION%/$${version}/" $< > $@
 
-tmp/files.txt: $(fendo_files)
+tmp/files.txt: $(fendo_files) $(lib_files)
 	ls -1 $^ > $@
 
 tmp/fendo_manual.adoc: tmp/manual_skeleton.adoc tmp/glossary.adoc
@@ -138,4 +139,5 @@ tmp/fendo_manual.adoc: tmp/manual_skeleton.adoc tmp/glossary.adoc
 # 2018-12-19: Replace htmldoc with asciidoctor-pdf, the PDF is much better.
 #
 # 2020-11-28: Fix parameters to convert DocBook to Texinfo. Replace ".docbook"
-# extension with ".dbk".
+# extension with ".dbk". Include the documentation of Galope library modules
+# (at the moment only the `begin-translation` module) into the glossary.

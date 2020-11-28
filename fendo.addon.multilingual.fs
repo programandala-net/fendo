@@ -6,10 +6,10 @@
 \ This file creates some low-level tools to manage multilingual
 \ websites. See the manual for details.
 
-\ Last modified  202011160218.
+\ Last modified  202011282104.
 \ See change log at the end of the file.
 
-\ Copyright (C) 2013,2017,2018,2019 Marcos Cruz (programandala.net)
+\ Copyright (C) 2013,2017,2018,2019,2020 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute
 \ it and/or modify it under the terms of the GNU General
@@ -184,7 +184,7 @@ true to multilingual?
   \ ----
   \
   \ NOTE: ``l10n-string`` is deprecated. It has been superseded by
-  \ ``begin-translation``, which makes it easier to add new
+  \ `begin-translation`, which makes it easier to add new
   \ translations gradually and maintain them.
   \
   \ See: `begin-translation`, `noname-l10n-string`, `langs`.
@@ -215,166 +215,10 @@ true to multilingual?
   \ }doc
 
 \ ==============================================================
-\ Config and doc of `begin-translation` {{{1 {{{1
+\ Config of `begin-translation` {{{1 {{{1
 
 ' current_lang# is lang
   \ `lang` must return the current language.
-
-\ This is an copy of the documentation, adapted to Fendo, in order to
-\ make it part of the program manual.
-
-  \ doc{
-  \
-  \ langs ( -- n )
-  \
-  \ A ``value`` that returns the number of language sections of a
-  \ multilingual website. It must be configured by the application.
-  \
-  \ Usage example:
-
-  \ ----
-  \ 0 constant en_language \ English
-  \ 1 constant eo_language \ Esperanto
-  \ 2 constant es_language \ Spanish
-  \ 3 to langs
-  \ ----
-  \
-  \ See: `l10n-string`, `default-lang`.
-  \
-  \ }doc
-
-  \ doc{
-  \
-  \ default-lang ( -- n )
-  \
-  \ A ``value`` that returns the language of the translation returned
-  \ by constants created by `begin-translation` or
-  \ `begin-noname-transalation` when the translation in the current
-  \ language is not available, unless `default-translation` is set.
-  \ Its default value is zero, i.e. the first language defined by the
-  \ application.
-  \
-  \ See: `default-translation`, `langs`.
-  \
-  \ }doc
-
-  \ doc{
-  \
-  \ default-translation ( -- a )
-  \
-  \ A dynamic string variable. _a_ is the address of the string, which
-  \ can be retrieved by Gforth's ``$@`` and set by ``$!``. Its default
-  \ value is an empty string.
-  \
-  \ When the dynamic string pointed by _a_ is not empty, it will be
-  \ returned by the variables created by `translation`, whenever the
-  \ translation in the current language is not available.
-  \
-  \ When the dynamic string pointed by _a_ is empty, which is the
-  \ default, `default-lang` is used instead when the current
-  \ translation of a `translation` variable is not available.
-  \
-  \ By storing an identificable string ``default-translation``, missing
-  \ translations can be traced in the HTML.
-  \
-  \ See: `default-lang`, `langs`.
-  \
-  \ }doc
-
-  \ doc{
-  \
-  \ end-translation ( translation-sys n[n] ca[n] len[n] ... n[1] ca[1] len[1] --)
-  \
-  \ End the definition of a translation started by
-  \ `begin-translation`, by compiling all translations from string
-  \ _ca[1] len[1]_ in language _n[n]_ to string _ca[n] len[n]_ in
-  \ language _n[1]_. Any number of translations can be provided.
-  \ _translation-sys_ is left by `begin-translation` and
-  \ `begin-noname-translation` in order to mark marks the end of the
-  \ parameters.
-  \
-  \ See `begin-translation` for details and a usage example.
-  \
-  \ }doc
-
-  \ doc{
-  \
-  \ begin-translation ( "name" -- translation-sys )
-  \
-  \ Begin the definition of a translation, i.e. a string constant that
-  \ will be calculated at run-time depending on the language of the
-  \ current page.  _translation-sys_ is consumed by `end-translation`.
-  \
-  \ When executed, _name_ will return the string corresponding to the
-  \ language of the current page. If the required translation is not
-  \ available, `default-translation` is tried first, then
-  \ `default-lang`.
-  \
-  \
-  \ Usage example:
-
-  \ ----
-  \ 0 constant english
-  \ 1 constant esperanto
-  \ 2 constant spanish
-  \ 3 constant interlingue
-  \ 4 to langs
-  \
-  \ begin-translation multilingual-salute$
-  \   spanish     s" Hola"
-  \   interlingue s" Salute"
-  \   english     s" Hello"
-  \ end-translation
-  \
-  \ \ Since no Esperanto translation has been defined in this
-  \ \ example, it will be calculated depending on
-  \ \ `default-translation` and `default-lang`.
-  \ ----
-
-  \ See: `end-translation`, `default-translation`, `default-lang`, `l10n-string`.
-  \
-  \ }doc
-
-  \ doc{
-  \
-  \ begin-noname-translation ( -- xt translation-sys )
-  \
-  \ Begin the definition of an unnamed translation an return its _xt_.
-  \ A transaltion is a string constant that will be calculated at
-  \ run-time depending on the language of the current page.
-  \ _translation-sys_ is consumed by `end-translation`.
-  \
-  \ When executed, _xt_ will return the string corresponding to the
-  \ language of the current page. If the required translation is not
-  \ available, `default-translation` is tried first, then
-  \ `default-lang`.
-  \
-  \ Usage example:
-
-  \ ----
-  \ 0 constant english
-  \ 1 constant esperanto
-  \ 2 constant spanish
-  \ 3 constant interlingue
-  \ 4 to langs
-  \
-  \ defer my-salute
-  \
-  \ begin-noname-translation
-  \   spanish     s" Hola"
-  \   interlingue s" Salute"
-  \   english     s" Hello"
-  \ end-translation is my-salute
-  \
-  \ \ Since no Esperanto translation has been defined in this
-  \ \ example, it will be calculated depending on
-  \ \ `default-translation` and `default-lang`.
-  \ ----
-
-  \ See: `begin-translation`, `end-translation`,
-  \ `default-translation`, `default-lang`, `l10n-string`.
-  \
-  \ }doc
 
 \ ==============================================================
 \ Development notes {{{1 {{{1
@@ -483,5 +327,9 @@ end-translation
 \ to the Galope library.
 \
 \ 2019-12-27: Fix typo in comment.
+\
+\ 2020-11-28: Remove the duplicated documentation of
+\ `begin-translation`: now its Galope module is included in the
+\ sources used to build the manual.
 
 \ vim: filetype=gforth
