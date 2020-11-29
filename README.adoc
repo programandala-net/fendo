@@ -5,7 +5,7 @@
 // This file is part of Fendo
 // http://programandala.net/en.program.fendo.html
 
-// Last modified 202011291924
+// Last modified 202011292026
 
 // tag::description[]
 
@@ -61,8 +61,8 @@ Home page: http://programandala.net/en.program.fendo.html
 Fendo is very stable and is regulary improved, after the requirements
 of the author's websites it already powers.
 
-Since 2014, two websites have been migrated from previous engines to
-Fendo, two more were created directly in it. At the time of writing
+Since 2014, two websites were migrated from previous engines to
+Fendo, and two more were created directly in it. At the time of writing
 (2020-11) one more website is being migrated and two more are waiting.
 
 The source code is well documented, but specific usage documentation
