@@ -1,11 +1,11 @@
 = Fendo
 :author: Marcos Cruz (programandala.net)
-:revdate: 2020-06-28
+:revdate: 2020-11-29
 
 // This file is part of Fendo
 // http://programandala.net/en.program.fendo.html
 
-// Last modified 202006281727
+// Last modified 202011291924
 
 // tag::description[]
 
@@ -34,22 +34,23 @@ Home page: http://programandala.net/en.program.fendo.html
 
 // tag::history[]
 
-== Motivation and history
+== History of the code
 
-The development of Fendo started in 2012, in order to replace two
-previous similar applications written by the author (one of them
-written in Forth, the other one in PHP) with a new one combining the
-best features of both of them.
+- 2012: The development of Fendo started in order to replace two
+  previous website generators written by the author (one of them
+  written in Forth, the other one in PHP) with a new one combining the
+  best features of both of them.
 
-Since 2014-12, Fendo is the engine that powers
-http://programandala.net[programandala.net]. Since 2019 it powers also
-two more websites of the author.
+- 2017-02-08: A local Git repository was created from all of the
+  development backups, in order to resume the development and prepare
+  the first public release.
 
-On 2017-02-08, a local Git repository was created from development
-backups, in order to resume the development and prepare the first
-public release.
+- 2020-03-28: The repository was uploaded to GitHub.
 
-On 2020-03-28, the repository was uploaded to GitHub.
+- 2020-11-29: The repository was converted from Git to
+  http://fossil-scm.org[Fossil], wich will be used to continue the
+  development. GitHub will be used only as a mirror, exported and
+  uploaded from the Fossil repository.
 
 // end::history[]
 
@@ -58,12 +59,17 @@ On 2020-03-28, the repository was uploaded to GitHub.
 == Current status
 
 Fendo is very stable and is regulary improved, after the requirements
-of the three personal websites it powers.
+of the author's websites it already powers.
 
-The source code is documented, but specific usage documentation is
-still missing.
+Since 2014, two websites have been migrated from previous engines to
+Fendo, two more were created directly in it. At the time of writing
+(2020-11) one more website is being migrated and two more are waiting.
 
-// Releases A-00..A-05 are internal, not recommended. 
+The source code is well documented, but specific usage documentation
+is still missing. A full manual with a complete glossary will be built
+automatically from the sources.
+
+Releases A-00..A-05 are internal, not recommended. 
 
 The current version under development is 0.6.0, which will be
 considered the first public version.
