@@ -1,17 +1,12 @@
 = Fendo TO-DO
 :author: Marcos Cruz (programandala.net)
-:revdate: 2020-10-28
+:revdate: 2020-11-29
 
 // This file is part of Fendo
 // (http://programandala.net/en.program.fendo.html).
 
 // This text file is in Asciidoctor format
 // See http://asciidoctor.org
-
-== 2013-06-04
-
-In <fendo.parser.fs>: Flag the first markup of the current line, in order to
-use `--` both for nested lists and for delete.
 
 == 2013-06-04
 
@@ -670,7 +665,7 @@ This was observed first in
 Finish <fendo.addon.images_by_wildcard.fs>. Test it in
 <programandala.net/es.programa.black_flag.fs>.
 
-== 2020-11-15
+== 2020-11-15, 2020-11-29
 
 Deprecate the current parsing versions of link and image markup,
 replacing them with non-parsing Forth-code versions:
@@ -678,14 +673,16 @@ replacing them with non-parsing Forth-code versions:
 |===
 | Current link with parsing:       | `[[ URL | TXT | attr="ATTR" ]]`
 | Current link with code:          | `<[ "URL" "TXT" attr=" ATTR" link ]>`
-| Possible link with code:         | `[[ "URL" "TXT" attr=" ATTR" ]]`
+| New link with code:              | `[[ "URL" "TXT" attr=" ATTR" ]]`
+| Possible link with recognizers:  | `[[ "URL" "TXT" attr="ATTR" ]]`
 | Current image with parsing:      | `{{ FILE | ALT | attr="ATTR" }}`
 | Current image with code:         | `<[ "FILE" "ALT" attr=" ATTR" img ]>`
+| New image with code:             | `{{ "FILE" "ALT" attr=" ATTR" }}`
 | Possible image with recognizers: | `{{ "FILE" "ALT" attr="ATTR" }}`
 |===
 
-Also, the HTML attributes could be defined as recognizers prefixes, in order
-to allow `attr="ATTR"`.
+The versions with recognizers need all of the HTML attributes to be
+defined as recognizers prefixes, in order to allow `attr="ATTR"`.
 
 == 2020-11-15
 
