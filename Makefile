@@ -3,7 +3,8 @@
 # This file is part of Fendo
 # http://programandala.net/en.program.fendo.html
 
-# Last modified 202011282214
+# Last modified: 202012241748.
+# See change log at the end of the file.
 
 # ==============================================================
 # Author {{{1
@@ -139,6 +140,33 @@ tmp/fendo_manual.adoc: \
 	tmp/glossary.adoc
 	cat tmp/manual_skeleton.adoc tmp/glossary.adoc > $@
 
+# ----------------------------------------------
+# Online documentation {{{2
+
+# Online documentation displayed on the Fossil repository.
+
+.PHONY: wwwdoc
+wwwdoc: wwwreadme
+
+.PHONY: cleanwww
+cleanwww:
+	rm -f \
+		doc/www/* \
+		tmp/README.*
+
+.PHONY: wwwreadme
+wwwreadme: doc/www/README.html
+
+doc/www/README.html: tmp/README.html
+	echo "<div class='fossil-doc' data-title='README'>" > $@;\
+	cat $< >> $@;\
+	echo "</div>" >> $@
+
+tmp/README.html: README.adoc
+	asciidoctor \
+		--embedded \
+		--out-file=$@ $<
+
 # ==============================================================
 # Change log {{{1
 
@@ -153,3 +181,6 @@ tmp/fendo_manual.adoc: \
 # also an EPUB manual. Don't build Info and Texinfo by default, the conversions
 # have problems. Add sections to the glossary. Fix: add <README.adoc> and
 # <doc_src/markup.adoc> to the prerequisites of the Asciidoctor manual.
+#
+# 2020-12-24: Build an online version of the README file for the Fossil
+# repository.
