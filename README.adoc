@@ -1,11 +1,11 @@
 = Fendo
 :author: Marcos Cruz (programandala.net)
-:revdate: 2020-11-29
+:revdate: 2020-12-24
 
 // This file is part of Fendo
 // http://programandala.net/en.program.fendo.html
 
-// Last modified 202011292026
+// Last modified: 202012241755.
 
 // tag::description[]
 
@@ -28,31 +28,13 @@ Some features:
 - Nestable page shortcuts.
 - Fully customizable.
 
-Home page: http://programandala.net/en.program.fendo.html
+Home page and repository:
+
+- Home page: http://programandala.net/en.program.fendo.html
+- Fossil repository: http://fossil.programandala.net/fendo
+- GitHub mirror: http://github.com/programandala-net/fendo
 
 // end::description[]
-
-// tag::history[]
-
-== History of the code
-
-- 2012: The development of Fendo started in order to replace two
-  previous website generators written by the author (one of them
-  written in Forth, the other one in PHP) with a new one combining the
-  best features of both of them.
-
-- 2017-02-08: A local Git repository was created from all of the
-  development backups, in order to resume the development and prepare
-  the first public release.
-
-- 2020-03-28: The repository was uploaded to GitHub.
-
-- 2020-11-29: The repository was converted from Git to
-  http://fossil-scm.org[Fossil], wich will be used to continue the
-  development. GitHub will be used only as a mirror, exported and
-  uploaded from the Fossil repository.
-
-// end::history[]
 
 // tag::status[]
 
@@ -81,3 +63,25 @@ http://vortaro.net/#fendo["fendo"] is the Esperanto word for "slot",
 in the sense "a narrow depression, perforation, or aperture".
 
 // end::status[]
+
+// tag::history[]
+
+== History of the code
+
+- 2012: The development of Fendo started in order to replace two
+  previous website generators written by the author (one of them
+  written in Forth, the other one in PHP) with a new one combining the
+  best features of both of them.
+
+- 2017-02-08: A local Git repository was created from all of the
+  development backups, in order to resume the development and prepare
+  the first public release.
+
+- 2020-03-28: The repository was uploaded to GitHub.
+
+- 2020-11-29: The Git repository was converted to a
+  http://fossil.programandala.net/fendo[Fossil repository], keeping
+  http://github.com/programandala-net/fendo[GitHub] as a mirror.
+
+// end::history[]
+
