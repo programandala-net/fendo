@@ -1,6 +1,6 @@
 = Fendo TO-DO
 :author: Marcos Cruz (programandala.net)
-:revdate: 2020-11-29
+:revdate: 2021-02-22
 
 // This file is part of Fendo
 // (http://programandala.net/en.program.fendo.html).
@@ -81,8 +81,7 @@ Write an addon to create a list of rencent changes?
 == 2014-03-08
 
 New:
-
-meta markups ~- and ~+ to change the separation of the next item.
+meta markups `~-` and `~+` to change the separation of the next item.
 
 == 2014-03-12
 
@@ -113,10 +112,12 @@ Idea:
 
 Implement author and title for block quotes, like Asciidoctor, e.g.:
 
+----
 <[ s" Miguel de Cervantes" quote_author! s" El quijote" quote_title! ]>
 """"
 En un lugar de la Mancha.
 """"
+----
 
 That would render a proper footer under the quote block.
 At the end of the block, the variables must be reseted.
@@ -658,7 +659,7 @@ the paragraph started by the link is not marked.
 Fix: The `//` markup (and probably others) at the start of a field
 adds a separating space before the datum when the field is evaluated.
 This was observed first in
-<fendo/websites/trunk/src/pages/eo.kajero.2008.12.09.fs>.
+<fendo/websites/(...)/trunk/src/pages/eo.kajero.2008.12.09.fs>.
 
 == 2020-11-14
 
