@@ -6,10 +6,10 @@
 \ This file defines the Fendo markup for passthroughs,
 \ used to output content 'as is'.
 
-\ Last modified  202011160218.
+\ Last modified 202102230001+0100.
 \ See change log at the end of the file.
 
-\ Copyright (C) 2013,2014,2017 Marcos Cruz (programandala.net)
+\ Copyright (C) 2013,2014,2017,2021 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute
 \ it and/or modify it under the terms of the GNU General
@@ -43,13 +43,9 @@ fendo_definitions
   read_source_line 0= abort" Missing closing `~~~~`" ;
   \ Parse a new line from the current passthrough block.
 
-: "~~~~"? ( ca len -- f )
+: passthrough-block-delimiter? ( ca len -- f )
   trim s" ~~~~" str= ;
-  \ Does the given string contains only "~~~~"?
-
-: passthrough-line? ( -- ca len true | false )
-  passthrough-line 2dup "~~~~"? 0= ;
-  \ Parse a new line from the current passthrough block.
+  \ Is the string _ca len_ the delimiter of a passthrough block?
 
 \ ==============================================================
 \ Markup {{{1
@@ -59,8 +55,10 @@ markup_definitions
 \ Block passthroughs
 
 : ~~~~ ( "text<cr>~~~~" -- )
-\  begin  passthrough-line? dup >r ?echo_line r> 0=  until  \ XXX OLD
-  begin  passthrough-line?  while  echo_line  repeat  2drop ;
+  begin  passthrough-line
+         2dup passthrough-block-delimiter? 0=
+  while  echo_line
+  repeat 2drop ;
   \ Open, parse and close a passthrough block.
   \ The block is echoed 'as is', line by line,  ignoring any markups
   \ but the end of the block, that must be on its own line.
@@ -85,5 +83,7 @@ fendo_definitions
 \ 2017-06-22: Update source style, layout and header.
 \
 \ 2018-12-08: Update notation of Forth words in comments and strings.
+\
+\ 2021-02-23: Make word names and factoring clearer.
 
 \ vim: filetype=gforth
