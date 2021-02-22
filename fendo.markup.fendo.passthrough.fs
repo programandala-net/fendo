@@ -6,10 +6,10 @@
 \ This file defines the Fendo markup for passthroughs,
 \ used to output content 'as is'.
 
-\ Last modified 202102230001+0100.
+\ Last modified 202102230013+0100.
 \ See change log at the end of the file.
 
-\ Copyright (C) 2013,2014,2017,2021 Marcos Cruz (programandala.net)
+\ Copyright (C) 2013,2014,2017,2018,2021 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute
 \ it and/or modify it under the terms of the GNU General
