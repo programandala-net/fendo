@@ -5,10 +5,10 @@
 
 \ This file creates the tools needed to use page tags.
 
-\ Last modified  202011160218.
+\ Last modified  20210429T1659+0200.
 \ See change log at the end of the file.
 
-\ Copyright (C) 2014,2017,2018,2020 Marcos Cruz (programandala.net)
+\ Copyright (C) 2014,2017,2018,2020,2021 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute it and/or modify it
 \ under the terms of the GNU General Public License as published by
@@ -39,6 +39,7 @@ forth_definitions
 require galope/n-to-r.fs \ `n>r`
 require galope/n-r-from.fs \ `nr<`
 require galope/one-plus-store.fs \ `1+!`
+require galope/s-comma.fs \ `s,`
 require galope/s-constant.fs \ `sconstant`
 fendo_definitions
 
@@ -343,5 +344,8 @@ s" /tmp/fendo.tags.fs" sconstant tags_filename$
 \
 \ 2020-04-26: Delete `tags_url_section$`. Document `tag>pid$` and
 \ `(tag>pid$)`.
+\
+\ 2021-04-29: Require `s,`, word removed from Gforth between versions
+\ 0.7.9_20201231 and 0.7.9_20210422, and added to Galope.
 
 \ vim: filetype=gforth
