@@ -6,7 +6,7 @@
 \ This file defines some common words for the markup definitions, also
 \ required by the links module.
 
-\ Last modified  202011160218.
+\ Last modified  20210429T1659+0200.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2017 Marcos Cruz (programandala.net)
@@ -31,6 +31,7 @@
 \ Requirements {{{1
 
 forth_definitions
+\ require galope/s-comma.fs \ `s,`
 require galope/unhtml.fs
 fendo_definitions
 
@@ -113,12 +114,15 @@ variable forth_code_depth
 \ 2014-03-04: Change: `xhtml?` moved to <fendo.config.fs>.
 \
 \ 2014-03-04: Change: parser vectors moved here from
-\   <fendo.markup.wiki.fs>.
+\ <fendo.markup.wiki.fs>.
 \
 \ 2014-11-08: New: `unmarkup` and `(unmarkup)`.
 \
 \ 2017-06-22: Update source style, layout and header.
 \
 \ 2018-12-08: Update notation of Forth words in comments and strings.
+\
+\ 2021-04-29: Require `s,`, word removed from Gforth between versions
+\ 0.7.9_20201231 and 0.7.9_20210422, and added to Galope.
 
 \ vim: filetype=gforth

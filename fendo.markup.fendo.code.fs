@@ -5,10 +5,10 @@
 
 \ This file defines the Fendo markup for code.
 
-\ Last modified  202011160218.
+\ Last modified  20210429T1659+0200.
 \ See change log at the end of the file.
 
-\ Copyright (C) 2013,2014,2017 Marcos Cruz (programandala.net)
+\ Copyright (C) 2013,2014,2017,2018,2021 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute
 \ it and/or modify it under the terms of the GNU General
@@ -31,6 +31,7 @@
 
 forth_definitions
 
+\ require galope/s-comma.fs \ `s,`
 require galope/trim.fs  \ `trim`
 
 fendo_definitions
@@ -183,5 +184,8 @@ fendo_definitions
 \ 2017-09-18: Fix documentation.
 \
 \ 2018-12-08: Update notation of Forth words in comments and strings.
+\
+\ 2021-04-29: Require `s,`, word removed from Gforth between versions
+\ 0.7.9_20201231 and 0.7.9_20210422, and added to Galope.
 
 \ vim: filetype=gforth
