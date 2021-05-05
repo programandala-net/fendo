@@ -5,10 +5,10 @@
 
 \ This file defines the Fendo markup for links.
 
-\ Last modified  202011160252.
+\ Last modified  20210505T1226+0200.
 \ See change log at the end of the file.
 
-\ Copyright (C) 2013,2014,2015,2017,2018,2020 Marcos Cruz (programandala.net)
+\ Copyright (C) 2013,2014,2015,2017,2018,2020,2021 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute
 \ it and/or modify it under the terms of the GNU General
@@ -225,8 +225,8 @@ variable [[-depth
   \ The text in the markup is evaluated as Forth code. The first
   \ string must be a page identifier, an actual URL or a shortcut. The
   \ second, optional, string must be the link text. HTML parameters
-  \ can be set by the corresponding parsing words like ``title=``,
-  \ ``style=``, etc., in any order or position. Also their storage
+  \ can be set by the corresponding parsing words like ``title="``,
+  \ ``style="``, etc., in any order or position. Also their storage
   \ variants like ``title=!`` are valid.
   \
   \ See also: `(simple_]])`, `(complex_[[)`, `link`, `shortcut:`.
@@ -355,7 +355,9 @@ complex_[[ \ set the default
 \
 \ 2020-11-16: Make `[[` defered, write an alternative simpler version
 \ of it and two words to select the old version or the new one. The
-\ old version is still the default. Document the markups, their 
+\ old version is still the default. Document the markups, their
 \ actions and the selectors.
+\
+\ 2021-05-05: Fix two typos in documentation of `(simple_[[)`.
 
 \ vim: filetype=gforth
