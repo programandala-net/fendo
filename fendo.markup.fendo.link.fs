@@ -5,7 +5,7 @@
 
 \ This file defines the Fendo markup for links.
 
-\ Last modified  20210505T1226+0200.
+\ Last modified  20211023T1524+0200.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2015,2017,2018,2020,2021 Marcos Cruz (programandala.net)
@@ -240,22 +240,20 @@ variable [[-depth
     default-of true abort" Wrong number of arguments in link markup" endof
   endcase ;
 
-  \ XXX TODO Indicate what happens when _ca2 len2_ is missing:
-
   \
   \ doc{
   \
   \ (simple_]]) ( ca1 len1 | ca1 len1 ca2 len2 -- )
   \
-  \ End a link markup (simple version). ``(simple_]])`` is a
-  \ possible action of the actual markup `]]`, selected by
-  \ `simple_[[`.
+  \ End a link markup (simple version) by calling `link` with the
+  \ given paramenters. ``(simple_]])`` is a possible action of the
+  \ actual markup `]]`, selected by `simple_[[`.
   \
   \ The string _ca1 len1_ is the address (an actual URL, a page
   \ identifier or a shortcut). The optional string _ca2 len2_ is the
-  \ link text. They are provided as Forth strings. HTML attributes are
-  \ set by the corresponding Fendo words. See `(simple_[[)` for usage
-  \ examples.
+  \ link text (if _ca2 len2_ is missing, an empty string is used
+  \ instead and passed to `link`). HTML attributes are set by the
+  \ corresponding Fendo words. See `(simple_[[)` for usage examples.
   \
   \ See also: `(complex_]])`.
   \
@@ -289,7 +287,7 @@ fendo_definitions
   \ Select the old complex version of the link markups `[[` and `]]`,
   \ provided by `(complex_[[)` and `(complex_[[)`.
   \
-  \ See also: `link`.
+  \ See also: `simple_[[`, `link`.
   \
   \ }doc
 
@@ -306,7 +304,7 @@ fendo_definitions
   \ Select the new simple version of the link markups `[[` and `]]`,
   \ provided by `(simple_[[)` and `(simple_[[)`.
   \
-  \ See also: `link`.
+  \ See also: `complex_[[`, `link`.
   \
   \ }doc
 
@@ -359,5 +357,7 @@ complex_[[ \ set the default
 \ actions and the selectors.
 \
 \ 2021-05-05: Fix two typos in documentation of `(simple_[[)`.
+\
+\ 2021-10-23: Improve documentation.
 
 \ vim: filetype=gforth
