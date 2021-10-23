@@ -5,10 +5,10 @@
 
 \ This file is the hierarchy navigation links addon.
 
-\ Last modified  202011160218.
+\ Last modified  202106231408.
 \ See change log at the end of the file.
 
-\ Copyright (C) 2017,2018,2020 Marcos Cruz (programandala.net)
+\ Copyright (C) 2017,2018,2020,2021 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute it and/or modify it
 \ under the terms of the GNU General Public License as published by
@@ -257,7 +257,7 @@ defer last$ ( -- ca len )
   \
   \ hierarchy_previous_navigation_link  ( -- )
   \
-  \ Prepare the the link text and the target page ID of the hierarchy
+  \ Prepare the link text and the target page ID of the hierarchy
   \ "previous" navigation link, and execute `?hierarchy_navigation_link`.
   \
   \ Usage example in the code:
@@ -444,5 +444,7 @@ defer last$ ( -- ca len )
 \
 \ 2018-12-24: Finish improving and documenting the hierarchy
 \ navigation links.
+\
+\ 2021-06-23: Fix typo in documentation.
 
 \ vim: filetype=gforth
