@@ -5,10 +5,10 @@
 
 \ This file creates the parser.
 
-\ Last modified  202011180106.
+\ Last modified 20211023T1637+0200.
 \ See change log at the end of the file.
 
-\ Copyright (C) 2013,2017,2018,2019,2020 Marcos Cruz (programandala.net)
+\ Copyright (C) 2013,2017,2018,2019,2020,2021 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute
 \ it and/or modify it under the terms of the GNU General
@@ -406,7 +406,7 @@ false value updating?  \ XXX TODO document
   \
   \ Mark the start of the page content. Its end is marked by `}content`.
   \
-  \ See: `contents`.
+  \ See also: `contents`.
   \
   \ }doc
 
@@ -426,7 +426,7 @@ get-current markup>current
   \
   \ Mark the end of the page content. Its start was marked by `}content`.
   \
-  \ See: `contents`.
+  \ See also: `contents`.
   \
   \ }doc
 
@@ -583,5 +583,7 @@ set-current
 \
 \ 2020-11-18: Delete the code of the old templates method, which split
 \ the template at "{CONTENT}".
+\
+\ 2021-10-23: Replace "See:" with "See also:" in the documentation.
 
 \ vim: filetype=gforth

@@ -6,10 +6,10 @@
 \ This file is the Markdown addon. It provides words to include
 \ contents in Markdown, either inline or from a file.
 
-\ Last modified  202011160218.
+\ Last modified 20211023T1637+0200.
 \ See change log at the end of the file.
 
-\ Copyright (C) 2015,2017,2018,2019 Marcos Cruz (programandala.net)
+\ Copyright (C) 2015,2017,2018,2019,2021 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute it and/or modify it
 \ under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@
 \ ==============================================================
 \ Requirements {{{1
 
-\ Pandoc must be installed in the system.  See:
+\ Pandoc must be installed in the system.  See also:
 \ <http://johnmacfarlane.net/pandoc/>.
 
 forth_definitions
@@ -129,7 +129,7 @@ public
   \ Include contents in Markdown format from file _ca len_.  The
   \ header and footer of the file will be ignored.
   \
-  \ See: `markdownw{`, `include_asciidoctor`.
+  \ See also: `markdownw{`, `include_asciidoctor`.
   \
   \ }doc
 
@@ -148,7 +148,7 @@ markup>current
   \ its own line). Then save the contents to a temporary file, convert
   \ it to HTML and include the result into the current page.
   \
-  \ See: `include_markdown`, `asciidoctor{`.
+  \ See also: `include_markdown`, `asciidoctor{`.
   \
   \ }doc
 
@@ -167,5 +167,7 @@ end-package
 \
 \ 2019-01-19: Improve documentation. Use temporary files using the
 \ source page filename with added extensions.
+\
+\ 2021-10-23: Replace "See:" with "See also:" in the documentation.
 
 \ vim: filetype=gforth

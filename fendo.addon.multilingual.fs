@@ -6,10 +6,10 @@
 \ This file creates some low-level tools to manage multilingual
 \ websites. See the manual for details.
 
-\ Last modified  202011282104.
+\ Last modified 20211023T1637+0200.
 \ See change log at the end of the file.
 
-\ Copyright (C) 2013,2017,2018,2019,2020 Marcos Cruz (programandala.net)
+\ Copyright (C) 2013,2017,2018,2019,2020,2021 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute
 \ it and/or modify it under the terms of the GNU General
@@ -59,7 +59,7 @@ true to multilingual?
   \ It is suggested to use ISO 639-1 or ISO 639-2 codes as language
   \ IDs.
   \
-  \ See: `pid$>lang#`.
+  \ See also: `pid$>lang#`.
   \
   \ }doc
 
@@ -76,7 +76,7 @@ true to multilingual?
   \ NOTE: The `language` metadatum has higher priority than the
   \ filename's prefix.
   \
-  \ See: `pid#>lang#`, `current_lang$`, `lang_prefix`.
+  \ See also: `pid#>lang#`, `current_lang$`, `lang_prefix`.
   \
   \ }doc
 
@@ -90,7 +90,7 @@ true to multilingual?
   \
   \ Return the language ID _ca len_ of the current page.
   \
-  \ See: `current_lang#`, `current_page`, `pid#>lang$`.
+  \ See also: `current_lang#`, `current_page`, `pid#>lang$`.
   \
   \ }doc
 
@@ -104,7 +104,7 @@ true to multilingual?
   \ Convert page ID _a_ to its language number _n_, which is used
   \ as an offset, e.g. for multilingual texts.
   \
-  \ See: `pid#>lang#`, `current_lang$`.
+  \ See also: `pid#>lang#`, `current_lang$`.
   \
   \ }doc
 
@@ -118,7 +118,7 @@ true to multilingual?
   \ Convert page ID _ca len_ to its language ID _n_, which is used as
   \ an offset, e.g. for multilingual texts.
   \
-  \ See: `pid#>lang#`, `pid#>lang$`, `current_lang$`.
+  \ See also: `pid#>lang#`, `pid#>lang$`, `current_lang$`.
   \
   \ }doc
 
@@ -135,7 +135,7 @@ true to multilingual?
   \ has been defined, _n_ is zero, which corresponds to the first
   \ language.
   \
-  \ See: `current_lang$`, `current_page`, `pid#>lang#`.
+  \ See also: `current_lang$`, `current_page`, `pid#>lang#`.
   \
   \ }doc
 
@@ -187,7 +187,7 @@ true to multilingual?
   \ `begin-translation`, which makes it easier to add new
   \ translations gradually and maintain them.
   \
-  \ See: `begin-translation`, `noname-l10n-string`, `langs`.
+  \ See also: `begin-translation`, `noname-l10n-string`, `langs`.
   \
   \ }doc
 
@@ -210,7 +210,7 @@ true to multilingual?
   \ by `begin-translation`, which makes it easier to add new
   \ translations gradually and maintain them.
   \
-  \ See: `begin-translation`, `l10n-string`.
+  \ See also: `begin-translation`, `l10n-string`.
   \
   \ }doc
 
@@ -331,5 +331,7 @@ end-translation
 \ 2020-11-28: Remove the duplicated documentation of
 \ `begin-translation`: now its Galope module is included in the
 \ sources used to build the manual.
+\
+\ 2021-10-23: Replace "See:" with "See also:" in the documentation.
 
 \ vim: filetype=gforth

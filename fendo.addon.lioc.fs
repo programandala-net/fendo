@@ -5,10 +5,10 @@
 
 \ This file provides a word that is needed by other addons.
 
-\ Last modified  202011160218.
+\ Last modified 20211023T1637+0200.
 \ See change log at the end of the file.
 
-\ Copyright (C) 2014,2017,2018,2019 Marcos Cruz (programandala.net)
+\ Copyright (C) 2014,2017,2018,2019,2021 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute it and/or modify it
 \ under the terms of the GNU General Public License as published by
@@ -51,7 +51,7 @@
   \ `properties` field does not contain "unlistable", create its
   \ corresponding element of a list of content.
   \
-  \ See: `unlistable?`, `(lioc)`.
+  \ See also: `unlistable?`, `(lioc)`.
   \
   \ }doc
 
@@ -81,5 +81,7 @@
 \
 \ 2019-02-07: Improve `lioc`: check `unlistable?` and factor to
 \ `(lioc)`. Improve documentation.
+\
+\ 2021-10-23: Replace "See:" with "See also:" in the documentation.
 
 \ vim: filetype=gforth

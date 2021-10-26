@@ -1,6 +1,6 @@
 = Fendo TO-DO
 :author: Marcos Cruz (programandala.net)
-:revdate: 2021-02-22
+:revdate: 2021-10-23
 
 // This file is part of Fendo
 // (http://programandala.net/en.program.fendo.html).
@@ -301,7 +301,7 @@ Finish the implementation of new translations in
 Fix:
 
 When a page leaves something on the stack, the problem is detected only when
-another page is built after it.  No error happes when the page is the only one
+another page is built after it.  No error happens when the page is the only one
 to be built.
 
 == 2015-02-02
@@ -693,7 +693,3 @@ Why `<[ … ]>` are nestable? What's the advantage?
 
 - Move `bl+` to Galope. It's defined in <fendo.markup.fendo.forth.fs>
   and required in <fendo.markup.fendo.link.fs>.
-
-== 2020-11-28
-
-- Replace "See:" with "See also:" in the documentation.

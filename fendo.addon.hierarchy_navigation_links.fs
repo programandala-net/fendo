@@ -5,7 +5,7 @@
 
 \ This file is the hierarchy navigation links addon.
 
-\ Last modified  202106231408.
+\ Last modified 20211023T1637+0200.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2017,2018,2020,2021 Marcos Cruz (programandala.net)
@@ -59,7 +59,7 @@ defer last$ ( -- ca len )
   \ noname-l10n-string is first$
   \ ----
 
-  \ See: `previous$`, `next$`, `up$`, `last$`, `noname-l10n-string`.
+  \ See also: `previous$`, `next$`, `up$`, `last$`, `noname-l10n-string`.
   \
   \ }doc
 
@@ -73,7 +73,7 @@ defer last$ ( -- ca len )
   \
   \ See `first$` for a usage example.
   \
-  \ See: `next$`, `up$`, `last$`.
+  \ See also: `next$`, `up$`, `last$`.
   \
   \ }doc
 
@@ -87,7 +87,7 @@ defer last$ ( -- ca len )
   \
   \ See `first$` for a usage example and related words.
   \
-  \ See: `previous$`, `up$`, `last$`.
+  \ See also: `previous$`, `up$`, `last$`.
   \
   \ }doc
 
@@ -101,7 +101,7 @@ defer last$ ( -- ca len )
   \
   \ See `first$` for a usage example and related words.
   \
-  \ See: `previous$`, `next$`, `last$`.
+  \ See also: `previous$`, `next$`, `last$`.
   \
   \ }doc
 
@@ -115,7 +115,7 @@ defer last$ ( -- ca len )
   \
   \ See `first$` for a usage example and related words.
   \
-  \ See: `previous$`, `next$`, `up$`.
+  \ See also: `previous$`, `next$`, `up$`.
   \
   \ }doc
 
@@ -141,7 +141,7 @@ defer last$ ( -- ca len )
   \
   \ See `hierarchy_previous_navigation_link?` for a usage example.
   \
-  \ See: `hierarchy_first_navigation_link?`,
+  \ See also: `hierarchy_first_navigation_link?`,
   \ `hierarchy_previous_navigation_link?`,
   \ `hierarchy_next_navigation_link?`,
   \ `hierarchy_upper_navigation_link?`.
@@ -162,7 +162,7 @@ defer last$ ( -- ca len )
   \ len2_ is a proper hierarchical link, create the link.  Otherwise
   \ discard the parameters and do nothing.
   \
-  \ See: `proper_hierarchical_link?`, `hierarchy_navigation_link`.
+  \ See also: `proper_hierarchical_link?`, `hierarchy_navigation_link`.
   \
   \ }doc
 
@@ -178,7 +178,7 @@ defer last$ ( -- ca len )
   \
   \ See `hierarchy_previous_navigation_link` for a usage example.
   \
-  \ See: `hierarchy_first_navigation_link?`,
+  \ See also: `hierarchy_first_navigation_link?`,
   \ `first$`, `current_page`, `first_page`,
   \ `hierarchy_previous_navigation_link`,
   \ `hierarchy_next_navigation_link`,
@@ -200,7 +200,7 @@ defer last$ ( -- ca len )
   \ `hierarchy_navigation_link`.  Otherwise _f_ is _false_, and _ca1
   \ len1_ and _ca2 len2_ are unimportant.
   \
-  \ See: `hierarchy_first_navigation_link`,
+  \ See also: `hierarchy_first_navigation_link`,
   \ `hierarchy_previous_navigation_link?`,
   \ `hierarchy_next_navigation_link?`,
   \ `hierarchy_upper_navigation_link?`.
@@ -220,7 +220,7 @@ defer last$ ( -- ca len )
   \
   \ See `hierarchy_previous_navigation_link` for a usage example.
   \
-  \ See: `hierarchy_upper_navigation_link?`,
+  \ See also: `hierarchy_upper_navigation_link?`,
   \ `up$`, `current_page`, `?upper_page`,
   \ `hierarchy_first_navigation_link`,
   \ `hierarchy_previous_navigation_link`,
@@ -242,7 +242,7 @@ defer last$ ( -- ca len )
   \ `hierarchy_navigation_link`.  Otherwise _f_ is _false_, and _ca1
   \ len1_ and _ca2 len2_ are unimportant.
   \
-  \ See: `hierarchy_upper_navigation_link`,
+  \ See also: `hierarchy_upper_navigation_link`,
   \ `hierarchy_first_navigation_link?`,
   \ `hierarchy_previous_navigation_link?`,
   \ `hierarchy_next_navigation_link?`,
@@ -282,7 +282,7 @@ defer last$ ( -- ca len )
   \ </footer>
   \ ----
 
-  \ See: `hierarchy_previous_navigation_link?`,
+  \ See also: `hierarchy_previous_navigation_link?`,
   \ `previous$`, `current_page`, `?previous_page`,
   \ `hierarchy_first_navigation_link`,
   \ `hierarchy_next_navigation_link`,
@@ -329,7 +329,7 @@ defer last$ ( -- ca len )
   \ </footer>
   \ ----
 
-  \ See: `hierarchy_previous_navigation_link`,
+  \ See also: `hierarchy_previous_navigation_link`,
   \ `hierarchy_first_navigation_link?`,
   \ `hierarchy_next_navigation_link?`,
   \ `hierarchy_upper_navigation_link?`.
@@ -349,7 +349,7 @@ defer last$ ( -- ca len )
   \
   \ See `hierarchy_previous_navigation_link` for a usage example.
   \
-  \ See: `hierarchy_next_navigation_link?`,
+  \ See also: `hierarchy_next_navigation_link?`,
   \ `next$`, `current_page`, `?next_page`,
   \ `hierarchy_first_navigation_link`,
   \ `hierarchy_previous_navigation_link`,
@@ -371,7 +371,7 @@ defer last$ ( -- ca len )
   \ `hierarchy_navigation_link`.  Otherwise _f_ is _false_, and _ca1
   \ len1_ and _ca2 len2_ are unimportant.
   \
-  \ See: `hierarchy_next_navigation_link`,
+  \ See also: `hierarchy_next_navigation_link`,
   \ `hierarchy_first_navigation_link?`,
   \ `hierarchy_previous_navigation_link?`,
   \ `hierarchy_upper_navigation_link?`.
@@ -391,7 +391,7 @@ defer last$ ( -- ca len )
   \
   \ See `hierarchy_previous_navigation_link` for a usage example.
   \
-  \ See:
+  \ See also:
   \ `last$`, `current_page`, `last_page`,
   \ `hierarchy_first_navigation_link`,
   \ `hierarchy_previous_navigation_link`,
@@ -399,7 +399,7 @@ defer last$ ( -- ca len )
   \ `hierarchy_upper_navigation_link`.
   \
   \ }doc
-  \ See: `hierarchy_last_navigation_link?`, \ XXX TODO --
+  \ See also: `hierarchy_last_navigation_link?`, \ XXX TODO --
 
 \ XXX TODO -- 2018-12-24: `?last_page` is not written yet.
 \ : hierarchy_last_navigation_link?  ( -- ca1 len1 ca2 len2 f )
@@ -414,7 +414,7 @@ defer last$ ( -- ca len )
   \ `hierarchy_navigation_link`.  Otherwise _f_ is _false_, and _ca1
   \ len1_ and _ca2 len2_ are unimportant.
   \
-  \ See: `hierarchy_last_navigation_link`,
+  \ See also: `hierarchy_last_navigation_link`,
   \ `hierarchy_first_navigation_link?`,
   \ `hierarchy_previous_navigation_link?`,
   \ `hierarchy_next_navigation_link?`,
@@ -446,5 +446,7 @@ defer last$ ( -- ca len )
 \ navigation links.
 \
 \ 2021-06-23: Fix typo in documentation.
+\
+\ 2021-10-23: Replace "See:" with "See also:" in the documentation.
 
 \ vim: filetype=gforth

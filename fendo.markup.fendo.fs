@@ -5,10 +5,10 @@
 
 \ This file defines the Fendo markup.
 
-\ Last modified  202011160218.
+\ Last modified 20211023T1637+0200.
 \ See change log at the end of the file.
 
-\ Copyright (C) 2013,2014,2017,2018,2020 Marcos Cruz (programandala.net)
+\ Copyright (C) 2013,2014,2017,2018,2020,2021 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute
 \ it and/or modify it under the terms of the GNU General
@@ -209,7 +209,7 @@ variable opened_[======]? \ is there an open h6 heading?
   \
   \ ``unraw_attributes`` is used by links and images markup.
   \
-  \ See: `[[`, `{{`.
+  \ See also: `[[`, `{{`.
   \
   \ }doc
 
@@ -668,5 +668,7 @@ fendo_definitions
 \ `exhausted?`.
 \
 \ 2020-11-16: Add `evaluate_markup`.
+\
+\ 2021-10-23: Replace "See:" with "See also:" in the documentation.
 
 \ vim: filetype=gforth

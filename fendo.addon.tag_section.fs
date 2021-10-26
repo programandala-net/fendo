@@ -6,10 +6,10 @@
 \ This file provides an addon to create a section containing a heading
 \ and a list of tagged pages in the current language.
 
-\ Last modified  202011160218.
+\ Last modified 20211023T1637+0200.
 \ See change log at the end of the file.
 
-\ Copyright (C) 2020 Marcos Cruz (programandala.net)
+\ Copyright (C) 2020,2021 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute it and/or modify it
 \ under the terms of the GNU General Public License as published by
@@ -52,7 +52,7 @@ require ./fendo.addon.tag_section_by_prefix.fs
   \
   \ ``tag_section_heading`` is a factor of `tag_section`.
   \
-  \ See: `tags_do_text`, `evaluate_tags`, `evaluate_content`, `id=!`,
+  \ See also: `tags_do_text`, `evaluate_tags`, `evaluate_content`, `id=!`,
   \ `[<h2>]`.
   \
   \ }doc
@@ -68,7 +68,7 @@ require ./fendo.addon.tag_section_by_prefix.fs
   \ Create a tag section containing a heading and a definition list of
   \ pages, in the current language, containing tag _ca len_.
   \
-  \ See: `tag_section_heading`, `current_lang$`,
+  \ See also: `tag_section_heading`, `current_lang$`,
   \ `tag_section_by_prefix`.
   \
   \ }doc
@@ -81,5 +81,7 @@ require ./fendo.addon.tag_section_by_prefix.fs
 \ 2020-04-25: Start.
 \
 \ 2020-07-06: Document the public words.
+\
+\ 2021-10-23: Replace "See:" with "See also:" in the documentation.
 
 \ vim: filetype=gforth

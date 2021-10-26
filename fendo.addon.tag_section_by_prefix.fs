@@ -6,10 +6,10 @@
 \ This file provides an addon to create a section containing a heading
 \ and a list of tagged pages in the current language.
 
-\ Last modified  202011160218.
+\ Last modified 20211023T1637+0200.
 \ See change log at the end of the file.
 
-\ Copyright (C) 2020 Marcos Cruz (programandala.net)
+\ Copyright (C) 2020,2021 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute it and/or modify it
 \ under the terms of the GNU General Public License as published by
@@ -85,7 +85,7 @@ public
   \ list of pages that contain tag _ca1 len1_ and having prefix _ca2
   \ len2_.
   \
-  \ See: `tag_section`, `tag_section_heading`, `tags_do_presence`,
+  \ See also: `tag_section`, `tag_section_heading`, `tags_do_presence`,
   \ `[<dl>]`, `(tagged_pages_by_prefix)`, `traverse_pids`.
   \
   \ }doc
@@ -100,6 +100,8 @@ end-package
 \ 2020-04-25: Start.
 \
 \ 2020-07-06: Document the public words.
+\
+\ 2021-10-23: Replace "See:" with "See also:" in the documentation.
 
 \ vim: filetype=gforth
 

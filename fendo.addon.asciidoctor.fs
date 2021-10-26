@@ -7,10 +7,10 @@
 \ contents in Asciidoctor (or AsciiDoc) format, either inline or from
 \ a file.
 
-\ Last modified  202011160218.
+\ Last modified 20211023T1637+0200.
 \ See change log at the end of the file.
 
-\ Copyright (C) 2015,2017,2018,2019 Marcos Cruz (programandala.net)
+\ Copyright (C) 2015,2017,2018,2019,2021 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute it and/or modify it
 \ under the terms of the GNU General Public License as published by
@@ -31,11 +31,11 @@
 \ ==============================================================
 \ Requirements {{{1
 
-\ Asciidoctor must be installed in the system.  See:
+\ Asciidoctor must be installed in the system.  See also:
 \ <http://asciidoctor.org>.
 \
 \ The original AsciiDoc engine could be used instead, but this file
-\ should be adapted.  Support for AsciidDoc is planned.  See:
+\ should be adapted.  Support for AsciidDoc is planned.  See also:
 \ <http://asciidoc.org>.
 
 forth_definitions
@@ -130,7 +130,7 @@ public
   \ Include contents in Asciidoctor format from file _ca len_.  The
   \ header and footer of the file will be ignored.
   \
-  \ See: `asciidoctor{`, `include_markdown`.
+  \ See also: `asciidoctor{`, `include_markdown`.
   \
   \ }doc
 
@@ -152,7 +152,7 @@ markup>current
   \ file, convert it to HTML and include the result into the current
   \ page.
   \
-  \ See: `include_asciidoctor`, `markdown{`.
+  \ See also: `include_asciidoctor`, `markdown{`.
   \
   \ }doc
 
@@ -188,5 +188,7 @@ end-package
 \
 \ 2019-01-27: Fix: `include_asciidoctor` tried to delete
 \ `input_file$`.
+\
+\ 2021-10-23: Replace "See:" with "See also:" in the documentation.
 
 \ vim: filetype=gforth

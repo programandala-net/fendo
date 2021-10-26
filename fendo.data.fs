@@ -5,10 +5,10 @@
 
 \ This file defines the page data tools.
 
-\ Last modified  202011160218.
+\ Last modified 20211023T1637+0200.
 \ See change log at the end of the file.
 
-\ Copyright (C) 2013,2014,2015,2017,2018,2019 Marcos Cruz
+\ Copyright (C) 2013,2014,2015,2017,2018,2019,2021 Marcos Cruz
 \ (programandala.net)
 
 \ Fendo is free software; you can redistribute
@@ -301,7 +301,7 @@ datum: template  \ HTML template filename in the design subdir
   \ If string page ID _ca len_ is known, return its equivalent page ID
   \ _a_ and _true_. Otherwise return _0_ and _false_.
   \
-  \ See: `pid$>pid#`.
+  \ See also: `pid$>pid#`.
   \
   \ }doc
 
@@ -356,7 +356,7 @@ datum: template  \ HTML template filename in the design subdir
   \
   \ ``(brother_pages?)`` is the default behaviour of `brother_pages?`.
   \
-  \ See: `pid$>level`.
+  \ See also: `pid$>level`.
   \
   \ }doc
 
@@ -559,7 +559,7 @@ variable do_content?  do_content? on
   \
   \ Convert page ID _ca len_ into its equivalent _a_.
   \
-  \ See: `pid$>pid#`
+  \ See also: `pid$>pid#`
   \
   \ }doc
 
@@ -586,7 +586,7 @@ variable do_content?  do_content? on
   \ corresponding source page. Then return return the equivalent page
   \ ID _a_.
   \
-  \ See: `pid$>pid#?`.
+  \ See also: `pid$>pid#?`.
   \
   \ }doc
 
@@ -667,7 +667,7 @@ false value ignore_draft_property?
   \
   \ Is page ID _a_ a draft? I.e., is "draft" in its properties field?
   \
-  \ See: `unlistable?`.
+  \ See also: `unlistable?`.
   \
   \ }doc
 
@@ -681,7 +681,7 @@ false value ignore_draft_property?
   \ Is page ID _a_ unlistable? I.e., is "unlistable" in its properties
   \ field?
   \
-  \ See: `lioc`, `draft?`.
+  \ See also: `lioc`, `draft?`.
   \
   \ }doc
 
@@ -797,7 +797,7 @@ variable a_previous_page \ dynamic string
   \ it and return the result in string _ca len_; otherwise return the
   \ field contents.
   \
-  \ See: `calculated_field?`, `?first_page`, `?next_page`,
+  \ See also: `calculated_field?`, `?first_page`, `?next_page`,
   \ `?upper_page`.
   \
   \ }doc
@@ -849,7 +849,7 @@ variable a_next_page \ flag
   \ and return the result in string _ca len_; otherwise return the
   \ field contents.
   \
-  \ See: `calculated_field?`, `?first_page`, `?previous_page`,
+  \ See also: `calculated_field?`, `?first_page`, `?previous_page`,
   \ `?upper_page`.
   \
   \ }doc
@@ -888,7 +888,7 @@ variable a_next_page \ flag
   \ and return the result in string _ca len_; otherwise return the
   \ field contents.
   \
-  \ See: `calculated_field?`, `?first_page`, `?previous_page`,
+  \ See also: `calculated_field?`, `?first_page`, `?previous_page`,
   \ `?next_page`.
   \
   \ }doc
@@ -924,7 +924,7 @@ variable a_next_page \ flag
   \ and return the result in string _ca len_; otherwise return the
   \ field contents.
   \
-  \ See: `calculated_field?`, `?previous_page`,
+  \ See also: `calculated_field?`, `?previous_page`,
   \ `?next_page`, `?upper_page`.
   \
   \ }doc
@@ -1225,5 +1225,7 @@ true value included_files_update_the_page_date?
 \ 2019-02-07: Add `unlistable?`. Improve documentation.
 \
 \ 2019-07-31: Fix `(pid$>previous)`. Improve documentation.
+\
+\ 2021-10-23: Replace "See:" with "See also:" in the documentation.
 
 \ vim: filetype=gforth

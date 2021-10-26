@@ -5,10 +5,10 @@
 
 \ This file is the hierarchy meta links addon.
 
-\ Last modified  202011160218.
+\ Last modified 20211023T1637+0200.
 \ See change log at the end of the file.
 
-\ Copyright (C) 2013,2014,2015,2017,2018 Marcos Cruz (programandala.net)
+\ Copyright (C) 2013,2014,2015,2017,2018,2021 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute it and/or modify it
 \ under the terms of the GNU General Public License as published by
@@ -60,7 +60,7 @@
   \
   \ ``proper_hierarchical_link?`` is used by `hierarchical_meta_link`.
   \
-  \ See: `hierarchical_meta_links`, `pid$>draft?`.
+  \ See also: `hierarchical_meta_links`, `pid$>draft?`.
   \
   \ }doc
 
@@ -86,7 +86,7 @@
   \
   \ ``(hierarchy_meta_link)`` is a factor of `hierarchy_meta_link`.
   \
-  \ See: `[<link/>]`.
+  \ See also: `[<link/>]`.
   \
   \ }doc
 
@@ -122,7 +122,7 @@
   \ `hierarchy_meta_links` can be used instead to create all
   \ hierarchical links automatically.
   \
-  \ See: `(hierarchy_meta_link)`.
+  \ See also: `(hierarchy_meta_link)`.
   \
   \ }doc
 
@@ -155,7 +155,7 @@
   \ </head>
   \ ----
   \
-  \ See: `hierarchy_meta_link`.
+  \ See also: `hierarchy_meta_link`.
   \
   \ }doc
 
@@ -211,5 +211,7 @@
 \ 2018-12-17: Update: replace `pid$>data>pid#` with `pid$>pid#`.
 \
 \ 2018-12-20: Improve documentation.
+\
+\ 2021-10-23: Replace "See:" with "See also:" in the documentation.
 
 \ vim: filetype=gforth
