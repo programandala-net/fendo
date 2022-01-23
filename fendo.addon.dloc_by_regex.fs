@@ -5,7 +5,7 @@
 
 \ This file is the code common to several content lists addons.
 
-\ Last modified  202011160218.
+\ Last modified  20220123T1335+0100.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2017,2018 Marcos Cruz (programandala.net)
@@ -41,6 +41,7 @@ require ./fendo.addon.regex.fs
 require ./fendo.addon.dtddoc.fs
 
 \ ==============================================================
+\ Code {{{1
 
 package fendo.addon.dloc_by_regex
 

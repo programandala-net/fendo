@@ -6,7 +6,7 @@
 \ This file provides an addon to create a section containing a heading
 \ and a list of tagged pages in the current language.
 
-\ Last modified 20211023T1637+0200.
+\ Last modified 20220123T1353+0100.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2020,2021 Marcos Cruz (programandala.net)
@@ -41,6 +41,7 @@ require ./fendo.addon.tags.fs
 require ./fendo.addon.traverse_pids.fs
 
 \ ==============================================================
+\ Code {{{1
 
 package fendo.addon.tagged_pages_by_prefix
 

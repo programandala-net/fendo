@@ -6,7 +6,7 @@
 \ This file provides a word that counts all pages whose page ID matches a
 \ prefix.
 
-\ Last modified  202011160218.
+\ Last modified  20220123T1344+0100.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2017,2018 Marcos Cruz (programandala.net)
@@ -39,6 +39,7 @@ fendo_definitions
 require ./fendo.addon.traverse_pids.fs
 
 \ ==============================================================
+\ Code {{{1
 
 package fendo.addon.pages_by_prefix
 

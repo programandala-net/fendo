@@ -5,7 +5,7 @@
 
 \ This file provides words required to use simple regex matches.
 
-\ Last modified  202011160218.
+\ Last modified  20220123T1344+0100.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2017 Marcos Cruz (programandala.net)
@@ -37,6 +37,7 @@ require galope/match-question.fs  \ `match?`
 fendo_definitions
 
 \ ==============================================================
+\ Code {{{1
 
 variable match$
 

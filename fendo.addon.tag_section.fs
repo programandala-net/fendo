@@ -6,7 +6,7 @@
 \ This file provides an addon to create a section containing a heading
 \ and a list of tagged pages in the current language.
 
-\ Last modified 20211023T1637+0200.
+\ Last modified 20220123T1353+0100.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2020,2021 Marcos Cruz (programandala.net)
@@ -40,6 +40,7 @@ require ./fendo.addon.multilingual.fs
 require ./fendo.addon.tag_section_by_prefix.fs
 
 \ ==============================================================
+\ Code {{{1
 
 : tag_section_heading ( ca len -- )
   2dup id=! [<h2>] tags_do_text evaluate_tags evaluate_content [</h2>] ;

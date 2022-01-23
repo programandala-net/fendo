@@ -6,7 +6,7 @@
 \ This file is the Markdown addon. It provides words to include
 \ contents in Markdown, either inline or from a file.
 
-\ Last modified 20211023T1637+0200.
+\ Last modified 20220123T1344+0100.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2015,2017,2018,2019,2021 Marcos Cruz (programandala.net)
@@ -41,6 +41,7 @@ require galope/trim.fs    \ `trim`
 fendo_definitions
 
 \ ==============================================================
+\ Code {{{1
 
 package fendo.addon.markdown
 

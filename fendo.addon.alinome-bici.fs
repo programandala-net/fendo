@@ -7,7 +7,7 @@
 \ with pages created with the alinome-bici engine
 \ (based on ForthCMS and fhp).
 
-\ Last modified  202011160218.
+\ Last modified 202011160218.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2017 Marcos Cruz (programandala.net)

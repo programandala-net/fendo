@@ -5,7 +5,7 @@
 
 \ This file is the BASin source code addon.
 
-\ Last modified  202011160218.
+\ Last modified  20220123T1351+0100.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2017 Marcos Cruz (programandala.net)
@@ -42,7 +42,7 @@ require ./fendo.addon.basin_charset.fs
 require ./fendo.addon.latin1_source_code.fs
 
 \ ==============================================================
-\ BASIC source code in BASin format {{{1
+\ Code {{{1
 
 package fendo.addon.basin_source_code
 

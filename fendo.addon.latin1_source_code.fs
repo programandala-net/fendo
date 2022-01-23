@@ -5,7 +5,7 @@
 
 \ This file is the latin1 source code addon.
 
-\ Last modified  202011160218.
+\ Last modified  20220123T1341+0100.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2017,2018 Marcos Cruz (programandala.net)
@@ -39,7 +39,7 @@ require ./fendo.addon.source_code.fs
 require ./fendo.addon.latin1_charset.fs
 
 \ ==============================================================
-\ Source code in latin1 character encoding {{{1
+\ Code {{{1
 
 : latin1_source_code_translated ( ca len -- ca' len' )
   latin1_charset_to_utf8 uncodepaged ;

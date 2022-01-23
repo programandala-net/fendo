@@ -6,7 +6,7 @@
 \ This file provides a word that include images whose path matches a
 \ shell wildcard.
 
-\ Last modified  202011160218.
+\ Last modified  20220123T1340+0100.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2019 Marcos Cruz (programandala.net)
@@ -37,6 +37,7 @@ require galope/package.fs \ `package`, `private`, `public`, `end-package`
 fendo_definitions
 
 \ ==============================================================
+\ Code {{{1
 
 package fendo.addon.images_by_wildcard
 
@@ -110,4 +111,3 @@ end-package
 \ 2019-03-22: Start.
 
 \ vim: filetype=gforth
-

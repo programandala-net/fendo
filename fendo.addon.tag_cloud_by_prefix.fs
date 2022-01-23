@@ -5,7 +5,7 @@
 
 \ This file provides tag clouds by a page-id prefix.
 
-\ Last modified  202011160218.
+\ Last modified  20220123T1353+0100.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2014,2017,2018,2020 Marcos Cruz (programandala.net)
@@ -44,6 +44,7 @@ require ./fendo.addon.pages_by_prefix.fs
 \ require ./fendo.addon.tag_counts_by_prefix.fs  \ XXX TODO
 
 \ ==============================================================
+\ Code {{{1
 
 package fendo.addon.tag_cloud_by_prefix
 

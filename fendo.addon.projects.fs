@@ -8,7 +8,7 @@
 \
 \ XXX NOT FINISHED
 
-\ Last modified  202011160218.
+\ Last modified  20220123T1349+0100.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2015,2017,2018 Marcos Cruz (programandala.net)
@@ -39,12 +39,12 @@ require galope/package.fs \ `package`, `private`, `public`, `end-package`
 fendo_definitions
 
 \ ==============================================================
-\
+\ Code {{{1
 
 package fendo.addon.projects
 
-\ ------------------------------
-\ First approach, abandoned
+\ ----------------------------------------------
+\ First approach, abandoned {{{2
 
 \ A data structure holds the data of named projects,
 \ and any page can be associated with a project.
@@ -89,8 +89,8 @@ variable projects  \ counter
 
 [then]
 
-\ ------------------------------
-\ Second approach
+\ ----------------------------------------------
+\ Second approach {{{2
 
 \ An ordinary metadatum holds the page ID of the page that has the
 \ data of the project (or nothing if the current page has the data).

@@ -5,7 +5,7 @@
 
 \ This file is the Sinclair QL source code addon.
 
-\ Last modified  202011160218.
+\ Last modified  20220123T1345+0100.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2017 Marcos Cruz (programandala.net)
@@ -39,6 +39,7 @@ require ./fendo.addon.source_code.fs
 require ./fendo.addon.ql_charset.fs
 
 \ ==============================================================
+\ Code {{{1
 
 : ql_source_code_translated ( ca len -- ca' len' )
   ql_charset_to_utf8 uncodepaged ;

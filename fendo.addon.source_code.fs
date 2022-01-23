@@ -5,7 +5,7 @@
 
 \ This file is the source code addon.
 
-\ Last modified  202011160218.
+\ Last modified  20220123T1353+0100.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2015,2017,2018,2020 Marcos Cruz (programandala.net)
@@ -44,6 +44,7 @@ fendo_definitions
 require ./fendo.addon.source_code.common.fs  \ XXX TMP
 
 \ ==============================================================
+\ Code {{{1
 
 package fendo.addon.source_code
 
@@ -106,9 +107,6 @@ package fendo.addon.source_code
   \ Convert a filename to a Vim's filetype.
   \ XXX TODO make all this configurable by the application
   \ XXX TODO use a data structure instead of conditionals
-
-\ ==============================================================
-\ Generic source code {{{1
 
 public
 0 value source_code_fid

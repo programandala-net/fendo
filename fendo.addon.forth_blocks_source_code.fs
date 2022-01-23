@@ -5,7 +5,7 @@
 
 \ This file is the Forth blocks source code addon.
 
-\ Last modified  202011160218.
+\ Last modified  20220123T1340+0100.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2017,2018,2020 Marcos Cruz (programandala.net)
@@ -39,7 +39,7 @@ fendo_definitions
 require ./fendo.addon.source_code.fs
 
 \ ==============================================================
-\ Forth source code in blocks format {{{1
+\ Code {{{1
 
 package fendo.addon.forth_blocks_source_code
 

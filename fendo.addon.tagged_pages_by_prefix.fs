@@ -5,7 +5,7 @@
 
 \ This file provides lists of tagged pages.
 
-\ Last modified  202011160218.
+\ Last modified  20220123T1353+0100.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2014,2015,2017,2018 Marcos Cruz (programandala.net)
@@ -40,6 +40,7 @@ require ./fendo.addon.traverse_pids.fs
 require ./fendo.addon.dtddoc.fs
 
 \ ==============================================================
+\ Code {{{1
 
 package fendo.addon.tagged_pages_by_prefix
 
