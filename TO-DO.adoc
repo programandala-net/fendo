@@ -1,6 +1,6 @@
 = Fendo TO-DO
 :author: Marcos Cruz (programandala.net)
-:revdate: 2021-12-05
+:revdate: 2022-01-23
 
 // This file is part of Fendo
 // (http://programandala.net/en.program.fendo.html).
@@ -697,3 +697,8 @@ Why `<[ … ]>` are nestable? What's the advantage?
 == 2021-12-05
 
 - Fix: make `&nbsp;` omit also the space after it.
+
+== 2022-01-23
+
+- Make versions of the "dloc", "uloc" and "oloc" addons to list the
+  pages in reverse order.
