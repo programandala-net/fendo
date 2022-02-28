@@ -5,10 +5,10 @@
 
 \ This file is the code common to several content lists addons.
 
-\ Last modified  20220123T1338+0100.
+\ Last modified  20220228T2157+0100.
 \ See change log at the end of the file.
 
-\ Copyright (C) 2014,2017,2018 Marcos Cruz (programandala.net)
+\ Copyright (C) 2014,2017,2018,2022 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute it and/or modify it
 \ under the terms of the GNU General Public License as published by
@@ -50,7 +50,7 @@ variable level
 : ((dloc_by_prefix_and_level))  { D: pid$ -- }
   pid$ prefix $@ string-prefix? 0= ?exit
   pid$ pid$>level level @ <>       ?exit
-  pid$ pid$>pid# draft?       ?exit
+  pid$ pid$>pid# draft?            ?exit
   pid$ dtddoc ;
   \ Create a description list of content if the given page ID starts with
   \ the current prefix and has the current level.
@@ -85,5 +85,7 @@ end-package
 \ 2018-12-08: Update notation of page IDs in comments and strings.
 \
 \ 2018-12-17: Update: replace `pid$>data>pid#` with `pid$>pid#`.
+\
+\ 2022-02-28: Fix layout of `((dloc_by_prefix_and_level))`.
 
 \ vim: filetype=gforth
