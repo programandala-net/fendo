@@ -6,10 +6,10 @@
 \ This file provides a word that traverses all pids (page IDs),
 \ required by other addons.
 
-\ Last modified  202011160218.
+\ Last modified  20220228T2215+0100.
 \ See change log at the end of the file.
 
-\ Copyright (C) 2013,2014,2017,2018,2020 Marcos Cruz (programandala.net)
+\ Copyright (C) 2013,2014,2017,2018,2020,2022 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute it and/or modify it
 \ under the terms of the GNU General Public License as published by
@@ -52,13 +52,18 @@ s" /tmp/fendo.traverse_pids.fs" sconstant pids_file$
   \ page source files into a list of Forth commands to traverse
   \ their corresponding page IDs.
 
+create reverse
+  \ Flag used by `sort$` to force the reverse order, and set by
+  \ `reversed`.
+
 : sort$ ( -- ca len )
-  s" sort --key 2,2" ;
+  s" sort --key 2,2"
+  s"  --reverse" reverse @ and s+ reverse off ;
   \ Return the shell command _ca len_ used to sort the list of page IDs.
   \
   \ Option `--key 2,2` makes the second field the only sorting key, which is
-  \ required in order to ignore rest of the line.  By default, `sort` separete
-  \ fields by non-blank to blank transition, which is fine in this case.
+  \ required in order to ignore rest of the line.  By default, `sort` separates
+  \ the fields by non-blank to blank transition, which is fine in this case.
 
 : command$ ( -- ca len )
   ls$ s" |" s+ sed$ s+ s" |" s+ sort$ s+ ;
@@ -95,6 +100,11 @@ variable last_traversed_pid
   is (traversed_pid)  create_pids_file
   pids_file$ included ;
 
+: reversed ( -- )
+  reverse on ;
+  \ Force `traverse_pids` to process the PIDs in reversed order.
+  \ `reversed` is used before words like `dloc_by_regex`.
+
 end-package
 
 .( fendo.addon.traverse_pids.fs compiled) cr
@@ -116,8 +126,8 @@ end-package
 \
 \ 2013-11-27: New: `pid$_list@` rewritten: now it skips draft pages.
 \
-\ 2014-03-02: Everything renamed. Rewritten. Simplified. The page ID list
-\ is Forth source, not a simple list anymore.
+\ 2014-03-02: Everything renamed. Rewritten. Simplified. The page ID
+\ list is Forth source, not a simple list anymore.
 \
 \ 2014-03-03: Fix: removed a redundant definition.
 \
@@ -128,7 +138,8 @@ end-package
 \
 \ 2017-06-22: Update source style, layout and header.
 \
-\ 2018-09-27: Use `package` instead of `module:`. Simplify `traverse_pids`.
+\ 2018-09-27: Use `package` instead of `module:`. Simplify
+\ `traverse_pids`.
 \
 \ 2018-09-28: Update source style. Improve documentation.
 \
@@ -138,5 +149,8 @@ end-package
 \
 \ 2020-04-14: Define strings constants with `sconstant` instead of
 \ `2constant`.
+\
+\ 2022-02-28: Add `reversed` to control the order of the PIDs handled
+\ by `traverse_pids`.
 
 \ vim: filetype=gforth
