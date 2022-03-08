@@ -6,10 +6,10 @@
 \ This file provides the Creole markup for verbatim blocks, deprecated
 \ from the set of markups used by default.
 
-\ Last modified  202011160218.
+\ Last modified 20220308T2111+0100.
 \ See change log at the end of the file.
 
-\ Copyright (C) 2013,2014,2017 Marcos Cruz (programandala.net)
+\ Copyright (C) 2013,2014,2017,2018 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute it and/or modify it
 \ under the terms of the GNU General Public License as published by
@@ -65,7 +65,7 @@ fendo_definitions
 
 \ 2014-04-20: Code deprecated, substituted by the Asciidoctor markup.
 \ Extracted from <fendo.markup.wiki.fs> (then renamed to
-\ <fendo.markup.fendo.fs>.
+\ <fendo.markup.fendo.fs>).
 \
 \ 2017-06-22: Update source style, layout and header.
 \
