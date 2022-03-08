@@ -5,7 +5,7 @@
 
 \ This file defines the page data tools.
 
-\ Last modified 20211023T1637+0200.
+\ Last modified 20220308T2342+0100.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2015,2017,2018,2019,2021 Marcos Cruz
@@ -583,7 +583,7 @@ variable do_content?  do_content? on
   \ pid$>pid# ( ca len -- a )
   \
   \ If string page ID _ca len_ is unknown, get its data from the
-  \ corresponding source page. Then return return the equivalent page
+  \ corresponding source page. Then return the equivalent page
   \ ID _a_.
   \
   \ See also: `pid$>pid#?`.
@@ -1227,5 +1227,7 @@ true value included_files_update_the_page_date?
 \ 2019-07-31: Fix `(pid$>previous)`. Improve documentation.
 \
 \ 2021-10-23: Replace "See:" with "See also:" in the documentation.
+\
+\ 2022-03-08: Fix typo in documentation.
 
 \ vim: filetype=gforth
