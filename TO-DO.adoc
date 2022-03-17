@@ -1,6 +1,6 @@
 = Fendo TO-DO
 :author: Marcos Cruz (programandala.net)
-:revdate: 2022-01-23
+:revdate: 2022-03-17
 
 // This file is part of Fendo
 // (http://programandala.net/en.program.fendo.html).
@@ -702,3 +702,9 @@ Why `<[ … ]>` are nestable? What's the advantage?
 
 - Make versions of the "dloc", "uloc" and "oloc" addons to list the
   pages in reverse order.
+
+== 2022-03-17
+
+Fix: When the "title" metadatum is empty and other page needs it, the
+process halts with "uncaught exception: Invalid memory address". Note:
+The page with the empty title can be built normally.
