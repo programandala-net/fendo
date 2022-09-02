@@ -8,7 +8,7 @@
 \ Last modified 20220308T2342+0100.
 \ See change log at the end of the file.
 
-\ Copyright (C) 2013,2014,2015,2017,2018,2019,2021 Marcos Cruz
+\ Copyright (C) 2013,2014,2015,2017,2018,2019,2021,2022 Marcos Cruz
 \ (programandala.net)
 
 \ Fendo is free software; you can redistribute
