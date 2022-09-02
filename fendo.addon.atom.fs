@@ -5,10 +5,10 @@
 
 \ This file is the Atom addon.
 
-\ Last modified  202011180105.
+\ Last modified  20220902T2032+0200.
 \ See change log at the end of the file.
 
-\ Copyright (C) 2009,2014,2015,2017,2018,2020 Marcos Cruz (programandala.net)
+\ Copyright (C) 2009,2014,2015,2017,2018,2020,2022 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute it and/or modify it
 \ under the terms of the GNU General Public License as published by
@@ -143,10 +143,14 @@ defer atom_site_title$ ( -- ca len )
 : atom_feed_title ( -- )
   [<title>] atom_site_title$ unmarkup echo [</title>] ;
 
+defer atom_site_subtitle$ ( -- ca len )
+
+' site_subtitle is atom_site_subtitle$
+
 : atom_feed_subtitle ( -- )
-  site_subtitle unmarkup dup
-  if    <subtitle> site_subtitle unmarkup echo </subtitle>
-  else  2drop   then ;
+  atom_site_subtitle$ unmarkup dup
+  if    <subtitle> unmarkup echo </subtitle>
+  else  2drop  then ;
 
 : atom_feed_alternate_link ( -- )
   current_lang$ 2dup hreflang=! pid$>url s" alternate" atom_link ;
@@ -378,5 +382,9 @@ set_default_atom_entry_summary
 \ `2constant`.
 \
 \ 2020-11-18: Draft the implementation of the `<content>` element.
+\
+\ 2022-09-02: Improvement: now there's Atom-specific site subwtitle
+\ (`atom_site_subtitle$`) configurable by the application; it defaults
+\ to `site_subtitle`. Fix `atom_feed_subtitle`.
 
 \ vim: filetype=gforth
