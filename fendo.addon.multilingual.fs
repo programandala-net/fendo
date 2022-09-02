@@ -6,10 +6,10 @@
 \ This file creates some low-level tools to manage multilingual
 \ websites. See the manual for details.
 
-\ Last modified 20211023T1637+0200.
+\ Last modified 20220902T2140+0200.
 \ See change log at the end of the file.
 
-\ Copyright (C) 2013,2017,2018,2019,2020,2021 Marcos Cruz (programandala.net)
+\ Copyright (C) 2013,2017,2018,2019,2020,2021,2022 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute
 \ it and/or modify it under the terms of the GNU General
@@ -182,12 +182,19 @@ true to multilingual?
   \ s" Hello" s" Saluton" s" Hola"
   \ l10n-string multilingual-salute$
   \ ----
+
+  \ WARNING: the name of the language identifiers must have the format
+  \ "XXX_language", where "XXX" is the ISO code used in the website
+  \ (in word names and page prefixes). The reason is those identifiers
+  \ need to be calculated by ``pid#>lang#``. This limitation will be
+  \ solved in a future version.
   \
   \ NOTE: ``l10n-string`` is deprecated. It has been superseded by
-  \ `begin-translation`, which makes it easier to add new
-  \ translations gradually and maintain them.
+  \ ``begin-translation`` (provided by the Galope library), which
+  \ makes it easier to add new translations gradually and maintain
+  \ them.
   \
-  \ See also: `begin-translation`, `noname-l10n-string`, `langs`.
+  \ See also: `noname-l10n-string`, `langs`.
   \
   \ }doc
 
@@ -207,10 +214,11 @@ true to multilingual?
   \ language of the current page.
   \
   \ NOTE: ``noname-l10n-string`` is deprecated. It has been superseded
-  \ by `begin-translation`, which makes it easier to add new
-  \ translations gradually and maintain them.
+  \ by ``begin-translation`` (provided by the Galope library), which
+  \ makes it easier to add new translations gradually and maintain
+  \ them.
   \
-  \ See also: `begin-translation`, `l10n-string`.
+  \ See also: ``l10n-string`.
   \
   \ }doc
 
@@ -332,6 +340,8 @@ end-translation
 \ `begin-translation`: now its Galope module is included in the
 \ sources used to build the manual.
 \
-\ 2021-10-23: Replace "See:" with "See also:" in the documentation.
+\ 2021-10-23: Replace "See:" with "See also:" in the documentation.a
+\
+\ 2022-09-02: Improve documentation.
 
 \ vim: filetype=gforth
