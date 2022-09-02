@@ -546,7 +546,7 @@ NOTE: Milestone: 0.6.0:
 
 NOTE: Milestone: 0.7.0:
 
-- Improve table markup: make the cells per row configurable with
+- Improve table markup: make the cells per row configurable with a
   variable, instead of depeding on the layout.
 
 == 2019-01-09
@@ -578,7 +578,7 @@ used in the template.
 
 == 2019-01-19
 
-Search for common code in the following addons and share it:
+Search the following addons for common code and share it:
 
 - fendo.addon.source_code.common.fs
 - fendo.addon.asciidoctor.fs
@@ -698,13 +698,13 @@ Why `<[ … ]>` are nestable? What's the advantage?
 
 - Fix: make `&nbsp;` omit also the space after it.
 
-== 2022-01-23
-
-- Make versions of the "dloc", "uloc" and "oloc" addons to list the
-  pages in reverse order.
-
 == 2022-03-17
 
-Fix: When the "title" metadatum is empty and other page needs it, the
-process halts with "uncaught exception: Invalid memory address". Note:
-The page with the empty title can be built normally.
+- Fix: When the "title" metadatum is empty and other page needs it,
+  the process halts with "uncaught exception: Invalid memory address".
+  Note: The page with the empty title can be built normally.
+
+NOTE: Milestone: 0.7.0:
+
+- Simplify the handling of metadata: use `[if]` and `[then]` to
+  delimitate metadata header.
