@@ -5,7 +5,7 @@
 
 \ This file defines the HTML attributes.
 
-\ Last modified  202011160218.
+\ Last modified  20220724T1408+0200.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2015,2017,2018,2020 Marcos Cruz (programandala.net)
@@ -177,7 +177,11 @@ link_text_as_attribute? [if]  \ XXX TMP
 \ References:
 \   <http://dev.w3.org/html5/markup/>
 \   <http://dev.w3.org/html5/markup/global-attributes.html>
+\ 2022-07-24:
+\   <https://www.w3schools.com/tags/ref_standardattributes.asp>
+
 \ XXX TODO complete
+
 attribute: accesskey=
 attribute: align=
 attribute: alt=
