@@ -5,10 +5,11 @@
 
 \ This file defines the Fendo markup for links.
 
-\ Last modified  20211023T1524+0200.
+\ Last modified  20220905T1044+0200.
 \ See change log at the end of the file.
 
-\ Copyright (C) 2013,2014,2015,2017,2018,2020,2021 Marcos Cruz (programandala.net)
+\ Copyright (C) 2013, 2014, 2015, 2017, 2018, 2020, 2021, 2022 Marcos
+\ Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute
 \ it and/or modify it under the terms of the GNU General
@@ -285,7 +286,7 @@ fendo_definitions
   \ complex_[[ ( -- )
   \
   \ Select the old complex version of the link markups `[[` and `]]`,
-  \ provided by `(complex_[[)` and `(complex_[[)`.
+  \ provided by `(complex_[[)` and `(complex_]])`.
   \
   \ See also: `simple_[[`, `link`.
   \
@@ -302,7 +303,7 @@ fendo_definitions
   \ simple_[[ ( -- )
   \
   \ Select the new simple version of the link markups `[[` and `]]`,
-  \ provided by `(simple_[[)` and `(simple_[[)`.
+  \ provided by `(simple_[[)` and `(simple_]])`.
   \
   \ See also: `complex_[[`, `link`.
   \
@@ -359,5 +360,7 @@ complex_[[ \ set the default
 \ 2021-05-05: Fix two typos in documentation of `(simple_[[)`.
 \
 \ 2021-10-23: Improve documentation.
+\
+\ 2022-09-05: Fix typos in documentation.
 
 \ vim: filetype=gforth
