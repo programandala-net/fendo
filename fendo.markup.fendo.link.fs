@@ -5,7 +5,7 @@
 
 \ This file defines the Fendo markup for links.
 
-\ Last modified  20220905T1044+0200.
+\ Last modified  20220905T1209+0200.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013, 2014, 2015, 2017, 2018, 2020, 2021, 2022 Marcos
@@ -214,6 +214,7 @@ variable [[-depth
   \ Usage examples:
 
   \ ----
+  \ simple_[[ \ select the simple link markup
   \ [[ "http://programandala.net" ]]
   \ [[ "http://programandala.net/en.program.fendo.html"
   \    "Fendo homepage" ]]
@@ -221,6 +222,7 @@ variable [[-depth
   \    title=" Fendo home page" ]]
   \ [[ s" This is the title" title=!
   \    "http://programandala.net" ]]
+  \ complex_[[ \ return to the default format
   \ ----
 
   \ The text in the markup is evaluated as Forth code. The first
@@ -229,6 +231,10 @@ variable [[-depth
   \ can be set by the corresponding parsing words like ``title="``,
   \ ``style="``, etc., in any order or position. Also their storage
   \ variants like ``title=!`` are valid.
+  \
+  \ WARNING: The text "]]", delimited by spaces or end of lines,
+  \ cannot be part of the link text or any attribute. Otherwise it
+  \ would be mistaken for the ending `]]`.
   \
   \ See also: `(simple_]])`, `(complex_[[)`, `link`, `shortcut:`.
   \
@@ -361,6 +367,6 @@ complex_[[ \ set the default
 \
 \ 2021-10-23: Improve documentation.
 \
-\ 2022-09-05: Fix typos in documentation.
+\ 2022-09-05: Fix and improve the documentation.
 
 \ vim: filetype=gforth
