@@ -5,10 +5,11 @@
 
 \ This file defines the Fendo markup for images.
 
-\ Last modified 20211023T1637+0200.
+\ Last modified 20220905T1134+0200.
 \ See change log at the end of the file.
 
-\ Copyright (C) 2013,2014,2017,2018,2020,2021 Marcos Cruz (programandala.net)
+\ Copyright (C) 2013, 2014, 2017, 2018, 2020, 2021, 2022 Marcos Cruz
+\ (programandala.net)
 
 \ Fendo is free software; you can redistribute
 \ it and/or modify it under the terms of the GNU General
@@ -28,6 +29,15 @@
 
 \ ==============================================================
 \ Requirements {{{1
+
+forth_definitions
+
+\ XXX TMP Move to Galope:
+[undefined] bl+ [if]
+: bl+ ( ca len -- ca' len' ) s"  " s+ ;
+[then]
+
+require galope/default-of.fs       \ `default-of`
 
 fendo_definitions
 
@@ -95,7 +105,7 @@ variable image_finished?  \ flag, no more image markup to parse?
   \ The default action of `{{`.
   \
   \ Start the definition of an image. Parse the input stream for an
-  \ image markup until and ending `}}` is found.
+  \ image markup until an ending `}}` is found.
   \
   \ Usage examples:
 
@@ -134,7 +144,82 @@ variable image_finished?  \ flag, no more image markup to parse?
 \ ==============================================================
 \ Simple images markup code {{{1
 
-\ XXX TODO
+: parse_simple_image ( "ccc" -- ca len )
+  s" "
+  begin  parse-name dup
+    if   2dup s" }}" str= >r s+ bl+ r>
+    else 2drop bl+ refill 0= then
+  until ;
+  \ Get the content of a `{{` image. Parse the input stream "ccc" until
+  \ a "}}" markup is found and return the parsed text (including "}}")
+  \ in string _ca len_.
+
+variable {{-depth
+  \ Store the stack depth at the start of the image markup, in order to
+  \ calculate later the number of arguments left.
+
+: (simple_{{) ( -- )
+  depth {{-depth ! parse_simple_image evaluate_markup ;
+
+  \ doc{
+  \
+  \ (simple_{{) ( -- )
+  \
+  \ Start an image markup (simple version). ``(simple_{{)`` is a
+  \ possible action of the actual markup `{{`, selected by
+  \ `simple_{{`.
+  \
+  \ Usage examples:
+
+  \ ----
+  \ simple_{{ \ select the simple image markup
+  \ {{ "mypicture.jpg" }}
+  \ {{ "there/another.jpg" "Optional alternative text here" }}
+  \ {{ "over/there/this_one.jpg" "Alt text" title=" Fendo picture" }}
+  \ {{ "over/there/this_one.jpg" title=" Picture without alt text" }}
+  \ complex_{{ \ return to the default format
+  \ ----
+
+  \ The text in the markup is evaluated as Forth code. The first
+  \ string must be a page identifier, an actual URL or a shortcut. The
+  \ second, optional, string must be the image text. HTML parameters
+  \ can be set by the corresponding parsing words like ``title="``,
+  \ ``style="``, etc., in any order or position. Also their storage
+  \ variants like ``title=!`` are valid.
+  \
+  \ WARNING: The text "}}", delimited by spaces or end of lines,
+  \ cannot be part of the alternative text or any attribute. Otherwise
+  \ it would be mistaken for the ending `}}`.
+  \
+  \ See also: `(simple_}})`, `(complex_{{)`, `img`, `shortcut:`.
+  \
+  \ }doc
+
+: (simple_}}) ( ca1 len1 | ca1 len1 ca2 len2 -- )
+  depth {{-depth @ - case
+    2       of s" " img                                               endof
+    4       of      img                                               endof
+    default-of true abort" Wrong number of arguments in image markup" endof
+  endcase ;
+
+  \
+  \ doc{
+  \
+  \ (simple_}}) ( ca1 len1 | ca1 len1 ca2 len2 -- )
+  \
+  \ End an image markup (simple version) by calling `img` with the
+  \ given paramenters. ``(simple_}})`` is a possible action of the
+  \ actual markup `}}`, selected by `simple_{{`.
+  \
+  \ The string _ca1 len1_ is the address (an actual URL, a page
+  \ identifier or a shortcut). The optional string _ca2 len2_ is the
+  \ image text (if _ca2 len2_ is missing, an empty string is used
+  \ instead and passed to `img`). HTML attributes are set by the
+  \ corresponding Fendo words. See `(simple_{{)` for usage examples.
+  \
+  \ See also: ``(complex_}})`, `img`.
+  \
+  \ }doc
 
 \ ==============================================================
 \ Markup {{{1
@@ -145,15 +230,49 @@ defer {{
 
 defer }}
 
-' (complex_{{) is {{
-' (complex_}}) is }}
-
 \ ==============================================================
 \ Markup selectors {{{1
 
-\ XXX TODO
+fendo_definitions
+
+: complex_{{ ( -- )
+  [markup>order]
+  ['] (complex_{{) is {{
+  ['] (complex_}}) is }}
+  [markup<order] ;
+
+  \ doc{
+  \
+  \ complex_{{ ( -- )
+  \
+  \ Select the old complex version of the image markups `{{` and `}}`,
+  \ provided by `(complex_{{)` and `(complex_{{)`.
+  \
+  \ See also: `simple_{{`.
+  \
+  \ }doc
+
+: simple_{{ ( -- )
+  [markup>order]
+  ['] (simple_{{) is {{
+  ['] (simple_}}) is }}
+  [markup<order] ;
+
+  \ doc{
+  \
+  \ simple_{{ ( -- )
+  \
+  \ Select the new simple version of the link markups `{{` and `}}`,
+  \ provided by `(simple_{{)` and `(simple_{{)`.
+  \
+  \ See also: `complex_{{`.
+  \
+  \ }doc
+
+complex_{{ \ set the default
 
 fendo_definitions
+
 .( fendo.markup.fendo.image.fs compiled ) cr
 
 \ ==============================================================
@@ -182,5 +301,8 @@ fendo_definitions
 \ `(complex_}})`.
 \
 \ 2021-10-23: Replace "See:" with "See also:" in the documentation.
+\
+\ 2022-09-05: Add an alternative simple syntax markup, after the link
+\ markup.
 
 \ vim: filetype=gforth
