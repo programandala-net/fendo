@@ -5,10 +5,11 @@
 
 \ This file defines the HTML attributes.
 
-\ Last modified  20220724T1408+0200.
+\ Last modified  20220905T1910+0200.
 \ See change log at the end of the file.
 
-\ Copyright (C) 2013,2014,2015,2017,2018,2020 Marcos Cruz (programandala.net)
+\ Copyright (C) 2013, 2014, 2015, 2017, 2018, 2020, 2022 Marcos Cruz
+\ (programandala.net)
 
 \ Fendo is free software; you can redistribute
 \ it and/or modify it under the terms of the GNU General
@@ -46,7 +47,8 @@ false  dup constant [gforth_strings_for_attributes?]  immediate
   require ffl/str.fs
 [then]
 
-require galope/dollar-store-new.fs  \ `$!new`
+require galope/dollar-store-new.fs   \ `$!new`
+require galope/heredoc.fs            \ `-cell-bounds`
 require galope/minus-cell-bounds.fs  \ `-cell-bounds`
 require galope/three-dup.fs
 require galope/trim.fs
@@ -108,8 +110,11 @@ fendo_definitions
   \ a = attribute variable
   \ ca1 len1 = attribute value
 
+: parsed_attribute! ( a ca len -- )
+  trim unspace rot @ attribute! ;
+
 : parse_attribute ( a c "text<c>" -- )
-  parse trim unspace rot @ attribute! ;
+  parse parsed_attribute! ;
 
 : :attribute"  ( ca len a -- )
   rot rot s\" \"" s+ :create  ,
@@ -117,6 +122,20 @@ fendo_definitions
     ( dfa ) '"' parse_attribute ;
   \ Create a word that parses and stores an attribute,
   \ delimited by a double quote.
+  \ ca len = name of the attribute variable
+  \ a = attribute variable
+
+: :attribute""  ( ca len a -- )
+  rot rot s\" \"\"" s+ :create  ,
+  does>  ( "text<quote>" -- )
+    ( dfa ) s\" \"\"" (heredoc) \ parse until the word `""` is found
+    parsed_attribute! ;
+
+  \ Create a word that parses and stores an attribute,
+  \ delimited by a two-double-quote word. The attribute can span
+  \ on several lines, and its line breaks will be replaced
+  \ by spaces.
+  \
   \ ca len = name of the attribute variable
   \ a = attribute variable
 
@@ -142,12 +161,13 @@ fendo_definitions
   \ a = attribute variable
 
 : :attribute  ( ca len a -- )
-  3dup :attribute"
-  3dup :attribute'
-  3dup :attribute!
-  3dup :attribute?!
-  3dup :attribute+!
-       :attribute@ ;
+  3dup :attribute"   \ parse and store unwrappable string ended by a `"` character
+  3dup :attribute'   \ parse and store unwrappable string ended by a `'` character
+  3dup :attribute""  \ parse and store wrappable string ended by a `""` word
+  3dup :attribute!   \ store string
+  3dup :attribute?!  \ store string if the attribute is empty
+  3dup :attribute+!  \ add string
+       :attribute@ ; \ get attribute
   \ Create the words to manage an attribute.
   \ ca len = attribute name
   \ a = attribute variable
@@ -492,5 +512,8 @@ create attributes  \ table for the attribute variables
 \ 2020-11-14: Factor out `attribute:"` and `attribute:'` into
 \ `parse_attribute` and tidy the argument string using `trim` and
 \ `unspace`. Improve their documentation.
+\
+\ 2022-09-05. Add `:attribute""`. Improve documentation of
+\ `:attribute`.
 
 \ vim: filetype=gforth
