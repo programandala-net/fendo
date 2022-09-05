@@ -1,12 +1,14 @@
 = Fendo TO-DO
 :author: Marcos Cruz (programandala.net)
-:revdate: 2022-03-17
+:revdate: 2022-09-05
 
 // This file is part of Fendo
 // (http://programandala.net/en.program.fendo.html).
 
 // This text file is in Asciidoctor format
 // See http://asciidoctor.org
+
+// Last modified 20220905T2052+0200.
 
 == 2013-06-04
 
@@ -636,7 +638,7 @@ Rename `tag_section` and `tag_section_by_prefix`?
 
 == 2020-07-16
 
-Fix: Image filenames used in `{{` causes a memory error when they
+Fix: Image filenames used in `{{` cause a memory error when they
 contain accented characters.
 
 == 2020-10-02
@@ -666,10 +668,10 @@ This was observed first in
 Finish <fendo.addon.images_by_wildcard.fs>. Test it in
 <programandala.net/es.programa.black_flag.fs>.
 
-== 2020-11-15, 2020-11-29
+== 2020-11-15, 2020-11-29, 2022-09-05
 
-Deprecate the current parsing versions of link and image markup,
-replacing them with non-parsing Forth-code versions:
+Deprecate the default complex versions of link and image markup,
+replacing them with the simple Forth-code versions:
 
 |===
 | Current link with parsing:       | `[[ URL | TXT | attr="ATTR" ]]`
@@ -689,10 +691,11 @@ defined as recognizers prefixes, in order to allow `attr="ATTR"`.
 
 Why `<[ … ]>` are nestable? What's the advantage?
 
-== 2020-11-16
+== 2020-11-16, 2022-09-05
 
 - Move `bl+` to Galope. It's defined in <fendo.markup.fendo.forth.fs>
-  and required in <fendo.markup.fendo.link.fs>.
+  and <fendo.markup.fendo.image.fs>, and required in
+  <fendo.markup.fendo.link.fs>.
 
 == 2021-12-05
 
