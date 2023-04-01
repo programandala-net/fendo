@@ -5,10 +5,10 @@
 
 \ This file creates the parser.
 
-\ Last modified 20211023T1637+0200.
+\ Last modified 20230401T0946+0200.
 \ See change log at the end of the file.
 
-\ Copyright (C) 2013,2017,2018,2019,2020,2021 Marcos Cruz (programandala.net)
+\ Copyright (C) 2013,2017,2018,2019,2020,2021,2023 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute
 \ it and/or modify it under the terms of the GNU General
@@ -285,7 +285,7 @@ variable more?  \ flag: keep on parsing more words?; changed by `}content`
 \ Design template {{{1
 
 : template_file ( -- ca len )
-  target_dir $@
+  designs_dir $@
   current_page design_subdir dup 0=  \ XXX useful?
   if  2drop website_design_subdir $@  then
   current_page template dup 0=  \ XXX individual page templates are useful
@@ -585,5 +585,8 @@ set-current
 \ the template at "{CONTENT}".
 \
 \ 2021-10-23: Replace "See:" with "See also:" in the documentation.
+\
+\ 2023-04-01: Replace `target_dir` with the new `designs_dir`, in
+\ `template_file`.
 
 \ vim: filetype=gforth
