@@ -1,4 +1,7 @@
+syntax: glob
+
 *_session*.vim
+.git
 000-info.txt
 _meta
 tmp
