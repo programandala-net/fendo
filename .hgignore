@@ -4,5 +4,6 @@ syntax: glob
 .git
 000-info.txt
 _meta
+doc
 tmp
 websites
