@@ -5,10 +5,10 @@
 
 \ This file is the code common to several source code addons.
 
-\ Last modified  20220123T1352+0100.
+\ Last modified  20230816T1744+0200.
 \ See change log at the end of the file.
 
-\ Copyright (C) 2013,2014,2017,2018,2020 Marcos Cruz (programandala.net)
+\ Copyright (C) 2013,2014,2017,2018,2020,2023 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute it and/or modify it
 \ under the terms of the GNU General Public License as published by
@@ -28,6 +28,9 @@
 
 \ ==============================================================
 \ Requirements {{{1
+
+\ XXX TODO Check Vim or Neovim are installed and use of them.
+\ XXX TODO Make the default one configurable.
 
 forth_definitions
 
@@ -105,7 +108,7 @@ input_file$ output_file_extension$ s+ sconstant output_file$
 public
 
 : base_highlight_command$ ( -- ca len )
-  s" vim -e -f " ;
+  s" nvim -e -f " ;
 
 s" fendo.addon.source_code.vim " sconstant vim_addon$
 
@@ -252,5 +255,7 @@ end-package
 \ -e`, for clarity. Remove alternative code to use Neovim instead of
 \ Vim. Define strings constants with `sconstant` instead of
 \ `2constant`.
+\
+\ 2023-08-16: Replace Vim with Neovim.
 
 \ vim: filetype=gforth

@@ -1,6 +1,6 @@
 = Fendo TO-DO
 :author: Marcos Cruz (programandala.net)
-:revdate: 2022-09-05
+:revdate: 2023-08-16
 
 // This file is part of Fendo
 // (http://programandala.net/en.program.fendo.html).
@@ -8,7 +8,7 @@
 // This text file is in Asciidoctor format
 // See http://asciidoctor.org
 
-// Last modified 20220905T2052+0200.
+// Last modified 20230816T1748+0200.
 
 == 2013-06-04
 
@@ -711,3 +711,10 @@ NOTE: Milestone: 0.7.0:
 
 - Simplify the handling of metadata: use `[if]` and `[then]` to
   delimitate metadata header.
+
+== 2023-08-16
+
+In <fendo.addon.source_code.common.fs>:
+
+- Check Vim or Neovim are installed and use of them.
+- Make the default editor configurable.
