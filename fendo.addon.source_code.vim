@@ -3,7 +3,7 @@
 " This file is part of Fendo.
 " This Vim program is used by the source code addon.
 
-" Copyright (C) 2013,2014 Marcos Cruz (programandala.net)
+" Copyright (C) 2013,2014,2015 Marcos Cruz (programandala.net)
 
 " Fendo is free software; you can redistribute it and/or modify it
 " under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@
 " 2013-11-07: Start; variables.
 " 2013-11-08: Actual conversion to XHTML; only the code zone is left in the file.
 " 2014-02-15: File header completed.
-" 2105-08-07: Fixed the search for "<pre>", because Vim 7.4 adds parameters to
+" 2015-08-07: Fixed the search for "<pre>", because Vim 7.4 adds parameters to
 " it.
 
 " **************************************************************
