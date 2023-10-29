@@ -5,7 +5,7 @@
 
 \ This file setups the default configuration.
 
-\ Last modified  20230904T0050+0200.
+\ Last modified  20231029T1911+0100.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2015,2017,2018,2023 Marcos Cruz (programandala.net)
@@ -75,7 +75,7 @@ variable files_subdir  \ target files
 s" files/" files_subdir $!
 
 variable website_design_subdir \ default design
-s" designs/basic_minimal/" website_design_subdir $!
+s" basic_minimal/" website_design_subdir $!
 
 variable website_template  \ filename of the default HTML template
 s" index.html" website_template $!
@@ -134,5 +134,7 @@ defer site_author
 \ 2023-04-01: Add `designs_dir`.
 \
 \ 2023-09-04: Update local absolute directories.
+\
+\ 2023-10-29: Fix demo designs path.
 
 \ vim: filetype=gforth
