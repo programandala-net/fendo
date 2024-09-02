@@ -1,11 +1,11 @@
 = Fendo
 :author: Marcos Cruz (programandala.net)
-:revdate: 2023-04-01
+:revdate: 2024-09-03
 
 // This file is part of Fendo
 // http://programandala.net/en.program.fendo.html
 
-// Last modified: 20230401T1532+0200.
+// Last modified: 20240903T0000+0200.
 
 // tag::description[]
 
@@ -28,10 +28,13 @@ Some features:
 - Nestable page shortcuts.
 - Fully customizable.
 
-Home page and repository:
+Links:
 
-- Home page: http://programandala.net/en.program.fendo.html
-- GitHub: http://github.com/programandala-net/fendo
+- http://programandala.net/en.program.fendo.html[Fendo home page]
+- https://hg.sr.ht/~programandala_net/fendo[Fendo repository in
+  SourceHut]
+- http://github.com/programandala-net/fendo[Fendo repository in
+  GitHub]
 
 // end::description[]
 
@@ -73,16 +76,19 @@ in the sense "a narrow depression, perforation, or aperture".
   development backups, in order to resume the development and prepare
   the first public release.
 
-- 2020-03-28: The repository was uploaded to
+- 2020-03-28: The Git repository was uploaded to
   https://github.com/programandala-net/fendo[GitHub].
 
 - 2020-11-29: The Git repository was converted to
   https://fossil-scm.org[Fossil], keeping GitHub as an automatic
   read-only mirror.
 
-- 2023-04-01: The repository was converted to
+- 2023-04-01: The Fossil repository was converted to
   https://mercurial-scm.org[Mercurial], enabling bidirectional
   communication with GitHub.
 
-// end::history[]
+- 2024-09-02: The Mercurial repository was uploaded to
+  https://hg.sr.ht/~programandala_net/fendo[SourceHut], keeping GitHub
+  as a mirror.
 
+// end::history[]
