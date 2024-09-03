@@ -3,7 +3,7 @@
 # This file is part of Fendo
 # http://programandala.net/en.program.fendo.html
 
-# Last modified: 202012241748.
+# Last modified: 20240903T1257+0200.
 # See change log at the end of the file.
 
 # ==============================================================
@@ -84,7 +84,7 @@ pdf: \
 	doc/fendo_manual.pdf
 
 .PHONY: clean
-clean: cleandoc
+clean: cleandoc cleanreadme
 
 .PHONY: cleandoc
 cleandoc:
@@ -141,29 +141,38 @@ tmp/fendo_manual.adoc: \
 	cat tmp/manual_skeleton.adoc tmp/glossary.adoc > $@
 
 # ----------------------------------------------
-# Online documentation {{{2
+# README.md {{{2
 
-# Online documentation displayed on the Fossil repository.
+# SourceHut does not support readme files in AsciiDoc,
+# only plain text and Markdown (Commonmark).
 
-.PHONY: wwwdoc
-wwwdoc: wwwreadme
+.PHONY: readme
+readme: README.md README.html.md
 
-.PHONY: cleanwww
-cleanwww:
-	rm -f \
-		doc/www/* \
-		tmp/README.*
+.PHONY: cleanreadme
+cleanreadme:
+	rm -f README.md
 
-.PHONY: wwwreadme
-wwwreadme: doc/www/README.html
+# XXX FIXME Somehow `pandoc --from docbook --to commonmark` ignores the main
+# title and makes section headings level 1.  A workaround is used with `echo`
+# and `sed`:
 
-doc/www/README.html: tmp/README.html
-	echo "<div class='fossil-doc' data-title='README'>" > $@;\
-	cat $< >> $@;\
-	echo "</div>" >> $@
+README.md: tmp/README.db
+	echo "# Fendo\n" > $@
+	pandoc \
+		--from docbook \
+		--to commonmark \
+		$< \
+	| sed -e 's/^#\(.\+\)/##\1/' >> $@
+
+tmp/README.db: README.adoc
+	asciidoctor \
+		--backend docbook \
+		--out-file=$@ $<
 
 tmp/README.html: README.adoc
 	asciidoctor \
+		--backend html5 \
 		--embedded \
 		--out-file=$@ $<
 
@@ -184,3 +193,6 @@ tmp/README.html: README.adoc
 #
 # 2020-12-24: Build an online version of the README file for the Fossil
 # repository.
+#
+# 2024-09-03: Remove the rules to build the <README.html> required by Fossil;
+# add rules to build a <README.md> for SourceHut.
