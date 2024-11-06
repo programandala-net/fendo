@@ -1,0 +1,55 @@
+# Makefile.markdown_readme
+
+# Objective: Convert <README.adoc> to <README.md>.
+
+# Motivation: SourceHut does not support readme files in AsciiDoc, only plain
+# text and Markdown (Commonmark).
+
+# By Marcos Cruz (programandala.net)
+
+# Last modified 20241106T1556+0100.
+# See change log at the end of the file.
+
+# Convert README to Markdown {{{1
+# ==============================================================
+
+.PHONY: readme
+readme: README.md
+
+.PHONY: cleanreadme
+cleanreadme:
+	rm -f README.md
+
+# XXX FIXME Somehow `pandoc --from docbook --to commonmark` ignores the main
+# title and makes section headings level 1.  A workaround is used with `echo`
+# and `sed`:
+
+README.md: tmp/README.db
+	echo "# Fendo\n" > $@
+	pandoc \
+		--from docbook \
+		--to commonmark \
+		$< \
+	| sed -e 's/^#\(.\+\)/##\1/' >> $@
+
+tmp/README.db: README.adoc
+	asciidoctor \
+		--backend docbook \
+		--out-file=$@ $<
+
+tmp/README.html: README.adoc
+	asciidoctor \
+		--backend html5 \
+		--embedded \
+		--out-file=$@ $<
+
+# ==============================================================
+# Change log {{{1
+
+# 2024-09-03: Start as part of the Makefile of project Fendo
+# (http://programandala.net/en.program.fendo.html): Remove the rules to build
+# the <README.html> required by Fossil; add rules to build a <README.md> for
+# SourceHut.
+#
+# 2024-11-06: Extract the rules to <Makefile.readme> in order to share the code
+# with other projects.

@@ -3,23 +3,23 @@
 # This file is part of Fendo
 # http://programandala.net/en.program.fendo.html
 
-# Last modified: 20240903T1257+0200.
+# Last modified: 20241106T1604+0100.
 # See change log at the end of the file.
 
-# ==============================================================
 # Author {{{1
+# ==============================================================
 
 # Marcos Cruz (programandala.net), 2017, 2018, 2020.
 
-# ==============================================================
 # License
+# ==============================================================
 
 # You may do whatever you want with this work, so long as you
 # retain every copyright, credit and authorship notice, and this
 # license.  There is no warranty.
 
-# ==============================================================
 # Requirements {{{1
+# ==============================================================
 
 # Asciidoctor (by Dan Allen and Sara White)
 # 	http://asciidoctor.org
@@ -38,13 +38,13 @@
 # pandoc (by John Macfarlane)
 # 	http://john-macfarlane.net/pandoc
 
-# ==============================================================
 # History {{{1
+# ==============================================================
 
 # See at the end of the file.
 
-# ==============================================================
 # Notes about make {{{1
+# ==============================================================
 
 # $@ = the name of the target of the rule
 # $< = the name of the first prerequisite
@@ -53,8 +53,8 @@
 
 # `%` works only at the start of the filter pattern
 
-# ==============================================================
 # Config {{{1
+# ==============================================================
 
 VPATH = ./
 
@@ -62,8 +62,8 @@ MAKEFLAGS = --no-print-directory
 
 #.ONESHELL:
 
-# ==============================================================
 # Interface {{{1
+# ==============================================================
 
 .PHONY: all
 all: doc
@@ -90,11 +90,11 @@ clean: cleandoc cleanreadme
 cleandoc:
 	-rm -f doc/* tmp/*
 
-# ==============================================================
 # Documentation {{{1
+# ==============================================================
 
-# ----------------------------------------------
 # Common rules {{{2
+# ----------------------------------------------
 
 doc/%.pdf: tmp/%.adoc
 	asciidoctor-pdf --out-file $@ $<
@@ -114,8 +114,8 @@ doc/%.dbk: tmp/%.adoc
 %.texi: %.dbk
 	pandoc -f docbook -o $@ $<
 
-# ----------------------------------------------
 # Main {{{2
+# ----------------------------------------------
 
 fendo_files=$(wildcard *.fs)
 lib_files=$(wildcard doc_src/galope/*.fs)
@@ -140,44 +140,13 @@ tmp/fendo_manual.adoc: \
 	tmp/glossary.adoc
 	cat tmp/manual_skeleton.adoc tmp/glossary.adoc > $@
 
-# ----------------------------------------------
 # README.md {{{2
+# ----------------------------------------------
 
-# SourceHut does not support readme files in AsciiDoc,
-# only plain text and Markdown (Commonmark).
+include Makefile.readme
 
-.PHONY: readme
-readme: README.md README.html.md
-
-.PHONY: cleanreadme
-cleanreadme:
-	rm -f README.md
-
-# XXX FIXME Somehow `pandoc --from docbook --to commonmark` ignores the main
-# title and makes section headings level 1.  A workaround is used with `echo`
-# and `sed`:
-
-README.md: tmp/README.db
-	echo "# Fendo\n" > $@
-	pandoc \
-		--from docbook \
-		--to commonmark \
-		$< \
-	| sed -e 's/^#\(.\+\)/##\1/' >> $@
-
-tmp/README.db: README.adoc
-	asciidoctor \
-		--backend docbook \
-		--out-file=$@ $<
-
-tmp/README.html: README.adoc
-	asciidoctor \
-		--backend html5 \
-		--embedded \
-		--out-file=$@ $<
-
-# ==============================================================
 # Change log {{{1
+# ==============================================================
 
 # 2018-12-07: Start. Adapted from Galope
 # (http://programandala.net/en.program.galope.html).
@@ -196,3 +165,6 @@ tmp/README.html: README.adoc
 #
 # 2024-09-03: Remove the rules to build the <README.html> required by Fossil;
 # add rules to build a <README.md> for SourceHut.
+#
+# 2024-11-06: Move the rules that build <README.md> to <Makefile.readme> in
+# order to share them with another projects.
