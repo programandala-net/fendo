@@ -7,8 +7,24 @@
 
 # By Marcos Cruz (programandala.net)
 
-# Last modified 20241106T1556+0100.
+# Last modified 20241106T1621+0100.
 # See change log at the end of the file.
+
+# Requirements {{{1
+# ==============================================================
+
+# Asciidoctor (by Dan Allen, Sarah White et al.)
+#   http://asciidoctor.org
+
+# Pandoc (by John MaFarlane)
+#   http://pandoc.org
+
+# Config {{{1
+# ==============================================================
+
+# Input variable, set by <Makefile>:
+#
+# readme_title = title of the README file, usually the name of the project
 
 # Convert README to Markdown {{{1
 # ==============================================================
@@ -25,7 +41,7 @@ cleanreadme:
 # and `sed`:
 
 README.md: tmp/README.db
-	echo "# Fendo\n" > $@
+	echo "# $(readme_title)\n" > $@
 	pandoc \
 		--from docbook \
 		--to commonmark \

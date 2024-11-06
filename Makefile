@@ -143,6 +143,8 @@ tmp/fendo_manual.adoc: \
 # README.md {{{2
 # ----------------------------------------------
 
+readme_title=Fendo
+
 include Makefile.readme
 
 # Change log {{{1
