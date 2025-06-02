@@ -1,4 +1,4 @@
-# Makefile.markdown_readme
+# Makefile.readme
 
 # Objective: Convert <README.adoc> to <README.md>.
 
@@ -7,7 +7,7 @@
 
 # By Marcos Cruz (programandala.net)
 
-# Last modified 20241106T1621+0100.
+# Last modified 20250414T2318+0200.
 # See change log at the end of the file.
 
 # Requirements {{{1
@@ -38,15 +38,16 @@ cleanreadme:
 
 # XXX FIXME Somehow `pandoc --from docbook --to commonmark` ignores the main
 # title and makes section headings level 1.  A workaround is used with `echo`
-# and `sed`:
+# and `--shift-heading-level-by`:
 
 README.md: tmp/README.db
 	echo "# $(readme_title)\n" > $@
 	pandoc \
 		--from docbook \
 		--to commonmark \
+		--shift-heading-level-by 1 \
 		$< \
-	| sed -e 's/^#\(.\+\)/##\1/' >> $@
+		>> $@
 
 tmp/README.db: README.adoc
 	asciidoctor \
@@ -69,3 +70,5 @@ tmp/README.html: README.adoc
 #
 # 2024-11-06: Extract the rules to <Makefile.readme> in order to share the code
 # with other projects.
+#
+# 2025-02-23: Simplify workaround to fix the headings of the Commonmark file.
