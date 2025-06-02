@@ -5,10 +5,10 @@
 
 \ This file setups the default configuration.
 
-\ Last modified  20231029T1911+0100.
+\ Last modified  20240905T2318+0200.
 \ See change log at the end of the file.
 
-\ Copyright (C) 2013,2014,2015,2017,2018,2023 Marcos Cruz (programandala.net)
+\ Copyright (C) 2013,2014,2015,2017,2018,2023,2024 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute it and/or modify it
 \ under the terms of the GNU General Public License as published by
@@ -62,11 +62,8 @@ s" ~/forth/fendo-demo/src/pages/" source_dir $!
 variable target_dir  \ target HTML pages
 s" ~/forth/fendo-demo/target/" target_dir $!
 
-variable designs_dir  \ designs
+variable designs_dir  \ source of the designs
 s" ~/forth/fendo-demo/src/designs/" designs_dir $!
-\ Before the implementation of `designs_dir`, `target_dir` was used instead
-\ as root directory of the designs. Therefore that default value has
-\ been kept.
 
 \ ------------------------------
 \ Target relative subdirectories (with final slash)
@@ -136,5 +133,7 @@ defer site_author
 \ 2023-09-04: Update local absolute directories.
 \
 \ 2023-10-29: Fix demo designs path.
+\
+\ 2024-09-05: Update comment.
 
 \ vim: filetype=gforth
