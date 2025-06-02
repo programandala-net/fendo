@@ -1,6 +1,6 @@
 = Fendo TO-DO
 :author: Marcos Cruz (programandala.net)
-:revdate: 2023-08-16
+:revdate: 2025-06-02
 
 // This file is part of Fendo
 // (http://programandala.net/en.program.fendo.html).
@@ -8,7 +8,7 @@
 // This text file is in Asciidoctor format
 // See http://asciidoctor.org
 
-// Last modified 20230816T1748+0200.
+// Last modified 20250602T1255+0200.
 
 == 2013-06-04
 
@@ -718,3 +718,8 @@ In <fendo.addon.source_code.common.fs>:
 
 - Check Vim or Neovim are installed and use of them.
 - Make the default editor configurable.
+
+== 2025-06-02
+
+fix `(filename>filetype)`: the ".fs" extension is ambiguous (used by
+gforth and f-sharp).

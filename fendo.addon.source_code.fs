@@ -5,10 +5,10 @@
 
 \ This file is the source code addon.
 
-\ Last modified  20220123T1353+0100.
+\ Last modified  20250602T1244+0200.
 \ See change log at the end of the file.
 
-\ Copyright (C) 2013,2014,2015,2017,2018,2020 Marcos Cruz (programandala.net)
+\ Copyright (C) 2013,2014,2015,2017,2018,2020,2025 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute it and/or modify it
 \ under the terms of the GNU General Public License as published by
@@ -51,48 +51,98 @@ package fendo.addon.source_code
 : (filename>filetype) ( ca1 len1 -- ca2 len2 )
   basename  \ remove the path, because some comparations use the whole filename
   { D: filename }
+
+  filename s" .free.bas" string-suffix? if  s" freebasic" exit  then
+
   filename s" .4th" string-suffix? if  s" forth" exit  then
+  filename s" .8th" string-suffix? if  s" 8th" exit  then
   filename s" .acef" string-suffix? if  s" aceforth" exit  then
   filename s" .acefs" string-suffix? if  s" aceforth" exit  then
+  filename s" .adb" string-suffix? if  s" ada" exit  then
+  filename s" .art" string-suffix? if  s" arturo" exit  then
   filename s" .asm" string-suffix? if  s" z80" exit  then
   filename s" .bac" string-suffix? if  s" bacon" exit  then
   filename s" .bas" string-suffix? if  s" basic" exit  then
   filename s" .bb" string-suffix? if  s" betabasic" exit  then
   filename s" .bbas" string-suffix? if  s" betabasic" exit  then
-  filename s" .betabas" string-suffix? if  s" betabasic" exit  then
   filename s" .bbim" string-suffix? if  s" bbim" exit  then
-  filename s" .fs" string-suffix? if  s" gforth" exit  then
+  filename s" .betabas" string-suffix? if  s" betabasic" exit  then
+  filename s" .c3" string-suffix? if  s" c3" exit  then
+  filename s" .chpl" string-suffix? if  s" chapel" exit  then
+  filename s" .clj" string-suffix? if  s" clojure" exit  then
+  filename s" .cr" string-suffix? if  s" crystal" exit  then
+  filename s" .cs" string-suffix? if  s" cs" exit  then
+  filename s" .d" string-suffix? if  s" d" exit  then
+  filename s" .dylan" string-suffix? if  s" dylan" exit  then
+  filename s" .eu" string-suffix? if  s" euphoria" exit  then
+  filename s" .factor" string-suffix? if  s" factor" exit  then
+  filename s" .fs" string-suffix? if  s" fsharp" exit  then \ XXX FIXME can be also gforth
+  filename s" .fs" string-suffix? if  s" gforth" exit  then \ XXX FIXME can be also f#
+  filename s" .go" string-suffix? if  s" go" exit  then
+  filename s" .gnuplot" string-suffix? if  s" gnuplot" exit  then
+  filename s" .ha" string-suffix? if  s" hare" exit  then
+  filename s" .hx" string-suffix? if  s" haxe" exit  then
+  filename s" .icn" string-suffix? if  s" icon" exit  then
   filename s" .ini" string-suffix? if  s" dosini" exit  then
+  filename s" .io" string-suffix? if  s" io" exit  then
+  filename s" .jl" string-suffix? if  s" julia" exit  then
+  filename s" .kt" string-suffix? if  s" kotlin" exit  then
+  filename s" .lisp" string-suffix? if  s" lisp" exit  then
+  filename s" .lobster" string-suffix? if  s" lobster" exit  then
+  filename s" .lua" string-suffix? if  s" lua" exit  then
+  filename s" .masterbas" string-suffix? if  s" masterbasic" exit  then
   filename s" .mb" string-suffix? if  s" masterbasic" exit  then
   filename s" .mbas" string-suffix? if  s" masterbasic" exit  then
-  filename s" .masterbas" string-suffix? if  s" masterbasic" exit  then
   filename s" .mbim" string-suffix? if  s" mbim" exit  then
+  filename s" .ml" string-suffix? if  s" ocml" exit  then
+  filename s" .neko" string-suffix? if  s" neko" exit  then
+  filename s" .nelua" string-suffix? if  s" nelua" exit  then
+  filename s" .nim" string-suffix? if  s" nim" exit  then
+  filename s" .nit" string-suffix? if  s" nit" exit  then
+  filename s" .obn" string-suffix? if  s" oberon-07" exit  then
+  filename s" .odin" string-suffix? if  s" odin" exit  then
   filename s" .opl" string-suffix? if  s" oplplus" exit  then
   filename s" .opl.txt" string-suffix? if  s" oplplus" exit  then
   filename s" .opp" string-suffix? if  s" oplplus" exit  then
   filename s" .php" string-suffix? if  s" php" exit  then
+  filename s" .pike" string-suffix? if  s" pike" exit  then
+  filename s" .pl" string-suffix? if  s" prolog" exit  then
   filename s" .prg" string-suffix? if  s" clipper" exit  then
+  filename s" .py" string-suffix? if  s" python" exit  then
+  filename s" .raku" string-suffix? if  s" raku" exit  then
+  filename s" .ratpoisonrc" str=  if  s" ratpoison" exit  then
+  filename s" .red" string-suffix? if  s" red" exit  then
+  filename s" .ring" string-suffix? if  s" ring" exit  then
+  filename s" .rkt" string-suffix? if  s" racket" exit  then
+  filename s" .rs" string-suffix? if  s" rust" exit  then
   filename s" .sbim" string-suffix? if  s" sbim" exit  then
+  filename s" .scala" string-suffix? if  s" scala" exit  then
+  filename s" .scm" string-suffix? if  s" scheme" exit  then
   filename s" .sdlbas" string-suffix? if  s" sdlbasic" exit  then
   filename s" .seq" string-suffix? if  s" forth" exit  then
-  filename s" .sinclairbas" string-suffix? if  s" sinclairbasic" exit  then
   filename s" .sh" string-suffix? if  s" sh" exit  then
+  filename s" .sinclairbas" string-suffix? if  s" sinclairbasic" exit  then
+  filename s" .swift" string-suffix? if  s" swift" exit  then
   filename s" .unexpanded_llist" string-suffix? if  s" sinclairbasic" exit  then
+  filename s" .v" string-suffix? if  s" v" exit  then
+  filename s" .vala" string-suffix? if  s" vala" exit  then
+  filename s" .vale" string-suffix? if  s" vale" exit  then
+  filename s" .vbas" string-suffix? if  s" vimclairbasic" exit  then
   filename s" .vim" string-suffix? if  s" vim" exit  then
   filename s" .vimbas" string-suffix? if  s" vimclairbasic" exit  then
   filename s" .vimclairbas" string-suffix? if  s" vimclairbasic" exit  then
-  filename s" .vbas" string-suffix? if  s" vimclairbasic" exit  then
   filename s" .xbas" string-suffix? if  s" x11basic" exit  then
   filename s" .yab" string-suffix? if  s" yabasic" exit  then
   filename s" .z80s" string-suffix? if  s" z80" exit  then
+  filename s" .zig" string-suffix? if  s" zig" exit  then
   filename s" .zxbas" string-suffix? if  s" zxbasic" exit  then
+  filename s" Makefile" str=  if  s" make" exit  then
   filename s" _bas" string-suffix? if  s" superbasic" exit  then
   filename s" _sbim" string-suffix? if  s" sbim" exit  then
-\  filename s" _scr" string-suffix? if  s" forth" exit  then  \ XXX TODO
-\  filename s" _cmd" string-suffix? if  s" text" exit  then  \ XXX TODO
   filename s" boot" str=  if  s" superbasic" exit  then
-  filename s" ratpoisonrc" str=  if  s" ratpoison" exit  then
-  filename s" Makefile" str=  if  s" make" exit  then
+  filename s" ratpoisonrc" str=  if  s" ratpoison" exit  then \ XXX OLD ? XXX FIXME ?
+\  filename s" _cmd" string-suffix? if  s" text" exit  then  \ XXX TODO
+\  filename s" _scr" string-suffix? if  s" forth" exit  then  \ XXX TODO
   s" text" ;
 
 : filename>filetype ( ca1 len1 -- ca2 len2 )
@@ -377,5 +427,8 @@ end-package
 \
 \ 2020-04-14: Define strings constants with `sconstant` and instead of
 \ `2constant`.
+\
+\ 2025-06-02: update `(filename>filetype)` with many new languages,
+\ which will be used in new contents of programandala.net.
 
 \ vim: filetype=gforth
