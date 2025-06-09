@@ -7,10 +7,10 @@
 \ contents in Asciidoctor (or AsciiDoc) format, either inline or from
 \ a file.
 
-\ Last modified 20220123T1350+0100.
+\ Last modified 20250609T2327+0200.
 \ See change log at the end of the file.
 
-\ Copyright (C) 2015,2017,2018,2019,2021 Marcos Cruz (programandala.net)
+\ Copyright (C) 2015,2017,2018,2019,2021,2025 Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute it and/or modify it
 \ under the terms of the GNU General Public License as published by
@@ -75,27 +75,18 @@ package fendo.addon.asciidoctor
 \ XXX TODO Use also AsciiDoc as alternative. Maybe `asciidoc_command`
 \ and a defered `adoc_command`.
 
-\ The Asciidoctor command includes all the required options, even when
-\ they are the default; just in case the deafaults change in the
-\ future, and also for the sake of clarity:
-: asciidoctor_base_command$ ( -- ca len )
-  s" asciidoctor "
-  s" --backend html5 " s+     \ default
-  s" --doctype article " s+   \ default
-  s" --no-header-footer " s+  \ supress the document header and footer
-                              \ in the output
-  \ s" --compact " s+         \ remove blank lines in the output
-  s" --out-file " s+ output_file$ s+ ;
-
-\ XXX FIXME -- 2018-08-20: Asciidoctor 1.5.7.1 throws error
-\ "--compact" is not accepted. But it's still in the documentation.
+$variable asciidoctor_options$
+  \ User-defined Asciidoctor options.
 
 : asciidoctor_command$ ( -- ca len )
-  asciidoctor_base_command$ s"  " s+ ;
+  s" asciidoctor --no-header-footer "
+  asciidoctor_options$ $@ s+
+  s"  --out-file " s+ output_file$ s+ ;
   \ Return the Asciidoctor command without the input file.
 
 : ((include_asciidoctor)) ( ca1 len1 -- ca2 len2 )
   asciidoctor_command$ s"  " s+ 2swap s+
+  \ 2dup cr ." asciidoctor command: `" type ." `" cr \ XXX INFORMER
   system $? abort" The system asciidoctor command failed"
   <output_file ;
   \ Return the contents _ca2 len2_ converted
@@ -119,6 +110,18 @@ package fendo.addon.asciidoctor
   until ;
 
 public
+
+: asciidoctor_options! ( ca len -- )
+  asciidoctor_options$ $! ;
+
+  \ doc{
+  \
+  \ asciidoctor_options! ( ca len -- )
+  \
+  \ Set user-defined Asciidoctor options which will be used by
+  \ `include_asciidoctor` and `asciidoctor{`.
+  \
+  \ }doc
 
 : include_asciidoctor ( ca len -- )
   (include_asciidoctor) echo
@@ -191,5 +194,7 @@ end-package
 \ `input_file$`.
 \
 \ 2021-10-23: Replace "See:" with "See also:" in the documentation.
+\
+\ 2025-06-09: Add `asciidoctor_options$`, `asciidoctor_options!`.
 
 \ vim: filetype=gforth
