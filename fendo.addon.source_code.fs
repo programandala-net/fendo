@@ -5,7 +5,7 @@
 
 \ This file is the source code addon.
 
-\ Last modified  20250609T2031+0200.
+\ Last modified  20250610T0003+0200.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2015,2017,2018,2020,2025 Marcos Cruz (programandala.net)
@@ -68,7 +68,7 @@ package fendo.addon.source_code
   filename s" .bbim" string-suffix? if  s" bbim" exit  then
   filename s" .betabas" string-suffix? if  s" betabasic" exit  then
   filename s" .c3" string-suffix? if  s" c3" exit  then
-  filename s" .chpl" string-suffix? if  s" chapel" exit  then
+  filename s" .chpl" string-suffix? if  s" chpl" exit  then
   filename s" .clj" string-suffix? if  s" clojure" exit  then
   filename s" .cr" string-suffix? if  s" crystal" exit  then
   filename s" .cs" string-suffix? if  s" cs" exit  then
@@ -433,5 +433,7 @@ end-package
 \ which will be used in new contents of programandala.net.
 \
 \ 2025-06-09: fix v language filetype; add fish language.
+\
+\ 2025-06-10: fix chapel language filetype.
 
 \ vim: filetype=gforth
