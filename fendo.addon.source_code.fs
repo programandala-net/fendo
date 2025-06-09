@@ -5,7 +5,7 @@
 
 \ This file is the source code addon.
 
-\ Last modified  20250602T1244+0200.
+\ Last modified  20250609T2031+0200.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2015,2017,2018,2020,2025 Marcos Cruz (programandala.net)
@@ -76,6 +76,7 @@ package fendo.addon.source_code
   filename s" .dylan" string-suffix? if  s" dylan" exit  then
   filename s" .eu" string-suffix? if  s" euphoria" exit  then
   filename s" .factor" string-suffix? if  s" factor" exit  then
+  filename s" .fish" string-suffix? if  s" fish" exit  then
   filename s" .fs" string-suffix? if  s" fsharp" exit  then \ XXX FIXME can be also gforth
   filename s" .fs" string-suffix? if  s" gforth" exit  then \ XXX FIXME can be also f#
   filename s" .go" string-suffix? if  s" go" exit  then
@@ -124,7 +125,7 @@ package fendo.addon.source_code
   filename s" .sinclairbas" string-suffix? if  s" sinclairbasic" exit  then
   filename s" .swift" string-suffix? if  s" swift" exit  then
   filename s" .unexpanded_llist" string-suffix? if  s" sinclairbasic" exit  then
-  filename s" .v" string-suffix? if  s" v" exit  then
+  filename s" .v" string-suffix? if  s" vlang" exit  then
   filename s" .vala" string-suffix? if  s" vala" exit  then
   filename s" .vale" string-suffix? if  s" vale" exit  then
   filename s" .vbas" string-suffix? if  s" vimclairbasic" exit  then
@@ -430,5 +431,7 @@ end-package
 \
 \ 2025-06-02: update `(filename>filetype)` with many new languages,
 \ which will be used in new contents of programandala.net.
+\
+\ 2025-06-09: fix v language filetype; add fish language.
 
 \ vim: filetype=gforth
