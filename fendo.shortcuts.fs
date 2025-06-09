@@ -5,7 +5,7 @@
 
 \ This file creates the tools for user's shortcuts.
 
-\ Last modified  202011160218.
+\ Last modified  20250609T1653+0200.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2017,2018,2020 Marcos Cruz (programandala.net)
@@ -180,19 +180,11 @@ s" " :shortcut ( -- )
   \ ca len = href attribute (or an empty string)
 
 :noname ( ca len -- ca len | ca' len' )
-\  cr ." order = " order cr ." entering unshortcut " 2dup type  \ XXX INFORMER
-\  ." Parameter in `unshortcut` = " 2dup type .s cr  \ XXX INFORMER
   2dup href=!
   0 rot rot  \ fake xt
-\  2dup cr ." order = " order cr ." about to unshortcut " type  \ XXX INFORMER
   begin  ( xt ca len ) shortcut? ( xt' xt' true  |  false )
   while   execute href=@
-\  ." --> " 2dup type  \ XXX INFORMER
   repeat  href=@
-\  ." Result of `unshortcut` = " 2dup type .s cr  \ XXX INFORMER
-\ save-mem  \ XXX TMP -- needed to preserve the actual zone of `href=`? No.
-\  .s cr  \ XXX INFORMER
-\  cr  \ XXX INFORMER
   ; is unshortcut  \ defered in <fendo.fs>
   \ Unshortcut an href attribute recursively.
   \ ca len = href attribute
