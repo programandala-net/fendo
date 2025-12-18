@@ -5,7 +5,7 @@
 
 \ This file is the source code addon.
 
-\ Last modified  20250610T0003+0200.
+\ Last modified  20251218T1328+0100.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2015,2017,2018,2020,2025 Marcos Cruz (programandala.net)
@@ -77,8 +77,17 @@ package fendo.addon.source_code
   filename s" .eu" string-suffix? if  s" euphoria" exit  then
   filename s" .factor" string-suffix? if  s" factor" exit  then
   filename s" .fish" string-suffix? if  s" fish" exit  then
-  filename s" .fs" string-suffix? if  s" fsharp" exit  then \ XXX FIXME can be also gforth
-  filename s" .fs" string-suffix? if  s" gforth" exit  then \ XXX FIXME can be also f#
+
+  \ XXX REMARK ".fs" is common to Gforth and F#; therefore F# must
+  \ use `s" fsharp" programming_language"` before calling
+  \ `source_code`.
+  \
+  \ filename s" .fs" string-suffix? if  s" fsharp" exit  then // XXX OLD
+
+  filename s" .fs" string-suffix? if  s" gforth" exit  then
+  filename s" .fsharp" string-suffix? if  s" fsharp" exit  then \ alternative to .fs, just in case
+  filename s" .gforth" string-suffix? if  s" gforth" exit  then \ alternative to .fs, just in case
+
   filename s" .go" string-suffix? if  s" go" exit  then
   filename s" .gnuplot" string-suffix? if  s" gnuplot" exit  then
   filename s" .ha" string-suffix? if  s" hare" exit  then
@@ -113,6 +122,8 @@ package fendo.addon.source_code
   filename s" .raku" string-suffix? if  s" raku" exit  then
   filename s" .ratpoisonrc" str=  if  s" ratpoison" exit  then
   filename s" .red" string-suffix? if  s" red" exit  then
+  filename s" .retro" string-suffix? if  s" retro" exit  then
+  filename s" .rexx" string-suffix? if  s" rexx" exit  then
   filename s" .ring" string-suffix? if  s" ring" exit  then
   filename s" .rkt" string-suffix? if  s" racket" exit  then
   filename s" .rs" string-suffix? if  s" rust" exit  then
@@ -435,5 +446,9 @@ end-package
 \ 2025-06-09: fix v language filetype; add fish language.
 \
 \ 2025-06-10: fix chapel language filetype.
+\
+\ 2025-08-15: add retro and rexx to `(filename>filetype)`.
+\
+\ 2025-12-18: deactivate recognition of ".fs" for F#.
 
 \ vim: filetype=gforth
