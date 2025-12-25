@@ -5,7 +5,7 @@
 
 \ This file is the source code addon.
 
-\ Last modified  20251218T1328+0100.
+\ Last modified  20251225T1655+0100.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2015,2017,2018,2020,2025 Marcos Cruz (programandala.net)
@@ -95,6 +95,7 @@ package fendo.addon.source_code
   filename s" .icn" string-suffix? if  s" icon" exit  then
   filename s" .ini" string-suffix? if  s" dosini" exit  then
   filename s" .io" string-suffix? if  s" io" exit  then
+  filename s" .janet" string-suffix? if  s" janet" exit  then
   filename s" .jl" string-suffix? if  s" julia" exit  then
   filename s" .kt" string-suffix? if  s" kotlin" exit  then
   filename s" .lisp" string-suffix? if  s" lisp" exit  then
@@ -105,10 +106,12 @@ package fendo.addon.source_code
   filename s" .mbas" string-suffix? if  s" masterbasic" exit  then
   filename s" .mbim" string-suffix? if  s" mbim" exit  then
   filename s" .ml" string-suffix? if  s" ocml" exit  then
+  filename s" .n" string-suffix? if  s" nature" exit  then
   filename s" .neko" string-suffix? if  s" neko" exit  then
   filename s" .nelua" string-suffix? if  s" nelua" exit  then
   filename s" .nim" string-suffix? if  s" nim" exit  then
   filename s" .nit" string-suffix? if  s" nit" exit  then
+  filename s" .nt" string-suffix? if  s" neat" exit  then
   filename s" .obn" string-suffix? if  s" oberon-07" exit  then
   filename s" .odin" string-suffix? if  s" odin" exit  then
   filename s" .opl" string-suffix? if  s" oplplus" exit  then
@@ -450,5 +453,8 @@ end-package
 \ 2025-08-15: add retro and rexx to `(filename>filetype)`.
 \
 \ 2025-12-18: deactivate recognition of ".fs" for F#.
+\
+\ 2025-12-25: add recognition of ".n" (nature), ".nt" (neat) and
+\ ".janet" (janet).
 
 \ vim: filetype=gforth
