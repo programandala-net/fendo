@@ -5,7 +5,7 @@
 
 \ This file is the source code addon.
 
-\ Last modified  20251225T1655+0100.
+\ Last modified  20251225T1756+0100.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2015,2017,2018,2020,2025 Marcos Cruz (programandala.net)
@@ -105,7 +105,7 @@ package fendo.addon.source_code
   filename s" .mb" string-suffix? if  s" masterbasic" exit  then
   filename s" .mbas" string-suffix? if  s" masterbasic" exit  then
   filename s" .mbim" string-suffix? if  s" mbim" exit  then
-  filename s" .ml" string-suffix? if  s" ocml" exit  then
+  filename s" .ml" string-suffix? if  s" ocaml" exit  then
   filename s" .n" string-suffix? if  s" nature" exit  then
   filename s" .neko" string-suffix? if  s" neko" exit  then
   filename s" .nelua" string-suffix? if  s" nelua" exit  then
@@ -455,6 +455,6 @@ end-package
 \ 2025-12-18: deactivate recognition of ".fs" for F#.
 \
 \ 2025-12-25: add recognition of ".n" (nature), ".nt" (neat) and
-\ ".janet" (janet).
+\ ".janet" (janet). fix recognition of ".ml" (ocaml).
 
 \ vim: filetype=gforth
