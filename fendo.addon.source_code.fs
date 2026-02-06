@@ -5,7 +5,7 @@
 
 \ This file is the source code addon.
 
-\ Last modified  20260206T1524+0100.
+\ Last modified  20260206T1535+0100.
 \ See change log at the end of the file.
 
 \ Copyright (C) 2013,2014,2015,2017,2018,2020,2025,2026, Marcos Cruz (programandala.net)
@@ -141,6 +141,7 @@ package fendo.addon.source_code
   filename s" .sh" string-suffix? if  s" sh" exit  then
   filename s" .sinclairbas" string-suffix? if  s" sinclairbasic" exit  then
   filename s" .swift" string-suffix? if  s" swift" exit  then
+  filename s" .sx" string-suffix? if  s" styx" exit  then
   filename s" .unexpanded_llist" string-suffix? if  s" sinclairbasic" exit  then
   filename s" .v" string-suffix? if  s" vlang" exit  then
   filename s" .vala" string-suffix? if  s" vala" exit  then
@@ -460,7 +461,7 @@ end-package
 \ 2025-12-25: add recognition of ".n" (nature), ".nt" (neat) and
 \ ".janet" (janet). fix recognition of ".ml" (ocaml).
 \
-\ 2026-02-06: add recognition of ".ex" (elixir), ".gleam" (gleam) and
-\ ".hs" (haskell).
+\ 2026-02-06: add recognition of ".ex" (elixir), ".gleam" (gleam),
+\ ".hs" (haskell), and ".sx" (styx).
 
 \ vim: filetype=gforth
