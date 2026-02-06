@@ -5,10 +5,10 @@
 
 \ This file is the source code addon.
 
-\ Last modified  20251225T1756+0100.
+\ Last modified  20260206T1524+0100.
 \ See change log at the end of the file.
 
-\ Copyright (C) 2013,2014,2015,2017,2018,2020,2025 Marcos Cruz (programandala.net)
+\ Copyright (C) 2013,2014,2015,2017,2018,2020,2025,2026, Marcos Cruz (programandala.net)
 
 \ Fendo is free software; you can redistribute it and/or modify it
 \ under the terms of the GNU General Public License as published by
@@ -75,6 +75,7 @@ package fendo.addon.source_code
   filename s" .d" string-suffix? if  s" d" exit  then
   filename s" .dylan" string-suffix? if  s" dylan" exit  then
   filename s" .eu" string-suffix? if  s" euphoria" exit  then
+  filename s" .ex" string-suffix? if  s" elixir" exit  then
   filename s" .factor" string-suffix? if  s" factor" exit  then
   filename s" .fish" string-suffix? if  s" fish" exit  then
 
@@ -88,9 +89,11 @@ package fendo.addon.source_code
   filename s" .fsharp" string-suffix? if  s" fsharp" exit  then \ alternative to .fs, just in case
   filename s" .gforth" string-suffix? if  s" gforth" exit  then \ alternative to .fs, just in case
 
+  filename s" .gleam" string-suffix? if  s" gleam" exit  then
   filename s" .go" string-suffix? if  s" go" exit  then
   filename s" .gnuplot" string-suffix? if  s" gnuplot" exit  then
   filename s" .ha" string-suffix? if  s" hare" exit  then
+  filename s" .hs" string-suffix? if  s" haskell" exit  then
   filename s" .hx" string-suffix? if  s" haxe" exit  then
   filename s" .icn" string-suffix? if  s" icon" exit  then
   filename s" .ini" string-suffix? if  s" dosini" exit  then
@@ -456,5 +459,8 @@ end-package
 \
 \ 2025-12-25: add recognition of ".n" (nature), ".nt" (neat) and
 \ ".janet" (janet). fix recognition of ".ml" (ocaml).
+\
+\ 2026-02-06: add recognition of ".ex" (elixir), ".gleam" (gleam) and
+\ ".hs" (haskell).
 
 \ vim: filetype=gforth
